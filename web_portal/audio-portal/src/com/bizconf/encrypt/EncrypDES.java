@@ -47,7 +47,8 @@ public class EncrypDES {
 		byte[] src = str.getBytes();
 		// 加密，结果保存进cipherByte
 		cipherByte = c.doFinal(src);
-		return cipherByte;
+		
+		return cipherByte;  
 	}
 
 	/**
