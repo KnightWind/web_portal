@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tables[
+<!ELEMENT tables (default, table*)>
+<!ELEMENT table (entity, name, primary-key, order-by?, field-maps?, datasource?, db-type?)>
+<!ELEMENT default (datasource?, db-type?)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT primary-key (#PCDATA)>
+<!ELEMENT order-by (#PCDATA)>
+<!ELEMENT field-maps (map*)>
+<!ELEMENT map (field-name, var-name)>
+<!ELEMENT field-name (#PCDATA)>
+<!ELEMENT var-name (#PCDATA)>
+<!ENTITY copyright "www.libernate.net">
+]>
+<tables>
+	<default>
+		<datasource>libernate.datasource.bizconf.audio</datasource>
+		<db-type>mysql</db-type>
+	</default>
+	 
+	<table>
+		<entity>com.bizconf.audio.entity.ConfBase</entity>
+		<name>t_conf_base</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.ConfOuter</entity>
+		<name>t_conf_outer</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.ConfCycle</entity>
+		<name>t_conf_cycle</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.ConfTelConfig</entity>
+		<name>t_conf_tel_config</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.ConfUser</entity>
+		<name>t_conf_user</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.ConfLog</entity>
+		<name>t_conf_log</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	 
+	<table>
+		<entity>com.bizconf.audio.entity.SiteBase</entity>
+		<name>t_site_base</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.License</entity>
+		<name>t_license</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.Empower</entity>
+		<name>t_empower</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.Notice</entity>
+		<name>t_notice</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.EventLog</entity>
+		<name>t_event_log</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.EventContent</entity>
+		<name>t_event_content</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.LoginLog</entity>
+		<name>t_login_log</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.EmailTemplate</entity>
+		<name>t_email_template</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.EmailInfo</entity>
+		<name>t_email_info</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.EmailConfig</entity>
+		<name>t_email_config</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.ContactGroup</entity>
+		<name>t_contact_group</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.DefaultConfig</entity>
+		<name>t_default_config</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.Contacts</entity>
+		<name>t_contacts</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	 
+	<table>
+		<entity>com.bizconf.audio.entity.UserBase</entity>
+		<name>t_user_base</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.SystemUser</entity>
+		<name>t_system_user</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.ValidCode</entity>
+		<name>t_valid_code</name>
+		<primary-key>code_key</primary-key>
+		<order-by></order-by>
+	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.JoinRandom</entity>
+		<name>t_join_random</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.SiteOrg</entity>
+		<name>t_site_org</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	
+</tables>

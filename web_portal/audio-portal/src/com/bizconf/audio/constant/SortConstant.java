@@ -1,0 +1,79 @@
+package com.bizconf.audio.constant;
+
+
+public class SortConstant {
+	
+
+	
+	public static final String SORT_ASC="0";//正序排序sortord
+	public static final String SORT_DESC="1";//倒序序排序
+	
+	
+	//事件日志
+	public static final String[][] EVENTLOG_FIELDS=new String[][]{
+		{"0","id"},
+		{"1","logStatus"},
+		{"2","createTime"}
+	} ;
+
+	//默认排序编码
+	public static final String EVENTLOG_SORT_DEFAULT="0";
+	
+	//类型排序编码
+	public static final String EVENTLOG_SORT_STATUS="1";
+	
+	//日志时间编码
+	public static final String EVENTLOG_SORT_CREATETIME="2";
+	
+	
+	//站点信息排序
+	public static final String[][] SITEBASE_FIELDS=new String[][]{
+		{"0","id"},
+		{"1","siteSign"},
+		{"2","siteFlag"},
+		{"3","expireDate"},
+		{"4","lockFlag"},
+		{"5","effeDate"}
+	} ;
+	
+	//站点信息排序
+	public static final String[][] SITE_ORG_FIELDS=new String[][]{
+		{"0","id"},
+		{"1", "orgName"}
+	};
+	
+	public static final String[][] CONTACTS_FIELDS = new String[][]{
+		{"0","id"},
+		{"1","contact_name"}
+	};
+	
+	//企业管理员排序
+	public static final String[][] USERBASE_FIELDS = new String[][]{
+		{"1","userStatus"}
+	};
+	public static final String SITEBASE_SORT_DEFAULT="0";
+	public static final String SITEBASE_SORT_SIGN="1";
+	
+	
+	
+	
+	//会议排序字段对应关系
+	public static final String[][] CONFBASE_FIELDS=new String[][]{
+		{"0","id"},
+		{"1","endTime"},
+		{"2","confType"},
+		{"3","confStatus"},
+		{"4","startTime"}
+	};
+
+	public static final String CONFBASE_SORT_DEFAULT="0";
+	public static final String CONFBASE_SORT_CONFNAME="1";
+	public static final String CONFBASE_SORT_CONFTYPE="2";
+	public static final String CONFBASE_SORT_STATUS="3";
+	public static final String CONFBASE_SORT_STARTTIME="4";
+	
+	
+	
+	
+	
+}

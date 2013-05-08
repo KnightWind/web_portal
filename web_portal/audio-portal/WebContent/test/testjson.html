@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script src="/static/js/jquery-1.8.3.js" type="text/javascript"></script>
+<script src="/static/js/json2.js" type="text/javascript"></script>
+<title>footer</title>
+<style type="text/css">
+.copyright-text {
+	font-size: 12px;
+	color: #FFFFFF;
+}
+</style>
+</head>
+<body>
+<script type="text/javascript">
+function testCreateJsonObject(str){
+	if(str!=null && str != ""){
+		 var json=JSON.parse(str); 
+	}
+	return  json;	
+}
+var test1 = '{"status":1,"confBase":[{"id":796,"confHwid":"","siteId":0,"cycleId":0,"confName":"wadssss","confDesc":"asdasd","publicFlag":2,"publicConfPass":"","confType":1,"startTime":"2013-03-18 16:49:32","duration":15,"endTime":"","compereUser":"","compereName":"","compereSecure":"","userSecure":"","callPhone":"","phonePass":"","maxUser":5,"maxAudio":0,"maxVideo":0,"dpiType":1,"maxDpi":"","defaultDpi":"","aheadTime":10,"openIpad":0,"funcBits":"00000001000000000000000000000000","clientConfig":"1111000110100000000000000000000000","confStatus":1,"soapStatus":2,"confVersion":0,"createTime":"2013-03-18 08:49:32","createUser":"","createType":2,"delFlag":1,"delTime":"","delUser":0,"delType":2}]}';
+var test = '{"status":1, "confBase":[{"id":"", "siteId":0}]}'
+var jsonStr='{"status":1,"siteBase":[{"id":102,"siteName":"上海会畅","enName":"asd","clientName":"","siteLogo":"","siteSign":"usb","siteDesc":"站点","time_zone":28800000,"siteFlag":1,"license":155,"mtgType":0,"lockFlag":1,"effeDate":{"date":1,"day":5,"hours":1,"minutes":5,"month":1,"nanos":0,"seconds":40,"time":1359651940000,"timezoneOffset":-480,"year":113},"expireDate":{"date":1,"day":5,"hours":1,"minutes":5,"month":1,"nanos":0,"seconds":40,"time":1359651940000,"timezoneOffset":-480,"year":113},"createTime":{"date":1,"day":5,"hours":1,"minutes":5,"month":1,"nanos":0,"seconds":40,"time":1359651940000,"timezoneOffset":-480,"year":113},"createUser":1,"delFlag":1,"delTime":{"date":1,"day":4,"hours":0,"minutes":0,"month":0,"nanos":0,"seconds":0,"time":-28800000,"timezoneOffset":-480,"year":70},"delUser":0}]}';
+//',"createUser":1,"delFlag":1,"delTime":"1970-01-01 00:00:00","delUser":0,"effeDate":"2013-01-31 08:09:22","enName":"asd","expireDate":"2013-01-31 08:09:22","id":89,"license":155,"lockFlag":1,"mtgType":0,"siteDesc":"站点","siteFlag":1,"siteLogo":"","siteName":"上海会畅","siteSign":"asdasdasdasdasda","time_zone":28800000}';
+alert(testCreateJsonObject(test).confBase[0].siteId);
+</script>
+
+</body>
+</html>

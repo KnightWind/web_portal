@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>testHttp.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="/script/jquery-1.8.2.js"></script>
+    
+
+  </head>
+  
+  <body>
+  	文件名：<input type="text"  id="fileName" vlaue=""/><br/><br/>
+  	Put内容：<textarea rows="10" cols="50"  id="fileContext"></textarea><br/><br/>
+  	<input type="button" name="HttpPut" value="测试HTTP PUT"  onclick="javascirpt:testPut();"/>
+  	<input type="button" name="OpenFile" value="打开文件" onclick="javascirpt:showPutFile();"/>
+  	<input type="button" name="HttpDelete" value="测试HTTP Delete"  onclick="javascirpt:testDelete();"/>
+  	<input type="button" name="Http Options" value="Http Options" onclick="javascirpt:testOptions();"/>
+  
+  
+  </body>
+  
+  
+</html>
+<script type="text/javascript">
+
+
+	function getXMLHTTPRequest() {
+		if (XMLHttpRequest) {
+			return new XMLHttpRequest();
+		} else {
+			try {
+				return new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
+				return new ActiveXObject('Microsoft.XMLHTTP');
+			}
+		}
+	}
+
+	
+	function testDelete() {
+		var httpFile=$("#fileName").val();
+		if(httpFile==null || httpFile==""){
+			alert("请输入文件名!");
+			return false;
+		}
+		var req = getXMLHTTPRequest();
+		req.open('DELETE', '/'+httpFile, false);
+		req.send(null);
+		alert(req.responseText);  
+		req=null;
+	
+	}
+	function testPut() {
+		var httpFile=$("#fileName").val();
+		var fileData=$("#fileContext").val();
+
+		if(httpFile==null || httpFile==""){
+			alert("请输入文件名!");
+			return false;
+		}
+
+		if(fileData==null || fileData==""){
+			alert("请输入PUT内容!");
+			return false;
+		}
+			
+		var req = getXMLHTTPRequest();
+		req.open('PUT', '/user/123', false);
+		req.send("<html><body>"+fileData+"</body></html>");
+		
+		alert(req.responseText);  
+		req=null;
+	}
+
+	function testOptions() {
+		var req = getXMLHTTPRequest();
+		req.open('OPTIONS', '/', false);
+		req.send("");
+		alert(req.status);  
+		req=null;
+	}
+	function showPutFile(){
+		var httpFile=$("#fileName").val();
+		if(httpFile!=null && httpFile!=""){
+			 window.open("/"+httpFile);
+		}
+	}
+	
+	
+</script>
