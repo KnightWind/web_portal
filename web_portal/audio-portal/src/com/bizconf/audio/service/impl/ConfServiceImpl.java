@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bizconf.audio.component.SecureGenerator;
 import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.constant.ConfStatus;
 import com.bizconf.audio.constant.ConstantUtil;
@@ -68,7 +69,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	@Autowired
 	ConfUserService confUserService;
 	
-	@Autowired 
+	@Autowired
 	UserService userService;
 	
 	@Autowired
@@ -875,7 +876,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		conf.setStartTime(DateUtil.getGmtDateByTimeZone(conf.getStartTime(),timeZone));
 		conf.setEndTime(DateUtil.addDateMinutes(conf.getStartTime(), conf.getDuration()));
 		String[] passArray = new String[]{
-				"id", "confName", "confDesc", "confType", "startTime", "duration", "endTime", "maxUser", "maxAudio", "maxVideo", "videoType", "aheadTime", "funcBits", "clientConfig", "publicFlag", "publicConfPass", "privi_bits"
+				"id", "confName", "confDesc","hostKey","confType", "startTime", "duration", "endTime", "maxAudio", "maxVideo", "videoType", "aheadTime", "funcBits", "clientConfig", "publicFlag", "publicConfPass", "privi_bits"
 		};
 		if(conf != null && conf.getId() > 0){
 			//再检测在正则表达式验证页面输入数据
@@ -1043,6 +1044,12 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		boolean cancleFlag = false;
 		ConfBase confBase = null;
 		ConfBase conf = getConfBasebyConfId(confId);
+//		ConfBase childConf=null;
+		boolean isPerConf=false;
+		if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(conf.getPermanentConf())){
+			isPerConf=true;
+//			childConf=getPermanentChildConf(conf.getId());
+		}
 		
 		try {
 			if(conf != null && conf.getId() != null && conf.getId().intValue() > 0){
@@ -1050,13 +1057,16 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 				conf.setDelFlag(ConstantUtil.DELFLAG_DELETED);
 				conf.setDelTime(DateUtil.getGmtDate(null));
 				conf.setDelUser(currentUser.getId());
-				if(StringUtil.isNotBlank(conf.getConfHwid())){
+				if(StringUtil.isNotBlank(conf.getConfHwid()) && !isPerConf){
 					cancleHwFlag = confManagementService.cancelConf(conf.getConfHwid(), currentSite, currentUser);
 				}
-				if(!cancleHwFlag){
+				if(!cancleHwFlag  && !isPerConf){
 					logger.info("华为接口取消一个预约会议失败！");
 					return false;
 				}
+//				if(isPerConf){
+//					deleteChildConfByBelongConfId(conf.getId());
+//				}
 				confBase = libernate.updateEntity(conf, "id", "confStatus", "delFlag", "delTime", "delUser");
 				
 				List<ConfUser> confUsers = confUserLogic.getConfUserList(conf.getId());
@@ -1100,6 +1110,130 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		}
 	}
 	
+	
+	
+	
+	private ConfCycle createCycleConf(ConfCycle confCycle, SiteBase currentSite, UserBase currentUser, Integer timeZone){
+		confCycle.setBeginDate(DateUtil.getGmtDateByTimeZone(confCycle.getBeginDate(), timeZone));
+		confCycle.setCreateUser(currentUser.getId());
+		confCycle.setEndDate(DateUtil.getGmtDateByTimeZone(confCycle.getEndDate(), timeZone));
+		confCycle.setSiteId(currentSite.getId());
+		try {
+			confCycle = libernate.saveEntity(confCycle);
+		} catch (Exception e) {
+			logger.error("保存 会议信息--循环会议设置出错！" + confCycle , e);
+		}
+		return confCycle;
+	}
+	
+	private ConfBase createCycleReservationConf(ConfBase conf, ConfCycle confCycleBase, SiteBase currentSite, UserBase currentUser, List<Date> confDateList){
+		ConfBase confBase = new ConfBase();
+		if(confDateList == null || confDateList.size() <= 0){
+			logger.info("周期会议获取周期时间范围出错！" + confDateList);
+			return confBase;
+		}
+		if(conf == null){
+			logger.info("周期会议内容为空！");
+			return confBase;
+		}
+		Integer cycleId = confCycleBase.getId();
+		conf = initConf(conf, currentSite, currentUser, confCycleBase);
+		conf.setCycleId(cycleId);
+		conf.setSoapStatus(ConfConstant.CONF_SOAP_STATUS_TRUE);
+		StringBuilder sqlBuilder = new StringBuilder("INSERT INTO t_conf_base ");
+		sqlBuilder.append(" ( conf_hwid, site_id, cycle_id, conf_name, conf_desc, conf_type, start_time, duration, end_time,");
+		sqlBuilder.append("  compere_user, compere_name, compere_secure, user_secure, call_phone, phone_pass, max_user, ");
+		sqlBuilder.append("  max_audio, max_video, video_type, max_dpi, default_dpi, ahead_time, open_ipad, client_config, ");
+		sqlBuilder.append("  conf_status, soap_status, conf_version, create_time, create_user, create_type, del_flag, ");
+		sqlBuilder.append("  del_time, del_user, del_type, public_flag, func_bits, public_conf_pass, privi_bits, time_zone_id, time_zone, crypt_key , host_key) ");
+		sqlBuilder.append(" VALUES ");
+		for(int i=0;i<confDateList.size();i++){
+			if(i>0){
+				sqlBuilder.append(",");
+			}
+			sqlBuilder.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? )");
+		}
+		List<Object> valueList = null;
+		try{
+			valueList = getConfValues(conf, confDateList, currentSite, currentUser);
+		}catch (Exception e){
+			confBase.setId(ConfConstant.CONF_CREATE_ERROR_LICENCE);    //参会人数大于站点当前所剩参会人数值
+			logger.info("参会人数大于站点当前所剩参会人数值" + confBase + e);
+			return confBase;
+		}
+		if(valueList == null || valueList.size() == 0){
+			logger.info("创建周期会议获取创建周期会议属性值错误！");
+			return confBase;
+		}
+		try {
+			if(libernate.executeSql(sqlBuilder.toString(), valueList.toArray())){
+				confBase = getConfBasebyCycleId(cycleId);
+				//创建周期会议完成后调用保存主持人信息
+				if(!confUserService.fillConfUserForCreateCycle(getCycleConfDate(cycleId, currentSite), currentUser)){
+					logger.info("创建会议后保存主持人信息失败");
+				}
+				//发送周期会议信息到主持人邮箱,会议的时间应为gmt时间，发送邮件接口会转换gmt到站点时区时间
+				if(!emailService.createConfEmail(confBase, confCycleBase, currentUser)){
+					logger.info("发送周期会议信息到主持人邮箱失败");
+				}
+				getOffsetConf(currentUser, confBase);     //返回到controller的会议时间从gmt转换为偏好设置时区的时间
+			}else{
+				logger.info("创建周期预约会议失败！" + conf);
+			}
+		} catch (Exception e) {
+			logger.error("创建周期预约会议失败！" + conf ,e);
+		}	
+		return confBase;
+	}
+	
+	/**
+	 * 补充创建无限期周期会议的下一条会议
+	 * 1.创建无限期周期会议时只创建了30条会议，每当结束一条会议时，则调用该方法再补充创建一条会议，保证该无限期周期会议一直有30条
+	 * @param conf 当前结束的会议
+	 * wangyong
+	 * 2013-5-9
+	 */
+	private ConfBase addInfiniteConf(ConfBase conf, ConfCycle confCycle, SiteBase currentSite, UserBase currentUser){
+		if(conf == null){
+			return null;
+		}
+		ConfBase firstCycleConf = new ConfBase();
+		if(confCycle != null && currentUser != null && currentSite != null){
+			Integer timeZone = conf.getTimeZone();
+			DateUtil.getOffsetDateByGmtDate(confCycle.getBeginDate(), timeZone.longValue());
+			Date localBeginDate = DateUtil.getOffsetDateByGmtDate(conf.getStartTime(), timeZone.longValue());    //转换会议开始时间为会议所属时区时间
+			Calendar cal = Calendar.getInstance();
+			Calendar calCycle = Calendar.getInstance();
+			cal.setTime(localBeginDate);
+			calCycle.setTime(DateUtil.getOffsetDateByGmtDate(confCycle.getBeginDate(), timeZone.longValue()));
+			cal.set(Calendar.HOUR_OF_DAY, calCycle.get(Calendar.HOUR_OF_DAY));
+			cal.set(Calendar.MINUTE, calCycle.get(Calendar.MINUTE));
+			cal.set(Calendar.SECOND, calCycle.get(Calendar.SECOND));
+			localBeginDate = cal.getTime();
+			Date localEndDate = DateUtil.getOffsetDateByGmtDate(confCycle.getEndDate(), timeZone.longValue());
+			//从当前结束会议的开始时间的下一天起，获得30天循环周期日期
+			List<Date> confDateList = DateUtil.getCycleDateFromScope(DateUtil.addDate(localBeginDate, 1), localEndDate, confCycle.getCycleType(), confCycle.getCycleValue(), ConstantUtil.CYCLE_CONF_DATE_LIMIT);
+			if(confDateList == null || confDateList.size() == 0){
+				logger.info("未获得有效循环周期日期");
+				return null;
+			}
+			if(confDateList.size() == ConstantUtil.CYCLE_CONF_DATE_LIMIT){    //当周期范围为30天时，取最后一天
+				List<Date> oneDateList = new ArrayList<Date>();
+				oneDateList.add(confDateList.get(confDateList.size()-1));
+				List<ConfBase> confList = getCycConfBases(confCycle.getId());
+				for(ConfBase confBase : confList){
+					if(confBase.getId().intValue() > conf.getId().intValue()){
+						conf.setDuration(confBase.getDuration());
+						conf.setConfStatus(ConfConstant.CONF_STATUS_SUCCESS);
+						break;
+					}
+				}
+				firstCycleConf = createCycleReservationConf(conf, confCycle, currentSite, currentUser, oneDateList);    //保存周期会议
+			}
+		}
+		return firstCycleConf;
+	}
+	
 	/**
 	 * 创建周期预约会议
 	 * @param conf 会议基本信息
@@ -1107,124 +1241,47 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	@Override
 	public ConfBase createCycleReservationConf(ConfBase conf, ConfCycle confCycle, SiteBase currentSite, UserBase currentUser){
 		ConfBase firstCycleConf = new ConfBase();
-		boolean saveFlag = false;
+
 		ConfCycle confCycleBase = null;
 		if(confCycle != null && currentUser != null && currentSite != null){
-			Integer timeZone = 0;
-			if(currentUser.getTimeZone() != null){
-				timeZone = currentUser.getTimeZone();
-			}else if(currentSite.getTimeZone() != null){
-				timeZone = currentSite.getTimeZone();
-			}
-			Date localBeginDate = confCycle.getBeginDate();
-			Date localEndDate = confCycle.getEndDate();
-			confCycle.setBeginDate(DateUtil.getGmtDateByTimeZone(confCycle.getBeginDate(), timeZone));
-			confCycle.setCreateUser(currentUser.getId());
-			confCycle.setEndDate(DateUtil.getGmtDateByTimeZone(confCycle.getEndDate(), timeZone));
-			confCycle.setSiteId(currentSite.getId());
-			List<Date> confDateList = DateUtil.getCycleDateFromScope(localBeginDate, localEndDate, confCycle.getCycleType(), confCycle.getCycleValue());
-			if(confDateList == null || confDateList.size() == 0){
-				return firstCycleConf;
-			}
-			//若周期时间早于当前时间，则移除该时间
-			for(int i=0;i<confDateList.size();i++){
-				if(!DateUtil.getGmtDateByTimeZone(confDateList.get(i), timeZone).after(DateUtil.getGmtDate(null))){
-					confDateList.remove(i);
-				}
-			}
 			//先检测参会人数是否大于站点当前所剩参会人数值
 //			boolean licenceFlag = confLogic.createConfLicenseVali(conf, confCycle, currentSite, currentUser);
 //			if(!licenceFlag){
 //				firstCycleConf.setId(ConfConstant.CONF_CREATE_ERROR_LICENCE);
 //				return firstCycleConf;
 //			}
-			//再检测在正则表达式验证页面输入数据
+			//正则表达式验证页面输入数据
 			boolean dataFlag = confLogic.saveConfValidate(conf, confCycle, currentSite);
-			if(dataFlag){
-				try {
-					confCycleBase = libernate.saveEntity(confCycle);
-				} catch (Exception e) {
-					logger.error("保存 会议信息--循环会议设置出错！",e);
+			if(!dataFlag){
+				//针对不法方式绕过前台用户，该错误不可以返回到页面，不可让客户知道该类错误，只记录错误到logger文件
+				logger.info("正则表达式验证页面输入数据");
+				return firstCycleConf;
+			}
+			Integer timeZone = 0;
+			if(currentUser.getTimeZone() != null){
+				timeZone = currentUser.getTimeZone();
+			}else if(currentSite.getTimeZone() != null){
+				timeZone = currentSite.getTimeZone();
+			}
+			Date localBeginDate = confCycle.getBeginDate();    //用户所设置时区的周期开始时间
+			Date localEndDate = confCycle.getEndDate();
+			confCycleBase = createCycleConf(confCycle, currentSite, currentUser, timeZone);      //保存周期会议属性到数据库
+			if(confCycleBase != null && confCycleBase.getId() != null && confCycleBase.getId().intValue() > 0){
+				int cycleLimit = confCycleBase.getRepeatCount().intValue() < 1000 && confCycleBase.getRepeatCount().intValue() != 0 ? confCycleBase.getRepeatCount().intValue() : ConstantUtil.CYCLE_CONF_DATE_LIMIT;
+				List<Date> confDateList = DateUtil.getCycleDateFromScope(localBeginDate, localEndDate, confCycleBase.getCycleType(), confCycleBase.getCycleValue(), cycleLimit);
+				if(confDateList == null || confDateList.size() == 0){
+					logger.info("未获得有效循环周期日期");
 					return firstCycleConf;
 				}
-				Integer cycleId = confCycleBase.getId();
-				if(confCycleBase != null && cycleId != null && cycleId.intValue() > 0){
-					if(conf != null){
-						conf = initConf(conf, currentSite, currentUser, confCycle);
-						conf.setCycleId(cycleId);
-//						String retInfo = confManagementService.createConf(conf, currentSite, currentUser);
-//						if(!retInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
-//							logger.info("调用华为接口出错！");
-//							return firstCycleConf;
-//						}
-						conf.setSoapStatus(ConfConstant.CONF_SOAP_STATUS_TRUE);
-						
-						StringBuilder sqlBuilder = new StringBuilder("INSERT INTO t_conf_base ");
-						sqlBuilder.append(" ( conf_hwid, site_id, cycle_id, conf_name, conf_desc, conf_type, start_time, duration, end_time,");
-						sqlBuilder.append("  compere_user, compere_name, compere_secure, user_secure, call_phone, phone_pass, max_user, ");
-						sqlBuilder.append("  max_audio, max_video, video_type, max_dpi, default_dpi, ahead_time, open_ipad, client_config, ");
-						sqlBuilder.append("  conf_status, soap_status, conf_version, create_time, create_user, create_type, del_flag, ");
-						sqlBuilder.append("  del_time, del_user, del_type, public_flag, func_bits, public_conf_pass, privi_bits, time_zone_id, time_zone, crypt_key ) ");
-						sqlBuilder.append(" VALUES ");
-						int dateSize = 0;
-						if(confDateList != null && confDateList.size() > 0){
-							dateSize = confDateList.size();
-							for(int i=0;i<dateSize;i++){
-								if(i>0){
-									sqlBuilder.append(",");
-								}
-								sqlBuilder.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?  )");
-							}
-							List<Object> valueList = null;
-							try{
-								valueList = getConfValues(conf, confDateList, currentSite, currentUser);
-							}catch (Exception e){
-								firstCycleConf.setId(ConfConstant.CONF_CREATE_ERROR_LICENCE);    //参会人数大于站点当前所剩参会人数值
-								logger.error("参会人数大于站点当前所剩参会人数值" + e);
-								return firstCycleConf;
-							}
-							if(valueList == null || valueList.size() == 0){
-								logger.info("创建周期会议获取创建周期会议属性值错误！");
-								return firstCycleConf;
-							}
-							try {
-								Object[] values = valueList.toArray();
-								saveFlag = libernate.executeSql(sqlBuilder.toString(), values);
-								if(saveFlag){
-									firstCycleConf = getConfBasebyCycleId(cycleId);
-//									boolean createCompere = saveCompere(0, cycleId, currentUser);
-									List<ConfBase> confList = getCycleConfDate(cycleId, currentSite);
-									//创建周期会议完成后调用保存主持人信息
-									boolean createCompere = confUserService.fillConfUserForCreateCycle(confList, currentUser);
-									if(createCompere){
-										logger.info("创建会议后保存主持人信息成功");
-									}else{
-										logger.info("创建会议后保存主持人信息失败");
-									}
-									//发送周期会议信息到主持人邮箱,会议的时间应为gmt时间，发送邮件接口会转换gmt到站点时区时间
-									boolean sendEmail = emailService.createConfEmail(firstCycleConf, confCycleBase, currentUser);
-									if(sendEmail){
-										logger.info("发送周期会议信息到主持人邮箱成功");
-									}else{
-										logger.info("发送周期会议信息到主持人邮箱失败");
-									}
-									getOffsetConf(currentUser, firstCycleConf);     //返回到controller的会议时间从gmt转换为偏好设置时区的时间
-								}
-							} catch (Exception e) {
-								logger.error("创建周期预约会议失败！",e);
-								saveFlag = false;
-							}	
-						}else{
-							logger.debug("周期会议获取周期时间范围出错！");
-						}
+				//若周期时间早于当前时间，则移除该时间
+				for(int i=0;i<confDateList.size();i++){
+					if(!DateUtil.getGmtDateByTimeZone(confDateList.get(i), timeZone).after(DateUtil.getGmtDate(null))){
+						confDateList.remove(i);
 					}
-				}else{
-					logger.debug("创建周期预约会议出错！");
 				}
+				firstCycleConf = createCycleReservationConf(conf, confCycleBase, currentSite, currentUser, confDateList);    //保存周期会议
 			}else{
-				//针对不法方式绕过前台用户，该错误不可以返回到页面，不可让客户知道该类错误，只记录错误到logger文件
-				logger.debug("正则表达式验证页面输入数据");
-				return firstCycleConf;
+				logger.info("创建周期预约会议出错！" + confCycle);
 			}
 		}
 		return firstCycleConf;
@@ -1300,6 +1357,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 				valueList.add(conf.getTimeZoneId());
 				valueList.add(conf.getTimeZone());
 				valueList.add(conf.getCryptKey());
+				valueList.add(conf.getHostKey());
 			}
 		}else{
 			logger.debug("获取创建周期会议属性值出错！");
@@ -1334,7 +1392,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		conf.setStartTime(DateUtil.getGmtDateByTimeZone(conf.getStartTime(),timeZone));
 		conf.setEndTime(DateUtil.addDateMinutes(conf.getStartTime(), conf.getDuration()));
 		String[] passArray = new String[]{
-				"id", "cycleId", "confName", "confDesc", "confType", "startTime", "duration", "endTime", "maxUser", "maxAudio", "maxVideo", "videoType", "aheadTime", "funcBits", "clientConfig", "publicFlag", "publicConfPass", "privi_bits"
+				"id", "cycleId", "confName","hostKey","confDesc", "confType", "startTime", "duration", "endTime", "maxAudio", "maxVideo", "videoType", "aheadTime", "funcBits", "clientConfig", "publicFlag", "publicConfPass", "privi_bits"
 		};
 		if(conf != null && conf.getId() > 0){
 			
@@ -1425,7 +1483,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 			for(ConfBase confBase:confList){
 				confBase.setStartTime(DateUtil.addDateMinutes(DateUtil.getGmtDateByTimeZone(confBase.getStartTime(),timeZone), (int)missMinutes));
 				confBase.setEndTime(DateUtil.addDateMinutes(confBase.getStartTime(), conf.getDuration()));
-				String updateFileds = " conf_name=?, conf_desc=?, conf_type=?, start_time=?, duration=?, end_time=?, max_user=?, max_audio=?, max_video=?, video_type=?, ahead_time=?, func_bits=?, client_config=?, privi_bits=? ";
+				String updateFileds = "host_key=?, conf_name=?, conf_desc=?, conf_type=?, start_time=?, duration=?, end_time=?, max_audio=?, max_video=?, video_type=?, ahead_time=?, func_bits=?, client_config=?, privi_bits=? ";
 				if(conf != null && conf.getId() > 0){
 					String retInfo = confManagementService.updateConf(confBase, siteBase, user);
 					if(retInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
@@ -1433,13 +1491,13 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 							StringBuilder sqlBuilder = new StringBuilder("UPDATE t_conf_base SET ");
 							sqlBuilder.append(updateFileds);
 							List<Object> valueList = new ArrayList<Object>();
+							valueList.add(conf.getHostKey());
 							valueList.add(conf.getConfName());
 							valueList.add(conf.getConfDesc());
 							valueList.add(conf.getConfType());
 							valueList.add(confBase.getStartTime());
 							valueList.add(conf.getDuration());
 							valueList.add(confBase.getEndTime());
-							valueList.add(conf.getMaxUser());
 							valueList.add(conf.getMaxAudio());
 							valueList.add(conf.getMaxVideo());
 							valueList.add(conf.getVideoType());
@@ -1457,8 +1515,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 							sqlBuilder.append(" WHERE del_flag = ? and id = ?");
 							valueList.add(ConstantUtil.DELFLAG_UNDELETE);
 							valueList.add(confBase.getId());
-							Object[] values = valueList.toArray();
-							updateFlag = libernate.executeSql(sqlBuilder.toString(), values);
+							updateFlag = libernate.executeSql(sqlBuilder.toString(), valueList.toArray());
 						} catch (Exception e) {
 							logger.error("修改周期预约会议出错！",e);
 						}
@@ -1640,10 +1697,15 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 			confBase.setStartTime(DateUtil.getGmtDateByTimeZone(confBase.getStartTime(), timeZone));
 			if(confBase.getDuration() != null && confBase.getDuration().intValue() > 0){
 				confBase.setDuration(confBase.getDuration());//转换为分钟为单位的值
-			}else{
+			}else {
 				confBase.setDuration(ConfConstant.CONF_DEFAULT_DURATION);
 			}
-			confBase.setEndTime(DateUtil.addDateMinutes(confBase.getStartTime(), confBase.getDuration()));
+			
+			if(confBase.getEndTime()==null){
+				confBase.setEndTime(DateUtil.addDateMinutes(confBase.getStartTime(), confBase.getDuration()));
+			}else{
+				confBase.setEndTime(DateUtil.getGmtDateByTimeZone(confBase.getEndTime(), timeZone));
+			}
 			confBase.setCompereUser(user.getId());
 			confBase.setCompereName(user.getTrueName());
 			confBase.setMaxUser(2);
@@ -1813,21 +1875,36 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	 */
 	@Override
 	public List<ConfBase> getConfListByCondition(SiteBase currentSite, Condition condition,String sortField, String sortord, PageModel pageModel){
-		List<ConfBase> confList = null;
+		List<ConfBase> confList = new ArrayList<ConfBase>();
+		List<ConfBaseSimple> confBaseSimpleList = null;
 		List<Object> valueList = new ArrayList<Object>();
-		StringBuffer strSql = new StringBuffer(" SELECT a.* FROM  t_conf_base a, t_user_base b WHERE 1=1 ");
-		if(condition != null && StringUtil.isNotBlank(condition.getConditionSql())){
-			strSql.append(" and ").append(condition.getConditionSql());
-		} 
-		strSql.append(" AND a.del_flag = ? ");
-		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
-		strSql.append(" AND b.del_flag = ? ");
-		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
-		strSql.append(" AND a.create_user=b.id ");
+		StringBuffer strSql = new StringBuffer(" SELECT id, conf_name, create_user, compere_user,compere_name ,conf_hwid, conf_type, start_time, end_time, ");
+		strSql.append(" (CASE WHEN  conf.conf_status =6 THEN 0 WHEN conf.conf_status =5 THEN 2 WHEN conf.conf_status =7 THEN 3 ELSE conf.conf_status END) conf_status ");
+		strSql.append(" from ( ");
+			strSql.append("select * from (");
+				strSql.append(" SELECT id, conf_name, create_user, compere_user,compere_name ,conf_hwid, conf_type, start_time, end_time,");
+				strSql.append(" (CASE WHEN  tmp.conf_status =20 THEN 6 WHEN tmp.conf_status =200 THEN 5 WHEN tmp.conf_status =2000 THEN 7 ELSE tmp.conf_status END) conf_status ");
+				strSql.append(" FROM ( ");
+					strSql.append(" SELECT a.id, a.conf_name, a.create_user, a.compere_user,a.compere_name ,a.conf_hwid, a.conf_type, a.start_time, a.end_time,");
+					strSql.append(" (CASE WHEN  a.conf_status =0 THEN 20 WHEN a.conf_status =2 THEN 200 WHEN a.conf_status =3 THEN 2000 ELSE a.conf_status END) conf_status ");
+					strSql.append(" FROM  t_conf_base a, t_user_base b WHERE 1=1 ");
+					if(condition != null && StringUtil.isNotBlank(condition.getConditionSql())){
+						strSql.append(" and ").append(condition.getConditionSql());
+					} 
+					strSql.append(" AND a.del_flag = ? ");
+					valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+					strSql.append(" AND b.del_flag = ? ");
+					valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+					strSql.append(" AND a.create_user=b.id ");
+					strSql.append(" AND a.site_id = b.site_id ");
+					strSql.append(" and a.site_id = ? ");
+					valueList.add(currentSite.getId());
+				strSql.append(" ) tmp ");
+			strSql.append(" ) confBase ");
+			strSql.append("ORDER BY confBase.conf_status ASC, confBase.start_time DESC, confBase.id ASC ");
+		strSql.append(" ) conf ");
 		if(StringUtil.isNotBlank(sortField)){
-			strSql.append(" order by ").append("a.").append(sortField);
-		}else{ 
-			strSql.append(" order by a.id DESC ");   //查出列表无排序条件则为默认逆序
+			strSql.append(" order by ").append("conf.").append(sortField);
 		}
 		if(StringUtil.isNotBlank(sortField) && StringUtil.isNotBlank(sortord) && "desc".equals(sortord.trim().toLowerCase())){
 			strSql.append(" DESC");
@@ -1838,15 +1915,44 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 			valueList.add(recordNo);
 			valueList.add(pageModel.getPageSize());
 		}
-		try{
-			Object[] values = valueList.toArray();
-			confList = DAOProxy.getLibernate().getEntityListBase(ConfBase.class, strSql.toString(), values);
-			if(confList != null && confList.size() > 0){
-				confList = getOffsetConfList(currentSite, confList);
-			}
-		}catch (Exception e){
-			e.printStackTrace(); 
+		
+		
+		try {
+			confBaseSimpleList = libernate.getEntityListBase(ConfBaseSimple.class,
+					strSql.toString(), valueList.toArray());
+		} catch (SQLException e) {
+			logger.error("站点管理员根据高级搜索条件查询会议列表(权限控制条件可以放在condition中)出错！" + e);
 		}
+		if(confBaseSimpleList != null && confBaseSimpleList.size() > 0){
+			String[] filedArray = ObjectUtil.getFieldFromObject(confBaseSimpleList.get(0));
+			String copyField = "";
+			for(String filed : filedArray){
+				if(!"confStatus".equals(filed)){
+					copyField = copyField + "," + filed;
+				}
+			}
+			logger.info("copyField:"+copyField);
+			for(ConfBaseSimple conf : confBaseSimpleList){
+				ConfBase confBase = new ConfBase();
+				try {
+					confBase = (ConfBase) ObjectUtil.copyObject(conf, confBase, copyField);
+					confBase.setConfStatus(Integer.valueOf(conf.getConfStatus().toString()));
+				} catch (Exception e) {
+					logger.error("转换conf出错！" + e);
+				}
+				confList.add(confBase);
+			}
+			confList = getOffsetConfList(currentSite, confList);
+		}
+//		try{
+//			Object[] values = valueList.toArray();
+//			confList = DAOProxy.getLibernate().getEntityListBase(ConfBase.class, strSql.toString(), values);
+//			if(confList != null && confList.size() > 0){
+//				confList = getOffsetConfList(currentSite, confList);
+//			}
+//		}catch (Exception e){
+//			e.printStackTrace(); 
+//		}
 		return confList;
 	}
 	
@@ -1905,6 +2011,11 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 			long time1=System.currentTimeMillis();
 			SiteBase siteBase=siteService.getSiteBaseById(conf.getSiteId());
 			UserBase userBase=userService.getUserBaseById(conf.getCreateUser());
+			
+			if(StringUtil.isEmpty(conf.getConfHwid())){//永久会议的HWID号为空
+				return false;
+			}
+			
 			ConfBase confFromAs=confManagementService.queryConfInfo(conf.getConfHwid(), siteBase, userBase);
 			if(confFromAs!=null){
 				System.out.println("syncConfStatus confId:"+confFromAs.getConfHwid()+","+confFromAs.getId()+",status:" + confFromAs.getConfStatus());
@@ -1921,20 +2032,43 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 						updateEndTime(conf, DateUtil.getGmtDate(null));
 						
 						soapUserArray=confManagementService.queryConfUserStatus(confFromAs.getConfHwid(), 1,10000, siteBase, userBase) ;
+						System.out.println("soapUserArray .length :" + soapUserArray.length);
 						if(soapUserArray != null && soapUserArray.length > 0){
 							logList=getLogListFromSoap(conf.getId(),conf.getSiteId(),soapUserArray);
 						}
 						if(logList!=null && logList.size() > 0){
-							//boolean saveStatus=confLogService.batchSaveConfLog(logList);
+							boolean saveStatus=confLogService.batchSaveConfLog(logList);
 						}
 						System.out.println("conf endtime :" + conf.getEndTime()+"  confFromAs  endtime="+confFromAs.getEndTime());
 						System.out.println("conf finished :" + conf.getConfHwid()+"  查的会议与会者列表");
-						
+						ConfCycle confCycle =  null;
+						if(conf != null && conf.getCycleId().intValue() > 0){
+							confCycle = getConfCyclebyConfId(conf.getCycleId());
+						}
+						if(confCycle != null && confCycle.getInfiniteFlag().intValue() == ConfConstant.CONF_CYCLE_INFINITE_TRUE){
+							ConfBase addConf = addInfiniteConf(conf, confCycle, siteBase, userBase);
+							if(addConf != null && addConf.getId() != null && addConf.getId().intValue() > 0){
+								logger.info("补充创建无限期周期会议的下一条会议成功");
+							}else{
+								logger.error("补充创建无限期周期会议的下一条会议失败！" + conf);
+							}
+						}
+					}
+					
+					if(conf.getBelongConfId()!=null && conf.getBelongConfId().intValue()>0){
+						if(!confManagementService.setingOnlineUserNum(conf)){
+							confManagementService.queryConfUserTerminals(conf);
+						}
+						logger.info("the conf:"+conf.getConfHwid()+" online number :"+conf.getPcNum());
 					}
 				}
 				//更新在线人数
 				if(ConfConstant.CONF_STATUS_OPENING.equals(confFromAs.getConfStatus())){
-					confManagementService.queryConfUserTerminals(conf);
+					if(!confManagementService.setingOnlineUserNum(conf)){
+						
+						confManagementService.queryConfUserTerminals(conf);
+					}
+					logger.info("the conf:"+conf.getConfHwid()+" online number :"+conf.getPcNum());
 				}
 			}
 			else{
@@ -2139,11 +2273,11 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		List<Object> valueList = new ArrayList<Object>();
 		List<ConfBase> confList = new ArrayList<ConfBase>();
 		List<ConfBaseSimple> confBaseSimpleList = null;
-		StringBuilder strSql = new StringBuilder();
-		strSql.append(" SELECT confbase.id,confbase.cycle_id,confbase.conf_name,confbase.site_id,confbase.conf_type,confbase.start_time,confbase.end_time, ");
-		strSql.append(" (CASE WHEN  confbase.conf_status =20 THEN 0 WHEN confbase.conf_status =10 THEN 2 WHEN confbase.conf_status =30 THEN 3 ELSE confbase.conf_status END) as conf_status ");
+		StringBuilder strSql = new StringBuilder();								//这里添加了pc_num 和phone_num字段
+		strSql.append(" SELECT confbase.id,confbase.cycle_id,confbase.conf_name,confbase.pc_num,confbase.phone_num, confbase.site_id,confbase.conf_type,confbase.start_time,confbase.end_time, ");
+		strSql.append(" (CASE WHEN  confbase.conf_status =20 THEN 2 WHEN confbase.conf_status =10 THEN 0 WHEN confbase.conf_status =30 THEN 3 ELSE confbase.conf_status END) as conf_status ");
 		strSql.append(" FROM ( ");
-		strSql.append("     SELECT conf.id,conf.conf_hwid,conf.site_id,conf.cycle_id,conf.start_time,conf.end_time,conf.conf_type,conf.conf_name, ");
+		strSql.append("     SELECT conf.id,conf.conf_hwid,conf.site_id,conf.cycle_id,conf.start_time,conf.end_time,conf.conf_type,conf.conf_name,conf.pc_num,conf.phone_num, ");//martin 添加了pc_num and phone_num
 		strSql.append("     (CASE WHEN  conf.conf_status =0 THEN 20 WHEN conf.conf_status =2 THEN 10 WHEN conf.conf_status =3 THEN 30 ELSE conf.conf_status END) conf_status ");
 		strSql.append("     FROM t_conf_base conf WHERE conf.id IN( ");
 		strSql.append(" 	SELECT tmp.id FROM ( ");
@@ -2350,11 +2484,11 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		List<ConfBaseSimple> confBaseSimpleList = null;
 		List<Object> valueList = new ArrayList<Object>();
 		StringBuilder strSql = new StringBuilder();
-		strSql.append(" SELECT * from ( ");
-		strSql.append(" SELECT confbase.id,confbase.cycle_id,confbase.conf_name,confbase.site_id,confbase.conf_type,confbase.start_time,confbase.end_time, ");
-		strSql.append(" (CASE WHEN  confbase.conf_status =20 THEN 0 WHEN confbase.conf_status =10 THEN 2 WHEN confbase.conf_status =30 THEN 3 ELSE confbase.conf_status END) conf_status ");
+		strSql.append(" SELECT * from ( ");										//Martin add pc_num and phone_num
+		strSql.append(" SELECT confbase.id,confbase.cycle_id,confbase.conf_name,confbase.pc_num,confbase.phone_num,confbase.site_id,confbase.conf_type,confbase.start_time,confbase.end_time, ");
+		strSql.append(" (CASE WHEN  confbase.conf_status =20 THEN 2 WHEN confbase.conf_status =10 THEN 0 WHEN confbase.conf_status =30 THEN 3 ELSE confbase.conf_status END) conf_status ");
 		strSql.append(" FROM ( ");
-		strSql.append("     SELECT conf.id,conf.conf_hwid,conf.site_id,conf.cycle_id,conf.start_time,conf.end_time,conf.conf_type,conf.conf_name, ");
+		strSql.append("     SELECT conf.id,conf.conf_hwid,conf.site_id,conf.cycle_id,conf.start_time,conf.end_time,conf.conf_type,conf.conf_name, conf.pc_num,conf.phone_num,");
 		strSql.append("     (CASE WHEN  conf.conf_status =0 THEN 20 WHEN conf.conf_status =2 THEN 10 WHEN conf.conf_status =3 THEN 30 ELSE conf.conf_status END) conf_status ");
 		strSql.append("     FROM t_conf_base conf WHERE conf.id IN( ");
 		strSql.append(" 	SELECT tmp.id FROM ( ");
@@ -2443,7 +2577,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 //		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
 		
 		if(StringUtil.isNotBlank(sortField)){
-			strSql.append(" order by ").append(" confbase.").append(sortField);
+			strSql.append(" order by ").append(" con.").append(sortField);
 			if(StringUtil.isNotBlank(sortField) && StringUtil.isNotBlank(sortord) && "desc".equals(sortord.trim().toLowerCase())){
 				strSql.append(" DESC");
 			}
@@ -2694,7 +2828,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	}
 	
 	/**
-	 * 根据会议ID号获取周期会议周期信息
+	 * 根据周期会议ID号获取周期会议周期信息
 	 * @param cycleId  周期会议ID号
 	 * 2013-2-21
 	 */
@@ -3159,9 +3293,14 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		Integer currentUserId = currentUser.getId();
 		Integer confStatus = conf.getConfStatus();
 		if(createConfUser != null && currentUserId != null && createConfUser.intValue() == currentUserId.intValue()){   //自己创建的会议可以删除
-			if(confStatus != null && confStatus.intValue() != ConfConstant.CONF_STATUS_OPENING.intValue()){   //正在进行的会议不可删除
+			if(ConfConstant.CONF_PERMANENT_UNABLE.equals(conf.getPermanentConf())){
+				if(confStatus != null && confStatus.intValue() != ConfConstant.CONF_STATUS_OPENING.intValue() ){   //正在进行的会议不可删除
+					authorityFlag = true;
+				}
+			}else if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(conf.getPermanentConf())){
 				authorityFlag = true;
 			}
+			
 		}		
 		return authorityFlag;
 	}
@@ -3363,6 +3502,22 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		return confBase;
 	}
 	
+	
+
+	public ConfBase saveConfBaseForOuter(ConfBase confBase,SiteBase siteBase,UserBase userBase ) {
+		try {
+			String retInfo = confManagementService.createConf(confBase,siteBase,userBase);
+			if(retInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
+				confBase=libernate.saveEntity(confBase);
+			}else{
+				throw new RuntimeException("invoking the soap interface error!");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return confBase;
+	}
  
 	
 	/**
@@ -3771,6 +3926,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 			ConfLog eachLog=null;
 			String eachUri="";
 			for(ESpaceMeetingAsSoapUserStatus eachSoapuser:soapUserArray){
+				logger.info(" eachAS Soap Log Info:" + eachSoapuser);
 				if(eachSoapuser!=null){
 					eachLog=new ConfLog();
 					eachLog.setSiteId(siteId);
@@ -3915,7 +4071,8 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	public int getTerminalNum(Integer confId,Integer terminalType) {
 		
 		List<Object> values = new ArrayList<Object>();
-		String sql = "select count(distinct user_name) from t_conf_log where conf_id = ? ";
+//		String sql = "select count(distinct user_name) from t_conf_log where conf_id = ? "; //去重
+		String sql = "select count(*) from t_conf_log where conf_id = ? ";
 		int count = 0;
 		try{
 			if(confId == null){
@@ -3984,6 +4141,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		return getConfListForCurrentUser(confName, userBase,ConfConstant.CONF_USER_HOST, ConfConstant.CONF_STATUS_FINISHED, startDate, endDate, pageNo, true);
 	}
 	
+	
 	@Override
 	public PageBean<ConfBase> getMonthlyComingConfListForHost(String confName, UserBase userBase,Integer pageNo,Date beginTime, Date endTime) {
 		Date monthBeginTime = DateUtil.getMonthStartDate(userBase.getTimeZone());
@@ -4022,7 +4180,7 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	@Override
 	public PageBean<ConfBase> getFullJoinedConfListForHost(String confName, UserBase userBase,Integer pageNo,Date beginTime, Date endTime) {
 		// TODO Auto-generated method stub
-		return getConfListForCurrentUser(confName, userBase,ConfConstant.CONF_USER_HOST, ConfConstant.CONF_STATUS_FINISHED, beginTime, endTime, pageNo, false);
+		return getConfListForCurrentUser(confName, userBase,ConfConstant.CONF_USER_HOST, ConfConstant.CONF_STATUS_FINISHED, beginTime, endTime, pageNo, true);
 	}
 
 	
@@ -4167,11 +4325,11 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	@Override
 	public PageBean<ConfBase> getFullJoinedConfListForActor(String confName, UserBase userBase, int pageNo, Date beginTime, Date endTime) {
 		
-		return getConfListForCurrentUser(confName, userBase,ConfConstant.CONF_USER_PARTICIPANT, ConfConstant.CONF_STATUS_FINISHED, beginTime, endTime, pageNo, false);
+		return getConfListForCurrentUser(confName, userBase,ConfConstant.CONF_USER_PARTICIPANT, ConfConstant.CONF_STATUS_FINISHED, beginTime, endTime, pageNo, true);
 		
 	}
 
-	private PageBean<ConfBase> getConfListForCurrentUser(String confName, UserBase userBase,int hostFlag,int confStatus,Date beginDate,Date endDate,int pageNo,boolean joinFlag){
+	private PageBean<ConfBase> getConfListForCurrentUserOld(String confName, UserBase userBase,int hostFlag,int confStatus,Date beginDate,Date endDate,int pageNo,boolean joinFlag){
 		
 		if(userBase == null){
 			return null;
@@ -4179,9 +4337,10 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		
 		List<Object> valueList = new ArrayList<Object>();
 		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append(" SELECT * FROM t_conf_base tcb WHERE 1=1 AND tcb.conf_status = ? AND tcb.del_flag = ? ");
+		sqlBuilder.append(" SELECT * FROM t_conf_base tcb WHERE 1=1 AND tcb.conf_status = ? AND tcb.del_flag = ? and tcb.permanent_conf = ?");
 		valueList.add(confStatus);
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+		valueList.add(0);
 
 		sqlBuilder.append(" AND tcb.id in ( ");
 		if(ConfConstant.CONF_USER_PARTICIPANT.intValue()==hostFlag){
@@ -4271,19 +4430,38 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		sqlBuilder.append(" )");
 		if(StringUtil.isNotBlank(confName)){
 			sqlBuilder.append(" AND tcb.conf_name LIKE ? ");
-			valueList.add("%" + confName + "%");
+			valueList.add("%" + confName.trim() + "%");
 		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(ConfConstant.CONF_USER_HOST.intValue()!=hostFlag){
+			sqlBuilder.append(" or (tcb.permanent_conf = 1 and tcb.public_flag = ? and tcb.conf_status = ? and tcb.compere_user !=? and tcb.site_id = ? and tcb.end_time > ?)  or (tcb.permanent_conf = 1 and tcb.public_flag = ? and tcb.conf_status = ? and tcb.end_time > ? and EXISTS(SELECT tcu.conf_id FROM t_conf_user tcu where tcu.conf_id = tcb.id AND tcu.host_flag = ? AND  tcu.user_id = ?))");
+			valueList.add(ConfConstant.CONF_PUBLIC_FLAG_TRUE);
+			valueList.add(confStatus);
+			valueList.add(userBase.getId());
+			valueList.add(userBase.getSiteId());
+			valueList.add(sdf.format(DateUtil.getGmtDate(null)));
+			
+			valueList.add(ConfConstant.CONF_PUBLIC_FLAG_FALSE);
+			valueList.add(confStatus);
+			valueList.add(sdf.format(DateUtil.getGmtDate(null)));
+			valueList.add(ConstantUtil.USERROLE_PARTICIPANT);
+			
+			valueList.add(userBase.getId());
+		}else{
+			sqlBuilder.append(" or(tcb.permanent_conf = 1 and tcb.conf_status = ? and  tcb.compere_user = ? and tcb.end_time > ?)");
+			valueList.add(confStatus);
+			valueList.add(userBase.getId());
+			valueList.add(sdf.format(DateUtil.getGmtDate(null)));
+		}
+		
 		if(ConfConstant.CONF_STATUS_FINISHED.intValue()==confStatus){
 			sqlBuilder.append("  ORDER BY tcb.start_time DESC ");
 		}else{
 			sqlBuilder.append("  ORDER BY tcb.start_time ASC ");
 		}
 		
-//		System.out.println("---->>sqlBuilder=="+sqlBuilder.toString());
-//		for(Object eachObj:valueList){
-//			System.out.print("--->>"+eachObj);
-//		}
-//		System.out.println(" pageNo="+pageNo);
+
 		PageBean<ConfBase> page = getPageBeans(ConfBase.class, sqlBuilder.toString(), pageNo, valueList.toArray());
 		if(page != null && page.getDatas() != null && page.getDatas().size() > 0){
 			page.setDatas(getOffsetConfList(userBase, page.getDatas()));
@@ -4299,6 +4477,152 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 	}
 	
 	
+	private PageBean<ConfBase> getConfListForCurrentUser(String confName, UserBase userBase,int hostFlag,int confStatus,
+					Date beginDate,Date endDate,int pageNo,boolean joinFlag){
+
+		logger.info("getConfListForCurrentUser:  beginDate-->>"+beginDate + "; endDate-->>"+endDate);
+		if(userBase == null){
+			return null;
+		}
+		List<Object> valueList = new ArrayList<Object>();
+		StringBuffer sqlBuffer = new StringBuffer();
+		if(joinFlag){//查找已经参加的
+
+			if(ConfConstant.CONF_USER_HOST.equals(hostFlag)){//自己主持的会议
+				sqlBuffer.append(" SELECT distinct tcb.* FROM t_conf_base tcb ,t_conf_log tcl ");
+				sqlBuffer.append(" WHERE tcb.`del_flag`=? AND tcl.`conf_id`=tcb.`id` ");
+				valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+				sqlBuffer.append(" AND tcb.`conf_status`=? ");
+				valueList.add(confStatus);
+				sqlBuffer.append(" AND tcb.`compere_user`=tcl.`user_id` ");
+				sqlBuffer.append(" AND tcb.`compere_user`=? ");
+				valueList.add(userBase.getId());
+				sqlBuffer.append(" AND (tcb.`permanent_conf`=? OR tcb.`permanent_conf`=?) ");
+				valueList.add(ConfConstant.CONF_PERMANENT_UNABLE);
+				valueList.add(ConfConstant.CONF_PERMANENT_ENABLED_CHILD);
+				if(!StringUtil.isEmpty(confName)){
+					sqlBuffer.append(" AND tcb.conf_name like ?");
+					valueList.add("%"+confName.trim()+"%");
+				}
+				if(beginDate != null){
+					sqlBuffer.append(" AND tcb.end_time >= ?");
+					valueList.add(beginDate);
+				}
+				if(endDate != null){
+					sqlBuffer.append(" AND tcb.end_time < ?");
+					valueList.add(endDate);
+				}
+				sqlBuffer.append(" ORDER BY tcb.`end_time` DESC");
+				
+			}else  if (ConfConstant.CONF_USER_PARTICIPANT.equals(hostFlag)) {// 参与的会议的会议
+				sqlBuffer.append(" SELECT distinct tcb.* FROM t_conf_base tcb ,t_conf_log tcl ");
+				sqlBuffer.append(" WHERE tcb.`del_flag`=? AND tcl.`conf_id`=tcb.`id` ");
+				valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+				sqlBuffer.append(" AND tcb.`conf_status`=? ");
+				valueList.add(confStatus);
+			//	sqlBuffer.append(" AND tcb.`compere_user`=tcl.`user_id` ");
+				sqlBuffer.append(" AND tcb.`compere_user`!=? ");
+				valueList.add(userBase.getId());
+				sqlBuffer.append(" AND tcl.user_id=? ");
+				valueList.add(userBase.getId());
+				sqlBuffer.append(" AND (tcb.`permanent_conf`=? OR tcb.`permanent_conf`=?) ");
+				valueList.add(ConfConstant.CONF_PERMANENT_UNABLE);
+				valueList.add(ConfConstant.CONF_PERMANENT_ENABLED_CHILD);
+				if(!StringUtil.isEmpty(confName)){
+					sqlBuffer.append(" AND tcb.conf_name like ?");
+					valueList.add("%"+confName.trim()+"%");
+				}
+				if(beginDate != null){
+					sqlBuffer.append(" AND tcb.end_time >= ?");
+					valueList.add(beginDate);
+				}
+				if(endDate != null){
+					sqlBuffer.append(" AND tcb.end_time < ?");
+					valueList.add(endDate);
+				}
+				sqlBuffer.append(" ORDER BY tcb.`end_time` DESC");
+			}else{
+				return null;
+			}
+			
+		}else{//查找预约成功 + 正在召开的会议
+			if(ConfConstant.CONF_USER_HOST.equals(hostFlag)){//自己主持的会议
+				sqlBuffer.append(" SELECT tcb.* FROM t_conf_base tcb ");
+				sqlBuffer.append(" WHERE tcb.`del_flag`=? ");
+				valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+				sqlBuffer.append(" AND tcb.`compere_user`=?");
+				valueList.add(userBase.getId());
+				sqlBuffer.append(" AND tcb.`conf_status`=? ");
+				valueList.add(confStatus);
+				sqlBuffer.append(" AND tcb.`permanent_conf`<=? ");
+				valueList.add(ConfConstant.CONF_PERMANENT_ENABLED_MAIN);
+				if(!StringUtil.isEmpty(confName)){
+					sqlBuffer.append(" AND tcb.conf_name like ?");
+					valueList.add("%"+confName.trim()+"%");
+				}
+				if(beginDate != null){
+					
+					sqlBuffer.append(" AND tcb.start_time >= ?");
+					valueList.add(beginDate);
+				}
+				if(endDate != null){
+					sqlBuffer.append(" AND tcb.start_time < ?");
+					valueList.add(endDate);
+				}
+				sqlBuffer.append(" ORDER BY tcb.`permanent_conf` DESC,tcb.`start_time` ASC ");
+				
+			} else if (ConfConstant.CONF_USER_PARTICIPANT.equals(hostFlag)) {// 参与的会议的会议
+				sqlBuffer.append(" SELECT DISTINCT tcb.* FROM t_conf_base tcb,t_conf_user tcu ");
+				sqlBuffer.append(" WHERE tcb.id=tcu.`conf_id`");
+//				sqlBuffer.append(" AND tcu.`user_id`=?");
+//				valueList.add(userBase.getId());
+				sqlBuffer.append(" AND tcb.`create_user`!=? ");
+				valueList.add(userBase.getId());
+				sqlBuffer.append(" AND ( (tcb.`public_flag`=? and tcb.site_id=?) ");
+				valueList.add(ConfConstant.CONF_PUBLIC_FLAG_TRUE);
+				valueList.add(userBase.getSiteId());
+				sqlBuffer.append("		OR (tcb.`public_flag`=? AND tcu.`user_id`=?)");
+				valueList.add(ConfConstant.CONF_PUBLIC_FLAG_FALSE);
+				valueList.add(userBase.getId());
+				sqlBuffer.append("		)");
+				sqlBuffer.append(" AND tcb.`del_flag`=?  AND tcb.`conf_status`=?");
+				valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+				valueList.add(confStatus);
+				sqlBuffer.append(" AND tcb.`permanent_conf`<=?");
+				valueList.add(ConfConstant.CONF_PERMANENT_ENABLED_MAIN);
+				if(!StringUtil.isEmpty(confName)){
+					sqlBuffer.append(" AND tcb.conf_name like ?");
+					valueList.add("%"+confName.trim()+"%");
+				}
+				if(beginDate != null){
+					sqlBuffer.append(" AND tcb.start_time >= ?");
+					valueList.add(beginDate);
+				}
+				if(endDate != null){
+					sqlBuffer.append(" AND tcb.start_time < ?");
+					valueList.add(endDate);
+				}
+				
+				
+				sqlBuffer.append(" ORDER BY tcb.`permanent_conf` DESC,tcb.`start_time` ASC");
+				sqlBuffer.append("");
+				sqlBuffer.append("");
+
+			}else{
+				return null;
+			}
+			
+		}
+		logger.info("sqlBuffer=="+sqlBuffer.toString());
+		
+		PageBean<ConfBase> page = getPageBeans(ConfBase.class, sqlBuffer.toString(), pageNo, valueList.toArray());
+		if(page != null && page.getDatas() != null && page.getDatas().size() > 0){
+			page.setDatas(getOffsetConfList(userBase, page.getDatas()));
+		}
+		return page;
+	}
+	
+	
 	@Override
 	public PageBean<ConfBase> getConfBasePage(int pageNo, int pageSize,UserBase user,
 			boolean isCreator) {
@@ -4310,6 +4634,8 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
 		
 		if(!isCreator){
+			sqlBuilder.append(" and tcb.compere_user != ? ");
+			valueList.add(user.getId());
 			sqlBuilder.append(" AND EXISTS ( ");
 			sqlBuilder.append(" 	SELECT * FROM  t_conf_log tcl  ");
 			sqlBuilder.append(" 	WHERE tcl.user_role = ? and tcl.user_id =? and  tcb.id = tcl.conf_id )");
@@ -4333,5 +4659,546 @@ public class ConfServiceImpl extends BaseService implements ConfService {
 		sqlBuilder.append("  ORDER BY tcb.start_time desc ");
 		return getPageBeans(ConfBase.class, sqlBuilder.toString(), pageNo, valueList.toArray());
 	}
+
+	@Override
+	public ConfBase createChildConf(ConfBase primaryConf) {
+		ConfBase childConf=initPermanentConf(primaryConf);
+		if(childConf!=null){
+			SiteBase currentsite=siteService.getSiteBaseById(primaryConf.getSiteId());
+			UserBase currUserBase=userService.getUserBaseById(primaryConf.getCreateUser());
+			String retCode=confManagementService.createConf(childConf, currentsite, currUserBase, true);
+			Integer confId=0;
+			if(ConstantUtil.AS_SUCCESS_CODE.equals(retCode)){
+				childConf.setSoapStatus(ConfConstant.CONF_SOAP_STATUS_TRUE);
+				childConf = saveConf(childConf);
+				confId = childConf.getId();
+			}else{
+				logger.info("华为返回错误码：" + retCode);
+				return childConf;
+			}
+			
+//			if(confId != null && confId.intValue() > 0){
+//				
+//			}else{
+//				childConf=null;
+//			}
+		}
+		
+		return childConf;
+	}
+
+	//初始化永久会议子会议信息
+	private ConfBase initPermanentConf(ConfBase primaryConf){
+		ConfBase childConf=null;
+		if(primaryConf!=null && primaryConf.getId()!=null && primaryConf.getId().intValue() > 0){
+			childConf=new ConfBase();
+			childConf.setSiteId(primaryConf.getSiteId());
+			childConf.setCycleId(0);
+			childConf.setConfName(primaryConf.getConfName());
+			childConf.setConfDesc(primaryConf.getConfDesc());
+			childConf.setPublicFlag(primaryConf.getPublicFlag());
+			childConf.setPublicConfPass(primaryConf.getPublicConfPass());
+			childConf.setConfType(primaryConf.getConfType());
+			Date startGmtTime=DateUtil.getGmtDate(null);
+			childConf.setStartTime(startGmtTime);
+			childConf.setDuration(ConfConstant.CONF_DEFAULT_DURATION);
+			Date endGmtTime=DateUtil.addDateMinutes(startGmtTime, ConfConstant.CONF_DEFAULT_DURATION);
+			childConf.setEndTime(endGmtTime);
+			childConf.setCompereUser(primaryConf.getCompereUser());
+			childConf.setCompereName(primaryConf.getCompereName());
+			childConf.setCallPhone(primaryConf.getCallPhone());
+			childConf.setPhonePass(primaryConf.getPhonePass());
+			childConf.setMaxUser(primaryConf.getMaxUser());
+			childConf.setMaxAudio(primaryConf.getMaxAudio());
+			childConf.setMaxVideo(primaryConf.getMaxVideo());
+			childConf.setVideoType(primaryConf.getVideoType());
+			childConf.setMaxDpi(primaryConf.getMaxDpi());
+			childConf.setDefaultDpi(primaryConf.getDefaultDpi());
+			childConf.setAheadTime(primaryConf.getAheadTime());
+			childConf.setOpenIpad(primaryConf.getOpenIpad());
+			childConf.setFuncBits(primaryConf.getFuncBits());
+			childConf.setPriviBits(primaryConf.getPriviBits());
+			childConf.setClientConfig(primaryConf.getClientConfig());
+			childConf.setConfStatus(ConfConstant.CONF_STATUS_SUCCESS);
+			childConf.setSoapStatus(ConfConstant.CONF_SOAP_STATUS_FASLE);
+			childConf.setConfVersion(1);
+			//childConf.setCreateTime(startGmtTime);
+			
+			childConf.setCreateUser(primaryConf.getCreateUser());
+			childConf.setCreateType(primaryConf.getCreateType());
+			childConf.setDelFlag(ConstantUtil.DELFLAG_UNDELETE);
+			childConf.setDelTime(startGmtTime);
+			childConf.setTimeZone(primaryConf.getTimeZone());
+			childConf.setTimeZoneId(primaryConf.getTimeZoneId());
+			childConf.setPcNum(0);
+			childConf.setPhoneNum(0);
+			childConf.setHostKey(primaryConf.getHostKey());
+			childConf.setPermanentConf(ConfConstant.CONF_PERMANENT_ENABLED_CHILD);
+			childConf.setBelongConfId(primaryConf.getId());
+			//compereUser
+			
+		}
+		return childConf;
+	}
+	@Override
+	public ConfBase getPermanentChildConf(int belongConfId) {
+		ConfBase childConf=null;
+		if(belongConfId > 0){
+			StringBuffer sqlBuffer=new StringBuffer();
+			sqlBuffer.append("select tcb.* from t_conf_base tcb ");
+			sqlBuffer.append(" where tcb.del_flag=? and tcb.permanent_conf=? ");
+			sqlBuffer.append("  and belong_confId=? ");
+			sqlBuffer.append("  and (tcb.conf_status=? or tcb.conf_status=?) ");
+			sqlBuffer.append(" order by conf_status desc,tcb.id desc");
+			Object[] values=new Object[]{ConstantUtil.DELFLAG_UNDELETE,
+					ConfConstant.CONF_PERMANENT_ENABLED_CHILD,belongConfId,
+					ConfConstant.CONF_STATUS_OPENING,
+					ConfConstant.CONF_STATUS_SUCCESS};
+			try {
+				childConf=libernate.getEntityCustomized(ConfBase.class, sqlBuffer.toString(), values);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return childConf;
+		
+	}
 	
+	/**
+	 * 查询永久会议（主会议）
+	 */
+	@Override
+	public PageBean<ConfBase> getPermanentConfPage(int pageNo, int pageSize,
+			Integer siteId, Integer userId,Integer confStatus,boolean publicOnly) {
+		
+		List<Object> valueList = new ArrayList<Object>();
+		StringBuilder sqlBuilder = new StringBuilder();
+		sqlBuilder.append(" SELECT * FROM t_conf_base tcb WHERE 1=1 AND tcb.del_flag = ? ");
+		valueList.add(ConfConstant.CONF_STATUS_FINISHED);
+		if(siteId!=null){
+			sqlBuilder.append(" and site_id = ? ");
+			valueList.add(siteId);
+		}
+		if(confStatus!=null){
+			sqlBuilder.append(" and  conf_status = ? ");
+			valueList.add(confStatus);
+		}
+		if(userId!= null && userId.intValue()>0){
+			sqlBuilder.append(" and compere_user = ? ");
+			valueList.add(userId);
+		}
+		if(publicOnly){
+			sqlBuilder.append(" and public_flag = ?");
+			valueList.add(ConfConstant.CONF_PUBLIC_FLAG_FALSE);
+		}
+		sqlBuilder.append("  ORDER BY tcb.start_time desc ");
+		return getPageBeans(ConfBase.class, sqlBuilder.toString(), pageNo, valueList.toArray());
+	}
+	
+	
+	
+	@Override
+	public ConfBase createPermanentConf(ConfBase conf,SiteBase site,UserBase user) {
+		conf = initConf(conf, site, user, null);
+		conf.setCompereSecure(SecureGenerator.getSecureNum());
+		conf.setUserSecure(SecureGenerator.getSecureNum());
+		try {
+			conf = libernate.saveEntity(conf);
+			boolean sendEmail = emailService.createConfEmail(conf, null, user);
+			if(sendEmail){
+				logger.info("create createPermanentConf send email success..");
+			}else{
+				logger.error("create PermanentConf send email failed! ");
+			}
+		} catch (Exception e) {
+ 
+			e.printStackTrace();
+		}
+		return conf;
+	}
+	
+	
+	
+	/**
+	 * 修改永久会议
+	 */
+	@Override
+	public ConfBase updatePermanentConf(ConfBase conf,UserBase currUser) {
+		
+		String[] passArray = new String[]{
+				"id","confName","confDesc","hostKey","confType", "startTime", "endTime", "maxAudio", "maxVideo", "videoType", "aheadTime", "funcBits", "clientConfig", "publicFlag", "publicConfPass", "privi_bits"
+		};
+		ConfBase updatedconf = null;
+		try {
+			if(conf.getEndTime()!=null){
+				conf.setEndTime(DateUtil.getGmtDateByTimeZone(conf.getEndTime(), currUser.getTimeZone()));
+			}
+			if(conf.getStartTime()!=null){
+				conf.setStartTime(DateUtil.getGmtDateByTimeZone(conf.getStartTime(), currUser.getTimeZone()));
+			}
+			updatedconf = libernate.updateEntity(conf, passArray);
+			
+			if(updatedconf!=null){
+				List<ConfUser> confUsers = confUserService.getAllConfUserList(updatedconf.getId().intValue());
+				boolean sendConfUsers = emailService.confModifyEmail(confUsers, updatedconf);
+				if(sendConfUsers){
+					logger.info("send update PermanentConf email  ok!");
+				}else{
+					logger.info("send update PermanentConf email  failed!");
+				}
+				updatedconf = libernate.getEntity(ConfBase.class, updatedconf.getId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return updatedconf;
+	}
+	
+	//删除永久会议 
+	public boolean delPermanentConf(ConfBase conf,SiteBase site,UserBase user){
+		boolean flag = true;
+		ConfBase subConf = getPermanentChildConf(conf.getId());
+		try {
+			emailService.confCancelEmail(confUserLogic.getConfUserList(conf.getId()), conf);
+			if(subConf!=null){
+					if(confManagementService.cancelConf(subConf.getConfHwid(), site, user)){
+						libernate.deleteEntity(conf);
+					}else{
+						logger.debug("delPermanentConf fail because of the child conf is runing!");
+						flag = false;
+					}
+			}else{
+				libernate.deleteEntity(conf);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			flag = false;
+		}
+		return flag;
+	}
+	
+	/**
+	 * 根据永久会议的ID号，获取所有的子会议的列表
+	 * @param confId
+	 * @return
+	 */
+	private List<ConfBase> getChildConfListByBelongConfId(int confId){
+		List<ConfBase> childConfList=null;
+		if(confId > 0){
+			StringBuffer sqlBuffer=new StringBuffer();
+			Object[] values=null;
+			sqlBuffer.append("	select tcb.* from t_conf_base tcb ");
+			sqlBuffer.append("	where tcb.del_flag=? ");
+			sqlBuffer.append("		and permanent_conf=?");
+			sqlBuffer.append("		and belong_confId=?");
+			values=new Object[]{ConstantUtil.DELFLAG_UNDELETE,ConfConstant.CONF_PERMANENT_ENABLED_CHILD,confId};
+			logger.info("get child conf --->>>"+sqlBuffer.toString());
+			try {
+				childConfList=libernate.getEntityListBase(ConfBase.class, sqlBuffer.toString(), values);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return childConfList;
+	}
+	
+	private boolean deleteChildConfByBelongConfId(int confId){
+		boolean delStatus=true;
+		if(confId > 0){
+			StringBuffer sqlBuffer=new StringBuffer();
+			Object[] values=null;
+			sqlBuffer.append("	update t_conf_base tcb ");
+			sqlBuffer.append("	set tcb.del_flag=? ");
+			sqlBuffer.append("	where tcb.del_flag=? ");
+			sqlBuffer.append("		and permanent_conf=?");
+			sqlBuffer.append("		and belong_confId=?");
+			values=new Object[]{ConstantUtil.DELFLAG_DELETED,ConstantUtil.DELFLAG_UNDELETE,ConfConstant.CONF_PERMANENT_ENABLED_CHILD,confId};
+			logger.info("delete child conf --->>>"+sqlBuffer.toString());
+			try {
+				libernate.executeSql(sqlBuffer.toString(), values);
+			} catch (Exception e) {
+				delStatus=false;
+				e.printStackTrace();
+			}
+		}
+		return delStatus;
+		
+	}
+	
+	
+	
+	
+	/**
+	 * 系统管理员根据会议主题、企业名称、企业标识模糊查询所有站点的会议列表
+	 * @param TitleOrNameOrSign  会议主题、企业名称、企业标识
+	 * wangyong
+	 * 2013-5-29
+	 */
+	@Override
+	public PageBean<ConfBase> getSysConfByName(String titleOrNameOrSign, String sortField, String sortord, PageModel pageModel, Integer sysUserId){
+		return getSysConf(null, titleOrNameOrSign, sortField, sortord, pageModel, sysUserId);
+	}
+	
+	/**
+	 * 系统管理员高级搜索查询会议列表
+	 * @param conf 会议名称、会议功能、会议状态等信息
+	 * @param siteName 站点名称
+	 * @param siteSign 站点标识
+	 * @param beginTime 开始时间
+	 * @param endTime	结束时间
+	 * @param sortField 排序字段
+	 * @param sortord 排序方式，正序逆序
+	 * @param pageModel 页数信息
+	 * @param sysUserId 不为空，则只查出该普通系统管理员创建的站点下的所有会议；为空，则查询所有站点下的会议
+	 * wangyong
+	 * 2013-5-29
+	 */
+	@Override
+	public PageBean<ConfBase> getSysConfByCondition(ConfBase conf, String siteName, String siteSign, 
+			Date beginTime, Date endTime, String sortField, String sortord, PageModel pageModel, Integer sysUserId){
+		Condition condition = initCondition(conf, siteName, siteSign, beginTime, endTime);
+		return getSysConf(condition, null, sortField, sortord, pageModel, sysUserId);
+	}
+	
+	/**
+	 * 站点管理员根据会议主题或会议号模糊查询所有站点的会议列表
+	 * @param subject  会议主题或会议号
+	 * wangyong
+	 * 2013-5-29
+	 */
+	@Override
+	public PageBean<ConfBase> getAdminConfByName(String subject, SiteBase currentSite,  String sortField, String sortord, PageModel pageModel, Integer adminId){
+		return getAdminConf(null, subject, currentSite, sortField, sortord, pageModel, adminId);
+	}
+	
+	/**
+	 * 站点管理员高级搜索查询会议列表
+	 * @param conf 会议名称、会议功能、会议状态等信息
+	 * @param siteId 站点id
+	 * @param beginTime 开始时间
+	 * @param endTime	结束时间
+	 * @param sortField 排序字段
+	 * @param sortord 排序方式，正序逆序
+	 * @param pageModel 页数信息
+	 * @param adminId 不为空，则只查出该普通系统管理员创建的站点下的所有会议；为空，则查询所有站点下的会议
+	 * wangyong
+	 * 2013-5-29
+	 */
+	@Override
+	public PageBean<ConfBase> getAdminConfByCondition(ConfBase conf, SiteBase currentSite, 
+			Date beginTime, Date endTime, String sortField, String sortord, PageModel pageModel, Integer adminId){
+		Condition condition = initCondition(conf, null, null, beginTime, endTime);
+		return getAdminConf(condition, null, currentSite, sortField, sortord, pageModel, adminId);
+	}
+	
+	private PageBean<ConfBase> getSysConf(Condition condition, String titleOrNameOrSign, String sortField, String sortord, PageModel pageModel, Integer sysUserId){
+		List<Object> valueList = new ArrayList<Object>();
+		StringBuffer strSql = new StringBuffer(" SELECT id, site_id, conf_name, create_user, compere_user,compere_name ,conf_hwid, conf_type, start_time, end_time, pc_num, phone_num, ");
+		strSql.append(" (CASE WHEN  conf.conf_status =6 THEN 0 WHEN conf.conf_status =5 THEN 2 WHEN conf.conf_status =7 THEN 3 ELSE conf.conf_status END) conf_status ");
+		strSql.append(" from ( ");
+			strSql.append("select * from (");
+				strSql.append(" SELECT id, site_id, conf_name, create_user, compere_user,compere_name ,conf_hwid, conf_type, start_time, end_time, pc_num, phone_num,");
+				strSql.append(" (CASE WHEN  tmp.conf_status =20 THEN 6 WHEN tmp.conf_status =200 THEN 5 WHEN tmp.conf_status =2000 THEN 7 ELSE tmp.conf_status END) conf_status ");
+				strSql.append(" FROM ( ");
+					strSql.append(" SELECT confBase.id, confBase.site_id, confBase.conf_name, confBase.create_user, confBase.compere_user, confBase.compere_name , confBase.conf_hwid, confBase.conf_type, confBase.start_time, confBase.end_time, confBase.pc_num, confBase.phone_num, ");
+					strSql.append(" (CASE WHEN  confBase.conf_status =0 THEN 20 WHEN confBase.conf_status =2 THEN 200 WHEN confBase.conf_status =3 THEN 2000 ELSE confBase.conf_status END) conf_status ");
+					strSql.append(" FROM  t_conf_base confBase, t_site_base siteBase WHERE 1=1 ");
+					if(condition != null && StringUtil.isNotBlank(condition.getConditionSql())){
+						strSql.append(" and ").append(condition.getConditionSql());
+					} 
+//					strSql.append(" AND confBase.del_flag = ? ");
+//					valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+					strSql.append(" AND siteBase.del_flag = ? ");
+					valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+					strSql.append(" AND confBase.site_id = siteBase.id ");
+					if(StringUtil.isNotBlank(titleOrNameOrSign)){
+						strSql.append(" AND (confBase.conf_name LIKE ? OR siteBase.`site_name` LIKE ? OR siteBase.site_sign LIKE ? ) ");
+						valueList.add("%" + titleOrNameOrSign + "%");
+						valueList.add("%" + titleOrNameOrSign + "%");
+						valueList.add("%" + titleOrNameOrSign + "%");
+					}
+					if(sysUserId != null && sysUserId.intValue() > 0){
+						strSql.append(" AND siteBase.create_user = ?");
+						valueList.add(sysUserId.intValue());
+					}
+				strSql.append(" ) tmp ");
+			strSql.append(" ) base ");
+			strSql.append("ORDER BY base.conf_status ASC, base.start_time ASC, base.id ASC ");
+		strSql.append(" ) conf ");
+		if(StringUtil.isNotBlank(sortField)){
+			strSql.append(" order by ");
+			for (String[] eachField : SortConstant.CONFBASE_FIELDS) {
+				if (eachField != null && eachField[0].equals(sortField)) {
+					strSql.append("conf.");
+					strSql.append(BeanUtil.att2Field(eachField[1]));
+					break;
+				}
+			}
+			if (SortConstant.SORT_ASC.equals(sortord)) {
+				strSql.append(" asc ");
+			}
+
+			if (SortConstant.SORT_DESC.equals(sortord) || sortord == null
+					|| "".equals(sortord.trim())
+					|| "null".equals(sortord.trim().toLowerCase())) {
+				strSql.append(" desc ");
+			}
+		}
+		
+		
+		return getConfPageModule(null, pageModel, strSql, valueList);
+	}
+	
+	private PageBean<ConfBase> getAdminConf(Condition condition, String subject, SiteBase currentSite, String sortField, String sortord, PageModel pageModel, Integer adminId){
+		List<Object> valueList = new ArrayList<Object>();
+		StringBuffer strSql = new StringBuffer(" SELECT id, conf_name, create_user, compere_user,compere_name ,conf_hwid, conf_type, start_time, end_time, pc_num, phone_num, ");
+		strSql.append(" (CASE WHEN  conf.conf_status =6 THEN 0 WHEN conf.conf_status =5 THEN 2 WHEN conf.conf_status =7 THEN 3 ELSE conf.conf_status END) conf_status ");
+		strSql.append(" from ( ");
+			strSql.append("select * from (");
+				strSql.append(" SELECT id, conf_name, create_user, compere_user,compere_name ,conf_hwid, conf_type, start_time, end_time, pc_num, phone_num, ");
+				strSql.append(" (CASE WHEN  tmp.conf_status =20 THEN 6 WHEN tmp.conf_status =200 THEN 5 WHEN tmp.conf_status =2000 THEN 7 ELSE tmp.conf_status END) conf_status ");
+				strSql.append(" FROM ( ");
+					strSql.append(" SELECT confBase.id, confBase.conf_name, confBase.create_user, confBase.compere_user, confBase.compere_name , confBase.conf_hwid, confBase.conf_type, confBase.start_time, confBase.end_time, confBase.pc_num, confBase.phone_num, ");
+					strSql.append(" (CASE WHEN  confBase.conf_status =0 THEN 20 WHEN confBase.conf_status =2 THEN 200 WHEN confBase.conf_status =3 THEN 2000 ELSE confBase.conf_status END) conf_status ");
+					strSql.append(" FROM  t_conf_base confBase, t_user_base b WHERE 1=1 ");
+					if(condition != null && StringUtil.isNotBlank(condition.getConditionSql())){
+						strSql.append(" and ").append(condition.getConditionSql());
+					} 
+//					strSql.append(" AND confBase.del_flag = ? ");
+//					valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+					strSql.append(" AND b.del_flag = ? ");
+					valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+					strSql.append(" AND confBase.create_user = b.id ");
+					strSql.append(" AND confBase.site_id = b.site_id ");
+					strSql.append(" and confBase.site_id = ? ");
+					valueList.add(currentSite.getId());
+					if(StringUtil.isNotBlank(subject)){
+						strSql.append(" AND ( confBase.conf_name LIKE ? OR confBase.conf_hwid = ? ) ");
+						valueList.add("%"+ subject +"%");
+						valueList.add(subject);
+					}
+					if(adminId != null && adminId.intValue() > 0){
+						strSql.append(" AND b.create_user = ? ");
+						valueList.add(adminId);
+					}
+				strSql.append(" ) tmp ");
+			strSql.append(" ) base ");
+			strSql.append("ORDER BY base.conf_status ASC, base.start_time ASC, base.id ASC ");
+		strSql.append(" ) conf ");
+		if(StringUtil.isNotBlank(sortField)){
+			strSql.append(" order by ");
+			for (String[] eachField : SortConstant.CONFBASE_FIELDS) {
+				if (eachField != null && eachField[0].equals(sortField)) {
+					strSql.append("conf.");
+					strSql.append(BeanUtil.att2Field(eachField[1]));
+					break;
+				}
+			}
+			if (SortConstant.SORT_ASC.equals(sortord)) {
+				strSql.append(" asc ");
+			}
+
+			if (SortConstant.SORT_DESC.equals(sortord) || sortord == null
+					|| "".equals(sortord.trim())
+					|| "null".equals(sortord.trim().toLowerCase())) {
+				strSql.append(" desc ");
+			}
+		}
+		return getConfPageModule(currentSite, pageModel, strSql, valueList);
+	}
+	
+	private PageBean<ConfBase> getConfPageModule(SiteBase currentSite, PageModel pageModel, StringBuffer strSql, List<Object> valueList){
+		List<ConfBase> confList = null;
+		List<ConfBaseSimple> confBaseSimpleList = null;
+		PageBean<ConfBase> page = new PageBean<ConfBase>();
+	
+		try {
+			String sql = strSql.toString().toLowerCase();
+			String countsql = " select count(*) " + sql.substring(sql.indexOf("from"));
+			int count = libernate.countEntityListWithSql(countsql, valueList.toArray());
+			page.setRowsCount(count);
+			
+			pageModel.setRowsCount(count);
+		} catch (SQLException e) {
+			logger.error("站点管理员根据高级搜索条件查询会议列表条数出错！" + e);
+			return null;
+		}
+		try {
+			String limitsql = strSql.toString() + " limit "+(Integer.parseInt(pageModel.getPageNo()) - 1) * pageModel.getPageSize() + "," + pageModel.getPageSize();
+			confBaseSimpleList = libernate.getEntityListBase(ConfBaseSimple.class, limitsql, valueList.toArray());
+		} catch (SQLException e) {
+			logger.error("站点管理员根据高级搜索条件查询会议列表(权限控制条件可以放在condition中)出错！" + e);
+		}
+		if(confBaseSimpleList != null && confBaseSimpleList.size() > 0){
+			confList = new ArrayList<ConfBase>();
+			String[] filedArray = ObjectUtil.getFieldFromObject(confBaseSimpleList.get(0));
+			String copyField = "";
+			for(String filed : filedArray){
+				if(!"confStatus".equals(filed)){
+					copyField = copyField + "," + filed;
+				}
+			}
+			logger.info("copyField:"+copyField);
+			for(ConfBaseSimple conf : confBaseSimpleList){
+				ConfBase confBase = new ConfBase();
+				try {
+					confBase = (ConfBase) ObjectUtil.copyObject(conf, confBase, copyField);
+					confBase.setConfStatus(Integer.valueOf(conf.getConfStatus().toString()));
+				} catch (Exception e) {
+					logger.error("转换conf出错！" + e);
+				}
+				confList.add(confBase);
+			}
+			if(currentSite != null){
+				confList = getOffsetConfList(currentSite, confList);
+			}
+		}
+		page.setDatas(confList);
+		page.setPageNo(pageModel.getPageNo());
+		page.setPageSize(pageModel.getPageSize());
+		return page;
+	}
+	
+	/**
+	 * 初始化高级搜索Condition条件
+	 * wangyong
+	 * 2013-1-23
+	 */
+	private Condition initCondition(ConfBase confBase, String siteName, String siteSign, Date beginTime, Date endTime){
+		Condition condition = new Condition();
+		if(confBase != null){
+			logger.info("confBase-----" + confBase);
+			if(StringUtil.isNotBlank(confBase.getConfName())){
+				condition.like("confBase.conf_name", confBase.getConfName());
+			}
+			if(confBase.getConfType() != null && confBase.getConfType().intValue() > 0){
+				condition.equal("confBase.conf_type", confBase.getConfType());    //	会议类型： 1 、电话会议 2、视频 3、视频+网络电话  4、视频+传统电话
+			}
+			if(confBase.getConfStatus() != null && confBase.getConfStatus().intValue() != -1){
+				condition.equal("confBase.conf_status", confBase.getConfStatus());    //会议状态：-1：全部会议  0、预约成功  2、正在召开  3、已结束    9、取消的会议
+				if(confBase.getConfStatus().intValue() != ConfConstant.CONF_STATUS_CANCELED){
+					condition.equal("confBase.del_flag", ConstantUtil.DELFLAG_UNDELETE);
+				}
+			}
+			if(StringUtil.isNotBlank(siteName)){
+				condition.like("siteBase.site_name", siteName);
+			}
+			if(StringUtil.isNotBlank(siteSign)){
+				condition.like("siteBase.site_sign", siteSign);
+			}
+		}
+	    if(beginTime != null){
+	      beginTime = DateUtil.StringToDate(DateUtil.dateToString(beginTime, null), "yyyy-MM-dd");
+	      beginTime = DateUtil.getGmtDate(beginTime);
+	      condition.greaterEqual("confBase.start_time", DateUtil.getDateStrCompact(beginTime, "yyyy-MM-dd HH:mm:ss"));
+	    }
+	    if(endTime != null){
+	      endTime = DateUtil.StringToDate(DateUtil.dateToString(endTime, null), "yyyy-MM-dd");
+	      endTime = DateUtil.getGmtDate(DateUtil.addDate(endTime, 1));
+	      condition.lessEqual("confBase.start_time", DateUtil.getDateStrCompact(endTime, "yyyy-MM-dd HH:mm:ss"));
+	    }
+		return condition;
+	}
 }

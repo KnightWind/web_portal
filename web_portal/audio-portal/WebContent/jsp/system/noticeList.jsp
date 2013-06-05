@@ -35,11 +35,11 @@ $(function() {
 	
 	$(".gaoji").toggle(function () {
 	    $("#search-condition").slideDown(function() {
-		    parent.resizeHeight();//增加高度
+		    parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res1']}
 	    });
 	}, function () {
 		$("#search-condition").slideUp(function() {
-			parent.resizeHeight();//减少高度
+			parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res2']}
 		});
 	});
 	

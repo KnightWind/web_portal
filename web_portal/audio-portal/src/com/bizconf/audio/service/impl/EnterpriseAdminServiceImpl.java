@@ -54,6 +54,7 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 			sqlBuilder.append(" and create_user = ? ");
 			values.add(creator);
 		}
+		sqlBuilder.append(" order by id desc ");
 		try{
 			 
 			admins = libernate.getEntityListBase(UserBase.class,"select *"+sqlBuilder.toString(),values.toArray());

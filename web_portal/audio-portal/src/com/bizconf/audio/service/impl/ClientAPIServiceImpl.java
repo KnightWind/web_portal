@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
@@ -24,6 +23,7 @@ import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.service.ClientAPIService;
 import com.bizconf.audio.service.ConfLogService;
 import com.bizconf.audio.service.ConfService;
+import com.bizconf.audio.service.IpLocatorService;
 import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.IntegerUtil;
 import com.bizconf.audio.util.SiteIdentifyUtil;
@@ -41,29 +41,36 @@ import com.bizconf.encrypt.Base64;
 public class ClientAPIServiceImpl extends BaseService implements
 		ClientAPIService {
 
-	private static final String CLIENT_WEB_URL = "http://%s.confcloud.cn:80/openapi/ClientAPI";
-
-	private static final String CLIENT_DOWNLOAD_URL = "http://%s.confcloud.cn:80/download";
-
-	static String SERVER_IP = null;
-	static String CLUSTER_ID = null;
-	
-	static {
-		try {
-			ResourceBundle rb = ResourceBundle.getBundle("/config/ms");
-			SERVER_IP = rb.getString("server_ip");
-			CLUSTER_ID = rb.getString("cluster_id");
-		}
-		catch (Exception e) {
-			e.printStackTrace(System.err);
-		}
-	}
+//	private static final String CLIENT_WEB_URL = "http://%s.confcloud.cn:80/openapi/ClientAPI";
+//
+//	private static String CLIENT_DOWNLOAD_URL = null;//"http://%s.confcloud.cn:80/download";
+//
+//	static String SERVER_IP = null;
+//	static String CLUSTER_ID = null;
+//	static String DOWNLOAD_DEFAULT=null;
+//	static String DOWNLOAD_SERVERS=null;
+//	
+//	static {
+//		try {
+//			ResourceBundle rb = ResourceBundle.getBundle("/config/ms");
+//			SERVER_IP = rb.getString("server_ip");
+//			CLUSTER_ID = rb.getString("cluster_id");
+//			DOWNLOAD_DEFAULT = rb.getString("download_default");
+//			DOWNLOAD_SERVERS = rb.getString("download_servers");
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace(System.err);
+//		}
+//	}
 
 	@Autowired
 	ConfService confService;
 
 	@Autowired
 	ConfLogService confLogService;
+	@Autowired
+	IpLocatorService ipLocatorService;
+	
 	@Override
 	public void clientInvite(String email, String content, int confId,
 			String confPasswd, String lang, String userName) {
@@ -76,22 +83,22 @@ public class ClientAPIServiceImpl extends BaseService implements
 		if (random == null) {
 			return null;
 		}
-		String initParam = buildStartUpParam(random.getId(), random.getLanguage());//CLIENT_WEB_URL + "#" + random.getId();
+		String initParam = buildStartUpParam(random.getId(), random.getLanguage());
 		return initParam;
 	}
 
 	@Override
-	public String makePreParam(JoinRandom random) {
+	public String makePreParam(JoinRandom random,String ip) {
 //		JoinRandom random = makeRandom(conf, user,userRole);
 		if (random == null) {
 			return null;
 		}
-		String preParam = buildPreParam(random.getId(), random.getLanguage(), false);
+		String preParam = buildPreParam(random.getId(), random.getLanguage(), false,ip);
 		return preParam;
 	}
 	
 	@Override
-	public String getPreParam(long random) {
+	public String getPreParam(long random,String ip) {
 		JoinRandom joinRandom;
 		try {
 			joinRandom = libernate.getEntity(JoinRandom.class, random);
@@ -102,7 +109,7 @@ public class ClientAPIServiceImpl extends BaseService implements
 		if (joinRandom == null) {
 			return null;
 		}
-		String preParam = buildPreParam(joinRandom.getId(), joinRandom.getLanguage(), true);
+		String preParam = buildPreParam(joinRandom.getId(), joinRandom.getLanguage(), true, ip);
 		return preParam;
 	}
 
@@ -149,12 +156,19 @@ public class ClientAPIServiceImpl extends BaseService implements
 		params.append("<user_role>" + joinRandom.getUserRole() + "</user_role>");
 		params.append("<client_type>0</client_type>");
 		params.append("<conf_pass>" + confBase.getUserSecure()+ "</conf_pass>");
-		params.append("<server_ip>"+ string2Unicodes(SERVER_IP) + "</server_ip>");
-		params.append("<site_id>"+CLUSTER_ID+"</site_id>");
+		//params.append("<server_ip>"+ string2Unicodes(ConfConstant.SERVER_IP) + "</server_ip>");
+		params.append("<server_ip>"+ string2Unicodes(ipLocatorService.getMsServers(joinRandom.getClientIp())) + "</server_ip>");
+		params.append("<site_id>"+ConfConstant.CLUSTER_ID+"</site_id>");
 		params.append("<access_code></access_code>");
 		params.append("<conf_desp>" + confBase.getConfDesc() + "</conf_desp>");
 		params.append("<conf_key>" + confBase.getConfHwid() + "</conf_key>");
-		params.append("<host_key>" + Base64.encode(confBase.getCompereSecure(),"utf8") + "</host_key>");
+		
+		String hostKey=confBase.getHostKey();
+		if(hostKey==null || "".equals(hostKey.trim())){
+			hostKey=confBase.getCompereSecure();
+		}
+	//	hostKey=confBase.getCompereSecure();
+		params.append("<host_key>" + Base64.encode(hostKey,"utf8") + "</host_key>");
 		params.append("<conf_tag>2</conf_tag>");
 		params.append("<layout_model>02</layout_model>");
 		params.append("<video_maxnum>" + confBase.getMaxVideo() + "</video_maxnum>");
@@ -209,10 +223,16 @@ public class ClientAPIServiceImpl extends BaseService implements
 		params.append("<large_venue>0</large_venue>");
 		params.append("<mirage_driver>0</mirage_driver>");//屏幕共享方式:0、GDI方式 ；1、mirage_driver方式
 		params.append("<svn_password>123456</svn_password>");
+		params.append("<as_default_bitrate>102400</as_default_bitrate>");
+		params.append("<as_default_frame_time_interval>1000</as_default_frame_time_interval>");
+		params.append("<as_default_jpeg_quality>25</as_default_jpeg_quality>");
 		params.append("</ConfParam>");
-		//
-		boolean logStatus=confLogService.saveConfLog(getConfLogForStart(confBase,joinRandom));
-		System.out.println("Strart conf  confLog Status="+logStatus);
+//
+//		boolean logStatus=confLogService.saveConfLog(getConfLogForStart(confBase,joinRandom));
+//		System.out.println("Strart conf  confLog Status="+logStatus);
+
+		
+		
 		return params.toString();
 	}
 
@@ -285,7 +305,7 @@ public class ClientAPIServiceImpl extends BaseService implements
 		return privilege;
 	}
 	
-
+	
 	private String string2Unicodes(String str) {
 		StringBuilder unicodes = new StringBuilder();
 		if (StringUtils.isEmpty(str)) {
@@ -380,9 +400,18 @@ public class ClientAPIServiceImpl extends BaseService implements
 		return joinRandom;
 	}
 	
-	private String buildPreParam(long random, String language, boolean forStartUp) {
-		String preParam =  String.format(CLIENT_WEB_URL, SiteIdentifyUtil.getCurrentBrand()) + "#" + String.format(CLIENT_DOWNLOAD_URL, SiteIdentifyUtil.getCurrentBrand()) + "#"
+	private String buildPreParam(long random, String language, boolean forStartUp,String ip) {
+		
+		String downLoadUrl=makeDownUrl(ip);
+		JoinRandom joinRandom=getJoinRandomById(IntegerUtil.parseInteger(random+""));
+		if(joinRandom!=null){
+			logger.warn("randomId=="+random+";UserIp=="+joinRandom.getClientIp()+";userId=="+joinRandom.getUserId()+";UserName=="+joinRandom.getUserName()+";downLoadUrl=="+downLoadUrl);
+		}
+		String preParam =  String.format(ConfConstant.CLIENT_WEB_URL, SiteIdentifyUtil.getCurrentBrand())+"#"//String.format(ConfConstant.CLIENT_WEB_URL, SiteIdentifyUtil.getCurrentBrand()) + "#" 
+				+downLoadUrl+"#"
 		+ (LanguageHolder.DEFAULT_LANGUAGE.equalsIgnoreCase(language) ? 2052 : 1033) + "#1#" + random;
+// 		+ String.format(CLIENT_DOWNLOAD_URL, SiteIdentifyUtil.getCurrentBrand()) + "#"
+		logger.info("preParam=="+preParam);
 		preParam = Base64.encode(preParam);
 		preParam = preParam.replaceAll("/", "_");
 		if (!forStartUp) {
@@ -391,9 +420,11 @@ public class ClientAPIServiceImpl extends BaseService implements
 		return preParam;
 	}
 	
+	
+	
 	private String buildStartUpParam(long random, String language) {
 		//"0" + "$" + "dick.confcloud.cn" + "$" + "80" + "$" + random + "/openapi/ClientAPI";
-		String startUpParamString = String.format(CLIENT_WEB_URL, SiteIdentifyUtil.getCurrentBrand()) + "#" + random;
+		String startUpParamString = String.format(ConfConstant.CLIENT_WEB_URL, SiteIdentifyUtil.getCurrentBrand()) + "#" + random;
 		startUpParamString = Base64.encode(startUpParamString);
 		startUpParamString.replaceAll("/", "_");
 		try {
@@ -404,6 +435,44 @@ public class ClientAPIServiceImpl extends BaseService implements
 		startUpParamString = "0" + "$" + SiteIdentifyUtil.getCurrentBrand() +"."+SiteIdentifyUtil.MEETING_CENTER_DOMAIN + "$" + "80$"+random+"$openapi" ;
 		return startUpParamString;
 	}
+	
+
+
+	private String  makeDownUrl(String ip){
+		String ispCode=ipLocatorService.getISPCodeByIP(ip);
+		String clientDownLoadUrl=ipLocatorService.getDownloadURL(ispCode);
+		
+//		String clientDownLoadUrl="";
+//		if(ConfConstant.DOWNLOAD_SERVERS==null && ConfConstant.DOWNLOAD_DEFAULT==null){
+//			
+//			clientDownLoadUrl=ConfConstant.CLIENT_DOWNLOAD_URL_DEFAULT;
+//		}
+//		
+//		if(ConfConstant.DOWNLOAD_DEFAULT!=null && ConfConstant.DOWNLOAD_DEFAULT.length() > 0){
+//			clientDownLoadUrl=ConfConstant.DOWNLOAD_DEFAULT;
+//		}
+//		if(ConfConstant.DOWNLOAD_SERVERS!=null && ConfConstant.DOWNLOAD_SERVERS.length() > 0){
+//			String[] server_array=null;
+//			server_array=ConfConstant.DOWNLOAD_SERVERS.split(",");
+//			if(server_array!=null && server_array.length >0){
+//				if(server_array.length==1){
+//					clientDownLoadUrl=ConfConstant.DOWNLOAD_SERVERS;
+//				}else{
+//					int serverCount=server_array.length;
+//					int randomNum=(int)Math.round(serverCount * Math.random());
+//					if(randomNum==serverCount){
+//						randomNum=serverCount-1;
+//					}
+//					clientDownLoadUrl=server_array[randomNum];
+//				}
+//			}
+//			server_array=null;
+//			
+//		}
+		return clientDownLoadUrl;
+	}
+
+	
 	private  ConfLog getConfLogForStart(ConfBase confBase,JoinRandom joinRandom){
 		ConfLog confLog=null;
 		confLog=new ConfLog();

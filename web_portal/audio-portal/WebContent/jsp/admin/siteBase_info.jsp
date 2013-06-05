@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>企业基本信息</title>
+<title>base info</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
 <link rel="stylesheet" type="text/css" href="/static/js/tipsy-master/src/stylesheets/tipsy.css" />
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">
@@ -37,7 +37,7 @@ $(function() {
  	}, ruleString.custom.checkSiteName);
 	
 	$.validator.addMethod("checkEnName", function(value, element) {       
-    	return this.optional(element) || /^[a-zA-Z0-9_\-&]{4,64}$/.test(value);
+    	return this.optional(element) || /^[a-zA-Z0-9_\s\-&,.]{1,64}$/.test(value);
  	}, ruleString.custom.checkEnName);
 	
 	var v = $("#profileForm").validate({
@@ -45,7 +45,7 @@ $(function() {
 		errorClass: "warning",
 		rules: {
             'siteName' : {required:true, rangelength: [4, 32], checkSiteName:true},
-            'enName' : {required:true, rangelength: [4, 64], checkEnName:true}
+            'enName' : {required:true, rangelength: [1, 64], checkEnName:true}
         },
         messages: {
             'siteName' : {required:ruleString.required.siteName, rangelength: ruleString.rangelength.siteName, checkSiteName:ruleString.custom.checkSiteName},
@@ -80,6 +80,7 @@ function uploadCallback(url){
 	$("#previewImg").attr("src", "/uploadfiles/site_logo/" + url);
 	$("#frameImg").attr("src", "/jsp/common/upload_common.jsp");
 	$("#siteLogo").val("/uploadfiles/site_logo/" + url);
+	
 }
 </script>
 </head>
@@ -109,7 +110,7 @@ function uploadCallback(url){
 		  </tr>
 		  <tr>
 		    <td align="right">
-		    	${LANG['system.site.list.timezone']}时区设置
+		    	${LANG['system.site.list.timeZoneSet']}
 		    </td>
 		    <td class="form-table-td">
 		    	<select name="timeZoneId"  class="" >
@@ -130,7 +131,7 @@ function uploadCallback(url){
 		    	<div style="position: relative;">
 		    		<iframe style="float: left;" id="frameImg" src="/jsp/common/upload_common.jsp" width="230" height="25" frameborder="0" scrolling="no"></iframe>
 			    	<img id="previewLoadImg" src="/static/images/loading.gif">
-	            	<div style="color: red; float: left; height: 25px; line-height: 25px;">最大上传256k，100*48，支持jpg,bmp,png,gif格式</div>
+	            	<div style="color: red; float: left; height: 25px; line-height: 25px;">${LANG['system.site.list.imageLimit']}</div>
 	            	<div style="clear: both;"></div>
 		    	</div>
 		    </td>
@@ -157,6 +158,13 @@ function uploadCallback(url){
    			<input  class="skipThese" name="emile_button" id="y_emile_button" type="submit"  value="${LANG['system.submit']}" />
            	<c:if test="${msgCode!=null && msgCode!='' && msgCode=='1'}">
            		<img src="/static/images/ys_r_bg.jpg" width="16" height="14" /><label style='color:#258021'>修改成功</label>
+           		<script type="text/javascript">
+					function refreshLogo() {
+						var url = $("#previewImg").attr("src");
+						parent.$("#logo_icon").attr("src", url);
+					}
+					refreshLogo();
+				</script>
            	</c:if>
            	<c:if test="${msgCode!=null && msgCode!='' && msgCode=='2'}">
            		<img src="/static/images/ys_w_bg.jpg" width="16" height="14" /><label style='color:#258021'>修改失败</label>
@@ -198,11 +206,11 @@ function uploadCallback(url){
 	            <li><span>${LANG['system.site.list.chargeMode']}：</span>--</li>
 	       	 </c:otherwise>
 			</c:choose>
-            <li><span>${LANG['system.site.list.LoginName']}：</span>${siteAdmin.loginName }</li>
-            <li><span>${LANG['system.site.list.Email']}：</span>${siteAdmin.userEmail }</li>
-            <li><span>${LANG['system.site.list.License']}：</span>${siteBase.license }</li>
-            <li><span>${LANG['system.site.list.effedate']}：</span><fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></li>
-            <li><span>${LANG['system.site.list.ExpireDate']}：</span><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></li>
+<!--            <li><span>${LANG['system.site.list.LoginName']}：</span>${siteAdmin.loginName }</li>-->
+<!--            <li><span>${LANG['system.site.list.Email']}：</span>${siteAdmin.userEmail }</li>-->
+<!--            <li><span>${LANG['system.site.list.License']}：</span>${siteBase.license }</li>-->
+<!--            <li><span>${LANG['system.site.list.effedate']}：</span><fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></li>-->
+           
             <cc:siteList var="SITEFLAG_FORMAL"/>
             <cc:siteList var="SITEFLAG_TRY"/>
             <c:choose>
@@ -216,6 +224,45 @@ function uploadCallback(url){
 	            <li><span>${LANG['system.site.list.SiteFlag']}：</span>--</li>
 	       	 </c:otherwise>
             </c:choose>
+             <li><span>${LANG['system.site.list.siteExpireDate']}：</span><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></li>
+            
+            
+            
+            
+            
+			 <c:if test="${SITE_CHARGEMODE_NAMEHOST == siteBase.chargeMode }">
+                <li><span>${LANG['system.site.list.hostInfo']}：</span>
+                <table border="0" cellpadding="0" cellspacing="0" class="host_top" style="position:relative; top: 15px;">
+					<tr height="30" class="host01">
+				    	<td width="100" align="center">${LANG['system.site.list.LoginName']}</td>
+				        <td width="150" align="center">${LANG['system.site.list.Email']}</td>
+				        <td width="80" align="center">${LANG['system.site.list.siteInfo.license']}</td>
+				        <td width="80" align="center">${LANG['system.site.list.effedate']}</td>
+				        <td width="80" align="center">${LANG['system.site.list.ExpireDate']}</td>
+				    </tr>
+				    <c:if test="${fn:length(pageModel.datas)<=0 }">
+				         <tr  height="36" class="host02">
+				           <td colspan="4" width="540" align="center">
+				        		${LANG['website.common.msg.list.nodata']}
+				           </td>
+				         </tr>
+				      </c:if>
+				    <c:forEach var="host" items = "${pageModel.datas}"  varStatus="status">
+					    <tr height="36" class="host02">
+					    	<td width="100" align="center" >${host.loginName}</td>
+					        <td width="150" align="center">${host.userEmail}</td>
+					        <td width="80" align="center" cla>${licnums[host.id]}</td>
+					        <td width="80" align="center" cla><fmt:formatDate  value="${effeDates[host.id]}" type="date" pattern="yyyy-MM-dd"/></td>
+					        <td width="80" align="center" cla><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></td>
+					    </tr>
+				    </c:forEach>
+				</table>
+                </li>
+				  
+			 </c:if>
+            
+            
+            
         </ul>
 	</div>      
 </div>

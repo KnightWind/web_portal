@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
-import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.entity.DefaultConfig;
 import com.bizconf.audio.entity.EmpowerConfig;
 import com.bizconf.audio.entity.UserBase;

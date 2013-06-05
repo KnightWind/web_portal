@@ -133,4 +133,8 @@ public interface ConfManagementService {
 	 * @return
 	 */
 	PageBean<ConfLog> queryConfUserStatusForPage(String confHwId,int pageNo,int pageSize,SiteBase currSite,UserBase currUser);
+
+
+	
+	boolean setingOnlineUserNum(ConfBase conf);
 }

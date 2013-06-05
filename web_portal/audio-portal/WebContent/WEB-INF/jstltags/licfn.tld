@@ -46,4 +46,16 @@
       &lt;c:if test="${myfn:siteExpired(date)}">
     </example>
   </function>
+  
+  <function>
+    <description>
+       this function fomart date by timezone.
+    </description>
+    <name>fmtDate</name>
+    <function-class>com.bizconf.audio.component.MyfnTag</function-class>
+    <function-signature>java.lang.string fmtDate(java.lang.String,java.util.Date,java.lang.Integer)</function-signature>
+    <example>
+      ${myfn:fmtDate()}
+    </example>
+  </function>
 </taglib>

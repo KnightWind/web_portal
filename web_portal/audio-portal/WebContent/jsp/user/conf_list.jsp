@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>我的会议</title>
+<title>${LANG['bizconf.jsp.conf_list.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
@@ -17,8 +17,8 @@
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/date.js?ver=${version}"></SCRIPT>
 <script type="text/javascript">
 jQuery(function($) {
-	$(".m_search_list").watermark('会议主题');
-// 	$(".m_search_public").watermark('会议主题');
+	$(".m_search_list").watermark('${LANG['bizconf.jsp.attendConfloglist.res3']}');
+// 	$(".m_search_public").watermark('${LANG['bizconf.jsp.attendConfloglist.res3']}');
 	$(".m_search_list").keypress(function(e){
 		if(e.keyCode == 13){
 			refreshIframe();
@@ -37,6 +37,7 @@ jQuery(function($) {
 	$('.m_top_tab li').click(function() {
 		var index = parseInt($(this).attr("dateScopeFlag"), 10);
 		selectTab(index);
+		//showLoading();
 		refreshIframe();
 	});
 	$(".pass_conf_check").click(function() {
@@ -120,6 +121,23 @@ jQuery(function($) {
 	showDateRange();
 });
 
+function showLoading() {
+	$("#contentFrame").hide();
+	var pWidth = parent.$("#mainFrame").width();
+	var pHeight = $(parent.window).height();
+	if(pHeight<450){
+		pHeight = 450;
+	}
+	var left = (pWidth-50)/2;
+	var top = (pHeight-150)/2;
+	$("#loadingContainer").css({left:left,top:top}).show();
+}
+
+function hideLoading() {
+	$("#loadingContainer").hide();
+	$("#contentFrame").show();
+}
+
 function selectTab(index) {
 	$(".m_top_tab_default").removeClass("m_top_tab_active");
 	$(".m_top_tab_default:eq("+(index-1)+")").addClass("m_top_tab_active");
@@ -177,6 +195,7 @@ function showDateRange() {
 	}
 }
 function refreshIHeight() {
+	//hideLoading();
 	var height = $("#contentFrame").contents().find("body").height() + 50;
 	$("#contentFrame").height(height);  
 }
@@ -203,7 +222,7 @@ function loadIframe(urlParam) {
 		url = addUrlParam(url, "dateScopeFlag", dateScopeFlag);
 	}
 	var confName = $(".m_search_list").val();
-	if(confName && confName!="会议主题"){
+	if(confName && confName!="${LANG['bizconf.jsp.attendConfloglist.res3']}"){
 		url = addUrlParam(url, "confName", confName, true);
 	}
 	var beginTime = $("#monthStart").val();
@@ -252,15 +271,15 @@ window.setInterval(refreshIframe, 5*60*1000);
 	<div class="meeting_top">
 	  <c:if test="${!isLogined}">
 	  	 <ul class="m_top_tab">
-		    <li dateScopeFlag="0"><a class="m_top_tab_default m_top_tab_active" href="javascript:;">本周</a></li>
+		    <li dateScopeFlag="0"><a class="m_top_tab_default m_top_tab_active" href="javascript:;">${LANG['bizconf.jsp.conf_list.res2']}</a></li>
 	 	 </ul>
 	  </c:if>
 	  <c:if test="${isLogined}">
 		  <ul class="m_top_tab">
-		    <li dateScopeFlag="1"><a class="m_top_tab_default m_top_tab_active" href="javascript:;">今天</a></li>
-		    <li dateScopeFlag="2"><a class="m_top_tab_default" href="javascript:;">本周</a></li>
-		    <li dateScopeFlag="3"><a class="m_top_tab_default" href="javascript:;">本月</a></li>
-		    <li dateScopeFlag="4"><a class="m_top_tab_default" href="javascript:;">所有</a></li>
+		    <li dateScopeFlag="1"><a class="m_top_tab_default m_top_tab_active" href="javascript:;">${LANG['bizconf.jsp.conf_list.res3']}</a></li>
+		    <li dateScopeFlag="2"><a class="m_top_tab_default" href="javascript:;">${LANG['bizconf.jsp.conf_list.res2']}</a></li>
+		    <li dateScopeFlag="3"><a class="m_top_tab_default" href="javascript:;">${LANG['bizconf.jsp.conf_list.res4']}</a></li>
+		    <li dateScopeFlag="4"><a class="m_top_tab_default" href="javascript:;">${LANG['bizconf.jsp.conf_list.res5']}</a></li>
 		  </ul>
 	  </c:if>
 	
@@ -269,10 +288,10 @@ window.setInterval(refreshIframe, 5*60*1000);
     <tr height="40" bgcolor="#fff" style="background:#FFF" >
     	<c:if test="${!isLogined}">
     		<td width="80%" class="STYLE00">
-    			<div class="">
-		        	<span style="margin-left: 8px;">开始时间</span>
+    			<div class="" style="height: 23px;">
+		        	<span style="margin-left: 8px;">${LANG['bizconf.jsp.attendConfloglist.res6']}</span>
 			        <input id="publicStart" type="text" class="t01" style="margin-left: 15px;"/>
-			        <span>——</span>
+			        <span>${LANG['bizconf.jsp.conf_list.res6']}</span>
 			        <input id="publicEnd" type="text"  class="t02"  style="margin-left: 8px;"/>
 			    </div>
     		</td>
@@ -281,23 +300,23 @@ window.setInterval(refreshIframe, 5*60*1000);
       	  <td width="10%" class="STYLE00">
       			<div class="" style="width: 140px;">
         			<input id="conf_check_box" name="" type="checkbox" value="" class="checkbox_01"/>
-        			<span class="pass_conf_check" style="cursor: pointer;padding-left: 0px;">显示已参加的</span>
+        			<span class="pass_conf_check" style="cursor: pointer;padding-left: 0px;">${LANG['bizconf.jsp.conf_list.res7']}</span>
        			</div>
       	  </td>
 	      <td width="70%" class="STYLE00">
 	        <div class="dateScopeFlag" style="display: none;">
-	        	<h3><span id="weekStart">2013-05-06</span> — <span id="weekEnd" style="padding-left: 0px;">2013-06-09</span></h3>
+	        	<h3><span id="weekStart">2013-05-06</span> ${LANG['bizconf.jsp.conf_list.res8']} <span id="weekEnd" style="padding-left: 0px;">2013-06-09</span></h3>
 	        </div>
 	        <div class="dateScopeFlag" style="display: none;">
 	        	<span style="margin-left: 8px;"></span>
 		        <input id="monthStart" type="text" class="t01" readonly="readonly" style="" />
-		        <span>——</span>
+		        <span>${LANG['bizconf.jsp.conf_list.res6']}</span>
 		        <input id="monthEnd" type="text"  class="t02"  readonly="readonly" style="margin-left: 8px;"/>
 	        </div>
 	        <div class="dateScopeFlag" style="display: none;">
 	        	<span style="margin-left: 8px;"></span>
 		   		<input id="allStart" type="text" class="t01" style=""/>
-		        <span>——</span>
+		        <span>${LANG['bizconf.jsp.conf_list.res6']}</span>
 		        <input id="allEnd" type="text"  class="t02" style="margin-left: 8px;" />
 	        </div>
 	      </td>
@@ -307,7 +326,7 @@ window.setInterval(refreshIframe, 5*60*1000);
       	       <div>
 <%--         	<c:if test="${isLogined}"> --%>
         		<form action="">
-        			<input class="m_search_list" name="" type="text" watermark="会议主题"/>
+        			<input class="m_search_list" name="" type="text" watermark="${LANG['bizconf.jsp.attendConfloglist.res3']}"/>
         			<a class="m_search_btn" href="javascript:;"></a>
         		</form>
 <%--         	</c:if> --%>
@@ -322,6 +341,10 @@ window.setInterval(refreshIframe, 5*60*1000);
     </tr>
   </table>
 	<div style="clear: both;"></div>
+		<div id="loadingContainer" style="display: none;position: absolute;">
+			<img src='/static/images/loading.gif'/>
+			<span style="position: relative;bottom: 10px;">${LANG['bizconf.jsp.user.conf_list.res1']}...</span>
+		</div>
 	<c:if test="${!isLogined}">
 		<iframe frameborder="0" width="100%" height="100%" id="contentFrame" name="contentFrame" scrolling="no" src="/user/conf/getControlPadPublicConf"></iframe>
 	</c:if>

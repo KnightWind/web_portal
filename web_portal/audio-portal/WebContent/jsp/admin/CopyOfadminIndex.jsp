@@ -5,7 +5,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<TITLE>上海会畅数据会议管理平台</TITLE>
+<TITLE>${LANG['bizconf.jsp.admin.CopyOfadminIndex.res1']}</TITLE>
 
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jqtransform/jqtransformplugin/jqtransform.css"/>
@@ -23,17 +23,17 @@
 
 
 <body>
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res2']}-->
 <div id="head">
     <div class="header_left">
     <img class="logo" src="${baseUrlStatic}/images/logo.gif" width="180" height="80" />
-    <span class="name">上海会畅数据会议管理平台</span>
+    <span class="name">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res1']}</span>
     </div>
     <div class="header_right">
      	<div class="header_right01">
           <form name="form" id="form">
             <select name="jumpMenu" id="jumpMenu" onchange="Javascript:changeLang(this.value)">
-<!--               <option>中文版</option> -->
+<!--               <option>${LANG['bizconf.jsp.admin.CopyOfadminIndex.res3']}</option> -->
 <!--               <option>English</option> -->
               <option value="zh-cn">${LANG['website.lang.zh']}</option>
 	          <option value="en-us">${LANG['website.lang.en']}</option>
@@ -42,58 +42,58 @@
            <ul class="head_right">
     <li><img class="geli" src="${baseUrlStatic}/images/geli.jpg" width="2" height="24" /></li>
     <li><img class="help" src="${baseUrlStatic}/images/help.jpg" width="16" height="16" /></li>
-    <li><a  title="帮助" href="#">帮助</a></li>
+    <li><a  title="${LANG['bizconf.jsp.admin.CopyOfadminIndex.res4']}" href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res4']}</a></li>
     <li><img class="geli" src="${baseUrlStatic}/images/geli.jpg" width="2" height="24" /></li>
     <li><img class="go_out" src="${baseUrlStatic}/images/go_out.jpg" width="16" height="16" /></li>
-    <li><a  title="退出" href="#">退出</a></li>
+    <li><a  title="${LANG['bizconf.jsp.admin.CopyOfadminIndex.res5']}" href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res5']}</a></li>
     </ul> 
           
      	</div>
         <div class="header_right02">
-        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>欢迎您，${user.trueName }！</span></div>
+        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['bizconf.jsp.admin.CopyOfadminIndex.res6']}${user.trueName }${LANG['bizconf.jsp.admin.CopyOfadminIndex.res7']}</span></div>
         </div>
         
   </div>
 </div>    
-<!--页面左部-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res8']}-->
 <div class="main_left" >
  <ul class="nav">
- 		<li><span class="nav_top05"><a href="#">用户管理</a></span>
+ 		<li><span class="nav_top05"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res9']}</a></span>
           <ul>
             
-            <li class="b_line"><a href="#">企业管理员管理</a></li>
-            <li><a href="#">企业用户管理</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res10']}</a></li>
+            <li><a href="#">${LANG['bizconf.jsp.admin.arrange_org_user.res1']}</a></li>
           </ul>
         </li>
-        <li><span class="nav_top01"><a href="#">系统配置</a></span>
+        <li><span class="nav_top01"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res11']}</a></span>
           <ul>
-            <li class="b_line"><a href="#">邮件服务器配置</a></li>
-            <li class="b_line"><a href="#">邮件模板设置</a></li>
-            <li><a href="#">会议权限设置</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res12']}</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res13']}</a></li>
+            <li><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res14']}</a></li>
           </ul>
         </li>
-        <li><span class="nav_top02"><a  href="#">企业信息管理</a></span>
+        <li><span class="nav_top02"><a  href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res15']}</a></span>
           <ul>
-            <li><a href="#">企业信息管理</a></li>
+            <li><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res15']}</a></li>
           </ul>
         </li>
-        <li><span class="nav_top03"><a href="#">公告管理</a></span>
+        <li><span class="nav_top03"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res16']}</a></span>
           <ul>
-            <li><a href="#">公告信息</a></li>
+            <li><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res17']}</a></li>
           </ul>
         </li>
        
-        <li><span class="nav_top04"><a  href="#">信息查询</a></span>
+        <li><span class="nav_top04"><a  href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res18']}</a></span>
           <ul>
-            <li class="b_line"><a href="#">会议信息</a></li>
-            <li class="b_line"><a href="#">企业管理员日志</a></li>
-            <li class="b_line"><a href="#">用户操作日志</a></li>
-            <li><a href="#">账单查询</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res19']}</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res20']}</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res21']}</a></li>
+            <li><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>
           </ul>
         </li>
-         <li><span class="nav_top06"><a href="#">个人信息管理</a></span>
+         <li><span class="nav_top06"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res23']}</a></span>
           <ul>
-            <li class="b_line"><a href="#">个人信息管理</a></li>
+            <li class="b_line"><a href="#">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res23']}</a></li>
             
           </ul>
         </li>
@@ -102,7 +102,7 @@
 <div class="main_right">
 <iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/admin/profile"></iframe>
 </div>
-<!--页面下部-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res24']}-->
  <div id="copy">
 <span class="copy_text" >Copyright © 2003-2012 Shanghai Shrine Telecom Co., Ltd. 2012. All rights reserved.Version:eMeeting V5.0</span>
 </div>

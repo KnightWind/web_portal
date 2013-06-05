@@ -58,8 +58,27 @@ function checkForm(pageIndex) {
 				return false;
 			}			
 		}
+		var hostKey = $("#hostKey").val();
+		if(!hostKey || hostKey.length==0){
+			parent.errorDialog(validString.pageRequired.hostKey, function() {
+				$("#hostKey").focus();
+			});
+			return false;
+		}
+		if(hostKey && !hostKey.isDigit()){
+			parent.errorDialog(validString.pageRequired.hostKeyType, function() {
+				$("#hostKey").focus();
+			});
+			return false;
+		}
+		if(hostKey.length<6 ||hostKey.length>12){
+			parent.errorDialog(validString.pageRequired.hostKeyType, function() {
+				$("#hostKey").focus();
+			});
+			return false;
+		}
 		var confDesc = $("#confDesc").val();
-		if(confDesc && (confDesc.length<1 ||confDesc.length>125)){
+		if(confDesc && (confDesc.length<1 ||confDesc.length>256)){
 			parent.errorDialog(validString.pageRequired.confDescLength, function() {
 				$("#confDesc").focus();
 			});
@@ -125,25 +144,37 @@ function checkForm(pageIndex) {
 				return false;				
 			}
 			var endTime = $("#endTime").val();
-			if(!endTime || endTime=="结束日期"){
-				parent.errorDialog(validString.pageRequired.weekEndDate, function() {
-					$("#endTime").focus();
-				});
-				return false;				
-			}
-			//判断循环的会议
-			var dateList = getDateListFromCycleScope(startTime, endTime, cycleType, cycleValue, false);
-			if(dateList==null || dateList.length==0){
-				parent.errorDialog(validString.pageRequired.cycleError, function() {
-					
-				});
-				return false;								
-			}
-			if(dateList.length>31){
-				parent.errorDialog(validString.pageRequired.maxInterval, function() {
-					
-				});
-				return false;								
+			
+			//无限循环会议
+//			var infiniteFlag = $('input:radio[name="infiniteFlag"]:checked').val();
+//			if(infiniteFlag==0){
+//				
+//			}
+			
+
+//			非无限循环会议
+			var infiniteFlag = $('input:radio[name="infiniteFlag"]:checked').val();
+			if(infiniteFlag==3) {
+				if(!endTime || endTime=="结束日期"){
+					parent.errorDialog(validString.pageRequired.weekEndDate, function() {
+						$("#endTime").focus();
+					});
+					return false;				
+				}
+				//判断循环的会议
+				var dateList = getDateListFromCycleScope(startTime, endTime, cycleType, cycleValue, false);
+				if(dateList==null || dateList.length==0){
+					parent.errorDialog(validString.pageRequired.cycleError, function() {
+						
+					});
+					return false;								
+				}
+				if(dateList.length>31){
+					parent.errorDialog(validString.pageRequired.maxInterval, function() {
+						
+					});
+					return false;								
+				}	
 			}
 			//判断当天的会议开始时间不能小于系统当前时间
 			if(dateList && dateList.length==1){
@@ -170,6 +201,20 @@ function checkForm(pageIndex) {
 					return false;
 				}
 			}
+		} else {
+			var endTypeFlag = $('input:radio[name="endType"]:checked').val();
+			if(endTypeFlag && endTypeFlag=="1"){
+				var startDateTemp = $("#startTime").val()+$("#startTimeH").val()+$("#startTimeM").val();
+				startDateTemp=startDateTemp.replace(/-/g,"");
+				var endDateTemp = $("#endDate").val()+$("#endTimeH").val()+$("#endTimeM").val();
+				endDateTemp=endDateTemp.replace(/-/g,"");
+				if(endDateTemp<startDateTemp){
+					parent.errorDialog("结束时间不能小于开始时间", function() {
+						
+					});
+					return false;
+				}
+			}
 		}
 		
 		if(cycleOption!=1) {
@@ -190,13 +235,29 @@ function checkForm(pageIndex) {
 		}
 		var durationH = parseInt($("#meetingTimeH").val(), 10);
 		var durationM = parseInt($("#meetingTimeM").val(), 10);
-		var duration = durationH*60 + durationM; 
-		if(duration==0){
-			parent.errorDialog(validString.maxlength.duration, function() {
-				$("#meetingTimeM").focus();
-			});
-			return false;				
-		}		
+		var duration = durationH*60 + durationM;
+		var durationTR = $(".durationTR");
+		if(durationTR.is(":visible")){
+			if(duration==0){
+				parent.errorDialog(validString.maxlength.duration, function() {
+					$("#meetingTimeM").focus();
+				});
+				return false;				
+			}			
+		}
+		var endDateTr = $(".endDateTr");
+		if(endDateTr.is(":visible")){
+			var startDateTemp = $("#startDate").val()+$("#startTimeH").val()+$("#startTimeM").val();
+			startDateTemp=startDateTemp.replace(/-/g,"");
+			var endDateTemp = $("#endDate").val()+$("#endTimeH").val()+$("#endTimeM").val();
+			endDateTemp=endDateTemp.replace(/-/g,"");
+			if(endDateTemp<startDateTemp){
+				parent.errorDialog("结束时间不能小于开始时间", function() {
+					
+				});
+				return false;
+			}
+		}
 	}
 	if(pageIndex=="3"){
 		/*
@@ -254,7 +315,18 @@ function editMeeting(){
 		if(publicPass && publicPass=="1"){
 			data.publicConfPass = $("#confPass").val();	
 		}
+	} else {
+		var confInviter = $('input:radio[name="confInviterRadio"]:checked').val();
+		if(confInviter=="0"){
+			data.publicFlag = 3;
+		}
 	}
+	//主持人密码
+	var hostKey = $("#hostKey").val();
+	if(hostKey) {
+		data.hostKey = hostKey;
+	}
+	
 	//周期信息
 	var cycleOption = $('input:radio[name="cycleOption"]:checked').val();//周期选项1是开启,2是关闭
 	data.cycleOption = cycleOption;
@@ -281,7 +353,21 @@ function editMeeting(){
 		}
 		var startDateStr=$("#startTime").val()+" "+$("#startTimeH").val()+":"+$("#startTimeM").val()+":00";
 		data.beginDate = startDateStr.parseDate().format("yyyy-MM-dd hh:mm:ss");// $("#startTime").val()+" "+$("#startTimeH").val()>0+":"+$("#startTimeM").val()+":00";
-		var endDateStr = $("#endTime").val()+" "+$("#startTimeH").val()+":"+$("#startTimeM").val()+":00";
+		
+		var endTime = $("#endTime").val();
+		var infiniteFlag = $('input:radio[name="infiniteFlag"]:checked').val();
+		//	无限循环会议
+		if(infiniteFlag==1){
+			data.infiniteFlag = 1;
+			endTime = "2100-01-01";
+		}
+		//	按次数循环
+		if(infiniteFlag==2){
+			data.repeatCount = $("#repeatCount").val();
+			endTime = "2100-01-01";
+		}
+		
+		var endDateStr = endTime +" "+$("#startTimeH").val()+":"+$("#startTimeM").val()+":00";
 		data.endDate = endDateStr.parseDate().format("yyyy-MM-dd hh:mm:ss");//$("#endTime").val()+" "+$("#startTimeH").val()>0+":"+$("#startTimeM").val()+":00";
 		data.startTime = data.beginDate;
 	} else {
@@ -298,6 +384,29 @@ function editMeeting(){
 	if(duration>0){
 		data.duration = duration;
 	}
+	
+	//永久会议创建
+	var endTypeFlag = $('input:radio[name="endType"]:checked').val();
+	if(endTypeFlag && endTypeFlag=="1"){
+		var endDate = $("#endDate").val();
+		var endHour = $("#endTimeH").val();
+		var endMinute = $("#endTimeM").val();
+		var dateStr = endDate+" "+endHour+":"+endMinute+":00";
+		data.endTime = dateStr; 
+		data.duration = "";
+	}
+	
+	//永久会议修改
+	var permanentConf = $('#permanentConf_id').val();
+	if(permanentConf && permanentConf=="1"){
+		data.permanentConf = permanentConf;
+		var endDate = $("#endDate").val();
+		var endHour = $("#endTimeH").val();
+		var endMinute = $("#endTimeM").val();
+		var dateStr = endDate+" "+endHour+":"+endMinute+":00";
+		data.endTime = dateStr;
+	}
+	
 	//会议功能
 	var confType_value =[];    
 	$('input[name="confType"]:checked').each(function(){    
@@ -519,6 +628,8 @@ function createMeetSuccess(result) {
 	frame.data("data", result);
 	$("#confNameSpan").text(confBase.confName);   //会议主题
 	var cycleType = confCycle.cycleType;
+	var infiniteFlag = confCycle.infiniteFlag;
+	var repeatCount = confCycle.repeatCount;
 	var cycleOption = 1;
 	if(confCycle.cycleType == 1){
 		cycleType = validString.pageRequired.firCycleType;    //周期类型:日循环会议
@@ -541,6 +652,13 @@ function createMeetSuccess(result) {
 	if(cycleOption != 0){
 		cycleTime = cycleTimeLz.substring(0, 10) + "----" + cycleTimeRz.substring(0, 10);
 		$("#cycleTimeSpan").text(cycleTime);	 //周期时间
+		if(infiniteFlag == 1){
+			$("#cycleTimeSpan").text(validString.pageRequired.infiniteType);
+		}
+		if(repeatCount != 0){
+			var repeatText = validString.pageRequired.repeatCountLeft + repeatCount + validString.pageRequired.repeatCountRight;
+			$("#cycleTimeSpan").text(repeatText);
+		}
 	}else{
 		$(".cycleTimeTRD").hide();	 //周期时间
 	}	
@@ -607,7 +725,7 @@ jQuery(function($) {
 	} else {
 		$.datepicker.setDefaults( $.datepicker.regional[ "en-GB" ] );
 	}
-	$("#startTime, #endTime, #startDate").datepicker({
+	$("#startTime, #endTime, #startDate, #endDate").datepicker({
 		minDate: 0,
 		changeMonth: true,
 		changeYear: true,			
@@ -619,15 +737,27 @@ jQuery(function($) {
 			$(this).trigger("blur");
 		}
 	});
-	
+	//设置结束时间
+	$(".endTypeRadio").change(function() {
+		var value = $(this).val();
+		if (value=="1") {
+			$(".endDateTr").show();
+			$(".durationTR").hide();
+		} else {
+			$(".endDateTr").hide();
+			$(".durationTR").show();
+		}
+	});	
 	//设置公开会议
 	$(".allowPublic").change(function() {
 		var value = $(this).val();
 		if (value=="1") {
 			$(".publicPassSet").show();
+			$(".confInviterTR").hide();
 		} else {
 			$('input:radio[name="passSetRadio"]:eq(1)').attr("checked",'checked');
 			$(".publicPassSet").hide();
+			$(".confInviterTR").show();
 			$("#confPassTR").hide();
 			$("#confPass").val("");
 			$("#confirmPassTR").hide();
@@ -648,6 +778,33 @@ jQuery(function($) {
 			$("#confirmPass").val("");
 		}
 	});	
+	
+	//是否无限期循环
+	$(".infiniteFlag").change(function() {
+		var value = $(this).val();
+		if(value == 1){
+			$("#repeatCount").attr("disabled",'disabled');
+			$("#endTime").attr("disabled",'disabled');
+		}else if( value == 2){
+			$("#repeatCount").removeAttr("disabled",'disabled');
+			$("#endTime").attr("disabled",'disabled');
+		}else{
+			$("#endTime").removeAttr("disabled",'');
+		}
+	});
+	
+	//设置永久会议
+	$(".permanentOption").change(function() {
+		var value = $(this).val();
+		if (value==1) {
+			$(".cycleOptionTR").hide();
+			$(".durationTR").hide();
+		} else {
+			$(".cycleOptionTR").show();
+			$(".durationTR").show();
+		} 
+	});
+
 	//设置会议类型
 	$(".confType").change(function() {
 		var value = $(this).val();
@@ -696,9 +853,17 @@ jQuery(function($) {
 		if (value==1) {
 			$(".cycleEnable").show();//开启周期
 			$(".startDateDiv").hide();
+			$(".endTypeTR").hide();
+			$(".endDateTr").hide();
+			$(".durationTR").show();
+			$('input:radio[name="endType"]:eq(1)').attr("checked",'checked');
+			$.uniform.update();
 		} else {
 			$(".cycleEnable").hide();//关闭周期
 			$(".startDateDiv").show();
+			$(".endTypeTR").show();
+			$(".endDateTr").hide();
+			$(".durationTR").show();
 		}
 	});
 	//选择周期类型

@@ -15,7 +15,7 @@
 	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"></bean>
 	<bean id="libernate.datasource.bizconf.audio" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://10.184.129.241:3306/bizconf?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8" />
+		<property name="url" value="jdbc:mysql://10.184.129.240:3306/bizconf?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8" />
 		<property name="username" value="bizconf" />
 		<property name="password" value="bizconf" />
 		<property name="maxActive" value="5" />

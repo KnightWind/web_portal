@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>会议缺省设置</title>
+<title>${LANG['bizconf.jsp.conf_default_setup.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css?ver=${version}">
@@ -22,13 +22,19 @@
 <c:set var="CONF_VIDEO_TYPE_WEBBAND" value="${CONF_VIDEO_TYPE_WEBBAND }"></c:set>
 <script type="text/javascript">
 $(function() {
-	$("#maxAudio").attr("value","${confConfig.maxAudio}");
-	var maxVideoNum = "${confConfig.maxVideo}";
-	var empowerVideoNum = "${userEmpower.videoNumber}";
+	
+	var maxVideoNum = parseInt("${confConfig.maxVideo}", 10);
+	var maxAudioNum = parseInt("${confConfig.maxAudio}", 10);
+	var empowerVideoNum = parseInt("${userEmpower.videoNumber}", 10);
+	var empowerAudioNum = parseInt("${userEmpower.audioNumber}", 10);
 	if(maxVideoNum>empowerVideoNum){
 		maxVideoNum = empowerVideoNum;
 	}
+	if(maxAudioNum>empowerAudioNum){
+		maxAudioNum = empowerAudioNum;
+	}
 	$("#maxVideo").attr("value",maxVideoNum);
+	$("#maxAudio").attr("value",maxAudioNum);
 	var videoType = "${confConfig.videoType}";
 	if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
 		$("input:radio[name=videoType]:eq(0)").attr("checked",'checked');
@@ -38,7 +44,7 @@ $(function() {
 		$("input:radio[name=videoType]:eq(2)").attr("checked",'checked');
 	}
 	$("#aheadTimes").val("${confConfig.aheadTimes}");
-	//设置视频
+	//${LANG['bizconf.jsp.conf_default_setup.res2']}
 	var isVideoFlag = "${isVideoFlag}"; 
 	if(isVideoFlag){
 		$(".videoTR").show();
@@ -46,19 +52,19 @@ $(function() {
 		$(".videoTR").hide();
 	}
 	
-	//会议模式
+	//${LANG['bizconf.jsp.conf_default_setup.res3']}
 	if("${confModel}" == 1){
 		$("input:radio[name=confModel]:eq(0)").attr("checked",'checked');
 	}else if("${confModel}" == 0){
 		$("input:radio[name=confModel]:eq(1)").attr("checked",'checked');
 	}
 	
-	//默认开启麦克风
+	//${LANG['bizconf.jsp.conf_default_setup.res4']}
 	if("${micStatus}" == 1){
 		$("input:radio[name=micStatus]:eq(0)").attr("checked",'checked');
 	}
 
-	//电话功能
+	//${LANG['bizconf.jsp.conf_default_setup.res5']}
 	var isPhoneFlag = "${isPhoneFlag}";
 	if(isPhoneFlag){
 		var phoheFuc = "${confConfig.confType}"; 
@@ -72,7 +78,7 @@ $(function() {
 		$(".callFunc").hide();
 	}
 
-	//设置自动外呼功能
+	//${LANG['bizconf.jsp.conf_default_setup.res6']}
 	var isAutoFlag = "${isAutoFlag}";
 	if(isAutoFlag){
 		$('input:radio[name="confType"]').change(function() {
@@ -84,14 +90,14 @@ $(function() {
 				$("input:radio[name=allowCall]:eq(1)").attr("checked",'checked');
 			}
 		});
-		//自动外呼
+		//${LANG['bizconf.jsp.conf_default_setup.res7']}
 		var callFunc = "${allowCall}"; 
 		if(callFunc=="1"){
 			$("input:radio[name=allowCall]:eq(0)").attr("checked",'checked');
 		}
 	}	
 	
-	//权限
+	//${LANG['bizconf.jsp.conf_default_setup.res8']}
 	if("${changePage}"==1){
 		$("input:checkbox[name=changePage]:eq(0)").attr("checked",'checked');
 	}
@@ -108,7 +114,7 @@ $(function() {
 		$("input:checkbox[name=chatParticipants]:eq(0)").attr("checked",'checked');
 	}
 	
-	//会议功能
+	//${LANG['bizconf.jsp.conf_default_setup.res9']}
 	if("${shareDocs}"==1){
 		$("input:checkbox[name=shareDocs]:eq(0)").attr("checked",'checked');
 	}
@@ -149,10 +155,10 @@ var maxUser = parseInt("${defaultLicence}", 10);
 $(function() {
 	var ruleString = {
 		required: {
-			"maxUser": "请输入参会方数"
+			"maxUser": "${LANG['bizconf.jsp.conf_default_setup.res10']}"
 		},
 		rangelength: {
-			"maxUser": "参会方数至少2位, 最大不超过"+maxUser+"位",
+			"maxUser": "${LANG['bizconf.jsp.conf_default_setup.res11']}2${LANG['bizconf.jsp.conf_default_setup.res12']}, ${LANG['bizconf.jsp.conf_default_setup.res13']}"+maxUser+"${LANG['bizconf.jsp.conf_default_setup.res12']}",
 			"aheadTimes": "${LANG['valid.input.aheadTimes']}"
 		}
 	};
@@ -206,105 +212,107 @@ function saveInfo() {
 <div class="main_content">
 <form name="confConfigForm" id="confConfigForm" action="/user/confConfig/updateConfConfig" method="post">
   <div class="intercalate_main_top_01">
-	<h3>会议缺省设置</h3>
-    <p>设置您常用的会议参数, 每次安排会议无需重复选择。</p>
+	<h3>${LANG['bizconf.jsp.conf_default_setup.res1']}</h3>
+    <p>${LANG['bizconf.jsp.conf_default_setup.res14']}, ${LANG['bizconf.jsp.conf_default_setup.res15']}</p>
   </div>
   <table class="Personal_settings_main_01" cellpadding="0" cellspacing="0" border="0" >
 <!--   	<tr height="40"> -->
-<!--     	<td align="right" width="160">最大参会方数</td> -->
+<!--     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res16']}</td> -->
 <!--         <td align="left" class="confsetTD"> -->
 <%--         	<input class="Personal_settings_01 skipThese" id="maxUser" name="maxUser" type="text"  value="${confConfig.maxUser}"/> --%>
-<%--         	&nbsp;<span style="color: red">参会方数不可超过: ${defaultLicence }</span> --%>
+<%--         	&nbsp;<span style="color: red">${LANG['bizconf.jsp.conf_default_setup.res17']}: ${defaultLicence }</span> --%>
 <!--         </td> -->
 <!--     </tr> -->  
     <tr height="40">
-    	<td align="right" width="160">允许最大音频路数</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res18']}</td>
         <td align="left" class="confsetTD">
         	<select name="maxAudio" id="maxAudio" class="video_channels">
-				<c:forEach var="h" begin="0" end="16" step="1">
-					<option value="${h}">${h} 路</option>
+				<c:forEach var="h" begin="0" end="${audioNumber }" step="1">
+					<option value="${h}">${h} ${LANG['bizconf.jsp.conf_default_setup.res19']}</option>
 				</c:forEach>
 		 	</select>
 	 	</td>
     </tr>
     
     <tr height="40" class="videoTR">
-    	<td align="right" width="160">允许最大视频路数</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res20']}</td>
         <td align="left" class="confsetTD">
 	        <select name="maxVideo" id="maxVideo" class="video_channels">
-				<c:forEach var="h" begin="0" end="${videoNumber }" step="1">
-					<option value="${h}">${h} 路</option>
+	        	<c:forEach var="h" begin="0" end="${videoNumber }" step="1">
+	        		<c:if test="${h<7 || h==16}">
+	        			<option value="${h}">${h} ${LANG['bizconf.jsp.conf_default_setup.res19']}</option>
+	        		</c:if>
 				</c:forEach>
 		    </select>
         </td>
     </tr>
     <tr height="40">
-    	<td align="right" width="160">视频画质设置</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res21']}</td>
         <td align="left" class="confsetTD">
         	<ul class="video_set">
         	    <cc:confList var="CONF_VIDEO_TYPE_FLUENCY"/>
 	            <cc:confList var="CONF_VIDEO_TYPE_DISTINCT"/>
 	            <cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
-        		<li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_FLUENCY }" checked="checked"/>优先保证视频流畅</li>
-                <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_DISTINCT }" />优先保证画质清晰</li>
-                <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_WEBBAND }" />优先保证网络带宽</li>
+        		<li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_FLUENCY }" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res22']}</li>
+                <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_DISTINCT }" />${LANG['bizconf.jsp.conf_default_setup.res23']}</li>
+                <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_WEBBAND }" />${LANG['bizconf.jsp.conf_default_setup.res24']}</li>
            </ul>
        </td>
     </tr>
     
     <tr height="40">
-    	<td align="right" width="160">会议提前时间</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res25']}</td>
         <td align="left" class="confsetTD">
-        	<input class="Personal_settings_01 skipThese" id="aheadTimes" name="aheadTimes" type="text"  value="${confConfig.aheadTimes}" />分钟</td>
+        	<input class="Personal_settings_01 skipThese" id="aheadTimes" name="aheadTimes" type="text"  value="${confConfig.aheadTimes}" />${LANG['bizconf.jsp.attended_conf_list.res10']}</td>
     </tr>
     
      	<tr height="40">
-    	<td align="right" width="160">会议模式</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res3']}</td>
         <td align="left" class="confsetTD">
-        	<input class="Personal_settings_01" name="confModel" type="radio" value="1" checked="checked"/>主持人模式
-          	<input class="Personal_settings_01" name="confModel" type="radio" value="0" />自由模式</td>
+        	<input class="Personal_settings_01" name="confModel" type="radio" value="1" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res26']}
+          	<input class="Personal_settings_01" name="confModel" type="radio" value="0" />${LANG['bizconf.jsp.conf_default_setup.res27']}</td>
         </td>
     </tr>        
  	<tr height="40">
-    	<td align="right" width="160">默认开启麦克风</td>   <!-- 麦克风状态 -->
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res4']}</td>   <!-- ${LANG['bizconf.jsp.conf_default_setup.res28']} -->
         <td align="left" class="confsetTD">
-          	<input class="Personal_settings_01" name="micStatus" type="radio" value="1" />是
-          	<input class="Personal_settings_01" name="micStatus" type="radio" value="0" checked="checked"/>否
+          	<input class="Personal_settings_01" name="micStatus" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res29']}
+          	<input class="Personal_settings_01" name="micStatus" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res30']}
         </td>
     </tr>        
  	<tr height="40" class="phoneFuc">
-    	<td align="right" width="160">电话功能</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res5']}</td>
         <td align="left" class="confsetTD">
-          	<input class="Personal_settings_01" name="confType" type="radio" value="1" />开启
-          	<input class="Personal_settings_01" name="confType" type="radio" value="0" checked="checked"/>关闭
+          	<input class="Personal_settings_01" name="confType" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res31']}
+          	<input class="Personal_settings_01" name="confType" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.attendConfloglist.res10']}
         </td>
     </tr>        
  	<tr height="40" class="callFunc">
-    	<td align="right" width="160">启动外呼</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res32']}</td>
         <td align="left" class="confsetTD">
-          	<input class="Personal_settings_01" name="allowCall" type="radio" value="1" />开启
-          	<input class="Personal_settings_01" name="allowCall" type="radio" value="0" checked="checked"/>关闭
+          	<input class="Personal_settings_01" name="allowCall" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res31']}
+          	<input class="Personal_settings_01" name="allowCall" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.attendConfloglist.res10']}
         </td>
     </tr>  
     
     <tr height="40">
-    	<td align="right" width="160">参会人权限</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res33']}</td>
         <td align="left" class="authority_set confsetTD">
-        	<input name="changePage" type="checkbox" value="1" />换页
-        	<input name="annotate" type="checkbox" value="1" />批注
-            <input name="chatAnyOne" type="checkbox" value="1" />与所有人聊天
-            <input name="chatCompere" type="checkbox" value="1" />与主持人聊天
-            <input name="chatParticipants" type="checkbox" value="1" />与参会人聊天</td>
+        	<input name="changePage" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res34']}
+        	<input name="annotate" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res35']}
+            <input name="chatAnyOne" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res36']}
+            <input name="chatCompere" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res37']}
+            <input name="chatParticipants" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res38']}</td>
     </tr>
     <tr height="40">
-    	<td align="right" width="160">会议功能</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res9']}</td>
         <td align="left"  class="authority_set01 confsetTD">
-	        <input name="shareDocs" type="checkbox" value="1" />文档共享
-	        <input name="shareScreen" type="checkbox" value="1" />屏幕共享
-	        <input name="shareMedia" id="shareMedia" type="checkbox" value="1" /><label id="shareMediaM">媒体共享</label>
-	        <input name="whiteBoard" type="checkbox" value="1" />白板
-	        <input name="fileTrans" type="checkbox" value="1" />文件传输
-	        <input name="record" id="record" type="checkbox" value="1" /><label id="recordM">录制</label>
+	        <input name="shareDocs" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res39']}
+	        <input name="shareScreen" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res40']}
+	        <input name="shareMedia" id="shareMedia" type="checkbox" value="1" /><label id="shareMediaM">${LANG['bizconf.jsp.conf_default_setup.res41']}</label>
+	        <input name="whiteBoard" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res42']}
+	        <input name="fileTrans" type="checkbox" value="1" />${LANG['bizconf.jsp.conf_default_setup.res43']}
+	        <input name="record" id="record" type="checkbox" value="1" /><label id="recordM">${LANG['bizconf.jsp.conf_default_setup.res44']}</label>
         </td>
     </tr>
     <tr>
@@ -312,7 +320,7 @@ function saveInfo() {
         <td>
         <div style="margin-top: 20px;">
         <a class="Personal_settings_main_hold" style="float:left;margin-top:0px;" href="javascript:;" onclick="saveInfo()">
-        	<img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" margin-right:5px;" />保存</a>
+        	<img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.conf_default_setup.res45']}</a>
 	        	<c:if test="${!empty infoMessage}">
 		 				<img src="/static/images/ys_r_bg.jpg" width="16" height="14" style="margin-left:15px;margin-top:5px;margin-right: 5px"/><label style='color:#258021'>${infoMessage}</label>
 		 			</c:if>

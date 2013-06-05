@@ -3,7 +3,8 @@ package com.bizconf.audio.service.impl;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.dao.DAOProxy;
@@ -18,9 +19,7 @@ import com.libernate.liberd.Libernate;
  */
 public class BaseService {
 	
-//	protected Log logger = LogFactory.getLog(this.getClass());
-	protected final Logger logger = Logger.getLogger(BaseService.class);
-	
+	protected Log logger = LogFactory.getLog(this.getClass());
 	
 	protected static Libernate libernate = DAOProxy.getLibernate();
 	

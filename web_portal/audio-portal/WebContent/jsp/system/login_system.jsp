@@ -45,9 +45,9 @@ $(function() {
             'authCode'  : {required:true, rangelength: [4, 4]}
         },
         messages: {
-            'loginName' : {required:'登录名必须填'},
-            'loginPass' : {required:'密码必须填'},
-            'authCode'  : {required:'验证码必须填', rangelength: "字符长度为4位"}
+            'loginName' : {required:'${LANG['bizconf.jsp.admin.login.res1']}'},
+            'loginPass' : {required:'${LANG['bizconf.jsp.admin.login.res2']}'},
+            'authCode'  : {required:'${LANG['bizconf.jsp.admin.login.res3']}', rangelength: "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"}
         },
 
         success: function (label) {
@@ -100,7 +100,7 @@ function successDialog(message) {
 	});
 }
 </script>
-<title>登录</title>
+<title>${LANG['bizconf.jsp.admin.login.res6']}</title>
 </head>
 
 <body>
@@ -110,23 +110,23 @@ function successDialog(message) {
 	<div class="login_main" align="center">
     	<div class="main_top">
 <%--         <img class="logo" src="${baseUrlStatic}/images/login_logo.gif" width="94" height="44" /> --%>
-        <span class="logo-label">商会云系统管理平台</span>
+        <span class="logo-label">${LANG['bizconf.jsp.system.header.res1']}</span>
         </div>        
     	<div class="main_bottom">
        	    <div class="m_left"><img class="ico01" src="${baseUrlStatic}/images/ico13.gif" width="107" height="97" /></div>
         	<div class="m_right">
-            	<div class="m_right01"><span>登录名</span><input name="loginName" id="loginName" type="text"/></div>
-                <div class="m_right02"><span>密&nbsp;&nbsp;码</span><input name="loginPass" id="loginPass" type="password"/></div>
+            	<div class="m_right01"><span>${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</span><input name="loginName" id="loginName" type="text"/></div>
+                <div class="m_right02"><span>${LANG['bizconf.jsp.admin.login.res7']}&nbsp;&nbsp;${LANG['bizconf.jsp.admin.login.res8']}</span><input name="loginPass" id="loginPass" type="password"/></div>
                 <div class="m_right03">
-                	<span>验证码</span>
+                	<span>${LANG['bizconf.jsp.admin.login.res9']}</span>
                     <input name="authCode" type="text" id="authCode"/>
-                    <img id="authCodeImg" class="yanzheng" alt="刷新" src=""  width="0" height="0" onclick="randomImg()"/>
-                    <a class="code_link" href="javascript:;" onclick="randomImg()">换一张</a>
+                    <img id="authCodeImg" class="yanzheng" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" onclick="randomImg()"/>
+                    <a class="code_link" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.admin.login.res11']}</a>
                     </div>
                
              <div class="m_right04">
-             <input type="submit" class="denglu" name="loginBtn" value="登录"/>
-             <a class="wangji" href="/system/password/forget">忘记密码？</a>             
+             <input type="submit" class="denglu" name="loginBtn" value="${LANG['bizconf.jsp.admin.login.res6']}"/>
+             <a class="wangji" href="/system/password/forget">${LANG['bizconf.jsp.admin.login.res12']}</a>             
              </div> 
              </div>
  	    </div>

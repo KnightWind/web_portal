@@ -87,7 +87,7 @@ public class ConfLogicImpl extends BaseService implements ConfLogic {
 			userLicense =  getUserEffetLicense(currentUser, startGmtTime, endGmtTime);   //获取当前用户（主持人）有效license总数
 			licenseMap.put(DateUtil.dateToString(startGmtTime,"yyyy-MM-dd"), (userLicense-license) <= 0? 0 : (userLicense-license));
 		}else{   //周期会议
-			List<Date> dateList = DateUtil.getCycleDateFromScope(confCycle.getBeginDate(), confCycle.getEndDate(), confCycle.getCycleType(), confCycle.getCycleValue());
+			List<Date> dateList = DateUtil.getCycleDateFromScope(confCycle.getBeginDate(), confCycle.getEndDate(), confCycle.getCycleType(), confCycle.getCycleValue(), ConstantUtil.CYCLE_CONF_DATE_LIMIT);
 			if(dateList != null && dateList.size() > 0){
 				for(Date eachDate:dateList){
 					Date eachStartTime = null;
@@ -126,7 +126,7 @@ public class ConfLogicImpl extends BaseService implements ConfLogic {
 			siteLicense =  getSiteEffetLicense(siteBase, startGmtTime, endGmtTime);   //获取当前用户（主持人）有效license总数
 			licenseMap.put(DateUtil.dateToString(startGmtTime,"yyyy-MM-dd"), (siteLicense-license) <= 0? 0 : (siteLicense-license));
 		}else{   //周期会议
-			List<Date> dateList=DateUtil.getCycleDateFromScope(confCycle.getBeginDate(), confCycle.getEndDate(), confCycle.getCycleType(), confCycle.getCycleValue());
+			List<Date> dateList=DateUtil.getCycleDateFromScope(confCycle.getBeginDate(), confCycle.getEndDate(), confCycle.getCycleType(), confCycle.getCycleValue(), ConstantUtil.CYCLE_CONF_DATE_LIMIT);
 			if(dateList!=null && dateList.size() > 0){
 				for(Date eachDate:dateList){
 					Date eachStartTime = null;
@@ -165,7 +165,7 @@ public class ConfLogicImpl extends BaseService implements ConfLogic {
 			siteLicense =  getSiteEffetLicense(siteBase, startGmtTime, endGmtTime);   //获取当前用户（主持人）有效license总数
 			licenseMap.put(DateUtil.dateToString(startGmtTime,"yyyy-MM-dd"), (siteLicense-license) <= 0? 0 : (siteLicense-license));
 		}else{   //周期会议
-			List<Date> dateList=DateUtil.getCycleDateFromScope(confCycle.getBeginDate(), confCycle.getEndDate(), confCycle.getCycleType(), confCycle.getCycleValue());
+			List<Date> dateList=DateUtil.getCycleDateFromScope(confCycle.getBeginDate(), confCycle.getEndDate(), confCycle.getCycleType(), confCycle.getCycleValue(), ConstantUtil.CYCLE_CONF_DATE_LIMIT);
 			if(dateList!=null && dateList.size() > 0){
 				for(Date eachDate:dateList){
 					Date eachStartTime = null;

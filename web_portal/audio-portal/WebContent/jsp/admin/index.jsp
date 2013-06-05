@@ -5,7 +5,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<TITLE>${siteBase.siteName}--站点管理系统</TITLE>
+<TITLE>${siteBase.siteName}--${LANG['bizconf.jsp.admin.index.res1']}</TITLE>
 
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
@@ -17,8 +17,15 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/widgets.js"></script>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js"></SCRIPT>
 
-
 <script type="text/javascript">
+
+	jQuery(function($) {
+		var needResetPass = "${needResetPass}";
+		if(needResetPass != null && needResetPass =="true"){
+			resetPass();
+		}
+	});
+
 	$(document).ready(function() {
 		$("#langForm").find("select").not(".skipThese").uniform();
 		$("#langForm select").change(function () {
@@ -67,11 +74,16 @@
 				successDialog(result.message);
 				showURL("/admin/notice/list");
 			} else if(type==VIEW_TYPE.organiz) {
-				successDialog("新增站点下的组织机构成功");
-				showURL("/admin/org/orgList");
+				successDialog("${LANG['bizconf.jsp.admin.index.res2']}");
+// 				showURL("/admin/org/orgListIndex");
+// 				$("#mainFrame")[0].contentWindow.addOrg(result);
+				$("#mainFrame")[0].contentWindow.refreshIframe();
 			} else if(type==VIEW_TYPE.assignUser) {
-				successDialog("分配成功");
-				showURL("/admin/org/orgList");
+				successDialog("${LANG['bizconf.jsp.admin.index.res3']}");
+// 				showURL("/admin/org/orgList");
+				$("#mainFrame")[0].contentWindow.assignUser();
+			} else if(type==VIEW_TYPE.relateOrg) {
+				//console.log(result);
 			}
 		});
 		$("body").bind(EVENT_UPDATE, function(event, result, type) {
@@ -88,8 +100,10 @@
 				successDialog(result.message);
 				showURL("/admin/notice/list");
 			} else if(type==VIEW_TYPE.organiz) {
-				successDialog("修改站点下的组织机构成功");
-				showURL("/admin/org/orgList");
+				successDialog("${LANG['bizconf.jsp.admin.index.res4']}");
+// 				showURL("/admin/org/orgList");
+// 				$("#mainFrame")[0].contentWindow.updateOrg(result);
+				$("#mainFrame")[0].contentWindow.refreshIframe();
 			}
 		});
 		$("body").bind(EVENT_DELETE, function(event, result) {
@@ -129,34 +143,64 @@
 			});
 		}
 	}
-	//create or update org
-	function createOrUpdateOrg(id) {
-		if (id) {
-			$("<div id=\"organizDiv\"/>").showDialog({
-				"title" : "修改机构",
-				"dialogClass" : "ui-dialog-smile",
-				"url" : "/admin/org/update/" + id,
-				"type" : VIEW_TYPE.organiz,
-				"action" : ACTION.update,
-				"width" : 407,
-				"height" : 180
-			});
-		} else {
-			$("<div id=\"organizDiv\"/>").showDialog({
-				"title" : "添加机构",
-				"dialogClass" : "ui-dialog-smile",
-				"url" : "/admin/org/add",
-				"type" : VIEW_TYPE.organiz,
-				"action" : ACTION.create,
-				"width" : 407,
-				"height" : 180
-			});
-		}
+	
+	function relateOrg(){
+		$("<div id=\"relateOrgDiv\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.admin.index.res5']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/admin/org/relateOrg",
+			"type" : VIEW_TYPE.relateOrg,
+			"action" : ACTION.create,
+			"width" : 350,
+			"height" : 300
+		});
 	}
-	//获取未分配组织机构的用户列表
+	
+	/*
+	 * ${LANG['bizconf.jsp.admin.index.res6']}
+	 */
+	function resetPass(){
+		$("<div id=\"resetPass\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.admin.index.res7']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/admin/resetPass",
+			"type" : VIEW_TYPE.notice,
+			"action" : ACTION.view,
+			"width" : 474,
+			"height" : 220,
+			"hideClose": true
+		});
+		
+	}
+	
+	//create or update org
+	function updateOrg(id) {
+		$("<div id=\"organizDiv\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.admin.index.res8']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/admin/org/update/" + id,
+			"type" : VIEW_TYPE.organiz,
+			"action" : ACTION.update,
+			"width" : 407,
+			"height" : 200
+		});
+	}
+	
+	function createOrg(pid) {
+		$("<div id=\"organizDiv\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.admin.index.res9']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/admin/org/add?pId="+pid,
+			"type" : VIEW_TYPE.organiz,
+			"action" : ACTION.create,
+			"width" : 407,
+			"height" : 200
+		});
+	}
+	//${LANG['bizconf.jsp.admin.index.res10']}
 	function getOrgUserList(id) {
 		$("<div id=\"assignUserDiv\"/>").showDialog({
-			"title" : "获取未分配组织机构的用户列表",
+			"title" : "${LANG['bizconf.jsp.admin.index.res11']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "/admin/org/getOrgUserList/" + id,
 			"type" : VIEW_TYPE.assignUser,
@@ -219,8 +263,8 @@
 				"dialogClass" : "ui-dialog-smile",
 				"type" : VIEW_TYPE.siteUser,
 				"action" : ACTION.update,
-				"width" : 450,
-				"height" : 520
+				"width" : 500,
+				"height" : 545
 			});
 		} else {
 			$("<div id=\"userDiv\"/>").showDialog({
@@ -229,8 +273,8 @@
 				"dialogClass" : "ui-dialog-smile",
 				"type" : VIEW_TYPE.siteUser,
 				"action" : ACTION.create,
-				"width" : 450,
-				"height" : 520
+				"width" : 500,
+				"height" : 545
 			});
 		}
 	}
@@ -265,7 +309,7 @@
 	
 	function viewUser(id) {
 		$("<div id=\"viewUserDiv\"/>").showDialog({
-			"title":"用户信息",
+			"title":"${LANG['bizconf.jsp.admin.index.res12']}",
 			"url" : "/admin/entUser/toViewUserBase?id="+id,
 			"dialogClass" : "ui-dialog-smile",
 			"width" : 370,
@@ -310,9 +354,9 @@
 	
 	function logout() {
 		$("<div/>").confirmDialog({
-			"title": "提示",
+			"title": "${LANG['bizconf.jsp.admin.index.res13']}",
 			"dialogClass" : "ui-dialog-smile",
-			"message" : "确定要退出吗?",
+			"message" : "${LANG['bizconf.jsp.admin.index.res14']}?",
 			"type": "confirm",
 			"actions": ["${LANG['system.ok']}", "${LANG['system.cancel']}"],
 			"callback" : function() {
@@ -341,7 +385,7 @@
 	
 	function showConflogs(id) {
 		$("<div id=\"logview\"/>").showDialog({
-			"title" : "入会详情",
+			"title" : "${LANG['bizconf.jsp.admin.index.res15']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "<%=request.getContextPath()%>/user/conflog/loglist?confId="+id,
 			"type" : VIEW_TYPE.group,
@@ -351,9 +395,33 @@
 		});
 	}
 	
+	function showTelDetail(id) {
+		$("<div id=\"billingView\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.index.res8']}",
+			"dialogClass" : "ui-dialog-user",
+			"url" : "/common/billing/showTelDetail?id="+id,
+			"type" : VIEW_TYPE.billing,
+			"action" : ACTION.create,
+			"width" : 624,
+			"height" : 587
+		});
+	}
+	
+	function showDataFeeDetail(id) {
+		$("<div id=\"dataFeeView\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.index.res8']}",
+			"dialogClass" : "ui-dialog-user",
+			"url" : "/common/billing/showDataDetail?id="+id,
+			"type" : VIEW_TYPE.billing,
+			"action" : ACTION.create,
+			"width" : 624,
+			"height" : 587
+		});
+	}
+	
 	function showAttendConfs(id) {
 		$("<div id=\"attendconfs\"/>").showDialog({
-			"title" : "参会详情",
+			"title" : "${LANG['bizconf.jsp.admin.index.res16']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "<%=request.getContextPath()%>/user/conflog/attendConflist?userId="+id,
 			"type" : VIEW_TYPE.group,
@@ -362,14 +430,26 @@
 			"height" : 534
 		});
 	}
+	//${LANG['bizconf.jsp.admin.index.res17']}
+	function showOrgUsers(id) {
+		$("<div id=\"orgUsersDiv\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.admin.index.res18']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/admin/org/getOrgSubUserList/" +id,
+			"type" : VIEW_TYPE.group,
+			"action" : ACTION.create,
+			"width" : 804,
+			"height" : 420
+		});
+	}
 </script>
 </HEAD>
 
 
 <body style="min-width:1002px;">
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res2']}-->
 <jsp:include page="header.jsp" />
-<!--页面左部-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res8']}-->
 <div class="main_left" >
  <ul class="nav">
  		<li><span class="nav_top05"><a href="#">${LANG['system.menu.config.user']}</a></span>
@@ -378,7 +458,7 @@
             <li class="b_line"><a class="li_alink" href="/admin/entUser/list" target="mainFrame">${LANG['company.menu.admin.manage']}</a></li>
           </c:if>
             <li class="b_line"><a class="li_alink li_actived" href="/admin/entUser/listAll" target="mainFrame">${LANG['company.menu.user.manage']}</a></li>
-            <li><a class="li_alink" href="/admin/org/orgList" target="mainFrame">机构管理</a></li>
+          	<li><a class="li_alink" href="/admin/org/orgListIndex" target="mainFrame">${LANG['bizconf.jsp.admin.index.res19']}</a></li>
           </ul>
         </li>
         <c:if test="${isSuperSiteAdmin}">
@@ -407,6 +487,11 @@
             <li><a class="li_alink" href="/admin/siteUserLogs/list" target="mainFrame">${LANG['system.menu.info.log.userOperator']}</a></li>
           </ul>
         </li>
+<%--        <li><span class="nav_top04"><a href="#">${LANG['bizconf.jsp.admin.index.res20']}</a></span>--%>
+<%--          <ul class="sub_nav">--%>
+<%--            <li class="b_line"><a class="li_alink" href="/common/billing/goSiteBilling" target="mainFrame">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>--%>
+<%--          </ul>--%>
+<%--        </li>--%>
         <li><span class="nav_top06"><a href="#">${LANG['system.menu.info.user.manage']}</a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" class="li_alink" href="/admin/profile" target="mainFrame">${LANG['system.menu.info.user.manage']}</a></li>
@@ -417,7 +502,7 @@
 <div class="main_right">
 	<iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/admin/entUser/listAll"></iframe>
 </div>
-<!--页面下部-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res24']}-->
  <div id="copy">
 <span class="copy_text" >Copyright © 2003-2012 Shanghai Shrine Telecom Co., Ltd. 2012. All rights reserved.Version:eMeeting V5.0</span>
 </div>

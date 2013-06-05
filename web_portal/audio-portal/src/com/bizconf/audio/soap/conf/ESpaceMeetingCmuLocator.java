@@ -22,7 +22,7 @@ public class ESpaceMeetingCmuLocator extends org.apache.axis.client.Service impl
     }
 
     // Use to get a proxy class for ESpaceMeetingAsSoapConfManagementService
-    private java.lang.String ESpaceMeetingAsSoapConfManagementService_address = "http://10.184.130.16:8996/eSpaceMeeting/ConfManagementService";
+    private java.lang.String ESpaceMeetingAsSoapConfManagementService_address = "http://127.0.0.1:8996/eSpaceMeeting/ConfManagementService";
 
     public java.lang.String getESpaceMeetingAsSoapConfManagementServiceAddress() {
         return ESpaceMeetingAsSoapConfManagementService_address;
@@ -67,7 +67,7 @@ public class ESpaceMeetingCmuLocator extends org.apache.axis.client.Service impl
 
 
     // Use to get a proxy class for ESpaceMeetingAsSoapBusinessService
-    private java.lang.String ESpaceMeetingAsSoapBusinessService_address = "http://10.184.130.16:8996/eSpaceMeeting/BusinessService";
+    private java.lang.String ESpaceMeetingAsSoapBusinessService_address = "http://127.0.0.1:8996/eSpaceMeeting/BusinessService";
 
     public java.lang.String getESpaceMeetingAsSoapBusinessServiceAddress() {
         return ESpaceMeetingAsSoapBusinessService_address;
@@ -112,7 +112,7 @@ public class ESpaceMeetingCmuLocator extends org.apache.axis.client.Service impl
 
 
     // Use to get a proxy class for ESpaceMeetingAsSoapBaseService
-    private java.lang.String ESpaceMeetingAsSoapBaseService_address = "http://10.184.130.16:8996/eSpaceMeeting/BaseService";
+    private java.lang.String ESpaceMeetingAsSoapBaseService_address = "http://127.0.0.1:8996/eSpaceMeeting/BaseService";
 
     public java.lang.String getESpaceMeetingAsSoapBaseServiceAddress() {
         return ESpaceMeetingAsSoapBaseService_address;

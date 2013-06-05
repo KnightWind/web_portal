@@ -46,6 +46,19 @@ public class BaseConfig {
 	}
 	
 	
+	public int getInt(String key,int defValue){
+		if(prop.getProperty(key)!=null){
+			try{
+				return  Integer.parseInt(prop.getProperty(key));
+			}catch (Exception e) {
+				// TODO: handle exception
+				return defValue;
+			}
+		}else{
+			return defValue;
+		}
+	}
+	
 	public static void main(String args[]){
 		
 		BaseConfig config = BaseConfig.getInstance();

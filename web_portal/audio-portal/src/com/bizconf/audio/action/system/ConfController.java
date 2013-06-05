@@ -17,6 +17,7 @@ import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.SortConstant;
 import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.ConfUserCount;
+import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.PageModel;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SystemUser;
@@ -48,13 +49,13 @@ public class ConfController extends BaseController{
 	 */
 	@SuppressWarnings("unchecked")
 	@AsController(path = "list")
-	public Object list(HttpServletRequest request,HttpServletResponse response) {
+	public Object list(HttpServletRequest request, PageModel pageModel, HttpServletResponse response) {
+		List<ConfBase> confList = null;
 		SystemUser  currentSysUser = userService.getCurrentSysAdmin(request);
 		String pageNo=String.valueOf(request.getParameter("pageNo"));
 		String sortField=String.valueOf(request.getParameter("sortField"));
 		String titleOrSiteSign=String.valueOf(request.getParameter("titleOrSiteSign"));
 		String sortord=String.valueOf(request.getParameter("sortord"));
-		PageModel pageModel=new PageModel();
 		pageModel.setPageSize(ConstantUtil.PAGESIZE_DEFAULT);
 		if(titleOrSiteSign==null || "".equals(titleOrSiteSign.trim()) || "null".equals(titleOrSiteSign.trim().toLowerCase())){
 			titleOrSiteSign="";
@@ -66,19 +67,26 @@ public class ConfController extends BaseController{
 			sortField="";
 		}
 		pageModel.setPageNo(pageNo);
-		int rowsCount = 0;
-		if(currentSysUser.isSuperSystemAdmin()|| currentSysUser.isSystemClientServer()){    //权限控制
-			rowsCount = confService.countConfListByBaseCondition(titleOrSiteSign, null);
-		}else{
-			rowsCount = confService.countConfListByBaseCondition(titleOrSiteSign, currentSysUser.getId());
-		}
-		pageModel.setRowsCount(rowsCount);
-		List<ConfBase> confList = null;
+//		int rowsCount = 0;
+//		if(currentSysUser.isSuperSystemAdmin()|| currentSysUser.isSystemClientServer()){    //权限控制
+//			rowsCount = confService.countConfListByBaseCondition(titleOrSiteSign, null);
+//		}else{
+//			rowsCount = confService.countConfListByBaseCondition(titleOrSiteSign, currentSysUser.getId());
+//		}
+//		if(currentSysUser.isSuperSystemAdmin() || currentSysUser.isSystemClientServer()){    //权限控制
+//			confList = confService.getConfListByBaseCondition(titleOrSiteSign, sortField, sortord, pageModel, null);
+//		}else{
+//			confList = confService.getConfListByBaseCondition(titleOrSiteSign, sortField, sortord, pageModel, currentSysUser.getId());
+//		}
+		PageBean<ConfBase> page = new PageBean<ConfBase>();
 		if(currentSysUser.isSuperSystemAdmin() || currentSysUser.isSystemClientServer()){    //权限控制
-			confList = confService.getConfListByBaseCondition(titleOrSiteSign, sortField, sortord, pageModel, null);
+			page = confService.getSysConfByName(titleOrSiteSign, sortField, sortord, pageModel, null);
 		}else{
-			confList = confService.getConfListByBaseCondition(titleOrSiteSign, sortField, sortord, pageModel, currentSysUser.getId());
+			page = confService.getSysConfByName(titleOrSiteSign, sortField, sortord, pageModel, currentSysUser.getId());
 		}
+		confList = page.getDatas();
+		pageModel.setRowsCount(page.getRowsCount());
+		pageModel.getPageCount();
 		List<SiteBase> siteList = null;
 		List<ConfUserCount> userCountList = null;
 		List<Integer> confIdList = new ArrayList<Integer>();
@@ -196,34 +204,40 @@ public class ConfController extends BaseController{
 		Date beginTime = DateUtil.StringToDate(effeDateStart, "yyyy-MM-dd");
 		Date endTime = DateUtil.StringToDate(effeDateEnd, "yyyy-MM-dd");
 		SystemUser  currentSysUser = userService.getCurrentSysAdmin(request);
-		String sortFieldValue = request.getParameter("sortField");
-		String sortField = initSort(sortFieldValue);     //获取页面传递的排序参数
-		String sortordValue = request.getParameter("sortord");
-		String sortord = "desc";
-		if(SortConstant.SORT_ASC.equals(sortordValue)){
-			sortord = "asc";
-		}
-		Integer rows = 0;
-		try {
-			if(currentSysUser.isSuperSystemAdmin()|| currentSysUser.isSystemClientServer()){
-				rows = confService.countConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, null);
-			}else{
-				rows = confService.countConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, currentSysUser.getId());
-			}
-		} catch (Exception e) {
-			logger.error("获取页数出错!"+e);
-		}
-		if(rows != null ){
-			pageModel.setRowsCount(rows);
+		String sortField = request.getParameter("sortField");
+		String sortord = request.getParameter("sortord");
+		PageBean<ConfBase> page = new PageBean<ConfBase>();
+		if(currentSysUser.isSuperSystemAdmin() || currentSysUser.isSystemClientServer()){    //权限控制
+			page = confService.getSysConfByCondition(confBase, siteName, siteSign, beginTime, endTime, sortField, sortord, pageModel, null);
 		}else{
-			pageModel.setRowsCount(0);
+			page = confService.getSysConfByCondition(confBase, siteName, siteSign, beginTime, endTime, sortField, sortord, pageModel, currentSysUser.getId());
 		}
+		confList = page.getDatas();
+		pageModel.setRowsCount(page.getRowsCount());
+		pageModel.getPageCount();
+		
+		
+//		Integer rows = 0;
+//		try {
+//			if(currentSysUser.isSuperSystemAdmin()|| currentSysUser.isSystemClientServer()){
+//				rows = confService.countConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, null);
+//			}else{
+//				rows = confService.countConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, currentSysUser.getId());
+//			}
+//		} catch (Exception e) {
+//			logger.error("获取页数出错!"+e);
+//		}
+//		if(rows != null ){
+//			pageModel.setRowsCount(rows);
+//		}else{
+//			pageModel.setRowsCount(0);
+//		}
 		try {
-			if(currentSysUser.isSuperSystemAdmin() || currentSysUser.isSystemClientServer()){
-				confList = confService.getConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, sortField, sortord, pageModel, null);
-			}else{
-				confList = confService.getConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, sortField, sortord, pageModel, currentSysUser.getId());
-			}
+//			if(currentSysUser.isSuperSystemAdmin() || currentSysUser.isSystemClientServer()){
+//				confList = confService.getConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, sortField, sortord, pageModel, null);
+//			}else{
+//				confList = confService.getConfListByAdvanceCondition(confBase, siteName, siteSign, beginTime, endTime, sortField, sortord, pageModel, currentSysUser.getId());
+//			}
 			List<Integer> confIdList = new ArrayList<Integer>();
 			List<Integer> cycleIdList = new ArrayList<Integer>();
 			List<Integer> siteIdList = new ArrayList<Integer>();
@@ -262,8 +276,8 @@ public class ConfController extends BaseController{
 		request.setAttribute("userCountList", userCountList);
 		request.setAttribute("siteList", siteList);
 		request.setAttribute("pageModel", pageModel);
-		request.setAttribute("sortField", sortFieldValue);   //传排序字段的编号
-		request.setAttribute("sortord", sortordValue);       //传排序方式的编号
+		request.setAttribute("sortField", sortField);   //传排序字段的编号
+		request.setAttribute("sortord", sortord);       //传排序方式的编号
 		sortAttribute(siteBase, confBase, request);                    //向前台传递高级搜索表单值
 		return new ActionForward.Forward("/jsp/system/conf_list.jsp");
 	}

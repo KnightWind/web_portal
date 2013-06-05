@@ -16,6 +16,8 @@ public class ConfOuter implements java.io.Serializable {
 	private String siteSign;
 	private String mtgTitle;
 	private String mtgKey;
+	private String hostPwd;
+	private String mtgPwd;
 	private Integer confId;
 	private Date createTime;
 	private String userId;
@@ -49,6 +51,18 @@ public class ConfOuter implements java.io.Serializable {
 	}
 	public void setMtgKey(String mtgKey) {
 		this.mtgKey = mtgKey;
+	}
+	public String getHostPwd() {
+		return hostPwd;
+	}
+	public void setHostPwd(String hostPwd) {
+		this.hostPwd = hostPwd;
+	}
+	public String getMtgPwd() {
+		return mtgPwd;
+	}
+	public void setMtgPwd(String mtgPwd) {
+		this.mtgPwd = mtgPwd;
 	}
 	public Integer getConfId() {
 		return confId;

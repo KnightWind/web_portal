@@ -3,7 +3,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>邮件模板列表</title>
+		<title>${LANG['bizconf.jsp.system.email_template_list.res1']}</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="pragma" content="no-cache">
 		<meta http-equiv="cache-control" content="no-cache">
@@ -18,22 +18,22 @@
 	<input type="hidden" name="id" id="id" value="${emailConfig.id}"/>
 	<input type="hidden" name="siteId" id="siteId" value="${emailConfig.siteId}"/>
 		<tr>
-			<td colspan="5" align="center"  >邮件模板列表 <input type="button" onclick="javascript:window.open('${ctx}/system/email/template/0-0')" value="新建模板"/></td>
+			<td colspan="5" align="center"  >${LANG['bizconf.jsp.system.email_template_list.res1']} <input type="button" onclick="javascript:window.open('${ctx}/system/email/template/0-0')" value="${LANG['bizconf.jsp.system.email_template_list.res2']}"/></td>
 		</tr>
 		 
 		<tr>
-			<td align="center" style="width:100px;">&nbsp;模板名称</td>
-			<td align="center" style="width:100px;">&nbsp;模板类别</td>
-			<td align="center" style="width:100px;">&nbsp;站点标识</td>
-			<td align="center" style="width:100px;">&nbsp;版本</td>  
-			<td align="center" style="width:100px;">&nbsp;操作</td>  
+			<td align="center" style="width:100px;">&nbsp;${LANG['bizconf.jsp.system.email_template_list.res3']}</td>
+			<td align="center" style="width:100px;">&nbsp;${LANG['bizconf.jsp.system.email_template_list.res4']}</td>
+			<td align="center" style="width:100px;">&nbsp;${LANG['bizconf.jsp.system.email_template_list.res5']}</td>
+			<td align="center" style="width:100px;">&nbsp;${LANG['bizconf.jsp.system.email_template_list.res6']}</td>  
+			<td align="center" style="width:100px;">&nbsp;${LANG['bizconf.jsp.admin.site_org_list.res6']}</td>  
 		 </tr> 
 		<tr>
 			<td >&nbsp;</td>
 			<td >&nbsp;</td>
 			<td >&nbsp;</td>
 			<td >&nbsp;</td>
-			<td >[修改][删除]</td>
+			<td >[${LANG['bizconf.jsp.system.email_template_list.res7']}][${LANG['bizconf.jsp.system.email_template_list.res8']}]</td>
 			
 		 </tr> 
 		 <tr>

@@ -15,7 +15,7 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js"></script>
 <script type="text/javascript"> 
 $(function() {
-	$("#operator").watermark('操作员');
+	$("#operator").watermark('${LANG['bizconf.jsp.admin.site_eventlog_list.res1']}');
 	$("#logsForm").find("input, select").not(".skipThese").uniform();
 	$('#site-list tr').hover(function() {
 			$(this).addClass('tr-hover');
@@ -29,8 +29,8 @@ $(function() {
 });
 
 function enterSumbit(url){  
-    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-    if (event.keyCode == 13){       //监听回车键
+    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.admin.conf_list.res3']}   
+    if (event.keyCode == 13){       //${LANG['bizconf.jsp.admin.conf_list.res4']}
     	resetPageNo();
     	logsForm.action=url;
     	logsForm.submit();	
@@ -74,7 +74,7 @@ function enterSumbit(url){
    <cc:sort var="SORT_ASC"/><cc:sort var="SORT_DESC"/>
    <cc:sort var="EVENTLOG_SORT_DEFAULT"/><cc:sort var="EVENTLOG_SORT_STATUS"/><cc:sort var="EVENTLOG_SORT_CREATETIME"/> 
    <tr class="table003" height="38"  >
-   	  <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"  style="cursor: pointer;" onclick="javascript:sort('${EVENTLOG_SORT_STATUS}');">
+   	  <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"  style="cursor: pointer;" onclick="javascript:sort('${EVENTLOG_SORT_STATUS}');">
    	  <div align="center"><span>${LANG["system.eventlog.title.status"]}</span>
    	  	  <c:if test="${EVENTLOG_SORT_STATUS!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	      <c:if test="${EVENTLOG_SORT_STATUS==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
@@ -88,6 +88,7 @@ function enterSumbit(url){
 	      <c:if test="${EVENTLOG_SORT_CREATETIME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
 	  </div>
 	  </td>
+      <td width="10%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.site.sign"]}&nbsp;</span></div></td>
       <td width="15%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.module"]}&nbsp;</span></div></td>
 <%--      <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.site.sign"]}</span></div></td>--%>
       <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.user"]}</span></div></td>
@@ -116,10 +117,11 @@ function enterSumbit(url){
       		<fmt:formatDate  value="${eventLog.createTime}" type="date" pattern="yyyy-MM-dd HH:mm:ss"/>
       	</span></div>
       	</td>
+      	
+		<td height="32"><div align="center">${siteSign}</div></td>
         <c:set var ="typeName" value="siteAdmin.eventlog.type.${eventLog.funcModule}"/>
         <td height="32"><div align="center">${LANG[typeName]}</div></td>
-<%--        <td height="32"><div align="center">${siteSign}</div></td>--%>
-<!--         <td height="32"><div align="center">操作员%%</div></td> -->
+<!--         <td height="32"><div align="center">${LANG['bizconf.jsp.admin.site_eventlog_list.res1']}%%</div></td> -->
         <td height="32"><div align="center">${operatorList[status.count-1]}</div></td>
         <td height="32"><div align="center">${operatorObjectList[status.count-1]}</div></td>
         <td height="32"><div align="center">${eventLog.createIp}</div></td>

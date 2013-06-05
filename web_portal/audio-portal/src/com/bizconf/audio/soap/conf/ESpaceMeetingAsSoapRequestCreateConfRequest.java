@@ -12,13 +12,13 @@ public class ESpaceMeetingAsSoapRequestCreateConfRequest  implements java.io.Ser
 
     private com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequester requester;
 
-    private java.lang.String confId;
+    private java.lang.String confId = "";
 
-    private java.lang.String subject;
+    private java.lang.String subject = "";
 
-    private java.lang.String agenda;
+    private java.lang.String agenda = "";
 
-    private java.lang.String areaId;
+    private java.lang.String areaId = "";
 
     private int confType;
 
@@ -26,11 +26,11 @@ public class ESpaceMeetingAsSoapRequestCreateConfRequest  implements java.io.Ser
 
     private int confCreateType;
 
-    private java.lang.String funcBits;
+    private java.lang.String funcBits = "";
 
-    private java.lang.String mediaBits;
+    private java.lang.String mediaBits = "";
 
-    private java.lang.String accessCode;
+    private java.lang.String accessCode = "";
 
     private int maxMemberAmount;
 
@@ -38,17 +38,17 @@ public class ESpaceMeetingAsSoapRequestCreateConfRequest  implements java.io.Ser
 
     private int minReservedAmount;
 
-    private java.lang.String chairmanPwd;
+    private java.lang.String chairmanPwd = "";
 
-    private java.lang.String memberPwd;
+    private java.lang.String memberPwd = "";
 
-    private java.lang.String beginDatetime;
+    private java.lang.String beginDatetime = "";
 
     private int duration;
 
     private com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapScheduledUser[] users;
 
-    private java.lang.String recordURL;
+    private java.lang.String recordURL = "";
 
     public ESpaceMeetingAsSoapRequestCreateConfRequest() {
     }

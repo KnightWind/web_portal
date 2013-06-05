@@ -7,14 +7,14 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
-<title>无标题文档</title>
+<title>${LANG['bizconf.jsp.conf_invite_user_list.res1']}</title>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js?ver=${version}"></script>	
 <script type="text/javascript">
 	 var group_id = "${group_id}";
 $(document).ready(function(){
-	$(".group_search").watermark('用户名、英文名、邮箱、联系电话、手机号码');
-	//全选and全不选
+	$(".group_search").watermark('${LANG['bizconf.jsp.group_contacts_list.res3']}');
+	//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 	$("#checkAll").click(function(){
 		if($(this).attr("checked")){
 			$("input[name=id]").attr("checked",true);				
@@ -43,11 +43,11 @@ $(document).ready(function(){
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->  
 		<div class="First_Steps_invite" style=" background:#FFF; border-radius:3px;">
 	  	<div class="First_Steps_title_invite"> <a href="javascript:closeDialog();"></a>
-	    	<h3 class="tit_a_invite">联系人列表</h3>
-	    	<p class="tit_b_invite">您可以从联系人名单添加到该群组中。</p>
+	    	<h3 class="tit_a_invite">${LANG['bizconf.jsp.group_contacts_list.res1']}</h3>
+	    	<p class="tit_b_invite">${LANG['bizconf.jsp.group_imports_list.res1']}</p>
 	  	</div>
   		<div style=" background:#fff"><img class="toa_quick_invite" src="${baseUrlStatic}/images/min.jpg" width="730" height="1" /></div>
  
@@ -63,11 +63,11 @@ $(document).ready(function(){
 		      </tr>
 		      <tr align="center" height="35" class="tr_center" bgcolor="#000066">
 		        <td width="6%" class="tr_center"><input id="checkAll" type="checkbox" value="" /></td>
-		        <td width="15%" class="tr_center">用户名</td>
-		        <td width="15%" class="tr_center">英文名</td>
-		        <td width="24%" class="tr_center">邮箱</td>
-		        <td width="20%" class="tr_center">联系电话</td>
-		        <td width="20%" class="tr_center" style=" border-right:#D2D8DB 1px solid">手机号码</td>
+		        <td width="15%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res7']}</td>
+		        <td width="15%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res8']}</td>
+		        <td width="24%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res9']}</td>
+		        <td width="20%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res10']}</td>
+		        <td width="20%" class="tr_center" style=" border-right:#D2D8DB 1px solid">${LANG['bizconf.jsp.add_contacts.res11']}</td>
 		      </tr>
 		      <c:if test="${fn:length(pageModel.datas)<=0}">
 						<tr align="center" bgcolor="#FFFFFF" height="30" >
@@ -93,11 +93,11 @@ $(document).ready(function(){
 	 	</div>
 	  	</form>
 	  	<div class="First_Steps_bottom_b">
-	    <div class="but99"><span class="button_common"><a href="#" onclick="javascript:closeDialog();"><img src="${baseUrlStatic}/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:8px;"/>取消</a></span></div>
-	    <div class="but100"><span class="button_common"><a href="javascript:importContact();"><img src="${baseUrlStatic}/images/right.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:8px;"/>完成</a></span></div>
+	    <div class="but99"><span class="button_common"><a href="#" onclick="javascript:closeDialog();"><img src="${baseUrlStatic}/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:8px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a></span></div>
+	    <div class="but100"><span class="button_common"><a href="javascript:importContact();"><img src="${baseUrlStatic}/images/right.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:8px;"/>${LANG['bizconf.jsp.add_contacts.res14']}</a></span></div>
   </div>
 </div>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>
@@ -114,7 +114,7 @@ $(document).ready(function(){
 <script type="text/javascript">
 function importContact() {
 	if($("input[name=id]:checked").length==0){
-		parent.errorDialog("请选择导入项！");
+		parent.errorDialog("${LANG['bizconf.jsp.contacts_import_main.res10']}");
 		return;
 	}
 	var parms = "group_id=${group_id}";

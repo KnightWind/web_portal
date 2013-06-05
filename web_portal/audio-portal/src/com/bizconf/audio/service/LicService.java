@@ -1,10 +1,13 @@
 package com.bizconf.audio.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.bizconf.audio.entity.BizBilling;
 import com.bizconf.audio.entity.License;
 import com.bizconf.audio.entity.PageBean;
+import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
 
 /**
@@ -66,6 +69,19 @@ public interface LicService {
 	Map<Integer, Integer> getHostsLienseDatas(List<UserBase> hosts);
 	
 	/**
+	 * 获取nameHost模式下主持人对应点数的最早生效日期
+	 * @param hosts
+	 * @return
+	 */
+	Map<Integer, Date> getHostsLienseEffeDates(List<UserBase> hosts, long offset);
+	
+	/**
+	 * 获取nameHost模式下主持人对应点数的map
+	 * @param hosts
+	 * @return
+	 */
+	public Map<String, Integer> getHostsLienseDatasMap(List<BizBilling> hosts,SiteBase site);
+	/**
 	 * 获取站点下有效license数
 	 * @param siteId
 	 * @return
@@ -102,4 +118,12 @@ public interface LicService {
 	 * 2013-5-3
 	 */
 	public List<License> getSiteLicenseList(int siteId);
+	
+	
+	/**
+	 * 删除用户时，删除该用户所属的license记录
+	 * @param userId
+	 * @return
+	 */
+	public boolean delHostLicenses(Integer userId);
 }

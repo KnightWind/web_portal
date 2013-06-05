@@ -56,6 +56,12 @@
 	</table>
 	 
 	<table>
+		<entity>com.bizconf.audio.entity.IpLocator</entity>
+		<name>t_ip_locator</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
 		<entity>com.bizconf.audio.entity.SiteBase</entity>
 		<name>t_site_base</name>
 		<primary-key>id</primary-key>
@@ -135,6 +141,13 @@
 		<primary-key>id</primary-key>
 		<order-by></order-by>
 	</table>
+	
+	<table>
+		<entity>com.bizconf.audio.entity.BizBilling</entity>
+		<name>t_biz_billing</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
 	 
 	<table>
 		<entity>com.bizconf.audio.entity.UserBase</entity>
@@ -167,6 +180,12 @@
 	<table>
 		<entity>com.bizconf.audio.entity.SiteOrg</entity>
 		<name>t_site_org</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
+	<table>
+		<entity>com.bizconf.audio.entity.MS</entity>
+		<name>t_ms</name>
 		<primary-key>id</primary-key>
 		<order-by></order-by>
 	</table>

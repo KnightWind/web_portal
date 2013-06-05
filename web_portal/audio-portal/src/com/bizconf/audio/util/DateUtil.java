@@ -13,6 +13,7 @@ import com.bizconf.audio.constant.ConstantUtil;
 
 public class DateUtil {
 	
+	public static final long BJ_TIME_OFFSET = 28800000l; 
 	
 	public static void mains(String[] args) {
 //		System.out.println(getGmtDateByBeforeHour(8));
@@ -40,9 +41,10 @@ public class DateUtil {
 ////		System.out.println(beginCalendar.getTime());
 		endCalendar.set(2013,3, 30);
 		List<Date> confDayList=null;
+		System.out.println("根据gmt时间获取当前时区时间:"+getOffsetDateByGmtDate(getGmtDate(null), 28800000L));
 		
 //		confDayList = getMonthlyDays(beginCalendar.getTime(),endCalendar.getTime(),"4;22222");
-		confDayList=getWeeklyDays(beginCalendar.getTime(),endCalendar.getTime(), "3,4,6");
+		confDayList=getWeeklyDays(beginCalendar.getTime(),endCalendar.getTime(), "3,4,6", ConstantUtil.CYCLE_CONF_DATE_LIMIT);
 //		
 ////		confDayList=getMonthlyDays(beginCalendar.getTime(), endCalendar.getTime(), "4;2,3",true);
 //		confDayList=getDaysByMonth(beginCalendar.getTime(), endCalendar.getTime(), "2;2");
@@ -127,16 +129,30 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date addDateMinutes(Date date,Integer minute){
+		return addDateField(date, Calendar.MINUTE, minute);
+	}
+	
+	/**
+	 * 时间增加多少秒
+	 * second 可以为负数，相当于减了多少秒
+	 * wangyong
+	 * 2013-6-4
+	 */
+	public static Date addDateSecond(Date date, Integer second){
+		return addDateField(date, Calendar.SECOND, second);
+	}
+	
+	private static Date addDateField(Date date, int calendarField, Integer fieldValue){
 		if(date==null){
 			date=new Date();
 		}
-		if( minute==null){
-			minute=0;
+		if( fieldValue==null){
+			fieldValue=0;
 		}
 		Date retDate=null;
 		Calendar calendar=Calendar.getInstance();
 		calendar.setTime(date);
-		calendar.add(Calendar.MINUTE, minute);
+		calendar.add(calendarField, fieldValue);
 		retDate=calendar.getTime();
 		calendar=null;
 		return retDate;
@@ -354,11 +370,14 @@ public class DateUtil {
 	 * @param cycleValue
 	 * @return
 	 */
-	public static List<Date> getCycleDateFromScope(Date beginDate,Date endDate,Integer cycleType,String cycleValue){
+	public static List<Date> getCycleDateFromScope(Date beginDate,Date endDate,Integer cycleType,String cycleValue, int cycleDateLimit){
 		List<Date> cycleDateList=null;
 		if(beginDate!=null && endDate!=null && cycleType!=null && cycleType.intValue() > 0){
+			if(cycleDateLimit == 0){
+				cycleDateLimit = ConstantUtil.CYCLE_CONF_DATE_LIMIT;
+			}
 //			cycleDateList=new ArrayList<Date>();
-			if(cycleType==ConfConstant.CONF_CYCLE_DAILY){
+			if(cycleType.intValue() == ConfConstant.CONF_CYCLE_DAILY.intValue()){
 				if(!StringUtil.isEmpty(cycleValue)){
 //					String[] valueArray=cycleValue.split(ConfConstant.CONF_CYCLE_VALUE_DAYS_SPLIT);
 					Integer diffDays = 0;
@@ -366,21 +385,21 @@ public class DateUtil {
 						diffDays=IntegerUtil.parseIntegerWithDefaultZero(cycleValue);
 //					}
 //					if(diffDays > 0){
-					cycleDateList=getDailyDays(beginDate,endDate,diffDays,false);
+					cycleDateList=getDailyDays(beginDate,endDate,diffDays,false, cycleDateLimit);
 //					}else{
 //						cycleDateList=new ArrayList<Date>();
 //						cycleDateList.add(beginDate);
 //					}
 				}
 					
-			}else if (cycleType==ConfConstant.CONF_CYCLE_WEEKLY){
-				cycleDateList=getWeeklyDays(beginDate,endDate,cycleValue);
+			}else if (cycleType.intValue() == ConfConstant.CONF_CYCLE_WEEKLY.intValue()){
+				cycleDateList=getWeeklyDays(beginDate,endDate,cycleValue, cycleDateLimit);
 				
-			}else if (cycleType==ConfConstant.CONF_CYCLE_MONTHLY){
-				cycleDateList=getMonthlyDays(beginDate,endDate,cycleValue);
+			}else if (cycleType.intValue() == ConfConstant.CONF_CYCLE_MONTHLY.intValue()){
+				cycleDateList=getMonthlyDays(beginDate,endDate,cycleValue, cycleDateLimit);
 //				cycleDateList=getMonthlyDays(beginDate,endDate,cycleValue,false);
 				
-			}else if (cycleType==ConfConstant.CONF_CYCLE_YEARLY){
+			}else if (cycleType.intValue() == ConfConstant.CONF_CYCLE_YEARLY.intValue()){
 				
 			}
 		}
@@ -396,9 +415,10 @@ public class DateUtil {
 	 * @param endDate    
 	 * @param diffDays   每几天
 	 * @param isWorkDay  是否只工作日    true:只工作日；False ：所有 工作日
+	 * @param cycleDateLimit  最多获取多少个符合条件的循环日期
 	 * @return
 	 */
-	public static List<Date> getDailyDays(Date beginDate,Date endDate,Integer diffDays,boolean isWorkDay){
+	public static List<Date> getDailyDays(Date beginDate,Date endDate,Integer diffDays,boolean isWorkDay, int cycleDateLimit){
 		List<Date> dailyList=null;
 		if(beginDate==null || endDate==null ){
 			return dailyList;
@@ -417,7 +437,11 @@ public class DateUtil {
 			}else{
 				Calendar eachDailyCalendar=beginCalendar;
 				int eachWeekCode=-1;
+				int cycleDays = 1;
 				while(eachDailyCalendar.getTimeInMillis()<=endCalendar.getTimeInMillis()){
+					if(cycleDays > cycleDateLimit){    //循环会议不可大于30天
+						break;
+					}
 					if(isWorkDay){//如果只是工作日
 						eachWeekCode=-1;
 						eachWeekCode=eachDailyCalendar.get(Calendar.DAY_OF_WEEK);
@@ -431,6 +455,7 @@ public class DateUtil {
 							dailyList.add(eachDailyCalendar.getTime());
 						}
 					}
+					cycleDays++; 
 					eachDailyCalendar.setTimeInMillis(eachDailyCalendar.getTimeInMillis()+(diffDays*24*3600*1000));
 				}
 				eachDailyCalendar=null;
@@ -453,7 +478,7 @@ public class DateUtil {
 	 * 
 	 */
 	
-	public static List<Date> getWeeklyDays(Date beginDate, Date endDate, String weeklyValue){
+	public static List<Date> getWeeklyDays(Date beginDate, Date endDate, String weeklyValue, int cycleDateLimit){
 		List<Date> dailyList = null;
 		if(beginDate==null || endDate == null || StringUtil.isEmpty(weeklyValue)){
 			return dailyList;
@@ -482,7 +507,11 @@ public class DateUtil {
 		Calendar eachCalendar=Calendar.getInstance();
 		dailyList=new ArrayList<Date>();
 		int eachWeekDay=0;
+		int cycleDays = 1;
 		while (eachDate.compareTo(endDate)<=0) {
+			if(cycleDays > cycleDateLimit){    //循环会议不可大于30天
+				break;
+			}
 			eachWeekDay=0;
 			eachCalendar.setTime(eachDate);
 			eachWeekDay = eachCalendar.get(Calendar.DAY_OF_WEEK);
@@ -490,6 +519,7 @@ public class DateUtil {
 				if(eachDay!=null && eachDay.intValue() >0 && eachWeekDay==eachDay) {
 					if(eachCalendar.getTime().after(getGmtDate(null))){
 						dailyList.add(eachCalendar.getTime());
+						cycleDays++;
 					}
 				}
 			}
@@ -697,59 +727,20 @@ public class DateUtil {
 	 * 2.每个月的第几个周几：2;3,4,5(第二个周三、周四、周五)
 	 * 
 	 */
-	private static List<Date> getMonthlyDays(Date beginDate,Date endDate,String monthlyValue){
+	private static List<Date> getMonthlyDays(Date beginDate, Date endDate, String monthlyValue , int cycleDateLimit){
 		List<Date> dailyList = new ArrayList<Date>();
 		if(monthlyValue.indexOf(ConfConstant.CONF_CYCLE_VALUE_MONTH_SPLIT)>0){
-			dailyList = getDaysByMonth(beginDate,endDate, monthlyValue);
+			dailyList = getDaysByMonth(beginDate,endDate, monthlyValue, cycleDateLimit);
 		}else{
-			dailyList = getSequenceDay(beginDate, endDate, monthlyValue);
+			dailyList = getSequenceDay(beginDate, endDate, monthlyValue, cycleDateLimit);
 		}
 		return dailyList;
 	}
-	
 	
 	/**
-	 * 
-	 *  一段时间内获取每个月的第几个周几
-	 *  @param monthlyValue 每个月的第几个周几：2;3(每月第二个周三)
-	 *  wangyong
-	 *  2013.3.19
+	 * 每个月的第几个周几：2;3,4,5(第二个周三、周四、周五)
 	 */
-	private static List<Date> getDaysByMonthBak(Date beginDate,Date endDate,String monthlyValue){
-		List<Date> dailyList = new ArrayList<Date>();
-		List<Date> dateList = new ArrayList<Date>();        //从开始日期取到结束日期的list，每月一天
-		if(beginDate == null || endDate == null || StringUtil.isEmpty(monthlyValue)){
-			return dailyList;
-		}
-		String[] monthValueArray = monthlyValue.split(ConfConstant.CONF_CYCLE_VALUE_MONTH_SPLIT);
-		//每月第几个，本例中为第二个
-		int sequenceInMonth = Integer.parseInt(monthValueArray[0]);
-		if(sequenceInMonth < 1 || sequenceInMonth > 5){
-			sequenceInMonth = 1;     //每个月最多第5个
-		}
-		//周几，本例中为周三
-		int week = Integer.parseInt(monthValueArray[1]);
-		Calendar eachCalendar = Calendar.getInstance();
-		eachCalendar.setTime(beginDate);
-		dateList.add(beginDate);
-		for(int i=0;i<ConstantUtil.CYCLE_CONF_DATE_LIMIT;i++){    //最多获取30个有效日期
-			if(eachCalendar.getTime().before(endDate)){
-				dateList.add(eachCalendar.getTime());
-			}else if(eachCalendar.getTime().after(endDate)){
-				break;
-			}
-			eachCalendar.add(Calendar.MONTH, +1);
-		}
-		for(Date date : dateList){
-			Date rightDate = getDaysByDate(date, sequenceInMonth, week);
-			if(rightDate.after(beginDate)){
-				dailyList.add(rightDate);
-			}
-		}
-		return dailyList;
-	}
-	
-	private static List<Date> getDaysByMonth(Date beginDate,Date endDate,String monthlyValue){
+	private static List<Date> getDaysByMonth(Date beginDate,Date endDate,String monthlyValue, int cycleDateLimit){
 		List<Date> dailyList = new ArrayList<Date>();
 		List<Date> dateList = new ArrayList<Date>();        //从开始日期取到结束日期的list，每月一天
 		if(beginDate == null || endDate == null || StringUtil.isEmpty(monthlyValue)){
@@ -769,22 +760,42 @@ public class DateUtil {
 		endCalendar.setTime(endDate);
 		endCalendar.set(Calendar.DATE, 1);
 //		dateList.add(beginDate);
-		for(int i=0;i<ConstantUtil.CYCLE_CONF_DATE_LIMIT;i++){    //最多获取30个有效日期
-			eachCalendar.set(Calendar.DATE, 1);
-			//if(eachCalendar.get(Calendar.MONTH) <= endDate.getMonth()){
-			if(!eachCalendar.after(endCalendar)){
-				dateList.add(eachCalendar.getTime());
-			}else{
-				break;
-			}
+		
+		
+		
+		eachCalendar.set(Calendar.DATE, 1);
+		while(!eachCalendar.after(endCalendar)){
+			dateList.add(eachCalendar.getTime());
 			eachCalendar.add(Calendar.MONTH, +1);
 		}
 		for(Date date : dateList){
+			if(dailyList.size() == cycleDateLimit){     //最多获取30个有效日期
+				break;
+			}
 			Date rightDate = getDaysByDate(date, sequenceInMonth, week);
 			if(!rightDate.before(beginDate)){
 				dailyList.add(rightDate);
 			}
 		}
+		
+		
+		
+//		for(int i=0;i<cycleDateLimit;i++){    //最多获取30个有效日期
+//			eachCalendar.set(Calendar.DATE, 1);
+//			//if(eachCalendar.get(Calendar.MONTH) <= endDate.getMonth()){
+//			if(!eachCalendar.after(endCalendar)){
+//				dateList.add(eachCalendar.getTime());
+//			}else{
+//				break;
+//			}
+//			eachCalendar.add(Calendar.MONTH, +1);
+//		}
+//		for(Date date : dateList){
+//			Date rightDate = getDaysByDate(date, sequenceInMonth, week);
+//			if(!rightDate.before(beginDate)){
+//				dailyList.add(rightDate);
+//			}
+//		}
 		return dailyList;
 	}
 	
@@ -831,7 +842,7 @@ public class DateUtil {
 	 * wangyong
 	 * 2013-3-27
 	 */
-	private static List<Date> getSequenceDay(Date beginDate,Date endDate,String dayValue){
+	private static List<Date> getSequenceDay(Date beginDate, Date endDate, String dayValue, int cycleDateLimit){
 		int day = IntegerUtil.parseIntegerWithDefaultZero(dayValue); 
 		List<Date> dailyList = new ArrayList<Date>();
 		List<Date> dateList = new ArrayList<Date>();
@@ -843,34 +854,35 @@ public class DateUtil {
 		Calendar endCalendar = Calendar.getInstance();
 //		eachCalendar.setTime(beginDate);
 		endCalendar.setTime(endDate);
-		endCalendar.set(Calendar.DATE, 1);
-//		dateList.add(beginDate);
-		for(int i=0;i<ConstantUtil.CYCLE_CONF_DATE_LIMIT;i++){    //最多获取30个有效日期
-			eachCalendar.set(Calendar.DATE, 1);
-			//if(eachCalendar.get(Calendar.MONTH) <= endDate.getMonth()){
-			if(!eachCalendar.after(endCalendar)){
-				dateList.add(eachCalendar.getTime());
-			}else{
-				break;
-			}
+		
+		
+		
+		eachCalendar.set(Calendar.DATE, 1);
+		while(!eachCalendar.after(endCalendar)){
+			dateList.add(eachCalendar.getTime());
 			eachCalendar.add(Calendar.MONTH, +1);
 		}
 		
 		
 		
 		
-//		dateList.add(beginDate);
-//		for(int i=0;i<30;i++){    //最多获取30个有效日期
-//			eachCalendar.add(Calendar.MONTH, +1);
-//			if(eachCalendar.getTime().compareTo(endDate) <= 0){
+//		endCalendar.set(Calendar.DATE, 1);
+//		for(int i=0;i<cycleDateLimit;i++){    //最多获取30个有效日期
+//			eachCalendar.set(Calendar.DATE, 1);
+//			//if(eachCalendar.get(Calendar.MONTH) <= endDate.getMonth()){
+//			if(!eachCalendar.after(endCalendar)){
 //				dateList.add(eachCalendar.getTime());
 //			}else{
-//				dateList.add(endDate);
 //				break;
 //			}
+//			eachCalendar.add(Calendar.MONTH, +1);
 //		}
+		
 		int dateSize = dateList.size();
 		for(int i=0;i<dateSize;i++){
+			if(dailyList.size() == cycleDateLimit){   //最多获取30个有效日期
+				break;
+			}
 			eachCalendar.setTime(dateList.get(i));
 			int dateInWhichMonth = eachCalendar.get(Calendar.MONTH);   //beginDate所在月份,java月份是从0-11,月份设置时要减1    1:2月份;2:3月份;3:4月份;4:5月份,以此类推
 			int dateInWhichYear = eachCalendar.get(Calendar.YEAR);     //beginDate所在年 
@@ -881,11 +893,16 @@ public class DateUtil {
 			int maxDay = firstDayCalendar.getActualMaximum(Calendar.DAY_OF_MONTH); 
 			if(maxDay >= (day-1)){      //每月第几天必须小于等于当月最大天数
 				firstDayCalendar.add(Calendar.DAY_OF_MONTH, (day-1)<0 ? 0 : (day-1));
-				if(i == 0){
-					if(firstDayCalendar.getTime().compareTo(dateList.get(i)) >= 0){
-						dailyList.add(firstDayCalendar.getTime());
-					}
-				}else if(i == (dateSize-1)){
+				if(firstDayCalendar.getTime().before(beginDate)){
+					continue;
+				}
+				
+//				if(i == 0){
+//					if(firstDayCalendar.getTime().compareTo(dateList.get(i)) >= 0){
+//						dailyList.add(firstDayCalendar.getTime());
+//					}
+//				}else 
+				if(i == (dateSize-1)){
 					if(firstDayCalendar.getTime().compareTo(dateList.get(i)) <= 0){
 						dailyList.add(firstDayCalendar.getTime());
 						break;
@@ -963,27 +980,66 @@ public class DateUtil {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(monthstart);
 		calendar.add(Calendar.MONTH, 1);
+		int mon = calendar.get(Calendar.MONTH)+1;
+		if(mon==1 || mon ==3 || mon ==5 || mon==7 ||mon ==8 ||mon ==10 || mon ==12){
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+		}
 		return calendar.getTime();
 	}
 	
-	
+	public static Date getMonthStratDate(String year,String month,Integer offsetmill){
+		long mills = DateUtil.BJ_TIME_OFFSET;
+		if(StringUtil.isEmpty(month) && StringUtil.isEmpty(month)){
+			return getMonthStartDate(mills); 
+		}
+		Calendar calendar = Calendar.getInstance();
+		int y =  calendar.get(Calendar.YEAR);
+		int M = calendar.get(Calendar.MONTH);
+		if(offsetmill!=null){
+			mills = offsetmill.longValue();
+		}
+		if(year!=null){
+			y = Integer.parseInt(year);
+		}
+		if(month!=null){
+			M = Integer.parseInt(month)-1;
+		}
+		calendar.set(Calendar.YEAR, y);
+		calendar.set(Calendar.MONTH, M);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		return getGmtDateByTimeZone(calendar.getTime(), (int)mills);
+	}
 	public static void main(String ...strings){
 		SimpleDateFormat sdfp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		long offset = 28800000l;
+//		long offset = 28800000l;
 		
-		Date d=getTodayStartDate(offset);
-		Date w =getWeekStartDate(offset);
-		Date m =getMonthStartDate(offset);
-		Date de = getTodayEndDate(d);
-		Date we = getWeekEndDate(w);
-		Date me = getMonthEndDate(m);
+//		Date d=getTodayStartDate(offset);
+//		Date w =getWeekStartDate(offset);
+//		Date m =getMonthStartDate(offset);
+//		Date de = getTodayEndDate(d);
+//		Date we = getWeekEndDate(w);
+//		Date me = getMonthEndDate(m);
 		
 //		System.out.println(sdfp.format(d));
 //		System.out.println(sdfp.format(w));
-		System.out.println(sdfp.format(m));
+//		System.out.println(sdfp.format(m));
 		
 //		System.out.println(sdfp.format(de));
 //		System.out.println(sdfp.format(we));
-		System.out.println(sdfp.format(me));
+//		System.out.println(sdfp.format(me));
+
+//		Date date = getMonthStartDate(DateUtil.BJ_TIME_OFFSET);
+		Date ds;
+		try {
+			ds = getMonthEndDate(sdfp.parse("2013-02-28 16:00:00"));
+			System.out.println("date == "+sdfp.format(ds));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		System.out.println("date == "+sdfp.format(date));
 	}
 }

@@ -153,7 +153,7 @@ public class ConfUserServiceImpl extends BaseService implements ConfUserService 
 		//
 		//
 		
-		return handleInvite(confUserId, ConfConstant.CONF_USER_ACCEPT);
+		return handleInvite(confUserId, ConfConstant.CONF_USER_REFUSE);
 	}
 	
 	private boolean handleInvite(int confUserId, int handleStatus) {

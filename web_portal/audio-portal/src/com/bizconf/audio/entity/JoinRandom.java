@@ -17,6 +17,17 @@ public class JoinRandom {
 	private Date createTime;
 	private String language;
 	private String userEmail;
+	
+	//added by Chris Gao
+	private String clientIp;
+	
+	public String getClientIp() {
+		return clientIp;
+	}
+
+	public void setClientIp(String clientIp) {
+		this.clientIp = clientIp;
+	}
 
 	public long getId() {
 		return id;
@@ -80,6 +91,14 @@ public class JoinRandom {
 
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
+	}
+
+	@Override
+	public String toString() {
+		return "JoinRandom [id=" + id + ", confId=" + confId + ", userId="
+				+ userId + ", userName=" + userName + ", userRole=" + userRole
+				+ ", createTime=" + createTime + ", language=" + language
+				+ ", userEmail=" + userEmail + ", clientIp=" + clientIp + "]";
 	}
 
 }

@@ -2,6 +2,7 @@ package com.bizconf.audio.entity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.bizconf.audio.component.language.ResourceHolder;
@@ -178,9 +179,11 @@ public class UserBase implements java.io.Serializable {
 	private Integer timeZoneId = 44;
 	
 	// Constructors
-
+	private Date exprieDate = new Date(180, 0, 1, 0, 0, 0);//用户过期时间
+	
 	/** default constructor */
 	public UserBase() {
+		
 	}
 
 	/** full constructor */
@@ -466,7 +469,7 @@ public class UserBase implements java.io.Serializable {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -545,12 +548,41 @@ public class UserBase implements java.io.Serializable {
 				+ ", loginCount=" + loginCount + ", passEditor=" + passEditor
 				+ ", timeZone=" + timeZone + ", timeZoneId=" + timeZoneId + "]";
 	}
+	
+	
+	public Date getExprieDate() {
+		return exprieDate;
+	}
+
+	public void setExprieDate(Date exprieDate) {
+		this.exprieDate = exprieDate;
+	}
+	
+	public boolean isExpried(){
+		if(this.exprieDate == null){
+			return false;
+		}else{
+			return DateUtil.getGmtDate(null).after(this.exprieDate);
+		}
+	}
+	
+	//判断该用户是否为一直有效的用户
+	public boolean isPermanentUser(){
+		if(this.exprieDate == null){
+			return true;
+		}else{
+			Calendar c = Calendar.getInstance();
+			c.setTime(exprieDate);
+			return c.get(Calendar.YEAR)>2060;
+		}
+	}
 
 	//初始化默认值
 	public void init(){
 		if(createTime==null){
 			this.setCreateTime(DateUtil.getGmtDate(null));   //创建时间初始化为GMT时间
 		}
+		
 		//this.setCreateUser(creator.getId());
 		//this.setSiteId(creator.getSiteId());
 		if(delFlag==null){
@@ -588,4 +620,6 @@ public class UserBase implements java.io.Serializable {
 		}
 		this.setDelUser(0);
 	}
+	
+	
 }

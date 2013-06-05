@@ -1,27 +1,142 @@
 package com.bizconf.audio.test;
 
-import com.bizconf.audio.entity.EmpowerConfig;
-import com.bizconf.audio.entity.UserBase;
-import com.bizconf.audio.service.ConfManagementService;
-import com.bizconf.audio.service.EmpowerConfigService;
-import com.bizconf.audio.service.UserService;
-import com.bizconf.audio.task.AppContextFactory;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.bizconf.audio.constant.ConstantUtil;
+import com.bizconf.encrypt.Base64;
+import com.bizconf.encrypt.MD5;
 
 
 public class TestService {
+	
+	
+	public static void makeJoinMtgUrl(String siteId,String mtgTitle,String mtgKey,String userName,String userId){
+		
+		
+//		String siteId="int";
+		String language="0";
+		String duration="120";
+//		String mtgTitle="测试外部入口进入会议003";
+//		String mtgKey="int2013202";
+//		String userName="Anke";
+//		String userId="0";ymkfzc
+		String hostPwd="112233445566";
+		hostPwd=Base64.encode(hostPwd,"utf8").replaceAll("/","_");
+		String mtgPwd="8q8w8e8s";
+		mtgPwd=Base64.encode(mtgPwd,"utf8").replaceAll("/","_");
+		String userType="8";
+		String timestamp=(new Date()).getTime()+"";//(new Date()).getTime()+"";	
+		String authSource=ConstantUtil.JOIN_MTG_PUBLIC_KEY+siteId+mtgKey+userId+userType+timestamp;
+//		authBuffer.append(""+ConstantUtil.JOIN_MTG_PUBLIC_KEY);
+//		authBuffer.append(""+siteSign);
+//		authBuffer.append(""+mtgKey);
+//		authBuffer.append(""+userId);
+//		authBuffer.append(""+userType);7e357968d85b6698f799c6965105e726
+//		authBuffer.append(""+timestamp);
+		String authId=MD5.encodePassword(authSource, "MD5");
+		StringBuffer joinUrlBuffer=new StringBuffer();
+		joinUrlBuffer.append(""+siteId+".confcloud.cn/");
+		joinUrlBuffer.append("join_mtg.asp?siteId="+siteId);
+		joinUrlBuffer.append("&language="+language);
+		joinUrlBuffer.append("&duration="+duration);
+		joinUrlBuffer.append("&mtgTitle="+string2Unicodes(mtgTitle));
+		joinUrlBuffer.append("&mtgKey="+mtgKey);
+		joinUrlBuffer.append("&hostPwd="+hostPwd);
+		joinUrlBuffer.append("&mtgPwd="+mtgPwd);
+		joinUrlBuffer.append("&userName="+string2Unicodes(userName));
+		joinUrlBuffer.append("&userId="+userId);
+		joinUrlBuffer.append("&userType="+userType);
+		joinUrlBuffer.append("&timestamp="+timestamp);
+		joinUrlBuffer.append("&authId="+authId);
+//		System.out.println(Base64.decode("MTYyODMzNDU1MDY4","utf8"));
+//		System.out.println(MD5.encodePassword(authSource, "MD5"));
+//		
+		System.out.println("");
+		System.out.println(userName);
+		System.out.println("");
+		System.out.println(joinUrlBuffer.toString());
+	}
+	
+	
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		System.out.println("0&1=="+('0'&'1'));
-		System.out.println("1&1=="+('1'&'1'));
-		System.out.println("0&0=="+('0'&'0'));
-	//	System.out.println("0^1=="+(0^1));
-		System.out.println("0|1=="+(0|1));
-		System.out.println("0|0=="+(0|0));
-		System.out.println("1|1=="+(1|1));
+		String siteId="emcps";
+		String mtgTitle=siteId+"JoinMtg会议00001";
+		String mtgKey="201321111222001"; 
+		List<String[]> userList=new ArrayList<String[]>();
+		userList.add(new String[]{"Dick","0"});
+		userList.add(new String[]{"Chris","9997"});
+		userList.add(new String[]{"John","9993"});
+		userList.add(new String[]{"Anke","9992"});
+		userList.add(new String[]{"Frank","9998"});
+//		userList.add(new String[]{"William","9991"});
+//		userList.add(new String[]{"Alan","9996"});
+//		userList.add(new String[]{"Martin","9995"});
+//		userList.add(new String[]{"Jack","9990"});
+	//	userList.add(new String[]{"John001","0"});
+		for(String[] userInfo:userList){
+			makeJoinMtgUrl(siteId,mtgTitle,mtgKey,userInfo[0],userInfo[1]);
+		}
+//		
+//		String siteId="int";
+//		String language="0";
+//		String duration="120";
+//		String mtgTitle="测试外部入口进入会议003";
+//		String mtgKey="int2013201";
+//		String userName="Anke";
+//		String userId="0";
+//		String hostPwd="1q2w3e4r5t6y";
+//		hostPwd=Base64.encode(hostPwd,"utf8").replaceAll("/","_");
+//		String mtgPwd="8q8w8e8r8g8y";
+//		mtgPwd=Base64.encode(mtgPwd,"utf8").replaceAll("/","_");
+//		String userType="8";
+//		String timestamp=(new Date()).getTime()+"";//(new Date()).getTime()+"";	
+//		String authSource=ConstantUtil.JOIN_MTG_PUBLIC_KEY+siteId+mtgKey+userId+userType+timestamp;
+////		authBuffer.append(""+ConstantUtil.JOIN_MTG_PUBLIC_KEY);
+////		authBuffer.append(""+siteSign);
+////		authBuffer.append(""+mtgKey);
+////		authBuffer.append(""+userId);
+////		authBuffer.append(""+userType);7e357968d85b6698f799c6965105e726
+////		authBuffer.append(""+timestamp);
+//		String authId=MD5.encodePassword(authSource, "MD5");
+//		StringBuffer joinUrlBuffer=new StringBuffer();
+//		joinUrlBuffer.append(""+siteId+".confcloud.cn/");
+//		joinUrlBuffer.append("join_mtg.asp?siteId="+siteId);
+//		joinUrlBuffer.append("&language="+language);
+//		joinUrlBuffer.append("&duration="+duration);
+//		joinUrlBuffer.append("&mtgTitle="+string2Unicodes(mtgTitle));
+//		joinUrlBuffer.append("&mtgKey="+mtgKey);
+//		joinUrlBuffer.append("&hostPwd="+hostPwd);
+//		joinUrlBuffer.append("&mtgPwd="+mtgPwd);
+//		joinUrlBuffer.append("&userName="+string2Unicodes(userName));
+//		joinUrlBuffer.append("&userId="+userId);
+//		joinUrlBuffer.append("&userType="+userType);
+//		joinUrlBuffer.append("&timestamp="+timestamp);
+//		joinUrlBuffer.append("&authId="+authId);
+//		System.out.println(Base64.decode("MTYyODMzNDU1MDY4","utf8"));
+//		System.out.println(MD5.encodePassword(authSource, "MD5"));
+//		
+//		
+//		System.out.println(joinUrlBuffer.toString());
+//		String joinUrl="join_mtg.asp?siteId="+siteId+"";
+//		ConfService confservice = AppContextFactory.getAppContext().getBean(ConfService.class);
+//		confservice.syncConfStatus(confservice.getConfBasebyConfId(2249));
+//		
+//
+//		System.out.println("0&1=="+('0'&'1'));
+//		System.out.println("1&1=="+('1'&'1'));
+//		System.out.println("0&0=="+('0'&'0'));
+//	//	System.out.println("0^1=="+(0^1));
+//		System.out.println("0|1=="+(0|1));
+//		System.out.println("0|0=="+(0|0));
+//		System.out.println("1|1=="+(1|1));
 //
 //		EmpowerConfigService empowerService=AppContextFactory.getAppContext().getBean(EmpowerConfigService.class);
 //		EmpowerConfig userPower=empowerService.getUserEmpowerConfigByUserId(1000150);
@@ -42,7 +157,7 @@ public class TestService {
 		
 		
 
-		ConfManagementService confManagementService=AppContextFactory.getAppContext().getBean(ConfManagementService.class);
+//		ConfManagementService confManagementService=AppContextFactory.getAppContext().getBean(ConfManagementService.class);
 		
 		
 
@@ -139,16 +254,17 @@ public class TestService {
 //				if(confBase!=null){
 //					System.out.println("confId="+confBase.getId()+"--->>confName="+confBase.getConfName()+"--->>StartTime="+confBase.getStartTime());
 //				}
-//				
+//				http://int.confcloud.cn/?joinUrl=am9pbi9qb2lucGFnZT9qb2luVHlwZT0zJmNJZD0zNjI2JnNjb2RlPTU2MjE5NjExNiZ1SWQ9MA==
 //			}
 //		}
 //		System.out.println(comingDate.getDatas().size());
  
 		
-//		String base64="aHR0cDovL3d3dy5jb25mY2xvdWQuY24vb3BlbmFwaS9DbGllbnRBUEkjaHR0cDovL3d3dy5jb25mY2xvdWQuY24vZG93bmxvYWQjMjA1MiMxIzk5OQ==";
-//		
-//
+//		String base64="am9pbi9qb2lucGFnZT9qb2luVHlwZT0zJmNJZD0zNjI2JnNjb2RlPTU2MjE5NjExNiZ1SWQ9MA==";
+		//am9pbi9qb2lucGFnZT9qb2luVHlwZT0zJmNJZD0zNjM3JnNjb2RlPSZ1SWQ9MA==
+//http://thtfpc.confcloud.cn/?joinUrl=am9pbi9qb2lucGFnZT9qb2luVHlwZT0zJmNJZD0zNjM3JnNjb2RlPSZ1SWQ9MA==
 //		System.out.println(Base64.decode(base64));
+		//http://int.confcloud.cn/?joinUrl=am9pbi9qb2lucGFnZT9qb2luVHlwZT0zJmNJZD0zNjI2JnNjb2RlPSZ1SWQ9MA==
 //		
 //		
 //				System.out.println(Base64.decode("aHR0cDovL3d3dy5jb25mY2xvdWQuY24vb3BlbmFwaS9DbGllbnRBUEkjaHR0cDovL3d3dy5jb25mY2xvdWQuY24vZG93bmxvYWQjMiMxIzQ="));
@@ -241,6 +357,18 @@ public class TestService {
 //		siteService=null;
 //		userService=null;
 //	}
+	}
+	
+	
+	private static String string2Unicodes(String str) {
+		StringBuilder unicodes = new StringBuilder();
+		if (StringUtils.isEmpty(str)) {
+			return "";
+		}
+		for (char c : str.toCharArray()) {
+			unicodes.append((int) c + ",");
+		}
+		return unicodes.deleteCharAt(unicodes.length() - 1).toString();
 	}
 
 }

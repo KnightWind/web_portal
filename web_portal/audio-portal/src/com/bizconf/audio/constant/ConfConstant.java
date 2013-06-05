@@ -2,8 +2,10 @@ package com.bizconf.audio.constant;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.bizconf.audio.entity.DefaultConfig;
+import com.bizconf.audio.util.SiteIdentifyUtil;
 
 public class ConfConstant {
 	
@@ -43,6 +45,13 @@ public class ConfConstant {
 	public static final Integer CONF_STATUS_CANCELED = 9;
 	//锁定的会议
 	public static final Integer CONF_STATUS_LOCKED = 11;
+
+	//非永久会议
+	public static final Integer CONF_PERMANENT_UNABLE=0;
+	//永久会议主会议
+	public static final Integer CONF_PERMANENT_ENABLED_MAIN=1;
+	//永久会议子会议
+	public static final Integer CONF_PERMANENT_ENABLED_CHILD=2;
 	
 	
 	/*
@@ -63,6 +72,12 @@ public class ConfConstant {
 	public static final Integer CONF_CYCLE_TRUE = 1;
 	//非循环会议
 	public static final Integer CONF_CYCLE_FALSE = 2;
+	
+	//无限期循环
+	public static final int CONF_CYCLE_INFINITE_TRUE = 1;
+	//非无限期循环
+	public static final int CONF_CYCLE_INFINITE_FALSE = 0;
+	
 	
 	//日会议标志
 	public static final Integer CONF_CYCLE_DAILY = 1;
@@ -233,6 +248,8 @@ public class ConfConstant {
 	public static final String JOIN_ERROR_CODE_7="7";//会议未到开始时间
 	public static final String JOIN_ERROR_CODE_8="8";//启动会议失败
 	public static final String JOIN_ERROR_CODE_9="9";//站点不存在
+	public static final String JOIN_ERROR_CODE_10="10";//启动永久会议失败
+	public static final String JOIN_ERROR_CODE_11="11";//
 	
 	public static final Integer CONF_REMIND_MINUTES=1440;//邮件提醒的提前时间，会议开始前多少时间提醒，单位：分钟
 	public static final Integer CONF_REMIND_FLAG_REMINDED= 1;//已经发送过邮件提醒
@@ -405,13 +422,13 @@ public class ConfConstant {
 	
 	
 	
-	public static final DefaultConfig DEFAULT_CONFIG_FOR_OUTER=new DefaultConfig(
+	public static final DefaultConfig DEFAULT_CONFIG_FOR_OUTER = new DefaultConfig(
 			16,
 			6,
 			CONF_CONFIG_VIDEO_TYPE,
 			"5",
 			"4",
-			1,
+			20,
 			CONF_CONFIG_AHEADTIMES,
 			"01111000000000000000000000000000",
 			"0011100111111011100001000000000000",
@@ -458,6 +475,63 @@ public class ConfConstant {
 	public static final int CONF_PAD_STATUS_OPENING = 1;       //正在进行的
 	public static final int CONF_PAD_STATUS_COMING = 2;		   //即将开始的
 	public static final int CONF_PAD_STATUS_ATTENDED = 3;	   //参加过的
+	
+	
+	
+	public static final String CLIENT_WEB_URL = "http://%s.confcloud.cn:80/openapi/ClientAPI";
+	public static final String CLIENT_DOWNLOAD_URL_DEFAULT="http://"+SiteIdentifyUtil.getCurrentBrand()+".confcloud.cn:80/download";
+	
+	
+	public static String CLIENT_DOWNLOAD_URL = null;//"http://%s.confcloud.cn:80/download";
+	public static String SERVER_IP = null;
+	public static String CLUSTER_ID = null;
+	public static String DOWNLOAD_DEFAULT=null;
+	public static String DOWNLOAD_SERVERS=null;
+	
+	static {
+		try {
+			ResourceBundle rb = ResourceBundle.getBundle("config.ms");
+			SERVER_IP = rb.getString("server_ip");
+			CLUSTER_ID = rb.getString("cluster_id");
+			CLIENT_DOWNLOAD_URL=CLIENT_DOWNLOAD_URL_DEFAULT;
+//			DOWNLOAD_DEFAULT = rb.getString("download_servers_default");
+//			DOWNLOAD_SERVERS = rb.getString("download_servers");
+		}
+		catch (Exception e) {
+			e.printStackTrace(System.err);
+		}
+//		
+//		if(DOWNLOAD_SERVERS==null && DOWNLOAD_DEFAULT==null){
+//			CLIENT_DOWNLOAD_URL=CLIENT_DOWNLOAD_URL_DEFAULT;
+//		}
+//		
+//		if(DOWNLOAD_DEFAULT!=null && DOWNLOAD_DEFAULT.length() > 0){
+//			CLIENT_DOWNLOAD_URL=DOWNLOAD_DEFAULT;
+//		}
+//		
+//		if(DOWNLOAD_SERVERS!=null && DOWNLOAD_SERVERS.length() > 0){
+//			String[] server_array=null;
+//			server_array=DOWNLOAD_SERVERS.split(",");
+//			if(server_array!=null && server_array.length >0){
+//				if(server_array.length==1){
+//					CLIENT_DOWNLOAD_URL=DOWNLOAD_SERVERS;
+//				}else{
+//					int serverCount=server_array.length;
+//					int randomNum=(int)Math.round(serverCount * Math.random());
+//					if(randomNum>=serverCount){
+//						randomNum=serverCount-1;
+//					}
+//					CLIENT_DOWNLOAD_URL=server_array[randomNum];
+//				}
+//			}
+//			server_array=null;
+//			
+//		}
+//		System.out.println("CLIENT_DOWNLOAD_URL=="+CLIENT_DOWNLOAD_URL);
+	}
+
+	
+	
 	
 	
 	

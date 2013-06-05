@@ -68,7 +68,7 @@
 	});
 		
 		function editMeeting(){
-			//基本信息
+			//${LANG['bizconf.jsp.create_Immediately_Conf.res1']}
 			var data = {};
 			data.confName = $("#confName").val();
 			app.tempMeeting(data, function(result) {
@@ -81,7 +81,7 @@
 				} else {
 					parent.errorDialog(result.message);
 				}
-			}, {message:"正在进入会议...", ui:parent});
+			}, {message:"${LANG['bizconf.jsp.create_Immediately_Conf.res2']}...", ui:parent});
 		};
 
 		function quickStart() {
@@ -102,7 +102,7 @@
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->  
 	  <form name="immediaForm" id="immediaForm" method="post" action="">
       	<div class="First_Steps_quick_a" style=" background:#FFF;height: 160px;">
 	        <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
@@ -120,13 +120,13 @@
 	          </table>
 	        </div>
 	        <div class="First_Steps_bottom01" style="height: 30px;">
-	          <button type="submit" value="立即开始" class="but07">
+	          <button type="submit" value="${LANG['bizconf.jsp.create_Immediately_Conf.res3']}" class="but07">
 	          		<img src="/static/images/join.png" width="16" height="15" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['user.menu.conf.start']}
 	          	</button>
 	        </div>
       	</div>
       </form>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>

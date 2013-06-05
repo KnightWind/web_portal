@@ -43,11 +43,11 @@ $(function() {
 	
 	$(".gaoji").toggle(function () {
 	    $("#search-condition").slideDown();
-	    parent.resizeHeight(150, true);//增加高度
+	    parent.resizeHeight(150, true);//${LANG['bizconf.jsp.admin.conf_list.res1']}
 	}, function () {
 		$("#search-condition").slideUp();
 		var height = $("#search-condition").height();
-		parent.resizeHeight(150, false);//减少高度
+		parent.resizeHeight(150, false);//${LANG['bizconf.jsp.admin.conf_list.res2']}
 	});
 	var lang = getBrowserLang();
 	if (lang=="zh-cn") {
@@ -137,8 +137,8 @@ function formBind(){
 }
 
 function enterSumbit(){   
-    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-    if (event.keyCode == 13){       //监听回车键
+    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.admin.conf_list.res3']}   
+    if (event.keyCode == 13){       //${LANG['bizconf.jsp.admin.conf_list.res4']}
     	querySite("/system/site/listWithSignOrName");   
     }   
 }  
@@ -151,7 +151,7 @@ function enterSumbit(){
 <div class="">
  <div class="m_top">
     <div class="text_box">
-    	<input type="text" name="nameOrSign" id="textfield01" value="请输入企业名称，企业标识进行查询..." onkeydown="enterSumbit()"  onfocus="this.value=''; this.onfocus=null;" />
+    	<input type="text" name="nameOrSign" id="textfield01" value="${LANG['bizconf.jsp.system.meeting_list.res1']}..." onkeydown="enterSumbit()"  onfocus="this.value=''; this.onfocus=null;" />
     	<a class="sousuo" title="${LANG['system.search']}" href="javascript:;" onclick='querySite("/system/site/listWithSignOrName")'><img src="${baseUrlStatic}/images/sousuo.jpg" width="29" height="24" /></a>
     	<a class="gaoji" title="${LANG['system.advancedSearch']}" href="#">${LANG['system.advancedSearch']}</a>
     </div>

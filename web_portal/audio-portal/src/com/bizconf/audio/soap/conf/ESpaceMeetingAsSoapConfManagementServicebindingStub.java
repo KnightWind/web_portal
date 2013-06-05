@@ -7,6 +7,7 @@
 
 package com.bizconf.audio.soap.conf;
 
+import com.bizconf.audio.component.BaseConfig;
 
 public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apache.axis.client.Stub implements com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapConfManagementService {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
@@ -17,7 +18,7 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[32];
+        _operations = new org.apache.axis.description.OperationDesc[37];
         _initOperationDesc1();
         _initOperationDesc2();
         _initOperationDesc3();
@@ -424,6 +425,69 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         _operations[31] = oper;
 
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("queryConfListByPtcptUri");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "request"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfListByPtcptUriRequest"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfListByPtcptUriRequest.class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "response"), org.apache.axis.description.ParameterDesc.OUT, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfListByPtcptUriResponse"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListByPtcptUriResponse.class, false, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Result"));
+        oper.setReturnClass(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "_result"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[32] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("queryConfInfoByPin");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "request"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfInfoByPinRequest"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfInfoByPinRequest.class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "response"), org.apache.axis.description.ParameterDesc.OUT, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfInfoByPinResponse"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfInfoByPinResponse.class, false, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Result"));
+        oper.setReturnClass(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "_result"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[33] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("queryConfListEx");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "request"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfListExRequest"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfListExRequest.class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "response"), org.apache.axis.description.ParameterDesc.OUT, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfListExResponse"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListExResponse.class, false, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Result"));
+        oper.setReturnClass(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "_result"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[34] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("updateConfMemberList");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "request"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.UpdateConfMemberListRequest"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestUpdateConfMemberListRequest.class, false, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Result"));
+        oper.setReturnClass(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "_result"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[35] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("getConfRealtimeStat");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "request"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.GetConfRealtimeStatRequest"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestGetConfRealtimeStatRequest.class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "response"), org.apache.axis.description.ParameterDesc.OUT, new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.GetConfRealtimeStatResponse"), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse.class, false, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Result"));
+        oper.setReturnClass(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "_result"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[36] = oper;
+
     }
 
     public ESpaceMeetingAsSoapConfManagementServicebindingStub() throws org.apache.axis.AxisFault {
@@ -607,6 +671,13 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.GetConfRealtimeStatRequest");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestGetConfRealtimeStatRequest.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
             qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.GetDataConfInfoRequest");
             cachedSerQNames.add(qName);
             cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestGetDataConfInfoRequest.class;
@@ -670,9 +741,30 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfInfoByPinRequest");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfInfoByPinRequest.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
             qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfInfoRequest");
             cachedSerQNames.add(qName);
             cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfInfoRequest.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfListByPtcptUriRequest");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfListByPtcptUriRequest.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.QueryConfListExRequest");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfListExRequest.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -775,6 +867,13 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.request.UpdateConfMemberListRequest");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestUpdateConfMemberListRequest.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
             qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Requester");
             cachedSerQNames.add(qName);
             cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequester.class;
@@ -808,6 +907,13 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
             qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.CreateCycleConfResponse");
             cachedSerQNames.add(qName);
             cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseCreateCycleConfResponse.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.GetConfRealtimeStatResponse");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -847,9 +953,30 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfInfoByPinResponse");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfInfoByPinResponse.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
             qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfInfoResponse");
             cachedSerQNames.add(qName);
             cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfInfoResponse.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfListByPtcptUriResponse");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListByPtcptUriResponse.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.response.QueryConfListExResponse");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListExResponse.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -929,6 +1056,13 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
             qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.Token");
             cachedSerQNames.add(qName);
             cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapToken.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.UserInfo");
+            cachedSerQNames.add(qName);
+            cls = com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapUserInfo.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -1033,6 +1167,8 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
                     }
                 }
             }
+            //设置soap请求时限  默认为5s
+            _call.setTimeout(BaseConfig.getInstance().getInt("time_out", 5000));
             return _call;
         }
         catch (java.lang.Exception _t) {
@@ -1324,16 +1460,13 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
-//        _call.setProperty(MessageContext.HTTP_TRANSPORT_VERSION, HTTPConstants.HEADER_PROTOCOL_11);
-//        _call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
-//        _call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
         _call.setOperationName(new javax.xml.namespace.QName("eSpaceMeeting.as.soap.ConfManagementService", "queryConfInfo"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
  try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {request});
- 
+
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
         }
@@ -2224,6 +2357,204 @@ public class ESpaceMeetingAsSoapConfManagementServicebindingStub extends org.apa
                 response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfStat1Response) _output.get(new javax.xml.namespace.QName("", "response"));
             } catch (java.lang.Exception _exception) {
                 response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfStat1Response) org.apache.axis.utils.JavaUtils.convert(_output.get(new javax.xml.namespace.QName("", "response")), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfStat1Response.class);
+            }
+            try {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) org.apache.axis.utils.JavaUtils.convert(_resp, com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult queryConfListByPtcptUri(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfListByPtcptUriRequest request, com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseQueryConfListByPtcptUriResponseHolder response) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[32]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("eSpaceMeeting.as.soap.ConfManagementService#queryConfListByPtcptUri");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("eSpaceMeeting.as.soap.ConfManagementService", "queryConfListByPtcptUri"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {request});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            java.util.Map _output;
+            _output = _call.getOutputParams();
+            try {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListByPtcptUriResponse) _output.get(new javax.xml.namespace.QName("", "response"));
+            } catch (java.lang.Exception _exception) {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListByPtcptUriResponse) org.apache.axis.utils.JavaUtils.convert(_output.get(new javax.xml.namespace.QName("", "response")), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListByPtcptUriResponse.class);
+            }
+            try {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) org.apache.axis.utils.JavaUtils.convert(_resp, com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult queryConfInfoByPin(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfInfoByPinRequest request, com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseQueryConfInfoByPinResponseHolder response) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[33]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("eSpaceMeeting.as.soap.ConfManagementService#queryConfInfoByPin");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("eSpaceMeeting.as.soap.ConfManagementService", "queryConfInfoByPin"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {request});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            java.util.Map _output;
+            _output = _call.getOutputParams();
+            try {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfInfoByPinResponse) _output.get(new javax.xml.namespace.QName("", "response"));
+            } catch (java.lang.Exception _exception) {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfInfoByPinResponse) org.apache.axis.utils.JavaUtils.convert(_output.get(new javax.xml.namespace.QName("", "response")), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfInfoByPinResponse.class);
+            }
+            try {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) org.apache.axis.utils.JavaUtils.convert(_resp, com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult queryConfListEx(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryConfListExRequest request, com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseQueryConfListExResponseHolder response) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[34]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("eSpaceMeeting.as.soap.ConfManagementService#queryConfListEx");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("eSpaceMeeting.as.soap.ConfManagementService", "queryConfListEx"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {request});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            java.util.Map _output;
+            _output = _call.getOutputParams();
+            try {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListExResponse) _output.get(new javax.xml.namespace.QName("", "response"));
+            } catch (java.lang.Exception _exception) {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListExResponse) org.apache.axis.utils.JavaUtils.convert(_output.get(new javax.xml.namespace.QName("", "response")), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseQueryConfListExResponse.class);
+            }
+            try {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) org.apache.axis.utils.JavaUtils.convert(_resp, com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult updateConfMemberList(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestUpdateConfMemberListRequest request) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[35]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("eSpaceMeeting.as.soap.ConfManagementService#updateConfMemberList");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("eSpaceMeeting.as.soap.ConfManagementService", "updateConfMemberList"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {request});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            try {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) org.apache.axis.utils.JavaUtils.convert(_resp, com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult getConfRealtimeStat(com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestGetConfRealtimeStatRequest request, com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponseHolder response) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[36]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("eSpaceMeeting.as.soap.ConfManagementService#getConfRealtimeStat");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("eSpaceMeeting.as.soap.ConfManagementService", "getConfRealtimeStat"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {request});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            java.util.Map _output;
+            _output = _call.getOutputParams();
+            try {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse) _output.get(new javax.xml.namespace.QName("", "response"));
+            } catch (java.lang.Exception _exception) {
+                response.value = (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse) org.apache.axis.utils.JavaUtils.convert(_output.get(new javax.xml.namespace.QName("", "response")), com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse.class);
             }
             try {
                 return (com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResult) _resp;

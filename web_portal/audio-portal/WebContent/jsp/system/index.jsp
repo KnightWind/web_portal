@@ -5,7 +5,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<TITLE>商会云系统管理平台</TITLE>
+<TITLE>${LANG['bizconf.jsp.system.header.res1']}</TITLE>
 
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/reset.css"/>
 <link rel="stylesheet" type="text/css" href="/static/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
@@ -35,7 +35,7 @@
 		});
 		$('body').bind(EVENT_CREATE, function(event, result, type) {
 			if(type==VIEW_TYPE.sysAdminUser) {
-				successDialog(result.siteBase[0]);
+				successDialog(result.message);
 				showURL("/system/sysUser/list");
 			} else if(type==VIEW_TYPE.site){
 				siteCreateSuccess(result);
@@ -47,7 +47,7 @@
 		});
 		$('body').bind(EVENT_UPDATE, function(event, result, type) {
 			if (type==VIEW_TYPE.sysAdminUser) {
-				successDialog(result.siteBase[0]);
+				successDialog(result.message);
 				showURL("/system/sysUser/list");
 			} else if(type==VIEW_TYPE.site){
 				siteUpdateSuccess(result);
@@ -112,7 +112,7 @@
 	function createOrUpdateHost(siteId,userId) {
 		if(userId) {
 			$("<div id=\"hostDiv\"/>").showDialog({
-				"title": "修改主持人",
+				"title": "${LANG['bizconf.jsp.system.index.res1']}",
 				"dialogClass" : "ui-dialog-smile",
 				"url" : "/system/lic/goEditHost?siteId="+siteId+"&userId="+userId,
 				"type" : VIEW_TYPE.hostUser,
@@ -122,7 +122,7 @@
 			});
 		} else {
 			$("<div id=\"hostDiv\"/>").showDialog({
-				"title" : "创建主持人",
+				"title" : "${LANG['bizconf.jsp.system.index.res2']}",
 				"dialogClass" : "ui-dialog-smile",
 				"url" : "/system/lic/goEditHost?siteId="+siteId+"&userId="+userId,
 				"type" : VIEW_TYPE.hostUser,
@@ -135,7 +135,7 @@
 	
 	function countManager(id) {
 		$("<div id=\"countManagerDiv\"/>").showDialog({
-			"title" : "点数管理",
+			"title" : "${LANG['bizconf.jsp.system.hostlist.res3']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "/system/lic/list?siteId="+id,
 			"type" : VIEW_TYPE.hostUser,
@@ -144,10 +144,10 @@
 			"height" : 380
 		});			
 	}
-	//name_host点数设置
+	//name_host${LANG['bizconf.jsp.system.index.res3']}
 	function licenseManage(userId,siteId){
 		$("<div id=\"countManagerDiv\"/>").showDialog({
-			"title" : "点数管理",
+			"title" : "${LANG['bizconf.jsp.system.hostlist.res3']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "/system/lic/list?userId="+userId+"&siteId="+siteId,
 			"type" : VIEW_TYPE.hostUser,
@@ -158,7 +158,7 @@
 	}
 	function hostManger(id) {
 		$("<div id=\"hostManagerDiv\"/>").showDialog({
-			"title" : "host管理",
+			"title" : "host${LANG['bizconf.jsp.system.index.res4']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "/system/lic/listHost?siteId="+id,
 			"type" : VIEW_TYPE.hostUser,
@@ -178,7 +178,7 @@
 				"type" : VIEW_TYPE.sysAdminUser,
 				"action" : ACTION.update,
 				"width" : 450,
-				"height" : 380
+				"height" : 430
 			});
 		} else {
 			$("<div id=\"userDiv\"/>").showDialog({
@@ -188,7 +188,7 @@
 				"type" : VIEW_TYPE.sysAdminUser,
 				"action" : ACTION.create,
 				"width" : 450,
-				"height" : 380
+				"height" : 430
 			});
 		}
 	}
@@ -227,7 +227,7 @@
 				"type" : VIEW_TYPE.site,
 				"action" : ACTION.update,
 				"width" : 500,
-				"height" : 420
+				"height" : 450
 			});
 		} else {
 			$("<div id=\"siteDiv\"/>").showDialog({
@@ -237,7 +237,7 @@
 				"type" : VIEW_TYPE.site,
 				"action" : ACTION.create,
 				"width" : 500,
-				"height" : 420
+				"height" : 450
 			});
 		}
 	}
@@ -321,9 +321,9 @@
 	
 	function logout() {
 		$("<div/>").confirmDialog({
-			"title": "提示",
+			"title": "${LANG['bizconf.jsp.admin.index.res13']}",
 			"dialogClass" : "ui-dialog-smile",
-			"message" : "确定要退出吗?",
+			"message" : "${LANG['bizconf.jsp.admin.index.res14']}?",
 			"type": "confirm",
 			"actions": ["${LANG['system.ok']}", "${LANG['system.cancel']}"],
 			"callback" : function() {
@@ -333,13 +333,13 @@
 	}	
 	
 	/*
-	 * 超级系统管理员修改普通系统管理员密码后，普通系统管理员第一次登陆成功后需重置密码
+	 * ${LANG['bizconf.jsp.system.index.res5']}
 	 */
 	function resetPass(){
 		$("<div id=\"resetPass\"/>").showDialog({
-			"title" : "重置密码",
+			"title" : "${LANG['bizconf.jsp.admin.index.res7']}",
 			"dialogClass" : "ui-dialog-smile",
-			"url" : "/jsp/system/resetPass.jsp",
+			"url" : "/system/resetPass",
 			"type" : VIEW_TYPE.notice,
 			"action" : ACTION.view,
 			"width" : 474,
@@ -349,10 +349,10 @@
 		
 	}
 	
-	//查看入会详情
+	//${LANG['bizconf.jsp.system.index.res6']}
 	function showConflogs(id) {
 		$("<div id=\"logview\"/>").showDialog({
-			"title" : "入会详情",
+			"title" : "${LANG['bizconf.jsp.admin.index.res15']}",
 			"dialogClass" : "ui-dialog-smile",
 			"url" : "<%=request.getContextPath()%>/user/conflog/loglist?confId="+id,
 			"type" : VIEW_TYPE.group,
@@ -361,12 +361,36 @@
 			"height" : 534
 		});
 	}
+	
+	function showTelDetail(id) {
+		$("<div id=\"billingView\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.index.res8']}",
+			"dialogClass" : "ui-dialog-user",
+			"url" : "/common/billing/showTelDetail?id="+id,
+			"type" : VIEW_TYPE.billing,
+			"action" : ACTION.create,
+			"width" : 624,
+			"height" : 587
+		});
+	}
+	
+	function showDataFeeDetail(id) {
+		$("<div id=\"dataFeeView\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.index.res8']}",
+			"dialogClass" : "ui-dialog-user",
+			"url" : "/common/billing/showDataDetail?id="+id,
+			"type" : VIEW_TYPE.billing,
+			"action" : ACTION.create,
+			"width" : 624,
+			"height" : 487
+		});
+	}
 </script>
 
  
 </HEAD>
 <BODY style="min-width:1002px;">
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res2']}-->
 <jsp:include page="header.jsp" />
 
 <div class="main_left" >
@@ -406,6 +430,12 @@
          	</c:if>
           </ul>
         </li>
+<%--        <li><span class="nav_top04"><a class="" href="#">${LANG['bizconf.jsp.admin.index.res20']}</a></span>--%>
+<%--          <ul class="sub_nav">--%>
+<%--            <li class="b_line"><a class="li_alink" href="/common/billing/goSysBilling" target="mainFrame">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>--%>
+<%--          </ul>--%>
+<%--        </li>--%>
+        
          <li><span class="nav_top06"><a class="" href="#">${LANG['system.menu.info.user.manage']}</a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" href="/system/profile" target="mainFrame">${LANG['system.menu.info.user.manage']}</a></li>
@@ -418,7 +448,7 @@
 <iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/system/site/list"></iframe>
 </div>
 
-<!--左部菜单栏-->
+<!--${LANG['bizconf.jsp.system.index.res7']}-->
 <jsp:include page="footer.jsp" />
 </BODY>
 </HTML>

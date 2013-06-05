@@ -20,13 +20,13 @@ $(document).ready(function(){
 	$('#emailForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 0.65 });
 	var ruleString = {
 			required: {
-				"email": "请输入邮箱"
+				"email": "${LANG['bizconf.jsp.add_calendar_notice.res1']}"
 			},
 			rangelength: {
-				"email": "长度为6~32个字符"
+				"email": "${LANG['bizconf.jsp.add_calendar_notice.res2']}6~32${LANG['bizconf.jsp.add_calendar_notice.res3']}"
 			},
 			custom: {
-				"email": "请输入正确的邮件格式"
+				"email": "${LANG['bizconf.jsp.add_calendar_notice.res4']}"
 			}
 	};
 	emailForm = $("#emailForm").validate({
@@ -77,19 +77,18 @@ $(document).ready(function(){
     </tr>
     <tr>
       <td class="overlay-bdL"></td>
-      <!--弹出层主题内容区域开始========================================================================-->
       <td class="overlay-content">
-        <div class="First_Steps_quick_e" style=" background:#FFF">
+        <div class="First_Steps_quick_e" style=" background:#FFF;width:460px;">
           <div class="First_Steps_title_a"> <a href="javascript:closeDialog();"></a>
-            <h3 class="tit_a">添加日历</h3>
-            <p class="tit_b">填写您的邮箱地址，系统自动为您创建日历用于提醒你准时参会。</p>
+            <h3 class="tit_a">${LANG['bizconf.jsp.add_calendar_notice.res5']}</h3>
+            <p class="tit_b">${LANG['bizconf.jsp.add_calendar_notice.res6']}</p>
           </div>
           <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
           <div class="First_Steps_top" style=" background:#FFF"> </div>
           <div class="First_Steps_main_quick">
             <table class="box_a_quick02">
               <tr class="box01">
-                <td align="right" class="left_text_a"><span style=" color:#F00">* </span>邮箱地址</td>
+                <td align="right" class="left_text_a"><span style=" color:#F00">* </span>${LANG['bizconf.jsp.add_calendar_notice.res7']}</td>
                 <td align="left">
                   <input class="right_text_a" id="email" name="email" type="text" />
                 </td>
@@ -99,16 +98,15 @@ $(document).ready(function(){
         </div>
         
         <div class="but361">
-         	<button type="submit" value="发送" class="but_send">
-          		<img src="/static/images/tixing.png" width="16" height="15" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>发送
+         	<button type="submit" value="${LANG['bizconf.jsp.add_calendar_notice.res8']}" class="but_send">
+          		<img src="/static/images/tixing.png" width="16" height="15" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.add_calendar_notice.res8']}
           	</button>
 <!-- 	    <span class="button_common"> -->
 <!-- 	        <a href="javascript:;" onclick="submitForm()"> -->
-<!-- 	        <img src="/static/images/tixing.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;"/>发送</a> -->
+<!-- 	        <img src="/static/images/tixing.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;"/>${LANG['bizconf.jsp.add_calendar_notice.res8']}</a> -->
 <!-- 	    </span> -->
         </div>
       </td>
-      <!--弹出层主题内容区域开始========================================================================-->
       <td class="overlay-bdR"></td>
     </tr>
     <tr>
@@ -137,7 +135,7 @@ function sendEmail() {
 			}
 			closeDialog();
 		}
-	},{message:"正在添加日历提醒...", ui:parent});
+	},{message:"${LANG['bizconf.jsp.add_calendar_notice.res9']}...", ui:parent});
 }
 function loaded() {
 	var frame = parent.$("#addCalendar");

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>企业用户公告列表</title>
+<title>${LANG['bizconf.jsp.notice_list.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></SCRIPT>
@@ -14,8 +14,8 @@
 <div class="main_content">
   <div class="meeting_main" >
   <div class="intercalate_main_top">
-	<h3>公告信息</h3>
-    <p>你可以查看到管理员发布的公告信息。</p>
+	<h3>${LANG['bizconf.jsp.help.res11']}</h3>
+    <p>${LANG['bizconf.jsp.notice_list.res2']}</p>
   </div>
     <table width="100%" cellpadding="0" cellspacing="0" border="0"  >
      <c:if test="${fn:length(noticeList)<=0 }">
@@ -31,14 +31,14 @@
         <td class="notice_title" style="border-right:#D2D8DB 1px solid; border-top:none;" colspan="2"><img src="/static/images/gg_left.png" align="absmiddle" style=" margin-left:20px; margin-right:10px;">${notice.title}&nbsp;&nbsp;&nbsp; (<fmt:formatDate value="${notice.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/>)</td>
       </tr>
       <tr align="left" bgcolor="#FFFFFF" height="32">
-        <td class="notice_message" style="border:#D2D8DB 1px solid;border-top:none">
-        <div style="width:600px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${notice.content}">
+        <td class="notice_message" style="border:#D2D8DB 1px solid;border-top:none;padding: 10px 45px;">
+        <div>
  			${notice.content}
 		</div>
         </td>
       </tr>
        <tr align="left" bgcolor="#FFFFFF" height="32">
-        <td class="notice_bottom" style="border:#D2D8DB 1px solid;border-top:none"><img src="/static/images/promulgator.png" align="absmiddle" style=" margin-right:5px;">发布者：${publishUserList[status.count-1]}</td>
+        <td class="notice_bottom" style="border:#D2D8DB 1px solid;border-top:none"><img src="/static/images/promulgator.png" align="absmiddle" style=" margin-right:5px;">${LANG['bizconf.jsp.notice_list.res3']}${publishUserList[status.count-1]}</td>
       </tr> 
     </c:forEach>
     </c:if>

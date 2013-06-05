@@ -37,9 +37,13 @@ img {
 	height:24px;
 	width:24px;
 	background:url(/static/images/xxx.png) no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/xxx.png', sizingMethod='scale');	
 }
 .dialog-close-button:hover {
 	background:url(/static/images/xxx_change.png) no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/xxx_change.png', sizingMethod='scale');	
 }
 /*=========================表格===================================*/
 .empty_result {
@@ -189,8 +193,6 @@ div.selector span {
 .ui-datepicker-trigger {
 	margin-bottom: -5px;
 	margin-left: -18px;
-
- 	_margin-bottom: -5px;
 }
 .ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
 	width: 44%;
@@ -501,9 +503,14 @@ table.overlay-panel td.overlay-ftR {
 }
 .subnav ul li {
 	background:url(/static/images/kuaijie-li.png) left center no-repeat;
+
 	padding-left:5px;
 	margin-right:10px;
 }
+
+*html .subnav ul li {
+	background:url(/static/images/subnav-li.png) left center no-repeat;
+} 
 .sub01 a {
 	display:block;
 	float:left;
@@ -755,7 +762,7 @@ table.overlay-panel td.overlay-ftR {
 	width:20px;
 }
 .k04 {
-	width:48px;
+	width:55px;
 	height:27px;
 	display:block;
 	border:#fff 1px solid;
@@ -767,6 +774,7 @@ table.overlay-panel td.overlay-ftR {
 	position:relative;
 	cursor:pointer;
 	padding-left:5px;
+	overflow: hidden;
 }
 .k04:hover {
 	border:#DBDFE2 1px solid;

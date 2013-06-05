@@ -47,6 +47,7 @@
       <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px;line-height:22px; margin-left:65px; margin-top:18px;font-weight:bold; ">邮箱：</span></td>
       <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666;line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${user.userEmail}</span></td>
     </tr>
+    <#if lics??>
     <tr  height="22">
       <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px;line-height:22px; margin-left:65px; margin-top:18px;font-weight:bold; ">授权点数信息如下：</span></td>
       <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666;line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;"></span></td>
@@ -65,11 +66,12 @@
       <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666;line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${lic.expireDate?string("yyyy-MM-dd")}</span></td>
     </tr>
 	</#list>
+	</#if>
   </table>
   <table cellpadding="0" cellspacing="0" border="0" style=" background:#fff;">
     <tr height="20">
       <td>
-        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-top:10px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.bizconf.cn'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服。</p>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-top:10px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服。</p>
       </td>
     </tr>
     <tr height="20"><td>&nbsp;</td></tr>

@@ -24,8 +24,10 @@ import com.bizconf.audio.util.ObjectUtil;
 import com.bizconf.audio.util.StringUtil;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.annotation.AsController;
+import com.libernate.liberc.annotation.CParam;
 import com.libernate.liberc.annotation.Interceptors;
 import com.libernate.liberc.annotation.ReqPath;
+import com.libernate.liberc.annotation.httpmethod.Get;
 
 /**
  * 企业用户公告
@@ -35,7 +37,6 @@ import com.libernate.liberc.annotation.ReqPath;
  */
 
 @ReqPath("notice")
-@Interceptors({UserInterceptor.class})
 public class NoticeController extends BaseController {
 	private final Logger logger = Logger.getLogger(NoticeController.class);
 	
@@ -56,6 +57,7 @@ public class NoticeController extends BaseController {
 	 */
 	@SuppressWarnings("unchecked")
 	@AsController(path="list")
+	@Interceptors({UserInterceptor.class})
 	public Object showList(PageModel pageModel, HttpServletRequest request){
 		List<Notice> noticeList = null;
 		List<String> publishUserList = null;
@@ -130,6 +132,27 @@ public class NoticeController extends BaseController {
 		}
 		return nameList;
 	}	
+	
+	/**
+	 * 弹出公告
+	 * alan
+	 * 2013-5-30
+	 */
+	@AsController(path = "popUpNotice/{id:([0-9]+)}")
+	@Get
+	public Object popUpNotice(@CParam("id") Integer id, HttpServletRequest request) throws Exception{
+		Notice notice = new Notice();
+		if (id>0) {
+			notice = noticeService.getNoticeById(id);
+			notice = (Notice) ObjectUtil.parseChar(notice, "title", "content");	//字符转义	
+		} else {
+			notice.setTitle(request.getParameter("title"));
+			notice.setContent(request.getParameter("content"));
+		}
+
+		request.setAttribute("notice", notice);
+		return new ActionForward.Forward("/jsp/user/viewNotice.jsp");
+	}
 	
 	/**
 	 * 根据当前访问的站点标识获取站点所在时区

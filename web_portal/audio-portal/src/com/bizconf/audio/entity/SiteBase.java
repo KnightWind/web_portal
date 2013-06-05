@@ -100,7 +100,7 @@ public class SiteBase implements java.io.Serializable {
 	 * 1、解锁状态
 	 * 2、锁定状态
 	 */
-	private Integer lockFlag = 1;
+	private Integer lockFlag = 0;
 	
 	/*
 	 * 生效时间
@@ -439,7 +439,17 @@ public class SiteBase implements java.io.Serializable {
 				+ ", delFlag=" + delFlag + ", delTime=" + delTime
 				+ ", delUser=" + delUser + ", priseId=" + priseId + "]";
 	}
-
- 
-
+	
+	/**
+	 * 获取还有多少天此站点到期
+	 * @return
+	 */
+	public int getExpireDateNumber(){
+		Date gmtNow = DateUtil.getGmtDate(null);
+		if(expireDate.after(gmtNow)){
+			int i = new Long((expireDate.getTime()-gmtNow.getTime())).intValue()/(24*3600*1000);
+			return i;
+		}
+		return 0;
+	}
 }

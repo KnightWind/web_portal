@@ -1,5 +1,6 @@
 package com.bizconf.audio.component;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.bizconf.audio.util.DateUtil;
@@ -50,12 +51,19 @@ public class MyfnTag {
 	 */
 	public static boolean siteExpired(Date date){
 		Date now = DateUtil.getGmtDate(null);
-		long expireTime = date.getTime();
+		long expireTime = date.getTime()+24*3600000l;
 		long nowTime = now.getTime();
 		long gapTime = expireTime-nowTime;
 		if(gapTime<=0){
 			return true;
 		}
 		return false;
+	}
+	
+	
+	public static String fmtDate(String parten,Date date,Integer timezone){
+		SimpleDateFormat sdf = new SimpleDateFormat(parten);
+		Date localDate = DateUtil.getOffsetDateByGmtDate(date, timezone.longValue());
+		return sdf.format(localDate);
 	}
 }

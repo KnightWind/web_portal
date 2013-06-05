@@ -8,16 +8,16 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/Popup.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/reset.css"/>
 <SCRIPT type="text/javascript" src="/static/js/jquery-1.8.3.js"></SCRIPT>
-<title>主持人列表</title>
+<title>${LANG['bizconf.jsp.system.hostlist.res1']}</title>
 </head>
 <body onload="loaded()">
-<div class="n_title"><a href="#" onclick="popUpHost('${siteId}','');">添加主持人</a></div>
+<div class="n_title"><a href="#" onclick="popUpHost('${siteId}','');">${LANG['bizconf.jsp.system.add_site_user.res1']}</a></div>
 <table border="0" cellpadding="0" cellspacing="0" class="host_top">
 	<tr height="30" class="host01">
-    	<td width="100" align="center">登录名</td>
-        <td width="150" align="center">邮箱</td>
-        <td width="80" align="center">点数</td>
-        <td width="170" align="center">操作</td>  
+    	<td width="100" align="center">${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</td>
+        <td width="150" align="center">${LANG['bizconf.jsp.admin.arrange_org_user.res9']}</td>
+        <td width="80" align="center">${LANG['bizconf.jsp.system.hostlist.res2']}</td>
+        <td width="170" align="center">${LANG['bizconf.jsp.admin.site_org_list.res6']}</td>  
     </tr>
 </table>
     <div class="h_main">
@@ -35,15 +35,15 @@
 	        <td width="150" align="center">${host.userEmail}</td>
 	        <td width="80" align="center" cla>${licnums[host.id]}</td>
 	        <td width="230" align="center">
-		        <a href="#" onclick="toLicenseManage(${host.id},${siteId})">点数管理</a>
-		        <a href="#" onclick="popUpHost(${siteId},${host.id})">修改</a>
-		        <a href="#" onclick="del(${host.id})">删除</a>
+		        <a href="#" onclick="toLicenseManage(${host.id},${siteId})">${LANG['bizconf.jsp.system.hostlist.res3']}</a>
+		        <a href="#" onclick="popUpHost(${siteId},${host.id})">${LANG['bizconf.jsp.system.email_template_list.res7']}</a>
+		        <a href="#" onclick="del(${host.id})">${LANG['bizconf.jsp.system.email_template_list.res8']}</a>
 	        </td>  
 	    </tr>
     </c:forEach>
 </table>  
 </div>
-<a href="#" class="fh_btn Public_button" onclick="closeDialog();">取消</a>
+<a href="#" class="fh_btn Public_button" onclick="closeDialog();">${LANG['bizconf.jsp.admin.createOrg.res4']}</a>
 </div>
 </body>
 </html>
@@ -66,7 +66,7 @@ function popUpdateHost(elem) {
 }
 
 function del(id){
-	parent.confirmDialog("确认删除主持人？",function(){
+	parent.confirmDialog("${LANG['bizconf.jsp.system.hostlist.res4']}",function(){
 		window.location = "/system/lic/delHost?id="+id;
 	});
 }
@@ -80,7 +80,7 @@ function closeDialog() {
 	frame.trigger("closeDialog");
 }
 
-//设置点数
+//${LANG['bizconf.jsp.system.hostlist.res5']}
 function toLicenseManage(userId,siteId){
 	parent.licenseManage(userId,siteId);
 }

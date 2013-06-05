@@ -11,7 +11,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.bizconf.audio.component.language.ResourceHolder;
+import com.bizconf.audio.action.BaseController;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.EventLogConstants;
 import com.bizconf.audio.entity.EmailConfig;
@@ -34,7 +34,7 @@ import com.libernate.liberc.annotation.ReqPath;
 
 @ReqPath("email")
 @Interceptors({SiteAdminInterceptor.class})
-public class EmailController {
+public class EmailController extends BaseController{
 	
 	private final  Logger logger = Logger.getLogger(EmailController.class);
 	
@@ -50,7 +50,7 @@ public class EmailController {
 	UserService userService;
 	
 	/**
-	 * 系统管理员获取系统默认HOST配置。并返回页面
+	 * 获取系统默认HOST配置。并返回页面
 	 * @return
 	 */
 	@AsController(path = "showhost")
@@ -63,7 +63,6 @@ public class EmailController {
 				request.setAttribute("emailConfig", emailConfig);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return new ActionForward.Forward("/jsp/admin/email_config.jsp");
@@ -71,27 +70,21 @@ public class EmailController {
 	
 
 	/**
-	 * 系统管理员获取系统默认HOST配置。，并返回页面
+	 * 保存系统默认HOST配置。，并返回页面
 	 * @return
 	 */
 	@AsController(path = "savehost")
 	public Object saveHost(EmailConfig emailConfig,HttpServletRequest request,HttpServletResponse response){
 		logger.info(emailConfig);
+		boolean saveFlag = false;
 		Integer msgCode=0;
 		UserBase currUser = userService.getCurrentSiteAdmin(request);
 		if(emailConfig!=null){
 			try {
 				emailConfig.setCreateUser(currUser.getId());
 				emailConfig=emailConfigService.saveSiteConfig(emailConfig);
-				UserBase user= userService.getCurrentSiteAdmin(request);
-				if(emailConfig != null && emailConfig.getId() > 0){
-					eventLogService.saveAdminEventLog(user, EventLogConstants.SITE_ADMIN_EMAILSERVER_SETUP, 
-							ResourceHolder.getInstance().getResource("siteAdmin.Host.update.1"), 
-							EventLogConstants.EVENTLOG_SECCEED, null, request);   //设置成功后写EventLog
-				}else{
-					eventLogService.saveAdminEventLog(user, EventLogConstants.SITE_ADMIN_EMAILSERVER_SETUP, 
-							ResourceHolder.getInstance().getResource("siteAdmin.Host.update.2"), 
-							EventLogConstants.EVENTLOG_FAIL, null, request);   //设置成功后写EventLog
+				if(emailConfig != null && emailConfig.getId().intValue() > 0){
+					saveFlag = true;
 				}
 				request.setAttribute("emailConfig", emailConfig);
 				msgCode=1;
@@ -102,6 +95,8 @@ public class EmailController {
 			}
 			request.setAttribute("msgCode", msgCode);
 		}
+		sysHelpAdminEventLog(saveFlag, userService.getCurrentSysAdmin(request), currUser, 
+				EventLogConstants.SYSTEM_ADMIN_EMAILSERVER_SETUP, EventLogConstants.SITE_ADMIN_EMAILSERVER_SETUP, "保存系统默认HOST配置", null, request);
 		return new ActionForward.Forward("/jsp/admin/email_config.jsp");
 	}
 	
@@ -144,15 +139,8 @@ public class EmailController {
 			emailInfo.setUserPass(emailConfig.getEmailPassword());
 			emailInfo.setRetryCount(10); 
 			saveFlag = emailService.saveEmailInfo(emailInfo);
-			if(saveFlag){
-				eventLogService.saveAdminEventLog(userBase, EventLogConstants.SITE_ADMIN_EMAILTEST, 
-						ResourceHolder.getInstance().getResource("siteAdmin.Host.test.1"), 
-						EventLogConstants.EVENTLOG_SECCEED, null, request);   //设置成功后写EventLog
-			}else{
-				eventLogService.saveAdminEventLog(userBase, EventLogConstants.SITE_ADMIN_EMAILTEST, 
-						ResourceHolder.getInstance().getResource("siteAdmin.Host.test.2"), 
-						EventLogConstants.EVENTLOG_FAIL, null, request);   //设置失败后写EventLog
-			}
+			sysHelpAdminEventLog(saveFlag, userService.getCurrentSysAdmin(request), userBase, 
+					EventLogConstants.SYSTEM_ADMIN_EMAILTEST, EventLogConstants.SITE_ADMIN_EMAILTEST, "测试发送邮件", null, request);
 			request.setAttribute("emailConfig", emailConfig);
 			msgCode=3;
 		}else{
@@ -222,16 +210,14 @@ public class EmailController {
 			template.setSiteId(user.getSiteId());
 			template.setCreateUser(user.getId());
 			//template=(EmailTemplate)ObjectUtil.parseHtml(template, "emailContent");
-			if(emailTemplateService.saveOrUpdateSiteTemplate(template)){
+			boolean saveFlag = emailTemplateService.saveOrUpdateSiteTemplate(template);
+			if(saveFlag){
 				json = ConstantUtil.SUCCESS_FLAG;
-				eventLogService.saveAdminEventLog(user, EventLogConstants.SITE_ADMIN_EMAILMODEL_SETUP, 
-						"修改邮件模板成功",
-						EventLogConstants.EVENTLOG_SECCEED, null, request);   //设置成功后写EventLog
 			}else{
-				eventLogService.saveAdminEventLog(user, EventLogConstants.SITE_ADMIN_EMAILMODEL_SETUP, 
-						"修改邮件模板失败",
-						EventLogConstants.EVENTLOG_FAIL, null, request);   //设置失败后写EventLog
+				json = ConstantUtil.ERROR_FLAG;
 			}
+			sysHelpAdminEventLog(saveFlag, userService.getCurrentSysAdmin(request), user, 
+					EventLogConstants.SYSTEM_ADMIN_EMAILMODEL_SETUP, EventLogConstants.SITE_ADMIN_EMAILMODEL_SETUP, "修改邮件模板", null, request);
 		} catch (Exception e) {
 			e.printStackTrace();
 			json = ConstantUtil.ERROR_FLAG;

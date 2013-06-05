@@ -480,8 +480,8 @@ public class UserServiceImpl extends BaseService implements UserService {
 //				return true;
 //			}
 		}
-		
-		if(null!=getSiteUserByLoginName(user.getSiteId(),user.getLoginName())){
+		UserBase  libUser  = getSiteUserByLoginName(user.getSiteId(),user.getLoginName());
+		if(null!=libUser && libUser.getUserType().equals(user.getUserType())){
 				return false;
 		}
 //		if(null!=getSiteUserByEmail(user.getSiteId(),user.getUserEmail())){
@@ -499,15 +499,16 @@ public class UserServiceImpl extends BaseService implements UserService {
 	@Override
 	public int CountSystemUser(Condition condition) {
 		int rows = 0;
-		Object[] values = new Object[2];
-		StringBuffer strSql = new StringBuffer(" select count(1) from t_system_user where del_flag = ? and sys_type = ? ");
-		values[0] = ConstantUtil.DELFLAG_UNDELETE;
-		values[1] = ConstantUtil.USERTYPE_SYSTEM;
+		List<Object> valueList = new ArrayList<Object>();
+		StringBuffer strSql = new StringBuffer(" select count(1) from t_system_user where del_flag = ? and (sys_type = ? or sys_type = ?) ");
+		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+		valueList.add(ConstantUtil.USERTYPE_SYSTEM);
+		valueList.add(ConstantUtil.USERTYPE_SYS_SERVER);
 		if(condition != null){
 			strSql.append(" and ").append(condition.getConditionSql());
 		} 
 		try {
-			rows = DAOProxy.getLibernate().countEntityListWithSql(strSql.toString(), values);
+			rows = DAOProxy.getLibernate().countEntityListWithSql(strSql.toString(), valueList.toArray());
 		} catch (SQLException e) {
 			logger.error("统计系统管理员总记录数出错"+e);
 		}
@@ -539,8 +540,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 			valueList.add(pageModel.getPageSize());
 		}
 		try{
-			Object[] values = valueList.toArray();
-			systemUserList = DAOProxy.getLibernate().getEntityListBase(SystemUser.class, strSql.toString(), values);
+			systemUserList = DAOProxy.getLibernate().getEntityListBase(SystemUser.class, strSql.toString(), valueList.toArray());
 		}catch (Exception e){
 			logger.error("根据条件获取系统管理员列表出错"+e);
 		}

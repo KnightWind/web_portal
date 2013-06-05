@@ -282,7 +282,7 @@ public interface ConfService {
 	public ConfBase getConfBasebyConfId(int confId);
 	
 	/**
-	 * 根据会议ID号获取周期会议周期信息
+	 * 根据周期会议ID号获取周期会议周期信息
 	 * @param cycleId  周期会议ID号
 	 * 2013-2-21
 	 */
@@ -546,6 +546,8 @@ public interface ConfService {
 	
 	
 	public ConfBase saveConfBase(ConfBase confBase);
+	
+	public ConfBase saveConfBaseForOuter(ConfBase confBase,SiteBase siteBase,UserBase userBase );
 	
 //	/**
 //	 *
@@ -906,4 +908,100 @@ public interface ConfService {
 	 * @return
 	 */
 	public PageBean<ConfBase> getConfBasePage(int pageNo,int pageSize,UserBase user,boolean isCreator);
+
+	
+	/**
+	 * 创建永久会议子会议
+	 * @param primaryConf，主会议信息对象
+	 * @return
+	 */
+	public ConfBase createChildConf(ConfBase primaryConf);
+	
+	
+	
+	/**
+	 * 根据永久会议的主会议ID号查找已经创建好预约的或者是正在召开子会议信息
+	 * @param belongConfId  主会议ID号
+	 * @return
+	 */
+	public ConfBase getPermanentChildConf(int belongConfId);
+	
+	
+	
+	/**
+	 * 
+	 * @param pageNo 当前页
+	 * @param pageSize 每页显示条数
+	 * @param siteId 所属站点
+	 * @param userId	主持人
+	 * @param publicOnly
+	 * @return
+	 */
+	public PageBean<ConfBase> getPermanentConfPage(int pageNo,int pageSize,Integer siteId, Integer userId,Integer confStatus,boolean publicOnly);
+
+
+	/**
+	 * 创建永久会议
+	 * @param conf
+	 */
+	public ConfBase createPermanentConf(ConfBase conf,SiteBase site,UserBase user);
+	
+	
+	/**
+	 * 修改永久会议
+	 * @param conf
+	 * @return
+	 */
+	public ConfBase updatePermanentConf(ConfBase conf,UserBase currUser);
+	
+	/**
+	 * 系统管理员根据会议主题、企业名称、企业标识模糊查询所有站点的会议列表
+	 * @param subject  会议主题或会议号
+	 * wangyong
+	 * 2013-5-29
+	 */
+	public PageBean<ConfBase> getSysConfByName(String subject, String sortField, String sortord, PageModel pageModel, Integer sysUserId);
+	
+	/**
+	 * 系统管理员高级搜索查询会议列表
+	 * @param conf 会议名称、会议功能、会议状态等信息
+	 * @param siteName 站点名称
+	 * @param siteSign 站点标识
+	 * @param beginTime 开始时间
+	 * @param endTime	结束时间
+	 * @param sortField 排序字段
+	 * @param sortord 排序方式，正序逆序
+	 * @param pageModel 页数信息
+	 * @param sysUserId 不为空，则只查出该普通系统管理员创建的站点下的所有会议；为空，则查询所有站点下的会议
+	 * wangyong
+	 * 2013-5-29
+	 */
+	public PageBean<ConfBase> getSysConfByCondition(ConfBase conf, String siteName, String siteSign, 
+			Date beginTime, Date endTime, String sortField, String sortord, PageModel pageModel, Integer sysUserId);
+	
+	/**
+	 * 站点管理员根据会议主题或会议号模糊查询所有站点的会议列表
+	 * @param TitleOrNameOrSign  会议主题、企业名称、企业标识
+	 * wangyong
+	 * 2013-5-29
+	 */
+	public PageBean<ConfBase> getAdminConfByName(String confName, SiteBase currentSite, String sortField, String sortord, PageModel pageModel, Integer adminId);
+	
+	/**
+	 * 站点管理员高级搜索查询会议列表
+	 * @param conf 会议名称、会议功能、会议状态等信息
+	 * @param siteId 站点id
+	 * @param beginTime 开始时间
+	 * @param endTime	结束时间
+	 * @param sortField 排序字段
+	 * @param sortord 排序方式，正序逆序
+	 * @param pageModel 页数信息
+	 * @param adminId 不为空，则只查出该普通系统管理员创建的站点下的所有会议；为空，则查询所有站点下的会议
+	 * wangyong
+	 * 2013-5-29
+	 */
+	public PageBean<ConfBase> getAdminConfByCondition(ConfBase conf, SiteBase currentSite,  
+			Date beginTime, Date endTime, String sortField, String sortord, PageModel pageModel, Integer adminId);
+	
+	
 }

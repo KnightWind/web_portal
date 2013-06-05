@@ -65,9 +65,9 @@
 	 	}, "");
 		$.validator.addMethod("noSpace", function(value, element) {
 			return value=="" || (value != ""&&value.indexOf(" ") < 0 );
-	 	}, "密码中不能含有空格");
+	 	}, "${LANG['bizconf.jsp.admin.add_site_user.res2']}");
 		$.validator.addMethod("checkLoginName", function(value, element) {       
-	    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+	    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
 	 	}, ruleString.custom.checkLoginName);
 		$.validator.addMethod("checkUserName", function(value, element) {       
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&\s\u4e00-\u9fa5]{1,32}$/.test(value);
@@ -124,7 +124,7 @@
 	        	}
 	        }
 		});					
-		//创建的时候必填、修改的时候选填
+		//${LANG['bizconf.jsp.system.createSystemUser.res1']}
 		var siteId = "${systemUser.id}";
 		if (siteId) {
 			$("#loginPass").rules("add", {noSpace: true, notRequired:true, rangelength:[6, 16]});
@@ -164,7 +164,7 @@
 </head>
 <body onload="loaded()">
 <form id="sysUserForm" name="sysUserForm" action="" method="post">
-	<table class="table_create_system_user" style="margin-top: 6px;">
+	<table class="table_create_system_user">
 	  <tr>
 	    <td align="right">
 	      <label class='red_star'>*</label>${LANG['system.sysUser.list.loginName']}
@@ -205,17 +205,19 @@
 	      <input id="enName" name="enName" class="create_system_user_input" type="text" value="${systemUser.enName}"/>
 	    </td>
 	  </tr>
-	  <tr>
-	    <td align="right">
-	      <label class='red_star'>*</label>角色
-	    </td>
-	    <td class="table-td">
-	       <select id="sysType" name="sysType">
-	       		<option value="999">系统管理员</option>
-	       		<option value="6">系统客服</option>
-	       </select>
-	    </td>
-	  </tr>
+	  <c:if test="${empty systemUser}">
+		  <tr>
+		    <td align="right">
+		      <label class='red_star'>*</label>${LANG['bizconf.jsp.system.createSystemUser.res2']}
+		    </td>
+		    <td class="table-td">
+		       <select id="sysType" name="sysType">
+		       		<option value="999">${LANG['bizconf.jsp.system.createSystemUser.res3']}</option>
+		       		<option value="6">${LANG['bizconf.jsp.system.createSystemUser.res4']}</option>
+		       </select>
+		    </td>
+		  </tr>
+	  </c:if>
 	  <tr>
 	    <td align="right">
 	      <label class='red_star'>*</label>${LANG['system.sysUser.list.email']}

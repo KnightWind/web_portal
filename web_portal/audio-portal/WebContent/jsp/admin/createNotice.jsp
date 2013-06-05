@@ -5,14 +5,9 @@
 <head>
 	<title>${LANG['system.notice.list.Create']}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
-	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css"/>	
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css"/>
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />	
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js"></script>
@@ -33,9 +28,15 @@
 					"title": "${LANG['system.notice.title.rangelength']}"
 				},
 				custom: {
-					"dateISO": "${LANG['system.notice.date.dateISO']}"
+					"dateISO": "${LANG['system.notice.date.dateISO']}",
+					"title": "${LANG['bizconf.jsp.admin.createNotice.res1']}"
 				}
 		};
+		
+		$.validator.addMethod("checkTitle", function(value, element) {   
+	    	return this.optional(element) || /^[a-zA-Z0-9\u4e00-\u9fa5]{2,32}$/.test(value);
+	 	}, ruleString.custom.title);
+		
 		var v = $("#noticeForm").validate({
 			onkeyup: false,
 			errorClass: "warning",
@@ -57,7 +58,7 @@
 				}
 			},
 			rules: {
-	            'title' : {required:true, rangelength: [2, 32]},
+	            'title' : {required:true, rangelength: [2, 32], checkTitle:true},
 	            'content' : {required:true}
 	        },
 	        messages: {

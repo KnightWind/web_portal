@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>会议全局设置</title>
+<title>${LANG['bizconf.jsp.admin.conf_tel_config.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/rightbox.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">
@@ -62,9 +62,9 @@
 <!-- 	            'voipFlag' : {required:true} -->
 <!-- 	        }, -->
 <!-- 	        messages: { -->
-<!-- 	        	'allowTelFlag' : {required:"请选择是否开启创建电话会议"}, -->
-<!-- 	            'autoCallFlag' : {required:"请选择是否开启自动外呼"}, -->
-<!-- 	            'voipFlag' : {required:"请选择是否开启集成VOIP"} -->
+<!-- 	        	'allowTelFlag' : {required:"${LANG['bizconf.jsp.admin.conf_tel_config.res2']}"}, -->
+<!-- 	            'autoCallFlag' : {required:"${LANG['bizconf.jsp.admin.conf_tel_config.res3']}"}, -->
+<!-- 	            'voipFlag' : {required:"${LANG['bizconf.jsp.admin.conf_tel_config.res4']}VOIP"} -->
 <!-- 	        }, -->
 <!-- 	        success: function (label) { -->
 
@@ -99,14 +99,14 @@
 <c:if test="${powerCount > 0}">
   <table class="all_install" width="auto" border="0" cellpadding="0" cellspacing="0">  
   	<tr>
-  		<td>已授权的功能</td>
+  		<td>${LANG['bizconf.jsp.admin.conf_tel_config.res5']}</td>
   	</tr>
   	<tr>
     	<td width="120px" height="38px"><div align="center"></div></td>
     	<td width="120px" height="38px"><div align="center">${LANG['site.admin.conf.config.option.enable']}</div></td>
         <td width="120px" height="38px"><div align="center">${LANG['site.admin.conf.config.option.disable']}</div></td>
         <td width="auto" height="38px" style="border:0px;background:#FFFFFF"></td>
-        <%-- <td width="120px" height="38px" style="border-right:#CFE2EF 1px solid;"><div align="center">不修改</div></td>
+        <%-- <td width="120px" height="38px" style="border-right:#CFE2EF 1px solid;"><div align="center">${LANG['bizconf.jsp.admin.conf_tel_config.res6']}</div></td>
          --%>
     </tr>
     <c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
@@ -138,7 +138,7 @@
   <c:if test="${flagCount > powerCount}">
   <table class="all_install" width="auto" border="0" cellpadding="0" cellspacing="0">  
   	<tr>
-  		<td>未授权的功能</td>
+  		<td>${LANG['bizconf.jsp.admin.conf_tel_config.res7']}</td>
   	</tr>
   	<tr>
     	<td width="120px" height="38px"><div align="center"></div></td>

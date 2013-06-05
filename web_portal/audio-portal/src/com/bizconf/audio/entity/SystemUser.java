@@ -21,6 +21,7 @@ public class SystemUser implements java.io.Serializable {
 	/*系统管理员类别
 	*		0     无效的管理员
 	*		999   supper Master
+	*		6  系统客服
 	*		1  普通管理员
 	*/
 	private Integer sysType;

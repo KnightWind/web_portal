@@ -10,7 +10,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
-<title>选择联系人</title>
+<title>${LANG['bizconf.jsp.contacts_import_main.res1']}</title>
 <style></style>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
 <script type="text/javascript">
@@ -31,6 +31,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			$(".cluster").find("a").css("color","#333333");
 			$(obj).css("color","#ED6F00");
 	}
+	
+	function selectOrg(obj){
+			$("#contactFrame").attr("src","/jsp/user/org_user_list.jsp");	
+			$(".cluster").find("a").css("color","#333333");
+			$(obj).css("color","#ED6F00");
+	}
 </script>
 </head>
 
@@ -45,30 +51,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->  
 		<div class="First_Steps_invite_m" style=" background:#FFF; border-radius:3px;">
         <div class="First_Steps_title_invite"> <a href="javascript:;" onclick="closeDialog()"></a>
-          <h3 class="tit_a_invite">从联系人导入</h3>
-          <p class="tit_b_invite">您可以在自己的联系人名单或企业通讯录中添加参会成员。</p>
+          <h3 class="tit_a_invite">${LANG['bizconf.jsp.inviteContactsSelect.res1']}</h3>
+          <p class="tit_b_invite">${LANG['bizconf.jsp.inviteContactsSelect.res2']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick_invite" src="/static/images/min.jpg" width="730" height="1" /></div>
         <div class="First_Steps_top_invite" style=" background:#FFF;">
-          <div class="cluster"><a href="#" style="margin-left:10px; color: #ED6F00;" onclick="selectContact(this);"><img src="/static/images/lianxiren.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />联系人&nbsp;&nbsp;</a></div>
-          <div class="cluster"><a href="#" style="margin-left:10px; " onclick="selectGroup(this);"><img src="/static/images/qunzu.png" width="20" height="18" align="absmiddle" style=" margin-right:5px;" />群组&nbsp;&nbsp;</a></div>
-          <div class="cluster"><a href="#" style="margin-left:10px;" onclick="selectEnContacts(this);"><img src="/static/images/tongxl.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />企业通讯录&nbsp;&nbsp;</a></div>
+          <div class="cluster"><a href="#" style="margin-left:10px; color: #ED6F00;" onclick="selectContact(this);"><img src="/static/images/lianxiren.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.contacts_main.res1']}&nbsp;&nbsp;</a></div>
+          <div class="cluster"><a href="#" style="margin-left:10px; " onclick="selectGroup(this);"><img src="/static/images/qunzu.png" width="20" height="18" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.contacts_main.res2']}&nbsp;&nbsp;</a></div>
+          <div class="cluster"><a href="#" style="margin-left:10px;" onclick="selectEnContacts(this);"><img src="/static/images/tongxl.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.inviteContactsSelect.res3']}&nbsp;&nbsp;</a></div>
         </div>
         <div class="jianju"></div>
-        <!--群组开始-->
+        <!--${LANG['bizconf.jsp.contacts_import_main.res7']}-->
         <div class="First_Steps_main_invite">
         	<iframe frameborder="0" width="100%" height="500px;" id="contactFrame" name="contactFrame" scrolling="no" src="/user/contact/invitelist"></iframe>
         </div>
-        <!--企业通讯录结束-->
+        <!--${LANG['bizconf.jsp.contacts_import_main.res8']}-->
         <div class="First_Steps_bottom_s">
-          <div class="but44"><span class="button_common"><a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>取消</a></span></div>
-          <div class="but09"><span class="button_common"><a href="javascript:;" onclick="selectContacts()"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />选定</a></span></div>
+          <div class="but44"><span class="button_common"><a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a></span></div>
+          <div class="but09"><span class="button_common"><a href="javascript:;" onclick="selectContacts()"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />${LANG['bizconf.jsp.inviteContactsSelect.res4']}</a></span></div>
         </div>
       	</div>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>
@@ -101,6 +107,7 @@ function selectContacts() {
 						item.name = data[i].contactName;
 						item.email = data[i].contactEmail;
 						item.phone = data[i].contactPhone || data[i].contactMobile;
+						item.userId = data[i].contactId;
 						contacts.push(item);
 					}
 					parent.$("#inventContact").find("iframe")[0].contentWindow.addByExtral(contacts);

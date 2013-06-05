@@ -16,6 +16,9 @@ public class LoginConstants {
 	public static final int LOGIN_ERROR_PASSWORD = 2;
 	
 	public static final int LOGIN_ERROR_USER_LOCKED = 3;
+	
+	//登录用户已过期
+	public static final int LOGIN_ERROR_USER_EXPRIED = 77;
 
 	public static final int LOGIN_ERROR_UNKNOWN = 99;
 	

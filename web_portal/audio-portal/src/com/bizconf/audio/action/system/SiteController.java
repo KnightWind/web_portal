@@ -80,6 +80,7 @@ public class SiteController extends BaseController{
 	EmpowerConfigService empowerConfigService;
 	@Autowired
 	LicService licService;
+
 	
 	/**
 	 * 获取全部站点信息列表
@@ -231,6 +232,16 @@ public class SiteController extends BaseController{
 	}
 	
 	/**
+	 * 创建站点（跳转页面）
+	 * wangyong
+	 * 2013-1-15
+	 */
+	@AsController(path = "new")
+	public Object createSite() throws Exception{
+		return new ActionForward.Forward("/jsp/system/createSite.jsp");
+	}
+	
+	/**
 	 * 创建站点
 	 * 说明：
 	 * 1. @Post   禁止浏览器通过http://localhost:8080/system/site/create直接访问该controller
@@ -243,6 +254,7 @@ public class SiteController extends BaseController{
 	@Post
 	@AsController(path = "create")
 	public Object saveSite(@CParam("data") String data, EmpowerConfig empowerConfig, HttpServletRequest request) throws Exception{
+		boolean saveFlag = false;
 		Object[] siteAndUser = JsonUtil.parseObjectArrWithJsonString(data);
 		SiteBase siteBase = (SiteBase) JsonUtil.parseObjectWithJsonString(siteAndUser[0].toString(), SiteBase.class);
 		siteBase.setTimeZone(getTimeZone(siteBase.getTimeZoneId()));
@@ -276,38 +288,29 @@ public class SiteController extends BaseController{
 					return returnJsonStr(ConstantUtil.CREATESITE_FAIL, ResourceHolder.getInstance().getResource("system.site.list.loginNmaePasswd.remote"));
 				}
 				siteAdmin.setLoginPass(MD5.encodePassword(loginPass, "MD5"));
+				siteAdmin.setPassEditor(systemUser.getId());
 			}
 			try{
 				site = siteService.createSite(siteBase, siteAdmin, empowerConfig);
 			}catch(Exception e){
+				saveSystemEventLog(false, systemUser, EventLogConstants.SYSTEM_SITE_CREATE, "创建站点", site, request);
+				logger.error("调用siteService.createSite()异常:" + siteBase + e);
 				return returnJsonStr(ConstantUtil.CREATESITE_FAIL, ResourceHolder.getInstance().getResource("system.site.meaasge.create.failed"));
 			}
-			try{
-				if(site != null && site.getId() != null && site.getId().intValue() > 0){
-					emailConfigService.copyConfigFromDefault(site.getId());    //创建成功后COPY 邮件HOST设置
-					emailTemplateService.copySiteTemplateFromDefault(site.getId());   //创建成功后COPY 邮件模板设置
-					
-					siteAdmin.setLoginPass(loginPass);//设置加密前的密码以便发送邮件
-					emailService.createSiteEmail(site,siteAdmin);//创建成功后发送邮件
-					
-					eventLogService.saveSystemEventLog(systemUser, 
-							EventLogConstants.SYSTEM_SITE_CREATE, ResourceHolder.getInstance().getResource("system.site.meaasge.create.succeed"), 
-							EventLogConstants.EVENTLOG_SECCEED, site, request);   //创建成功后写EventLog
-					logger.info("创建站点成功");
-				}else{
-					String errorMessage = getSiteErrorMessage(site);//取出返回Error信息内容
-					eventLogService.saveSystemEventLog(systemUser, 
-							EventLogConstants.SYSTEM_SITE_CREATE, errorMessage, 
-							EventLogConstants.EVENTLOG_FAIL, siteBase, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.CREATESITE_FAIL, errorMessage);
-				}
-			}catch(Exception e){
-				eventLogService.saveSystemEventLog(systemUser, 
-						EventLogConstants.SYSTEM_SITE_CREATE, ResourceHolder.getInstance().getResource("system.site.meaasge.create.failed"), 
-						EventLogConstants.EVENTLOG_FAIL, site, request);   //创建失败后写EventLog
+			if(site != null && site.getId() != null && site.getId().intValue() > 0){
+				saveFlag = true;
 			}
 			site.setEffeDate(DateUtil.getBejingDateByGmtDate(site.getEffeDate()));   //将数据库中的GMT时间转换为北京时间
 			site.setExpireDate(DateUtil.getBejingDateByGmtDate(site.getExpireDate()));
+			//记录系统管理员操作日志
+			saveSystemEventLog(saveFlag, systemUser, EventLogConstants.SYSTEM_SITE_CREATE, "创建站点", site, request);
+			if(saveFlag){
+				createSiteSuccess(site, siteAdmin, loginPass);
+				logger.info("创建站点成功");
+			}else{
+				String errorMessage = getSiteErrorMessage(site);//取出返回Error信息内容
+				return returnJsonStr(ConstantUtil.CREATESITE_FAIL, errorMessage);
+			}
 			json.put("status", ConstantUtil.CREATESITE_SUCCEED);
 			jsonArrSite.add(JsonUtil.parseJsonWithFullFieldByObject(site));
 			jsonArrUser.add(JsonUtil.parseJsonWithFullFieldByObject(siteAdmin));
@@ -318,12 +321,53 @@ public class SiteController extends BaseController{
 	}
 	
 	/**
-	 * 创建站点
+	 * 创建站点成功后调用
+	 * 1.创建成功后COPY 邮件HOST设置
+	 * 2.创建成功后COPY 邮件模板设置
+	 * 3.创建成功后发送邮件
+	 * wangyong
+	 * 2013-5-15
+	 */
+	private void createSiteSuccess(SiteBase site, UserBase siteAdmin, String loginPass){
+		try {
+			emailConfigService.copyConfigFromDefault(site.getId()); //创建成功后COPY 邮件HOST设置
+		} catch (Exception e) {
+			logger.error("创建成功后COPY 邮件HOST设置异常" + e);
+		}    
+		try {
+			emailTemplateService.copySiteTemplateFromDefault(site.getId()); //创建成功后COPY 邮件模板设置
+		} catch (Exception e) {
+			logger.error("创建成功后COPY 邮件模板设置异常" + e);
+		}   
+		siteAdmin.setLoginPass(loginPass);//设置加密前的密码以便发送邮件
+		if(!emailService.createSiteEmail(site,siteAdmin)){
+			logger.error("创建成功后发送邮件异常");
+		}
+//		if(!saveFirstSiteOrg(site)){  //创建站点成功后调用，为站点创建根组织机构
+//			logger.info("创建站点成功后调用，为站点创建根组织机构失败");
+//		}
+	}
+	
+	/**
+	 * 系统管理员修改站点
 	 * wangyong
 	 * 2013-1-15
 	 */
-	@AsController(path = "new")
-	public Object createSite() throws Exception{
+	@AsController(path = "update/{id:([0-9]+)}")
+	@Get
+	public Object updatePage(@CParam("id") Integer id,HttpServletRequest request) throws Exception{
+		logger.info("id=="+id);
+		SiteBase siteBase = siteService.getSiteBaseById(id);
+		getOffsetSiteBase(siteBase);
+		Integer[] siteIds = new Integer[1];
+		siteIds[0] = siteBase.getId();
+		List<UserBase> userList = userService.getSiteSupperMasterBySiteIdArray(siteIds);
+		siteBase.setLicense(licService.getSiteLicenseNum(id) + siteBase.getLicense().intValue());
+		request.setAttribute("siteBase", siteBase);
+		if(userList != null && userList.size() > 0){
+			request.setAttribute("siteAdmin", userList.get(0));
+		}
+		request.setAttribute("empowerConfig", empowerConfigService.getSiteEmpowerConfigBySiteId(siteBase.getId()));
 		return new ActionForward.Forward("/jsp/system/createSite.jsp");
 	}
 	
@@ -341,6 +385,7 @@ public class SiteController extends BaseController{
 	@AsController(path = "update")
 	@Post
 	public Object updateSite(@CParam("data") String data, EmpowerConfig empowerConfig, HttpServletRequest request){
+		boolean saveFlag = false;
 		Object[] siteAndUser = JsonUtil.parseObjectArrWithJsonString(data);
 		SiteBase siteBase = (SiteBase) JsonUtil.parseObjectWithJsonString(siteAndUser[0].toString(), SiteBase.class);
 		siteBase.setTimeZone(getTimeZone(siteBase.getTimeZoneId()));
@@ -376,30 +421,24 @@ public class SiteController extends BaseController{
 			}
 			try {
 				empowerConfig.initEmpower(systemUser);
-				if(siteBase.getChargeMode() == SiteConstant.SITE_CHARGEMODE_NAMEHOST){
+				if(siteBase.getChargeMode().intValue() == SiteConstant.SITE_CHARGEMODE_NAMEHOST){
 					siteBase.setLicense(0);
 				}
 				//boolean updatetoAs = siteService.soapUpdateSite(site);
 				site = siteService.updateSiteBaseForSystem(siteBase, siteAdmin, empowerConfig);
 			}catch (Exception e){
+				saveSystemEventLog(false, systemUser, EventLogConstants.SYSTEM_SITE_UPDATE, "修改站点", site, request);
 				return returnJsonStr(ConstantUtil.UPDATESITE_FAIL, ResourceHolder.getInstance().getResource("system.site.meaasge.update.failed"));
 			}
-			try{
-				if(site != null && site.getId() != null && site.getId().intValue() > 0){
-					eventLogService.saveSystemEventLog(systemUser, 
-							EventLogConstants.SYSTEM_SITE_UPDATE, ResourceHolder.getInstance().getResource("system.site.meaasge.update.succeed"), 
-							EventLogConstants.EVENTLOG_SECCEED, siteBase, request);   //修改成功后写EventLog
-				}else{
-					String errorMessage = getSiteErrorMessage(site);
-					eventLogService.saveSystemEventLog(systemUser, 
-							EventLogConstants.SYSTEM_SITE_UPDATE, errorMessage, 
-							EventLogConstants.EVENTLOG_FAIL, siteBase, request);   //修改失败后写EventLog
-					return returnJsonStr(ConstantUtil.UPDATESITE_FAIL, errorMessage);
-				}
-			} catch (Exception e) {
-				eventLogService.saveSystemEventLog(systemUser, 
-						EventLogConstants.SYSTEM_SITE_UPDATE, ResourceHolder.getInstance().getResource("system.site.meaasge.update.failed"), 
-						EventLogConstants.EVENTLOG_FAIL, siteBase, request);   //修改失败后写EventLog
+			if(site != null && site.getId() != null && site.getId().intValue() > 0){
+				saveFlag = true;
+				logger.info("修改站点成功");
+			}
+			//记录系统管理员操作日志
+			saveSystemEventLog(saveFlag, systemUser, EventLogConstants.SYSTEM_SITE_UPDATE, "修改站点", site, request);
+			if(!saveFlag){
+				String errorMessage = getSiteErrorMessage(site);
+				return returnJsonStr(ConstantUtil.UPDATESITE_FAIL, errorMessage);
 			}
 			site.setEffeDate(DateUtil.getBejingDateByGmtDate(site.getEffeDate()));   //将数据库中的GMT时间转换为北京时间
 			site.setExpireDate(DateUtil.getBejingDateByGmtDate(site.getExpireDate()));
@@ -413,28 +452,6 @@ public class SiteController extends BaseController{
 	}
 	
 	/**
-	 * 系统管理员修改站点
-	 * wangyong
-	 * 2013-1-15
-	 */
-	@AsController(path = "update/{id:([0-9]+)}")
-	@Get
-	public Object updatePage(@CParam("id") Integer id,HttpServletRequest request) throws Exception{
-		logger.info("id=="+id);
-		SiteBase siteBase = siteService.getSiteBaseById(id);
-		Integer[] siteIds = new Integer[1];
-		siteIds[0] = siteBase.getId();
-		List<UserBase> userList = userService.getSiteSupperMasterBySiteIdArray(siteIds);
-		siteBase.setLicense(licService.getSiteLicenseNum(id) + siteBase.getLicense().intValue());
-		request.setAttribute("siteBase", siteBase);
-		if(userList != null && userList.size() > 0){
-			request.setAttribute("siteAdmin", userList.get(0));
-		}
-		request.setAttribute("empowerConfig", empowerConfigService.getSiteEmpowerConfigBySiteId(siteBase.getId()));
-		return new ActionForward.Forward("/jsp/system/createSite.jsp");
-	}
-	
-	/**
 	 * 预览站点
 	 * wangyong
 	 * 2013-1-15
@@ -444,6 +461,7 @@ public class SiteController extends BaseController{
 	public Object viewSite(@CParam("id") Integer id,HttpServletRequest request) throws Exception{
 		logger.info("id=="+id);
 		SiteBase siteBase = siteService.getSiteBaseById(id);
+		getOffsetSiteBase(siteBase);
 		Integer[] siteIds = new Integer[1];
 		siteIds[0] = siteBase.getId();
 		List<UserBase> userList = userService.getSiteSupperMasterBySiteIdArray(siteIds);
@@ -460,8 +478,8 @@ public class SiteController extends BaseController{
 	@AsController(path = "siteCreateSuccess/{id:([0-9]+)}")
 	@Get
 	public Object siteCreateSuccess(@CParam("id") Integer id,HttpServletRequest request) throws Exception{
-		logger.info("id=="+id);
 		SiteBase siteBase = siteService.getSiteBaseById(id);
+		getOffsetSiteBase(siteBase);
 		Integer[] siteIds = new Integer[1];
 		siteIds[0] = siteBase.getId();
 		List<UserBase> userList = userService.getSiteSupperMasterBySiteIdArray(siteIds);
@@ -495,17 +513,13 @@ public class SiteController extends BaseController{
 		boolean lockFlag = siteService.lockSiteById(id);
 		int lockStatus = ConstantUtil.LOCKSITE_SUCCEED;
 		if(lockFlag){
-			eventLogService.saveSystemEventLog(systemUser, 
-					EventLogConstants.SYSTEM_SITE_LOCK, ResourceHolder.getInstance().getResource("system.site.lock." + lockStatus), 
-					EventLogConstants.EVENTLOG_SECCEED, id, request);   //锁定站点成功后写EventLog
 			setInfoMessage(request, ResourceHolder.getInstance().getResource("system.site.lock." + lockStatus));
 		}else{
 			lockStatus = ConstantUtil.LOCKSITE_FAIL;
-			eventLogService.saveSystemEventLog(systemUser, 
-					EventLogConstants.SYSTEM_SITE_LOCK, ResourceHolder.getInstance().getResource("system.site.lock." + lockStatus), 
-					EventLogConstants.EVENTLOG_FAIL, id, request);   //锁定站点失败后写EventLog
 			setErrMessage(request, ResourceHolder.getInstance().getResource("system.site.lock." + lockStatus));
 		}
+		//记录系统管理员操作日志
+		saveSystemEventLog(lockFlag, systemUser, EventLogConstants.SYSTEM_SITE_LOCK, "锁定站点", null, request);
 		if(StringUtil.isNotBlank(nameOrSign)){
 			request.setAttribute("nameOrSign", nameOrSign);
 			return new ActionForward.Forward("/system/site/listWithSignOrName");
@@ -527,17 +541,13 @@ public class SiteController extends BaseController{
 		boolean unlockFlag = siteService.unLockSiteById(id);
 		int unlockStatus = ConstantUtil.UNLOCKSITE_SUCCEED;
 		if(unlockFlag){
-			eventLogService.saveSystemEventLog(systemUser, 
-					EventLogConstants.SYSTEM_SITE_UNLOCK, ResourceHolder.getInstance().getResource("system.site.unlock." + unlockStatus), 
-					EventLogConstants.EVENTLOG_SECCEED, id, request);   //解锁站点成功后写EventLog
 			setInfoMessage(request, ResourceHolder.getInstance().getResource("system.site.unlock." + unlockStatus));
 		}else{
 			unlockStatus = ConstantUtil.UNLOCKSITE_FAIL;
-			eventLogService.saveSystemEventLog(systemUser, 
-					EventLogConstants.SYSTEM_SITE_UNLOCK, ResourceHolder.getInstance().getResource("system.site.unlock." + unlockStatus), 
-					EventLogConstants.EVENTLOG_FAIL, id, request);   //解锁站点失败后写EventLog
 			setErrMessage(request, ResourceHolder.getInstance().getResource("system.site.unlock." + unlockStatus));
 		}
+		//记录系统管理员操作日志
+		saveSystemEventLog(unlockFlag, systemUser, EventLogConstants.SYSTEM_SITE_LOCK, "解锁站点", null, request);
 		if(StringUtil.isNotBlank(nameOrSign)){
 			request.setAttribute("nameOrSign", nameOrSign);
 			return new ActionForward.Forward("/system/site/listWithSignOrName");
@@ -764,10 +774,13 @@ public class SiteController extends BaseController{
 				request.setAttribute("siteSign", siteBase.getSiteSign());
 			}
 			if(siteBase.getSiteFlag() != null){
-				request.setAttribute("siteType", siteBase.getSiteFlag());
+				request.setAttribute("siteFlag", siteBase.getSiteFlag());
 			}
 			if(siteBase.getLockFlag() != null){
-				request.setAttribute("siteStatus", siteBase.getLockFlag());
+				request.setAttribute("lockFlag", siteBase.getLockFlag());
+			}
+			if(siteBase.getHireMode() != null){
+				request.setAttribute("hireMode", siteBase.getHireMode());
 			}
 		}
 		if(StringUtil.isNotBlank(request.getParameter("expireDateStart"))){
@@ -799,6 +812,9 @@ public class SiteController extends BaseController{
 			if(siteBase.getLockFlag() != null && siteBase.getLockFlag().intValue() > 0){
 				condition.equal("lock_flag", siteBase.getLockFlag());    //站点状态：解锁1、锁定2
 			}
+			if(siteBase.getHireMode() != null && siteBase.getHireMode().intValue() > 0){
+				condition.equal("hire_mode", siteBase.getHireMode());    //租用模式：1.包月 2.计时
+			}
 		}
 		String expireDateStart = request.getParameter("expireDateStart");
 		String expireDateEnd = request.getParameter("expireDateEnd");
@@ -828,6 +844,8 @@ public class SiteController extends BaseController{
 		siteBase.setEffeDate(DateUtil.getGmtDate(siteBase.getEffeDate()));      //开始时间初始化为GMT时间
 //		siteBase.setExpireDate(DateUtil.getGmtDate(siteBase.getExpireDate()));    //到期时间修改为GMT时间
 		siteBase.setExpireDate(DateUtil.addDate(DateUtil.getGmtDate(siteBase.getExpireDate()), 1));    //到期时间修改为GMT时间
+		//改为23:59:59
+		siteBase.setExpireDate(DateUtil.addDateSecond(siteBase.getExpireDate(), -1));
 		siteBase.setSiteDesc("站点");
 		siteBase.setLockFlag((int)ConstantUtil.LOCKFLAG_UNLOCK);
 		siteBase.setCreateUser(systemUser.getId());
@@ -939,5 +957,22 @@ public class SiteController extends BaseController{
 //			}
 //		}
 		return 28800000;//默认为北京时间
+	}
+	
+	
+	/**
+	 * 获取当前站点时区的站点信息
+	 * shhc
+	 * 2013-6-3
+	 */
+	private void getOffsetSiteBase(SiteBase siteBase){
+		String[] fields = new String[]{"effeDate", "expireDate"};
+		long offset = 0 ;
+		if(siteBase != null){
+			offset = siteBase.getTimeZone();
+		}else{
+			offset = DateUtil.getDateOffset();
+		}
+		siteBase = (SiteBase) ObjectUtil.offsetDate(siteBase, offset, fields);
 	}
 }

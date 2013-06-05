@@ -45,6 +45,9 @@ public class UserInterceptor implements SysInterceptorExt {
 		}
 		UserBase currentUser = userService.getCurrentUser(request);
 		request.setAttribute("currentUser", currentUser);
+		if(currentUser.isExpried()){
+			return new ActionForward.Forward("/user/login");
+		}
 		return null;
 	}
 

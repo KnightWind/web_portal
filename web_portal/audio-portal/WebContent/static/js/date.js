@@ -22,6 +22,13 @@ String.prototype.isEmpty=function(){
 };
 
 /**
+ *复制日期 
+ */
+Date.prototype.clone = function () {
+    return new Date(this.getTime());
+};
+
+/**
  *验证是否为正整数 
  */
 String.prototype.isInteger = function() {
@@ -32,6 +39,26 @@ String.prototype.isInteger = function() {
     return regex.test(this);
 };
 
+/**
+ *验证是否为数字 
+ */
+String.prototype.isDigit = function() {
+    if (this.isEmpty()) {
+        return false;
+    }
+    var regex = /^\d+$/;
+    return regex.test(this);
+};
+/**
+ *验证是否为整数 
+ */
+String.prototype.isFullInteger = function() {
+    if (this.isEmpty()) {
+        return false;
+    }
+    var regex = /^-?\d+$/;
+    return regex.test(this);
+};
 /*
 String.prototype.isDate=function(){
     var dateStatus=false;

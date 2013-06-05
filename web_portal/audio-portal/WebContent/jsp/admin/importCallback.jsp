@@ -3,7 +3,7 @@
 <script type="text/javascript">
 	var statu = "${statu}"
 	var showinfo = "${LANG['site.user.import.cbinfo1']} ${itemnum} ${LANG['site.user.import.cbinfo2']} ${iptitemnum} ${LANG['site.user.import.cbinfo3']}"
-	//重复的账号有：张三。未导入的有：李四，王五。";
+	//${LANG['bizconf.jsp.admin.importCallback.res1']}";
 	<c:if test="${repeated != null}">
 		showinfo += " ${LANG['site.user.import.cbinfo4']} ";
 		<c:forEach var="rpt" items="${repeated}" varStatus="status">
@@ -20,7 +20,7 @@
 	if(statu=="1"){
 		info = showinfo;
 	}else{
-		info = "${LANG['site.user.import.cbinfo6']}可能导入文件数据格式错误。";
+		info = "${LANG['site.user.import.cbinfo6']}${LANG['bizconf.jsp.admin.importCallback.res2']}";
 	}
 	window.parent.showInfo(info,statu);
 	//alert("yes!");

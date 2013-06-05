@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
-<title>邀请参会人</title>
+<title>${LANG['bizconf.jsp.conf_list_main.res2']}</title>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/date.js?ver=${version}"></script>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js?ver=${version}"></SCRIPT>
@@ -41,7 +41,7 @@ function saveContact() {
 		$(".yq_ta").each(function(){
 			$(this).remove();
 		});		 
-		parent.errorDialog("请添加联系人");
+		parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res1']}");
 		return;
 	}
 	app.inventContact(data, function(result) {
@@ -52,13 +52,13 @@ function saveContact() {
 				parent.errorDialog(result.message);
 			}
 		}
-	}, {message:"正在发送邀请...", ui:parent});
+	}, {message:"${LANG['bizconf.jsp.inviteFirst.res2']}...", ui:parent});
 }
 function invent(){
 	parent.importContact();
 }
 	
-//用于判断是否添加重复 避免过多的DOM操作  
+//${LANG['bizconf.jsp.inviteFirst.res3']} ${LANG['bizconf.jsp.inviteFirst.res4']}DOM${LANG['bizconf.jsp.attended_conf_list.res9']}  
 var emailContainer = new Object();
 function regsiterEmail(email){
 	if(!emailContainer[email]){
@@ -79,14 +79,14 @@ function isRepeatedEmail(email){
 	return false;
 }
 
-//用于发送时检测
+//${LANG['bizconf.jsp.inviteFirst.res5']}
 function hasRepeatEmail(){
 	var regsiter = new Object();
 	for(var i=0; i<$("input[name=cemail]").length;i++){
 		var ipt = $("input[name=cemail]").get(i);
 		if(regsiter[$(ipt).val()]){
 			$(ipt).focus();
-			parent.errorDialog("存在重复邮件！");
+			parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res6']}");
 			return true;
 		}
 		regsiter[$(ipt).val()]=true;
@@ -103,19 +103,19 @@ function addItem(){
 		 var reg_tel = /(^((\+86)?|\(\+86\)|\+86\s)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/;
 		 //isRepeatedEmail(email);
 		 if(!email && !phone){
-			parent.errorDialog("请填写电话或邮箱！");
+			parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res7']}");
 			//$("#itemName").focus();
 			return;
 		}else if(email && !reg_email.test(email)){
-			parent.errorDialog("请正确填写邮箱！");
+			parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res8']}");
 			$("#itemEmail").focus();
 			return;
 		}else if(phone && !reg_tel.test(phone)){
-			parent.errorDialog("请正确填写电话号码！");
+			parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res9']}");
 			$("#itemPhone").focus();
 			return;
 		}else if(isRepeatedEmail(email)){
-			parent.errorDialog("请不要添加重复邮件！");
+			parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res10']}");
 			$("#itemEmail").focus();
 			return;
 		}
@@ -139,7 +139,7 @@ function appendRow(data){
 				+"<input name=\"userId\" value=\""+userId+"\" type=\"hidden\"><input class=\"yq_t01 username\" name=\"cname\" type=\"text\" value=\""+data.name+"\" /></td>"
 				+" <td align=\"center\" ><input class=\"yq_t02 email\" name=\"cemail\" type=\"text\" value=\""+data.email+"\" /></td>"
 				+" <td align=\"center\" ><input class=\"yq_t03 phone\" name=\"cphone\" type=\"text\" value=\""+data.phone+"\" /></td>"
-				+"  <td align=\"center\" ><a href=\"#\" onclick=\"removeItem(this,'"+data.email+"');\" >删除</a></td>"
+				+"  <td align=\"center\" ><a href=\"#\" onclick=\"removeItem(this,'"+data.email+"');\" >${LANG['bizconf.jsp.attended_conf_list.res12']}</a></td>"
 				+" <td align=\"center\" ></td></tr>";
 	$("#contactsTab").append(html);
 }
@@ -163,9 +163,9 @@ function addByExtral(datas){
 		}
 		appendRow(datas[i]);
 	}
-	var text = "导入成功！";
+	var text = "${LANG['bizconf.jsp.inviteFirst.res11']}";
 	if(repated){
-		text += "其中 "+repated+ " 邮箱重复！";
+		text += "${LANG['bizconf.jsp.inviteFirst.res12']} "+repated+ " ${LANG['bizconf.jsp.inviteFirst.res13']}";
 		alert(text);
 	}
 }
@@ -183,20 +183,20 @@ function addByExtral(datas){
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->  
 <div class="First_Steps_invite_first" style="height: 450px;">
         <div class="First_Steps_title_invite"> <a href="javascript:;" onclick="closeDialog()"></a>
-          <h3 class="tit_a_invite">邀请用户</h3>
-          <p class="tit_b_invite">您可以手工添加或从联系人中导入参会者成员。</p>
+          <h3 class="tit_a_invite">${LANG['bizconf.jsp.inviteFirst.res14']}</h3>
+          <p class="tit_b_invite">${LANG['bizconf.jsp.inviteFirst.res15']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick_invite" src="/static/images/min.jpg" width="730" height="1" /></div>
         <div class="First_Steps_main_invite" style="height:320px; overflow-y:auto;">
           <table id="contactsTab" width="730" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box_01" style="line-height:32px; margin-top:5px;">
             <tr>
               <td width="20" height="24"></td>
-              <td align="center" width="160">用户名</td>
-              <td align="center" width="160">邮箱</td>
-              <td align="center" width="160">电话</td>
+              <td align="center" width="160">${LANG['bizconf.jsp.add_contacts.res7']}</td>
+              <td align="center" width="160">${LANG['bizconf.jsp.add_contacts.res9']}</td>
+              <td align="center" width="160">${LANG['bizconf.jsp.conflogs.res4']}</td>
               <td align="center" width="90"></td>
               <td align="center" width="160"></td>
             </tr>
@@ -208,14 +208,14 @@ function addByExtral(datas){
               <td align="center" width="90">
               	<span class="button_common">
               		<a href="javascript:;" onclick="addItem()">
-              			<img width="16" height="16" align="absmiddle" style=" margin-left:5px; margin-right:5px;" src="/static/images/add_16.png" />增加
+              			<img width="16" height="16" align="absmiddle" style=" margin-left:5px; margin-right:5px;" src="/static/images/add_16.png" />${LANG['bizconf.jsp.inviteFirst.res16']}
               		</a>
               	</span>
               </td>
               <td align="center" width="160">
               	<span class="button_common">
               		<a href="javascript:;" onclick="invent()">
-              			<img width="14" height="9" align="absmiddle" style=" margin-left:5px; margin-right:5px;" src="/static/images/import.png" />从联系人导入
+              			<img width="14" height="9" align="absmiddle" style=" margin-left:5px; margin-right:5px;" src="/static/images/import.png" />${LANG['bizconf.jsp.inviteContactsSelect.res1']}
               		</a>
               	</span>
               </td>
@@ -232,16 +232,16 @@ function addByExtral(datas){
         <div class="First_Steps_bottom_a" style="margin-top: 0px;">
           <div class="but10">
           	<span class="button_common">
-          	<a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>取&nbsp;&nbsp;消</a>
+          	<a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res64']}&nbsp;&nbsp;${LANG['bizconf.jsp.create_Reservation_Conf.res65']}</a>
           	</span></div>
           <div class="but11">
           	<span class="button_common">
-          		<a href="javascript:;" onclick="saveContact()"><img src="/static/images/fasong.png" width="16" height="12" align="absmiddle" style=" margin-right:8px; margin-left:10px" />发送</a>
+          		<a href="javascript:;" onclick="saveContact()"><img src="/static/images/fasong.png" width="16" height="12" align="absmiddle" style=" margin-right:8px; margin-left:10px" />${LANG['bizconf.jsp.add_calendar_notice.res8']}</a>
           	</span>
           	</div>
         </div>
       </div>		
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>

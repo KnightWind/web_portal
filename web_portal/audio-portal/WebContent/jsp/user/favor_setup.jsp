@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>用户修改时区设置</title>
+<title>${LANG['bizconf.jsp.favor_setup.res1']}</title>
 
 
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
@@ -40,13 +40,13 @@ function closeDialog() {
 <div class="main_content">
 <form name="timeForm" id="timeForm" action="/user/favor/updateTimeZone" method="post" style="background: #FFF">
   <div class="intercalate_main_top">
-    <h3>偏好设置</h3>
-    <p>可以根据您的偏好进行设置。</p>
+    <h3>${LANG['bizconf.jsp.favor_setup.res2']}</h3>
+    <p>${LANG['bizconf.jsp.favor_setup.res3']}</p>
   </div>
   
   <table class="Personal_settings_main" cellpadding="0" cellspacing="0" border="0" >
     <tr height="40">
-      <td align="right" width="100">时区</td>
+      <td align="right" width="100">${LANG['bizconf.jsp.favor_setup.res4']}</td>
       <td align="left" class="person_settings_td">
         <select id="timeZoneId" name="timeZoneId" class="s01">
          <c:forEach var="eachTimeZone" items="${TIMEZONE_WITH_CITY_LIST}">
@@ -57,17 +57,17 @@ function closeDialog() {
       </td>
     </tr>
     <tr height="40">
-      <td align="right" width="100">语言</td>
+      <td align="right" width="100">${LANG['bizconf.jsp.favor_setup.res5']}</td>
       <td align="left" class="person_settings_td">
         <select name="" class="s02">
-          <option>中文版</option>
+          <option>${LANG['bizconf.jsp.conf_invite_refuse.res1']}</option>
         </select>
       </td>
     </tr>
     <tr height="40">
       <td align="right" width="100"></td>
       <td align="left" class="person_settings_td">
-        	<span style="color:#ec6e00">注意:更改时区将影响此站点上的时间日期显示</span>
+        	<span style="color:#ec6e00">${LANG['bizconf.jsp.favor_setup.res6']}:${LANG['bizconf.jsp.favor_setup.res7']}</span>
       </td>
     </tr>
     <tr>
@@ -75,7 +75,7 @@ function closeDialog() {
       <td>
       <div style="margin-top: 20px;">
       <a class="Personal_settings_main_hold" href="javascript:;" onclick="saveInfo()">
-          <img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" margin-right:5px;" />保存</a>
+          <img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.conf_default_setup.res45']}</a>
 	      <c:if test="${!empty infoMessage}">
 				<img src="/static/images/ys_r_bg.jpg" width="16" height="14" style="margin-left:15px;margin-top:5px;margin-right: 5px"/><label style='color:#258021'>${infoMessage}</label>
 		  </c:if>

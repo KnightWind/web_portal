@@ -457,14 +457,13 @@ public class NoticeServiceImpl implements NoticeService {
 			valueList.add(siteId.intValue());
 		}
 		if(userIds != null && userIds.length>0){
-			for (int i = 0; i < userIds.length; i++) {
-				if(i==0){
-					strSql.append(" AND create_user = ? ");
-				} else {
-					strSql.append(" OR create_user = ? ");
-				}
-				valueList.add(userIds[i]);
+			strSql.append(" and create_user in (-1 ");
+			for(Integer id:userIds){
+				strSql.append(" , ");
+				strSql.append(" ? ");
+				valueList.add(id);
 			}
+			strSql.append(" ) ");
 		} 
 		try {
 			rows = DAOProxy.getLibernate().countEntityListWithSql(strSql.toString(), valueList.toArray());
@@ -489,15 +488,15 @@ public class NoticeServiceImpl implements NoticeService {
 			strSql.append(" AND n.site_id = ? ");
 			valueList.add(siteId.intValue());
 		}
+		
 		if(userIds != null && userIds.length>0){
-			for (int i = 0; i < userIds.length; i++) {
-				if(i==0){
-					strSql.append(" AND n.create_user = ? ");
-				} else {
-					strSql.append(" OR n.create_user = ? ");
-				}
-				valueList.add(userIds[i]);
+			strSql.append(" and n.create_user in (-1 ");
+			for(Integer id:userIds){
+				strSql.append(" , ");
+				strSql.append(" ? ");
+				valueList.add(id);
 			}
+			strSql.append(" ) ");
 		} 
 		strSql.append(" order by n.start_time DESC ");   //查出列表无排序条件则为默认逆序
 		if(pageModel != null && pageModel.getRowsCount()>0){

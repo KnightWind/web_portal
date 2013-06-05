@@ -16,6 +16,18 @@ public class ConfCycle implements java.io.Serializable {
 	private Integer id;
 	
 	/*
+	 * 是否无限期循环（即无结束日期周期会议）
+	 * 0、非无限期循环；1、无限期循环
+	 */
+	private Integer infiniteFlag = 0;
+	
+	/*
+	 * 重复次数
+	 * 创建周期会议时，若该字段值大于0，则最多创建所设置的最大会议条数
+	 */
+	private Integer repeatCount = 0;
+	
+	/*
 	 * 站点ID号
 	 * */
 	private Integer siteId = 0;
@@ -77,11 +89,13 @@ public class ConfCycle implements java.io.Serializable {
 	public ConfCycle() {
 	}
 
-	public ConfCycle(Integer id, Integer siteId, Integer cycleType,
-			String cycleValue, Date beginDate, Date endDate, Date createTime,
-			Integer createUser) {
+	public ConfCycle(Integer id, Integer infiniteFlag, Integer repeatCount,
+			Integer siteId, Integer cycleType, String cycleValue,
+			Date beginDate, Date endDate, Date createTime, Integer createUser) {
 		super();
 		this.id = id;
+		this.infiniteFlag = infiniteFlag;
+		this.repeatCount = repeatCount;
 		this.siteId = siteId;
 		this.cycleType = cycleType;
 		this.cycleValue = cycleValue;
@@ -105,6 +119,22 @@ public class ConfCycle implements java.io.Serializable {
 
 	public void setSiteId(Integer siteId) {
 		this.siteId = siteId;
+	}
+
+	public Integer getInfiniteFlag() {
+		return infiniteFlag;
+	}
+
+	public void setInfiniteFlag(Integer infiniteFlag) {
+		this.infiniteFlag = infiniteFlag;
+	}
+	
+	public Integer getRepeatCount() {
+		return repeatCount;
+	}
+
+	public void setRepeatCount(Integer repeatCount) {
+		this.repeatCount = repeatCount;
 	}
 
 	public Integer getCycleType() {
@@ -182,10 +212,12 @@ public class ConfCycle implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "ConfCycle [id=" + id + ", siteId=" + siteId + ", cycleType="
-				+ cycleType + ", cycleValue=" + cycleValue + ", beginDate="
-				+ beginDate + ", endDate=" + endDate + ", createTime="
-				+ createTime + ", createUser=" + createUser + "]";
+		return "ConfCycle [id=" + id + ", infiniteFlag=" + infiniteFlag
+				+ ", repeatCount=" + repeatCount + ", siteId=" + siteId
+				+ ", cycleType=" + cycleType + ", cycleValue=" + cycleValue
+				+ ", beginDate=" + beginDate + ", endDate=" + endDate
+				+ ", createTime=" + createTime + ", createUser=" + createUser
+				+ "]";
 	}
  
 }

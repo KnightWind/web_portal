@@ -15,6 +15,7 @@ import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.JoinRandom;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.interceptors.SiteStatusInterceptor;
 import com.bizconf.audio.service.ClientAPIService;
 import com.bizconf.audio.service.ConfManagementService;
 import com.bizconf.audio.service.ConfService;
@@ -28,10 +29,12 @@ import com.bizconf.audio.util.StringUtil;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.annotation.AsController;
 import com.libernate.liberc.annotation.CParam;
+import com.libernate.liberc.annotation.Interceptors;
 import com.libernate.liberc.annotation.ReqPath;
 import com.libernate.liberc.utils.LiberContainer;
 
 @ReqPath("/join")
+@Interceptors(SiteStatusInterceptor.class)
 public class JoinController extends BaseController {
 	private final Logger logger = Logger.getLogger(JoinController.class);
 	
@@ -287,10 +290,12 @@ public class JoinController extends BaseController {
 			isLogin=true;
 			request.setAttribute("currentUser", currentUser);
 		}
-		
+
+		ConfBase perConf=null;
+		String userIp=StringUtil.getIpAddr(request);
 		request.setAttribute("isLogin", isLogin);
 		String reload=request.getParameter("reload");
-		System.out.println("reload=="+reload);
+		logger.info("reload=="+reload);
 		if(!StringUtil.isEmpty(reload)){
 			request.setAttribute("reload", reload);	
 			request.setAttribute("code", code);	
@@ -305,7 +310,7 @@ public class JoinController extends BaseController {
 					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 				}
 				
-				String preParam=clientAPIService.makePreParam(joinRandom);
+				String preParam=clientAPIService.makePreParam(joinRandom,userIp);
 				
 				request.setAttribute("preParam", preParam);
 			}
@@ -350,6 +355,22 @@ public class JoinController extends BaseController {
 			}
 			
 			
+			Integer permanentConf = confBase.getPermanentConf();
+			if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(permanentConf)){
+				perConf=confBase;
+				ConfBase childConf=confService.getPermanentChildConf(confBase.getId());
+				if(childConf==null){
+					childConf=confService.createChildConf(confBase);
+				}
+				if(childConf==null){
+					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
+					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+				}
+				confBase=childConf;
+			}
+			
+			
+			
 //			if(checkTooEarly(confBase)){
 //				request.setAttribute("msgFlag", ConfConstant.JOIN_ERROR_CODE_7);
 //				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
@@ -392,6 +413,22 @@ public class JoinController extends BaseController {
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 			}
 			
+			perConf=confBase;
+			
+			Integer permanentConf = confBase.getPermanentConf();
+			if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(permanentConf)){
+				ConfBase childConf=confService.getPermanentChildConf(confBase.getId());
+				if(childConf==null){
+					childConf=confService.createChildConf(confBase);
+				}
+				if(childConf==null){
+					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
+					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+				}
+				confBase=childConf;
+			}
+			
+			
 		}
 
 		if(ConfConstant.JOIN_TYPE_EMAIL.equals(joinType)){
@@ -414,16 +451,39 @@ public class JoinController extends BaseController {
 				//主持人安全会议号
 				confBase = confService.getConfBaseByCompereSecure(code);
 			}
+
 			if(confBase==null){
 				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_6);
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 			}
 			
+			perConf=confBase;
+			//验证永久会议信息
+			Integer permanentConf = confBase.getPermanentConf();
+			if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(permanentConf)){
+				
+				ConfBase childConf=confService.getPermanentChildConf(confBase.getId());
+				if(childConf==null){
+					childConf=confService.createChildConf(confBase);
+				}
+				if(childConf==null){
+					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
+					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+				}
+				confBase=childConf;
+			}
+			
+			
 		}
 		
 		if(ConfConstant.JOIN_TYPE_SECURE_CODE.equals(joinType)|| ConfConstant.JOIN_TYPE_EMAIL.equals(joinType)){
+			
 			String hostCode=confBase.getCompereSecure();
 			String userCode=confBase.getUserSecure();
+			if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(perConf.getPermanentConf())){
+				hostCode=perConf.getCompereSecure();
+				userCode=perConf.getUserSecure();
+			}
 			if(!StringUtil.isEmpty(code)){
 				if(code.equals(userCode)){
 					userRole = 8;
@@ -451,6 +511,16 @@ public class JoinController extends BaseController {
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
 		
+		//验证在线人数与站点的License数
+//		int siteLicCount = siteService.queryASSiteInfo(siteBase.getSiteSign()).getLicense();
+//		confManagementService.setingOnlineUserNum(confBase);
+//		logger.info("confBase.pcNum="+confBase.getPcNum());
+//		logger.info("siteLicCount="+siteLicCount);
+//		if (confBase.getPcNum() >= (siteLicCount-1)) {
+//			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_11);
+//			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+//		}
+		
 		if(checkTooEarly(confBase)){
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_7);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
@@ -469,9 +539,14 @@ public class JoinController extends BaseController {
 				if(startStatus){
 					confService.updateStartTime(confBase, DateUtil.getGmtDate(null));
 					confService.updateConfStatus(confBase,ConfConstant.CONF_STATUS_OPENING);
+					
 				}
 		}
-		System.out.println("Join Conf startStatus="+startStatus);
+		if(perConf!=null && perConf.getId().equals(confBase.getBelongConfId()) 
+				&& ConfConstant.CONF_STATUS_SUCCESS.equals(perConf.getConfStatus())){
+			confService.updateConfStatus(perConf,ConfConstant.CONF_STATUS_OPENING);
+		}
+		logger.info("Join Conf startStatus="+startStatus);
 		if(!startStatus){
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
@@ -491,14 +566,14 @@ public class JoinController extends BaseController {
 			joinRandom.setUserRole(userRole);
 			joinRandom.setCreateTime(DateUtil.getGmtDate(null));
 			joinRandom.setLanguage(LanguageHolder.getCurrentLanguage());
+			joinRandom.setClientIp(StringUtil.getIpAddr(request));
 			joinRandom=clientAPIService.saveRandom(joinRandom);
 		}
 		if(joinRandom==null || joinRandom.getId()<= 0){
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
-		
-		String preParam=clientAPIService.makePreParam(joinRandom);
+		String preParam=clientAPIService.makePreParam(joinRandom,userIp);
 		
 		request.setAttribute("preParam", preParam);
 		request.setAttribute("cId", confBase.getId());
@@ -510,8 +585,23 @@ public class JoinController extends BaseController {
 	}
 		
 		
-		
-		
+//		
+//	private Object checkPermanentConf(ConfBase confBase,HttpServletRequest request){
+//		Integer permanentConf = confBase.getPermanentConf();
+//		if(ConfConstant.CONF_PERMANENT_ENABLED_MAIN.equals(permanentConf)){
+//			ConfBase childConf=confService.getPermanentChildConf(confBase.getId());
+//			if(childConf==null){
+//				childConf=confService.createChildConf(confBase);
+//			}
+//			if(childConf==null){
+//				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
+//				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+//			}
+//			confBase=childConf;
+//		}
+//		return null;
+//	}
+//		
 		
 		
 		
@@ -629,7 +719,7 @@ public class JoinController extends BaseController {
 //		if(isChair){
 //			
 //		}
-//		System.out.println("request.getContextPath()=="+request.getSession().getServletContext().getRealPath("/"));//.getContextPath());
+//		logger.info("request.getContextPath()=="+request.getSession().getServletContext().getRealPath("/"));//.getContextPath());
 		
 		//拼成Param参数
 		
@@ -659,7 +749,7 @@ public class JoinController extends BaseController {
 					confService.updateConfStatus(confBase,ConfConstant.CONF_STATUS_OPENING);
 				}
 		}
-		System.out.println("Join Conf startStatus="+startStatus);
+		logger.info("Join Conf startStatus="+startStatus);
 		if(!startStatus){
 			String forWardUrl=  errorForward(joinType, ConfConstant.JOIN_ERROR_CODE_8,request);
 			return new ActionForward.Forward(forWardUrl);
@@ -736,6 +826,7 @@ public class JoinController extends BaseController {
 			joinRandom.setUserRole(8);
 			joinRandom.setCreateTime(DateUtil.getGmtDate(null));
 			joinRandom.setLanguage(LanguageHolder.getCurrentLanguage());
+			joinRandom.setClientIp(StringUtil.getIpAddr(request));
 			joinRandom=clientAPIService.saveRandom(joinRandom);
 		}
 		if(joinRandom==null || joinRandom.getId()<= 0){

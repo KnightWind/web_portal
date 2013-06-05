@@ -26,7 +26,7 @@ $.widget("ui.showDialog",{
     	if (self.options.data) {
     		this.element.data("data", self.options.data);
     	}
-    	var frameHtml="<iframe allowtransparency='true' id='dialogFrame' name='dialogFrame' src="+self.options.url+"  width="+self.options.width+" height="+self.options.height+" frameborder='0'  scrolling='no' style='background:transparent' />";
+    	var frameHtml="<iframe allowTransparency='true' id='dialogFrame' name='dialogFrame' src="+self.options.url+"  width="+self.options.width+" height="+self.options.height+" frameborder='0'  scrolling='no' style='background:transparent' />";
     	this.element.append(frameHtml);
     	this.element.bind("closeDialog", function(event, result) {
     		if (result) {
@@ -49,6 +49,14 @@ $.widget("ui.showDialog",{
     	});
     	this.element.bind("loaded", function(event, result) {
     		self.loading.hide();
+    		//fixed ie iframe background transparent
+    		if ($.browser.msie) {
+    			if($.browser.version>8){
+    	    		self.element.find("iframe").css("background-color", "transparent");		
+    			} else {
+    				self.element.find("iframe").css("background", "transparent");
+    			}
+    		}
     	});
     	this.element.bind("resize", function(event, result) {
     		self.element.find("#dialogFrame").height(result);
@@ -383,3 +391,72 @@ $.widget("ui.alertDialog",{
 		self.destroy();     	
     }
 });
+
+
+/**
+ *jquery tabs
+ *
+ */
+
+(function($){
+    $.fn.slideBar = function(o){
+        // default options
+        var options = $.extend({
+            activeClass:'active',
+            panelOffClass: 'nav-ul-off',
+            panelOnClass: 'nav-ul-on',
+            tabLinks:'a',
+            clickCallback: null
+        },o);
+        return this.each(function(){
+            var tabUl = $(this);//ul
+            var tabLinks = tabUl.find(options.tabLinks);//a
+            var tabLinksParents = tabLinks.parent();//li
+            var prevActiveLink = tabLinks.eq(0), currentTab;
+            // init tabLinks
+            tabLinks.each(function(){ 
+                var link = $(this);
+                // event handler
+                if(!link.hasClass("ignore")){
+                    link.bind("click", function(e){
+                        switchTab(prevActiveLink, link);
+                        if(link != prevActiveLink) {
+                            prevActiveLink = link;
+                        }
+                        if (options.clickCallback) {
+                            options.clickCallback(link);
+                        } 
+                        e.preventDefault();
+                    });
+                }
+            });
+
+            // tab switch function
+            function switchTab(oldLink, newLink) {
+                // refresh pagination links
+                var parent = newLink.parent();
+                var subUL = newLink.next();
+                if (subUL && subUL.length>0) {
+                    if (subUL.is(":visible")) {
+                        newLink.removeClass(options.panelOnClass).addClass(options.panelOffClass);
+                        if ($.browser.msie && $.browser.version<8) {
+                            subUL.hide();
+                        } else {
+                            subUL.slideUp();   
+                        }
+                    } else{
+                        newLink.removeClass(options.panelOffClass).addClass(options.panelOnClass);
+                        if ($.browser.msie && $.browser.version<8) {
+                            subUL.show();
+                        } else {
+                            subUL.slideDown();
+                        }
+                    };
+                } else {
+                    tabLinksParents.removeClass(options.activeClass);
+                    parent.addClass(options.activeClass);  
+                } 
+            }
+        });
+    };
+}(jQuery));

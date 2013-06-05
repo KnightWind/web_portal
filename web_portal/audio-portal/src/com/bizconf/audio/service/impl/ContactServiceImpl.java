@@ -553,7 +553,7 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 	 */
 	@Override
 	public PageBean<UserBase> getEnterpriseContacts(String keyword,Integer pageNo,boolean isSupper,
-			boolean showAllFlag,UserBase currUser) {
+			boolean showAllFlag,UserBase currUser, String orgCode) {
 		List<Object> values = new ArrayList<Object>();//不同站点的管理员ID必然不同
 		String sql = "";
 		if(isSupper){
@@ -587,6 +587,10 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
+		}
+		if(StringUtil.isNotBlank(orgCode)){
+			sql += " and t.org_code like ? ";
+			values.add(orgCode +"%");
 		}
 		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sql, pageNo,values.toArray(new Object[values.size()]));
 		return pageModel;

@@ -1,4 +1,5 @@
 var LOGDEBUG = false;
+var ISFASTIP = false;
 var EVENT_CREATE = "eventCreate";
 var EVENT_UPDATE = "eventUpdate";
 var EVENT_DELETE  = "eventDelete";
@@ -14,6 +15,8 @@ var VIEW_TYPE = {
 	notice: "notice",
 	site: "site",
 	organiz: "organiz",
+	billing: "billing",
+	relateOrg: "relateOrg",
 	assignUser: "assignUser",
 	tempMeeting: "tempMeeting",
 	linkTempMeeting: "linkTempMeeting",
@@ -39,6 +42,12 @@ function logDebug(message) {
 	if (window.console && window.console.debug) {
         window.console.log(message);
     }
+}
+
+function formatIpUrl(param) {
+	var url = "http://"+param+".confcloud.cn:80/test/logo.png";
+	url = addT(url);
+	return url;
 }
 
 function addUrlParam(url, paramName, paramValue, encode) {
@@ -530,6 +539,15 @@ var app = {
 		            }
                 }, null, options);			
 	},
+	forceResetAdminPass: function(data, callback, options) { //重置站点管理员密码
+		var url = "/admin/password/resetPass";
+		ajaxPost(url, data,
+				function(result) {
+			if (callback) {
+				callback(result);
+			}
+		}, null, options);			
+	},
 	forceResetSysPass: function(data, callback, options) {    //重置系统管理员密码
 		var url = "/system/password/resetPass";
 		ajaxPost(url, data,
@@ -602,8 +620,19 @@ var app = {
 		            }
                 }, null, options);		
 	},
-	loadMoreConf: function(data, callback) {
+	loadMoreConf: function(data, callback, options) {
 		var url = "/user/conf/getMoreControlPadConf";
+		if(options){
+			if(options.beginTime){
+				url = addUrlParam(url, "beginTime", options.beginTime);
+			}
+			if(options.endTime){
+				url = addUrlParam(url, "endTime", options.endTime);
+			}
+			if(options.confName){
+				url = addUrlParam(url, "confName", options.confName, true);
+			}
+		}
 		ajaxGet(url, data,
                 function(result) {
 					if (callback) {
@@ -622,6 +651,18 @@ var app = {
 				callback(result);
 			}
 		}, null, options);		
+	},
+	delConf: function(confId, callback, options) {
+		var url = "/user/conf/delete/"+confId;
+		ajaxPost(url, null,
+				function(result) {
+			if (callback) {
+				callback(result);
+			}
+		}, null, options);
+	},
+	delAllConf: function() {
+		
 	},
 	updateCycleOneMeeting: function(data, callback, options) {
 		var url = "/user/conf/updateSingleCycleConfInfo";
@@ -677,6 +718,15 @@ var app = {
 		            }
                 }, null, null);		
 	},
+	addContacts: function(data, callback, options) {
+		var url = "/user/contact/importBatchByContacts";
+		ajaxPost(url, data,
+                function(result) {
+					if (callback) {
+		                callback(result);
+		            }
+                }, null, options);		
+	},
 	addGroup: function(data, callback) {
 		var url = "/user/group/save";
 		ajaxPost(url, data,
@@ -730,6 +780,61 @@ var app = {
 		                callback(result);
 		            }
                 }, null, options);		
+	},
+	addSiteOrg: function(data, callback, options) {
+		var url = "/admin/org/create";
+		ajaxPost(url, data,
+                function(result) {
+					if (callback) {
+		                callback(result);
+		            }
+                }, null, options);		
+	},
+	loadSiteOrg: function(callback) {
+		var url = "/admin/org/orgListIndex";
+		ajaxGet(url, data,
+                function(result) {
+					if (callback) {
+		                callback(result);
+		            }
+                }, null, null);
+	},
+	delSiteOrg: function(id, callback, options) {
+		var url = "/admin/org/delete/"+id;
+		ajaxPost(url, null,
+                function(result) {
+					if (callback) {
+		                callback(result);
+		            }
+                }, null, options);			
+	},
+	//移除该组织机构的用户
+	delUserFromOrg: function(id, callback, options) {
+		var url = "/admin/org/removeUserFromOrg/"+id;
+		ajaxPost(url, null,
+				function(result) {
+			if (callback) {
+				callback(result);
+			}
+		}, null, options);			
+	},
+	getLevelOrg: function(id, callback) {
+		var url = "/user/contact/orgListForJson/"+id;
+		ajaxGet(url, null,
+                function(result) {
+					if (callback) {
+		                callback(result);
+		            }
+                }, null, null);
+	},
+	getAdminLevelOrg: function(id, callback) {
+		var url = "/admin/org/orgListForJson/"+id;
+		ajaxGet(url, null,
+                function(result) {
+					if (callback) {
+		                callback(result);
+		            }
+                }, null, null);
 	}
 };
 

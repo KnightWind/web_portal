@@ -22,15 +22,15 @@
 		$('#passwordForgetForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		var ruleString = {
 				required: {
-					"email": "请输入邮箱地址",
-					"authCode": "请输入验证码"
+					"email": "${LANG['bizconf.jsp.admin.password_forget.res1']}",
+					"authCode": "${LANG['bizconf.jsp.admin.password_forget.res2']}"
 				},
 				rangelength: {
-					"email": "字符长度为6~32位",
-					"authCode": "字符长度为4位"
+					"email": "${LANG['bizconf.jsp.admin.login.res4']}6~32${LANG['bizconf.jsp.admin.login.res5']}",
+					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"
 				},
 				custom: {
-					"email": "请输入正确的email格式"
+					"email": "${LANG['bizconf.jsp.admin.password_forget.res3']}email${LANG['bizconf.jsp.admin.password_forget.res4']}"
 				}
 		};
 		var v = $("#passwordForgetForm").validate({
@@ -70,35 +70,35 @@
 		});	
 	});	
 	</script>
-<title>系统管理员-忘记密码</title>
+<title>${LANG['bizconf.jsp.system.createSystemUser.res3']}-${LANG['bizconf.jsp.admin.password_forget.res6']}</title>
 </head>
 
 <body>
 
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res2']}-->
 <jsp:include page="header.jsp" />   
-<!--页面头部结束-->     
+<!--${LANG['bizconf.jsp.admin.password_forget.res7']}-->     
 <form action="/system/password/sendEmail" name="passwordForgetForm" id="passwordForgetForm" method="post">
 <div class="main">
-  <h3>忘记密码？</h3>
-  <p>*  输入与eCon账户关联的电子邮件地址。我们将向您发送页面链接，通过该页面您可以轻松创建新密码。</p>
+  <h3>${LANG['bizconf.jsp.admin.login.res12']}</h3>
+  <p>*  ${LANG['bizconf.jsp.admin.password_forget.res8']}eCon${LANG['bizconf.jsp.admin.password_forget.res9']}</p>
 	<input type="hidden" name="random" id="random" value=""/>
 	<input type="hidden" name="type" id="type" value="forgetpass"/>
 	<ul>
-    	<li><span>邮箱地址：</span><input id="systemEmail" name="systemEmail" class="text01" type="text" /></li>
-    	<li><span>验证码：</span><input id="authCode" name="authCode" type="text" id="authCode" maxlength="4" class="text02"/>
-                    <img id="authCodeImg" class="yanzhengma" alt="刷新" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
+    	<li><span>${LANG['bizconf.jsp.admin.password_forget.res10']}</span><input id="systemEmail" name="systemEmail" class="text01" type="text" /></li>
+    	<li><span>${LANG['bizconf.jsp.admin.password_forget.res11']}</span><input id="authCode" name="authCode" type="text" id="authCode" maxlength="4" class="text02"/>
+                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
                     &nbsp;&nbsp;&nbsp;
-                    <a class="change" href="javascript:;" onclick="randomImg()">看不清？换一张</a>
+                    <a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.admin.password_forget.res12']}</a>
    	    </li>
 	</ul>
 	<div style="clear: both;"></div>
-	<input name="button01" class="button01" type="submit" value="提交"  />
-    <input name="button02" class="button02" type="button" value="返回"  onclick="javascript:back();" >
+	<input name="button01" class="button01" type="submit" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}"  />
+    <input name="button02" class="button02" type="button" value="${LANG['bizconf.jsp.admin.arrange_org_user.res11']}"  onclick="javascript:back();" >
 
 </div>        
     </form>   
-    <!--页脚版权-->       
+    <!--${LANG['bizconf.jsp.admin.password_forget.res13']}-->       
 <jsp:include page="footer.jsp" />
 
 </body>
@@ -129,7 +129,7 @@ function sendEmail(){
 	app.forgotPass(authCode, type, random, systemEmail, function(result) {
 		randomImg();
 		if (result && result.status==2) {
-			successDialog("邮件发送成功", function() {
+			successDialog("${LANG['bizconf.jsp.admin.password_forget.res14']}", function() {
 			});	
 		} else {
 			errorDialog(result.message);

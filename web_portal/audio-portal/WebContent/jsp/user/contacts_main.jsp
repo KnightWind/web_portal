@@ -35,12 +35,12 @@
   <div class="meeting_top" style="margin-top: 20px;">
     <ul>
       <li class="meau_01 switchList">
-      <span class="meau_btn"><a href="javascript:;" class="activeMeau-left activeMeau-right"><img src="${baseUrlStatic}/images/lianxiren.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />联系人</a></span></li>
+      <span class="meau_btn"><a href="javascript:;" class="activeMeau-left activeMeau-right"><img src="${baseUrlStatic}/images/lianxiren.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />${LANG['bizconf.jsp.contacts_main.res1']}</a></span></li>
       <li class="meau_02 switchList">
-      <span class="meau_btn"><a href="javascript:;"><img src="${baseUrlStatic}/images/qunzu_b.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />群组</a></span></li>
+      <span class="meau_btn"><a href="javascript:;"><img src="${baseUrlStatic}/images/qunzu_b.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />${LANG['bizconf.jsp.contacts_main.res2']}</a></span></li>
     </ul>
   </div>
-   <iframe frameborder="0" width="100%" height="550px;" id="contentFrame" name="contentFrame" scrolling="no" src="/user/contact/list"></iframe>
+   <iframe frameborder="0" width="100%" height="650px;" id="contentFrame" name="contentFrame" scrolling="no" src="/user/contact/list"></iframe>
 </div>
 </body>
 </html>

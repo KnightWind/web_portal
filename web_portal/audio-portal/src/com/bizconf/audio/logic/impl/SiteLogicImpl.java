@@ -8,6 +8,7 @@ import com.bizconf.audio.dao.DAOProxy;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.logic.SiteLogic;
+import com.bizconf.audio.util.ObjectUtil;
 import com.bizconf.audio.util.RegexUtil;
 import com.bizconf.audio.util.StringUtil;
 @Service
@@ -89,6 +90,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 	 * 2013-1-22
 	 */
 	private boolean siteValidate(SiteBase siteBase){
+		ObjectUtil.parseChar(siteBase, "siteName", "siteSign");
 		String siteName = siteBase.getSiteName();
 		String enName = siteBase.getEnName();
 		String siteSign = siteBase.getSiteSign();
@@ -100,7 +102,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 			}
 		}
 		if(StringUtil.isNotBlank(siteName)){
-			if(!RegexUtil.accordStringByPattern(siteName,"^[a-zA-Z0-9_\\-&\u4e00-\u9fa5]{4,32}$")){
+			if(!RegexUtil.accordStringByPattern(siteName,"^[a-zA-Z0-9_\\-&\\u4e00-\\u9fa5]{4,32}$")){
 				logger.error("站点名称错误");
 				return false;
 			}
@@ -143,7 +145,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 		String trueName = siteAdmin.getTrueName();
 		String loginName = siteAdmin.getLoginName();
 		if(StringUtil.isNotBlank(trueName)){
-			if(!RegexUtil.accordStringByPattern(trueName,"^[a-zA-Z0-9_\\-&]{4,32}$")){
+			if(!RegexUtil.accordStringByPattern(trueName,"^[a-zA-Z0-9_\\-&\\u4e00-\\u9fa5]{1,32}$")){
 				logger.error("站点管理员用户名错误");
 				return false;
 			}

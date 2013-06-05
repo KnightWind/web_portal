@@ -7,72 +7,73 @@
 
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/popupbox.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
-<title>企业用户信息</title>
+<title>${LANG['bizconf.jsp.admin.user_info.res1']}</title>
 </head>
 <body onload="loaded();">
 <div class="popup_box">
 	<div class="popup_box_main">
     <table>
   <tr>
-    <td align="right" class="changes_left">登录名:</td>
+    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.arrange_org_user.res7']}:</td>
     <td class="changes_right">${user.loginName}</td>
   </tr>
   <tr>
-    <td align="right" class="changes_left">用户名:</td>
+    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.arrange_org_user.res8']}:</td>
     <td class="changes_right">${user.trueName}</td>
   </tr>
   <tr>
-    <td align="right" class="changes_left">英文名:</td>
+    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.user_info.res2']}:</td>
     <td class="changes_right">${user.enName}</td>
   </tr>
 <%--  <tr>--%>
-<%--    <td align="right" class="changes_left">密码:</td>--%>
+<%--    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.user_info.res3']}:</td>--%>
 <%--    <td  class="changes_right">${user.loginPass}</td>--%>
 <%--  </tr>--%>
 	<tr>
-		 <td align="right" class="changes_left">用户状态:</td>
+		 <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.user_info.res4']}:</td>
 		 <td  class="changes_right">
 		 	<c:if test="${user.userStatus eq '0'}">${LANG['system.site.list.Status.lock']}</c:if>
 			<c:if test="${user.userStatus eq '1'}">${LANG['site.admin.userlist.active']}</c:if>
 		 </td>
 	</tr>
-	
-	<tr>
-	    <td align="right" class="changes_left">用户机构:</td>
-	    <td class="changes_right">${orgName}</td>
-	</tr>
+	<c:if test="${!empty orgName && orgName != ''}">
+	 	<tr> 
+	 	    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.edit_userbase.res3']}:</td> 
+			<td class="changes_right">${orgName}</td>
+	 	</tr> 
+ 	</c:if>
 	
   <tr>
-    <td align="right" class="changes_left">用户角色:</td>
+    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.user_info.res5']}:</td>
     <td class="changes_right">
     	<c:choose>
-    		<c:when test="${user.userRole eq '1'}">主持人</c:when>
-    		<c:otherwise>参会者</c:otherwise>
+    		<c:when test="${user.userRole eq '1'}">${LANG['bizconf.jsp.admin.user_info.res6']}</c:when>
+    		<c:otherwise>${LANG['bizconf.jsp.admin.user_info.res7']}</c:otherwise>
     	</c:choose>
     </td>
   </tr>
 
   <tr>
-    <td align="right" class="changes_left">邮箱:</td>
+    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.arrange_org_user.res9']}:</td>
     <td class="changes_right">${user.userEmail}</td>
   </tr>
   <tr>
-    <td align="right" class="changes_left">电话:</td>
+    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.conf_list.res9']}:</td>
     <td class="changes_right">${user.mobile}</td>
   </tr>
   <c:if test="${user.userRole eq '1'}">
 	  <tr>
-	    <td align="right" class="changes_left">会议权限:</td>
+	    <td align="right" class="changes_left">${LANG['bizconf.jsp.admin.user_info.res8']}:</td>
 	    <td class="changes_right"><p>
-	    <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">电话&nbsp;</c:if> 
-	    <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">自动外呼&nbsp;</c:if> 
-	    <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">媒体共享&nbsp;</c:if> 
-	    <c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">录制</c:if> 
+	    <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">${LANG['bizconf.jsp.admin.conf_list.res9']}&nbsp;</c:if> 
+	    <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">${LANG['bizconf.jsp.admin.edit_userbase.res7']}&nbsp;</c:if> 
+	    <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">${LANG['bizconf.jsp.admin.edit_userbase.res8']}&nbsp;</c:if> 
+	    <c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">${LANG['bizconf.jsp.admin.edit_userbase.res9']}</c:if> 
 	    </p></td>
 	  </tr>
   </c:if>
 </table>
-   <a class="user_messages_btn" href="#" onclick="closeDialog();" >确认</a> 
+   <a class="user_messages_btn" href="#" onclick="closeDialog();" >${LANG['bizconf.jsp.admin.user_info.res9']}</a> 
  </div>
 </div>
 </body>

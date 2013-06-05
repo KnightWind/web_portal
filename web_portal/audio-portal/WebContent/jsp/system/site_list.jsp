@@ -48,11 +48,11 @@ $(function() {
 	//show or hide search input
 	$(".gaoji").toggle(function () {
 	    $("#search-condition").slideDown(function() {
-		    parent.resizeHeight();//增加高度
+		    parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res1']}
 	    });
 	}, function () {
 		$("#search-condition").slideUp(function() {
-			parent.resizeHeight();//减少高度
+			parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res2']}
 		});
 	});
 	var lang = getBrowserLang();
@@ -138,6 +138,11 @@ function del(id){
 	});
 }
 
+function sysAdminManage(id){
+	var url = "/admin/sysAdminManage/"+id;
+	window.open(url,"_bank");//
+}
+
 function sortQuery(sortField,sortord){
 	formBind();
 	var nameOrSign = $("#textfield01").val();
@@ -156,21 +161,22 @@ function formBind(){
 	$("#sortord").val("${sortord}");
 	$("#siteName").val("${siteName}");
 	$("#siteSign").val("${siteSign}");
-	$("#siteFlag").val("${site_flag}");
-	$("#lockFlag").val("${lock_flag}");
+	$("#siteFlag").val("${siteFlag}");
+	$("#lockFlag").val("${lockFlag}");
+	$("#hireMode").val("${hireMode}");
 	$("#expireDateStart").val("${expireDateStart}");
 	$("#expireDateEnd").val("${expireDateEnd}");
 }
 
 function enterSumbit(url){   
-    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-    if (event.keyCode == 13){       //监听回车键
+    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.admin.conf_list.res3']}   
+    if (event.keyCode == 13){       //${LANG['bizconf.jsp.admin.conf_list.res4']}
     	querySite(url);   
     }   
 }  
 
 $(document).ready(function(){
-	$("#textfield01").watermark('企业名称、企业标识');
+	$("#textfield01").watermark('${LANG['bizconf.jsp.system.site_list.res1']}');
 	$("#search-condition").find("input[type=text]").each(function(){
 		if($(this).val()){
 			$("#search-condition").show();
@@ -212,7 +218,7 @@ $(document).ready(function(){
 					<cc:siteList var="SITE_TYPES"/>
 			   		<c:forEach var="eachType" items="${SITE_TYPES}"  varStatus="itemStatus">
 			   			<c:set var ="typeName" value="site.type.${eachType }"/>
-			   			<option value="${eachType}" <c:if test="${siteType==eachType}">selected</c:if>>${LANG[typeName]}</option>
+			   			<option value="${eachType}" <c:if test="${siteFlag==eachType}">selected</c:if>>${LANG[typeName]}</option>
 			   		</c:forEach>
     			</select>
 	    		<label style="margin:4px 11px">${LANG['system.site.list.Status']} </label>
@@ -220,7 +226,17 @@ $(document).ready(function(){
 					<cc:siteList var="SITE_STATUS"/>
 			   		<c:forEach var="eachType" items="${SITE_STATUS}"  varStatus="itemStatus">
 			   			<c:set var ="typeName" value="site.status.${eachType }"/>
-			   			<option value="${eachType}" <c:if test="${siteStatus==eachType}">selected</c:if>>${LANG[typeName]}</option>
+			   			<option value="${eachType}" <c:if test="${lockFlag==eachType}">selected</c:if>>${LANG[typeName]}</option>
+			   		</c:forEach>
+    			</select>
+    		</div>
+    		<div style="height:30px;clear: left">
+	    		<label>${LANG['system.site.list.SiteHire']}  </label>
+	    		<select name="hireMode" id="hireMode">
+					<cc:siteList var="SITE_HIREMODE"/>
+			   		<c:forEach var="eachType" items="${SITE_HIREMODE}"  varStatus="itemStatus">
+			   			<c:set var ="typeName" value="site.hire.${eachType }"/>
+			   			<option value="${eachType}" <c:if test="${hireMode==eachType}">selected</c:if>>${LANG[typeName]}</option>
 			   		</c:forEach>
     			</select>
     		</div>
@@ -317,7 +333,14 @@ $(document).ready(function(){
 	        </c:if>
        		</div>
        	</td>
-        <td width="16%" height="38" bgcolor="d3eaef" class="STYLE10" class="STYLE_none" style="border-right:none"><div align="center"><span>${LANG['system.Operate']}</span></div></td>
+       	<c:choose>
+			<c:when test="${user.sysType gt 6 }">
+	       	 	<td width="16%" height="38" bgcolor="d3eaef" class="STYLE10" class="STYLE_none" style="border-right:none"><div align="center"><span>${LANG['system.Operate']}</span></div></td>
+	     	</c:when>
+	     	<c:otherwise>
+	     	
+	     	</c:otherwise>
+     	</c:choose>
       </tr>
         <c:if test="${fn:length(siteList)<=0 }">
          <tr>
@@ -332,13 +355,13 @@ $(document).ready(function(){
         <td height="32" class="STYLE19" align="left">
         	<c:choose>
 	      			<c:when test="${myfn:expiredInWe(siteBase.expireDate) }">
-	      				<div style="margin-left: 10px;"  title="站点即将过期" >
+	      				<div style="margin-left: 10px;"  title="${LANG['bizconf.jsp.system.site_list.res2']}" >
 	      					<img src="/static/images/caution.png"/>
 			        		<a onclick="viewSite(${siteBase.id})" href="javascript:;"><span>${siteBase.siteName}</span></a>
 			        	</div>
 	      			</c:when>
 	      			<c:when test="${myfn:siteExpired(siteBase.expireDate) }">
-	      				<div style="margin-left: 10px;" title="站点已经过期" >
+	      				<div style="margin-left: 10px;" title="${LANG['bizconf.jsp.system.site_list.res3']}" >
 	      					<img src="/static/images/overdue.png" />
 	      					<a onclick="viewSite(${siteBase.id})" href="javascript:;"><span>${siteBase.siteName}</span></a>
 	      				</div>	
@@ -366,8 +389,8 @@ $(document).ready(function(){
 		<c:if test="${siteBase.hireMode == null || siteBase.hireMode == 0}">
 			<td height="32" class="STYLE19"><div align="center">--</div></td>
 		</c:if>
-        <td height="32" class="STYLE19"><div align="center"><fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></div></td>
-        <td height="32" class="STYLE19"><div align="center"><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></div></td>
+        <td height="32" class="STYLE19"><div align="center">${myfn:fmtDate('yyyy-MM-dd',siteBase.effeDate,28800000)}</div></td>
+        <td height="32" class="STYLE19"><div align="center">${myfn:fmtDate('yyyy-MM-dd',siteBase.expireDate,28800000)}</div></td>
         <td height="32" class="STYLE19"><div align="center" id="siteIdDiv_${siteBase.id}">--</div></td>
 	    <c:if test="${siteBase.lockFlag == 1}"> 
 			<td height="32" class="STYLE19"><div align="center" class="STYLE21">${LANG['system.site.list.Status.normal']}</a></span></div></td>
@@ -375,33 +398,36 @@ $(document).ready(function(){
 		<c:if test="${siteBase.lockFlag == 2}"> 
 			<td height="32" class="STYLE19"><div align="center" class="STYLE21">${LANG['system.site.list.Status.lock']}</a></span></div></td>
 		</c:if>
-        <td height="32" class="STYLE19">
-        	<div align="center" class="STYLE21">
+        
 <%--        <a href="javascript:hostManager(${siteBase.id});">host=${siteBase.chargeMode}</a>--%>
 				<c:choose>
 					<c:when test="${user.sysType gt 6 }">
-						<c:if test="${siteBase.chargeMode == 1}">
-		        			<a href="javascript:hostManager(${siteBase.id});">点数</a>&nbsp;&nbsp;
-			        	</c:if>
-			        	<c:if test="${siteBase.chargeMode != 1}">
-		        			<a href="javascript:countManager(${siteBase.id});">点数</a>&nbsp;&nbsp;
-			        	</c:if>
-			     		<c:if test="${siteBase.lockFlag == 2}"> 
-							<a href="javascript:;" onclick='unlock("${siteBase.id}")'>${LANG['system.site.list.Status.unlock']}</a>&nbsp;&nbsp;
-						</c:if>
-						<c:if test="${siteBase.lockFlag == 1}"> 
-							<a href="javascript:;" onclick='lock("${siteBase.id}")'>${LANG['system.site.list.Status.lock']}</a>&nbsp;&nbsp;
-						</c:if>
-						<a onclick="updateSite(${siteBase.id})" href="javascript:;">${LANG['system.change']}</a>&nbsp;&nbsp;
-						<a href="javascript:;" onclick='del("${siteBase.id}")'>${LANG['system.delete']}</a>&nbsp;&nbsp;
+						<td height="32" class="STYLE19">
+	        				<div align="center" class="STYLE21">
+								<c:if test="${siteBase.chargeMode == 1}">
+				        			<a href="javascript:hostManager(${siteBase.id});">${LANG['bizconf.jsp.system.site_list.res4']}</a>&nbsp;&nbsp;
+					        	</c:if>
+					        	<c:if test="${siteBase.chargeMode != 1}">
+				        			<a href="javascript:countManager(${siteBase.id});">${LANG['bizconf.jsp.system.site_list.res4']}</a>&nbsp;&nbsp;
+					        	</c:if>
+					     		<c:if test="${siteBase.lockFlag == 2}"> 
+									<a href="javascript:;" onclick='unlock("${siteBase.id}")'>${LANG['system.site.list.Status.unlock']}</a>&nbsp;&nbsp;
+								</c:if>
+								<c:if test="${siteBase.lockFlag == 1}"> 
+									<a href="javascript:;" onclick='lock("${siteBase.id}")'>${LANG['system.site.list.Status.lock']}</a>&nbsp;&nbsp;
+								</c:if>
+								<a onclick="updateSite(${siteBase.id})" href="javascript:;">${LANG['system.change']}</a>&nbsp;&nbsp;
+								<a href="javascript:;" onclick='del("${siteBase.id}")'>${LANG['system.delete']}</a>&nbsp;&nbsp;
+								<a href="javascript:;" onclick='sysAdminManage("${siteBase.id}")'>${LANG['bizconf.jsp.system.index.res4']}</a>
+							</div>
+       					</td>
 					</c:when>
 					<c:otherwise>
-						<a  href="javascript:;">申请修改</a>
+<%--						<a  href="javascript:;">${LANG['bizconf.jsp.system.site_list.res5']}</a>--%>
 					</c:otherwise>
 				</c:choose>
 <%-- 				<a href="javascript:;"  >${LANG['system.manager']}</a> --%>
-			</div>
-        </td>
+		
       </tr>
      </c:forEach>
      </c:if>
@@ -413,21 +439,21 @@ $(document).ready(function(){
     <jsp:include page="/jsp/common/page_info.jsp" />
 <!--     <table width="100%" border="0" cellspacing="0" cellpadding="0"> -->
 <!--       <tr> -->
-<%--         <td><div><span width="33%" class="STYLE22" align="left">&nbsp;&nbsp;&nbsp;&nbsp;共 <strong>${pageModel.pageCount}</strong> 页,共有<strong>${pageModel.rowsCount}</strong> 条记录</span></div></td> --%>
+<%--         <td><div><span width="33%" class="STYLE22" align="left">&nbsp;&nbsp;&nbsp;&nbsp;${LANG['bizconf.jsp.system.site_info.res8']} <strong>${pageModel.pageCount}</strong> ${LANG['bizconf.jsp.system.site_list.res6']},${LANG['bizconf.jsp.system.site_info.res8']}有<strong>${pageModel.rowsCount}</strong> ${LANG['bizconf.jsp.system.site_list.res7']}</span></div></td> --%>
 <!--         <td width="67%"><table width="420" border="0" align="right" cellpadding="0" cellspacing="0" > -->
 <!--           <tr> -->
-<!--             <td><div align="center" class="page_shouye"><a href="#">首页</a></div></td> -->
-<!--             <td><div align="center" class="page_next"><a href="#">下一页</a></div></td> -->
+<!--             <td><div align="center" class="page_shouye"><a href="#">${LANG['bizconf.jsp.system.site_info.res10']}</a></div></td> -->
+<!--             <td><div align="center" class="page_next"><a href="#">${LANG['bizconf.jsp.system.site_info.res13']}</a></div></td> -->
 <!--             <td><div align="center" class="page_shuzi"><a href="#">1</a>&nbsp;&nbsp;<a href="#">2</a>&nbsp;&nbsp;<a href="#">3</a>&nbsp;&nbsp;<a href="#">4</a>&nbsp;&nbsp;<a href="#">5</a></div></td> -->
             
-<!--             <td><div class="page_next"><a href="#">下一页</a></div></td> -->
-<!--             <td><div class="page_shouye"><a href="#">尾页</a></div></td> -->
-<!--             <td class="STYLE22"><div class="page_shouye"><a href="#">转到</a></div></td> -->
+<!--             <td><div class="page_next"><a href="#">${LANG['bizconf.jsp.system.site_info.res13']}</a></div></td> -->
+<!--             <td><div class="page_shouye"><a href="#">${LANG['bizconf.jsp.system.site_info.res11']}</a></div></td> -->
+<!--             <td class="STYLE22"><div class="page_shouye"><a href="#">${LANG['bizconf.jsp.system.site_list.res8']}</a></div></td> -->
 <!--             <td><div align="center"> -->
 <!--             <input type="text" name="textfield" id="textfield"  style="width:22px; height:16px; font-size:12px; border:solid 1px #CACACA; line-height:16px;"/> -->
 <!--             </div></td> -->
-<!--             <td class="STYLE22">页</div></td> -->
-<!--             <td class="STYLE22"><div class="page_shouye01">跳转</div></td> -->
+<!--             <td class="STYLE22">${LANG['bizconf.jsp.system.site_list.res6']}</div></td> -->
+<!--             <td class="STYLE22"><div class="page_shouye01">${LANG['bizconf.jsp.system.site_list.res9']}</div></td> -->
 <!--            </tr>   -->
 <!--            </table>   -->
 <!--         </td>  -->

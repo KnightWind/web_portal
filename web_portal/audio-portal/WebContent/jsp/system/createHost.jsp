@@ -21,42 +21,42 @@
 <body onload="loaded()">
 <table>
 <tr>
-	<td>登录名</td>
+	<td>${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</td>
 	<td><input type="text" name="loginName" id="loginName" value="test user"/></td>
 </tr>
 <tr>
-	<td>密码</td>
+	<td>${LANG['bizconf.jsp.admin.user_info.res3']}</td>
 	<td><input type="password" name="loginPass" id="loginPass" value="asdasd"/></td>
 </tr>
 <tr>
-	<td>确认密码</td>
+	<td>${LANG['bizconf.jsp.admin.resetPass.res7']}</td>
 	<td><input type="password" name="" id=""/></td>
 </tr>
 <tr>
-	<td>用户名</td>
+	<td>${LANG['bizconf.jsp.admin.arrange_org_user.res8']}</td>
 	<td><input type="text" name="trueName" id="trueName" value="test user"/></td>
 </tr>
 <tr>
-	<td>英文名</td>
+	<td>${LANG['bizconf.jsp.admin.user_info.res2']}</td>
 	<td><input type="text" name="enName" id="enName" value="test"/></td>
 </tr>
 <tr>
-	<td>邮箱</td>
+	<td>${LANG['bizconf.jsp.admin.arrange_org_user.res9']}</td>
 	<td><input type="text" name="userEmail" id="userEmail" value="alan@bizconf.cn"/></td>
 </tr>
 <tr>
-	<td>电话</td>
+	<td>${LANG['bizconf.jsp.admin.conf_list.res9']}</td>
 	<td><input type="text" name="phone" id="phone" value="123456879"/></td>
 </tr>
 <tr>
-	<td>备注</td>
+	<td>${LANG['bizconf.jsp.admin.createOrg.res3']}</td>
 	<td><input type="text" name="remark" id="remark" value="test"/></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
 	<td>
-		<input type="button" name="" id="" value="确定" onclick="saveHost()"/>
-		<input type="button" name="" id="" value="取消" onclick="closeDialog()"/>
+		<input type="button" name="" id="" value="${LANG['bizconf.jsp.common.bill_detaillist.res10']}" onclick="saveHost()"/>
+		<input type="button" name="" id="" value="${LANG['bizconf.jsp.admin.createOrg.res4']}" onclick="closeDialog()"/>
 	</td>
 </tr>
 </table>
@@ -68,7 +68,7 @@ function loaded() {
 	frame.trigger("loaded");
 	var data = frame.data("data");
 	if(data) {
-		console.log(data.loginName);	
+		//console.log(data.loginName);	
 	}
 }
 function saveHost() {

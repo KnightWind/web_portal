@@ -18,8 +18,8 @@
 	<script type="text/javascript">
 		var validString  = {
 			required:{
-				userName: "请输入用户名",
-				meetingNo: "请输入安全会议号"
+				userName: "${LANG['bizconf.jsp.attendConf.res1']}",
+				meetingNo: "${LANG['bizconf.jsp.attendConf.res2']}"
 			}
 		};
 		function editMeeting(){
@@ -59,8 +59,8 @@
 		});
 		
 		function enterKey(){
-		    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-		    if (event.keyCode == 13){       //监听回车键
+		    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.attendConf.res3']}   
+		    if (event.keyCode == 13){       //${LANG['bizconf.jsp.attendConf.res4']}
 		    	if(checkForm()){
 					editMeeting();
 				}

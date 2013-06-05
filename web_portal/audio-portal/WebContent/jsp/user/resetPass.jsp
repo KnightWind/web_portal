@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>重置密码</title>
+<title>${LANG['bizconf.jsp.index.res24']}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- Css -->	
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
@@ -78,8 +78,8 @@ var resetPassForm = null;
 		}
 	}
 	function enterKey(){
-	    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-	    if (event.keyCode == 13){       //监听回车键
+	    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.attendConf.res3']}   
+	    if (event.keyCode == 13){       //${LANG['bizconf.jsp.attendConf.res4']}
 	    	checkForm();
 	    } 
 	}
@@ -100,27 +100,27 @@ var resetPassForm = null;
       <td class="overlay-content">
         <div class="First_Steps_quick_a" style=" background:#FFF;">
           <div class="First_Steps_title_a">
-            <h3 class="tit_a">重置密码</h3>
-            <p class="tit_b">为了您密码的安全，建议您立即进行密码修改。</p>
+            <h3 class="tit_a">${LANG['bizconf.jsp.index.res24']}</h3>
+            <p class="tit_b">${LANG['bizconf.jsp.resetPass.res1']}</p>
           </div>
           <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
           <div class="First_Steps_top" style=" background:#FFF"> </div>
           <div class="First_Steps_main_quick">
             <table class="box_a_quick02">
               <tr class="box01">
-                <td align="right" class="left_text_a">原密码</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.profile.res8']}</td>
                 <td align="left">
                   <input class="right_text_a" id="orgPass" name="orgPass" type="password" value="" />
                 </td>
               </tr>
               <tr class="box01">
-                <td align="right" class="left_text_a">新密码</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.profile.res10']}</td>
                 <td align="left">
                   <input class="right_text_a" id="loginPass" name="loginPass" type="password" />
                 </td>
               </tr>
               <tr class="box01">
-                <td align="right" class="left_text_a">确认密码</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.profile.res12']}</td>
                 <td align="left">
                   <input class="right_text_a" id="loginPassConfirm" name="loginPassConfirm" type="password" value="" onkeypress="enterKey();"/>
                 </td>
@@ -128,7 +128,7 @@ var resetPassForm = null;
               <tr align="left">
             <td align="left" colspan="3">  
             <div class="but150" style=" margin-bottom:70px;"><span class="button_common">
-            	<a href="javascript:;" onclick="javascript:checkForm();" ><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>提交</a> </span>
+            	<a href="javascript:;" onclick="javascript:checkForm();" ><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>${LANG['bizconf.jsp.add_group.res5']}</a> </span>
             </div>
             </td>
             </tr>
@@ -164,7 +164,7 @@ function resetPass(){
 				parent.errorDialog(result.message);
 			}
 		}
-	}, {message:"正在保存...", ui:parent});	
+	}, {message:"${LANG['bizconf.jsp.resetPass.res2']}...", ui:parent});	
 }
 
 function closeDialog(){

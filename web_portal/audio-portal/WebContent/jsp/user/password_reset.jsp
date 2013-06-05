@@ -77,26 +77,26 @@
 		}
 	}
 	</script>
-<title>修改密码</title>
+<title>${LANG['bizconf.jsp.password_reset.res1']}</title>
 
 </head>
 
 <body>
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.conf_invite_recv.res4']}-->
 <jsp:include page="header.jsp" />
 
 <div id="head_bar">
-  <div class="nav_profile"><img src="/static/images/password_bg.png" width="13" height="16" align="absmiddle" /><a href="#"><span>修改密码？</span></a> </div>
+  <div class="nav_profile"><img src="/static/images/password_bg.png" width="13" height="16" align="absmiddle" /><a href="#"><span>${LANG['bizconf.jsp.password_reset.res2']}</span></a> </div>
   <!--<ul class="nav_help">
-    <li class="bar01" align="absmiddle"><a  title="下载中心" href="#">下载中心</a> </li>
-    <li class="bar02"><a  title="帮助" href="#">帮助</a> </li>
-    <li class="bar03"><a  title="退出" href="#">退出</a> </li>
+    <li class="bar01" align="absmiddle"><a  title="${LANG['bizconf.jsp.download_center.res1']}" href="#">${LANG['bizconf.jsp.download_center.res1']}</a> </li>
+    <li class="bar02"><a  title="${LANG['bizconf.jsp.help.res1']}" href="#">${LANG['bizconf.jsp.help.res1']}</a> </li>
+    <li class="bar03"><a  title="${LANG['bizconf.jsp.password_forget.res1']}" href="#">${LANG['bizconf.jsp.password_forget.res1']}</a> </li>
   </ul>-->
 </div>
-<!--忘记密码-->
+<!--${LANG['bizconf.jsp.conf_invite_refuse.res2']}-->
 <div class="Forget_password ">
 
-<!--页面头部结束-->     
+<!--${LANG['bizconf.jsp.password_reset.res3']}-->     
 <div class="main">
   
 <form action="/user/password/save" name="passwordResetForm" id="passwordResetForm" method="post">
@@ -107,27 +107,26 @@
 	<input type="hidden" name="ts" id="ts" value="${ts}"/>
 	<input type="hidden" name="ln" id="ln" value="${ln}"/>
 <ul>
-    	<li><span>密码：</span><input id="lp" name="lp" class="text01" type="password" /></li>
-    	<li><span>确认密码：</span><input id="clp" name="clp" class="text01" type="password" /></li>
-    	<li><span>验证码：</span><input id="authCode" name="authCode" type="text" class="text04"/>
-                    <img id="authCodeImg" class="yanzhengma" alt="刷新" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
-                    &nbsp;&nbsp;<a class="change" href="javascript:;" onclick="randomImg()">看不清？换一张</a>
+    	<li><span>${LANG['bizconf.jsp.password_reset.res4']}</span><input id="lp" name="lp" class="text01" type="password" /></li>
+    	<li><span>${LANG['bizconf.jsp.password_reset.res5']}</span><input id="clp" name="clp" class="text01" type="password" /></li>
+    	<li><span>${LANG['bizconf.jsp.password_forget.res4']}</span><input id="authCode" name="authCode" type="text" class="text04"/>
+                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
+                    &nbsp;&nbsp;<a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.password_forget.res5']}</a>
    	    </li>
 	</ul>
 	<div class="btnn">
-    	<a href="javascript:" class="bt01" onclick="javascript:checkForm();">提交</a>
-        <a href="javascript:" class="bt02">取消</a>
-     
+    	<a href="javascript:" class="bt01" onclick="javascript:checkForm();">${LANG['bizconf.jsp.add_group.res5']}</a>
+        <a href="javascript:" class="bt02">${LANG['bizconf.jsp.add_contacts.res13']}</a>
     </div>
 <%--
-	<input name="button01" class="button01" type="button" value="提交"  onclick="javascript:resetPass();" onmouseover="this.className='Btn_Hover02'" onmouseout="this.className='Btn02'"/>
-    <input name="button02" class="button02" type="button" value="取消" onmouseover="this.className='Btn_Hover'" onmouseout="this.className='Btn'">
+	<input name="button01" class="button01" type="button" value="${LANG['bizconf.jsp.add_group.res5']}"  onclick="javascript:resetPass();" onmouseover="this.className='Btn_Hover02'" onmouseout="this.className='Btn02'"/>
+    <input name="button02" class="button02" type="button" value="${LANG['bizconf.jsp.add_contacts.res13']}" onmouseover="this.className='Btn_Hover'" onmouseout="this.className='Btn'">
     --%>
 </form>  
 </div>        
 </div>
 
-<!--页面下部-->
+<!--${LANG['bizconf.jsp.conf_invite_recv.res15']}-->
 <div id="copy_close">
 <jsp:include page="footer.jsp" />
 </div>
@@ -155,7 +154,7 @@ function resetPass() {
 			$("#lp").val("");
 			$("#clp").val("");
 			$("#authCode").val("");
-			successDialog("密码修改成功");
+			successDialog("${LANG['bizconf.jsp.password_reset.res6']}");
 		} else {
 			errorDialog(result.message);
 		}
@@ -165,7 +164,7 @@ function resetPass() {
 
 function successDialog(message) {
 	$("<div id=\"successDiv\"/>").alertDialog({
-		"title" : "提示",
+		"title" : "${LANG['bizconf.jsp.conf_invite_recv.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"message": message,
 		"type": "success",

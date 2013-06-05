@@ -67,7 +67,7 @@ public class SortConstant {
 	};
 
 	public static final String CONFBASE_SORT_DEFAULT="0";
-	public static final String CONFBASE_SORT_CONFNAME="1";
+	public static final String CONFBASE_SORT_ENDTIME="1";
 	public static final String CONFBASE_SORT_CONFTYPE="2";
 	public static final String CONFBASE_SORT_STATUS="3";
 	public static final String CONFBASE_SORT_STARTTIME="4";

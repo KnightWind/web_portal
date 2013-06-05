@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.bizconf.audio.entity.Contacts;
 import com.bizconf.audio.entity.EmpowerConfig;
 import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
+import com.bizconf.audio.entity.SiteOrg;
 import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.interceptors.UserInterceptor;
 import com.bizconf.audio.logic.ConfUserLogic;
@@ -41,10 +43,12 @@ import com.bizconf.audio.service.ContactService;
 import com.bizconf.audio.service.EmailService;
 import com.bizconf.audio.service.EmpowerConfigService;
 import com.bizconf.audio.service.EventLogService;
+import com.bizconf.audio.service.OrgService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.UserService;
 import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.ExcelUtil;
+import com.bizconf.audio.util.IntegerUtil;
 import com.bizconf.audio.util.JsonUtil;
 import com.bizconf.audio.util.ObjectUtil;
 import com.bizconf.audio.util.StringUtil;
@@ -54,6 +58,7 @@ import com.libernate.liberc.annotation.AsController;
 import com.libernate.liberc.annotation.CParam;
 import com.libernate.liberc.annotation.Interceptors;
 import com.libernate.liberc.annotation.ReqPath;
+import com.libernate.liberc.annotation.httpmethod.Get;
 import com.libernate.liberc.annotation.httpmethod.Post;
 import com.libernate.liberc.utils.LiberContainer;
 
@@ -90,12 +95,14 @@ public class ContactController extends BaseController{
 	ConfUserLogic confUserLogic;
 	@Autowired
 	EmpowerConfigService empowerConfigService;
+	@Autowired
+	OrgService orgService;
 	 
 	
 	@AsController(path = "list")
 	public Object groupsList(@CParam("keyword") String keyword, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
-		PageBean<Contacts> page = contactService.getContactsPage(keyword,currUser.getSiteId(),currUser.getId(),pageNo,0);
+		PageBean<Contacts> page = contactService.getContactsPage(keyword,currUser.getSiteId(),currUser.getId(),pageNo,15);
 		request.setAttribute("pageModel", page);
 		request.setAttribute("keyword", keyword);
 		return new ActionForward.Forward("/jsp/user/contacts_list.jsp");
@@ -304,6 +311,10 @@ public class ContactController extends BaseController{
 			request.setAttribute("statu", statu);
 			request.setAttribute("info", retInfo);
 		}
+		String userImportFlag = request.getParameter("userImportFlag");
+		if(userImportFlag!=null){
+			return StringUtil.returnJsonStr(statu, retInfo);
+		}
 		return new ActionForward.Forward("/jsp/user/importCallback.jsp");
 	}
 	
@@ -441,15 +452,54 @@ public class ContactController extends BaseController{
 		if(currentUser.isSiteAdmin()||creator==null || creator.isSuperSiteAdmin()){
 			isSupper = true;
 		}
-		if(showAll!=null&&showAll.trim().equals("1")){
+		if(showAll != null && showAll.trim().equals("1")){
 			showAllFlag =false;
 		}
-		PageBean<UserBase> page = contactService.getEnterpriseContacts(keyword, pageNo, isSupper, showAllFlag,currentUser);
+		PageBean<UserBase> page = contactService.getEnterpriseContacts(keyword, pageNo, isSupper, showAllFlag,currentUser, "");
+ 		request.setAttribute("pageModel", page);
+ 		request.setAttribute("showAll", showAll);
+ 		request.setAttribute("keyword", keyword);
+ 		List<SiteOrg> orgList = orgService.getSiteOrgList(currentUser.getSiteId()).getDatas();
+// 		if(orgList != null && orgList.size() > 0){
+// 			for(SiteOrg siteOrg : orgList){
+// 				request.setAttribute("rootOrg", siteOrg);
+// 				break;
+// 			}
+// 		}
+ 		request.setAttribute("orgList", orgList);
+//		return new ActionForward.Forward("/jsp/user/enContacts_list.jsp");
+		return new ActionForward.Forward("/jsp/user/invite_enContacts_list.jsp");
+	}
+	
+	/**
+	 * 查询企业联系人
+	 * @param request
+	 * @return
+	 */
+	@AsController(path = "showEnterpriseOrgContacts")
+	public Object showEnterpriseOrgContacts(@CParam("keyword") String keyword,@CParam("showAll")String showAll,@CParam("pageNo") Integer pageNo,HttpServletRequest request){
+		UserBase currentUser = userService.getCurrentUser(request);
+		UserBase creator = userService.getUserBaseById(currentUser.getCreateUser());
+		SiteOrg org = orgService.getSiteOrgById(IntegerUtil.parseIntegerWithDefaultZero(request.getParameter("orgId")));
+		String orgCode = "";
+		if(org != null && org.getId() > 0){
+			orgCode = org.getOrgCode();
+		}
+		boolean showAllFlag = true;
+		boolean isSupper = true;// 默认全部显示
+		//如果找不到登录用户的创建者。认为该用户为管理员
+		if(currentUser.isSiteAdmin()||creator==null || creator.isSuperSiteAdmin()){
+			isSupper = true;
+		}
+		if(showAll != null && showAll.trim().equals("1")){
+			showAllFlag =false;
+		}
+		PageBean<UserBase> page = contactService.getEnterpriseContacts(keyword, pageNo, isSupper, showAllFlag,currentUser, orgCode);
  		request.setAttribute("pageModel", page);
  		request.setAttribute("showAll", showAll);
  		request.setAttribute("keyword", keyword);
 //		return new ActionForward.Forward("/jsp/user/enContacts_list.jsp");
-		return new ActionForward.Forward("/jsp/user/invite_enContacts_list.jsp");
+		return new ActionForward.Forward("/jsp/user/invite_enContacts_org_list.jsp");
 	}
 	
 	/**
@@ -550,5 +600,45 @@ public class ContactController extends BaseController{
 			msg = "邀请参会人失败！";
 		}
 		return StringUtil.returnJsonStr(status, msg);
+	}
+	
+	/**
+	 * 查询站点下的组织机构
+	 * 1.查出该组织机构的下一级组织机构(不包括自己)
+	 * 2.组织机构共4层
+	 * wangyong
+	 * 2013-5-6
+	 */
+	@AsController(path = "orgListForJson/{id:([0-9]+)}")
+	@Get
+	public Object orgListForJson(@CParam("id") String id, HttpServletRequest request){
+		JSONObject json = new JSONObject();
+		UserBase userBase = userService.getCurrentUser(request);
+		PageBean<SiteOrg> pageModel = orgService.getSubOrgOnlyList(userBase.getSiteId(), Integer.parseInt(id));
+		Map<Integer,Integer> participantSizeList = getParticipants(pageModel.getDatas());   //获取每个机构人数
+		request.setAttribute("participantSizeList", participantSizeList);
+		request.setAttribute("pageModel", pageModel);
+		
+		json.put("status", ConstantUtil.CREATE_CONF_SUCCEED);
+		JSONArray jsonArrOrgUser = JSONArray.fromObject(pageModel.getDatas());
+		json.put("orgUserList", jsonArrOrgUser);
+		
+		return json.toString();
+	}	
+
+	/**
+	 * 获取每个组织机构的人数
+	 * wangyong
+	 * 2013-3-25
+	 */
+	private Map<Integer,Integer> getParticipants(List<SiteOrg> orgList){
+		Map<Integer,Integer> ParticipantsMap = new HashMap<Integer, Integer>();
+		if(orgList != null && orgList.size() > 0){
+			for(SiteOrg org:orgList){
+				List<UserBase> Participants = orgService.getOrgUserList(org);
+				ParticipantsMap.put(org.getId(), Participants == null ? 0 : Participants.size());
+			}
+		}
+		return ParticipantsMap;
 	}
 }

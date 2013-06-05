@@ -1,6 +1,8 @@
 package com.bizconf.audio.logic.impl;
 
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -21,19 +23,52 @@ public class ContactLogicImpl extends BaseService implements ContactLogic {
 	public boolean updateContactSingleValidate(Contacts contact) {
 		return true;
 	}
-
+	
 	/**
 	 * 新建联系人（单个）验证前台表单数据
 	 * 2013-3-11
 	 */
 	@Override
 	public boolean createContactSingleValidate(Contacts contact) {
+		if(contact.getContactName()==null || contact.getContactName().equals("")){
+			return false;
+		}else if(contact.getContactName().length()<1 || contact.getContactName().length()>32){
+			return false;
+		}else{
+			Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\u4e00-\\u9fa5_\\-&]{1,32}$");
+			Matcher matcher = pattern.matcher(contact.getContactName());
+			if(!matcher.matches()){
+				return false;
+			}
+		}
+		
 		if(contact.getContactPhone()==null || contact.getContactPhone().equals("")){
 			return false;
 		}
+		else {
+			Pattern pattern = Pattern.compile("^((\\+?[0-9]{2,4}\\-[0-9]{3,4}\\-)|([0-9]{3,4}\\-))?([0-9]{7,8})(\\-[0-9]+)?$");
+			Matcher matcher = pattern.matcher(contact.getContactPhone());
+			Pattern patternMobile = Pattern.compile("^((\\+86)?|\\(\\+86\\)|\\+86\\s|\\+86-)0?1[358]\\d{9}$");
+			String mobile = contact.getContactMobile();
+			if(mobile==null){
+				mobile = "";
+			}
+			Matcher matcherMobile = patternMobile.matcher(mobile);
+			if(!matcher.matches() && !matcherMobile.matches()){
+				return false;
+			}
+		}
+		
 		if(contact.getContactEmail()==null || contact.getContactEmail().equals("")){
 			return false;
+		}else{
+			Pattern pattern = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+			Matcher matcher = pattern.matcher(contact.getContactEmail());
+			if(!matcher.matches()){
+				return false;
+			}
 		}
+		
 		StringBuffer strSql = new StringBuffer(" SELECT * FROM t_contacts WHERE del_flag !=? and contact_email = ? and user_id = ? and id!=?");
 		Object[] values = new Object[4];
 		values[0] = ConstantUtil.DELFLAG_DELETED;
@@ -57,5 +92,6 @@ public class ContactLogicImpl extends BaseService implements ContactLogic {
 		
 		return true;
 	}
-
+	
+	
 }

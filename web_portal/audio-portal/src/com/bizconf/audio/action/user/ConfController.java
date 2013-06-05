@@ -2,6 +2,7 @@ package com.bizconf.audio.action.user;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -629,7 +630,13 @@ public class ConfController extends BaseController {
 						return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "创建周期预约会议失败" + errorMessage);
 					}
 				}else{
-					confBase = confService.createSingleReservationConf(conf, currentSite, currentUser);
+					if(conf.isBelongPermanentConf()){
+						confBase = confService.createPermanentConf(conf, currentSite, currentUser);
+					}else {
+						conf.setDuration(conf.getDuration());
+						confBase = confService.createSingleReservationConf(conf, currentSite, currentUser);
+					}
+					
 					if(confBase != null && confBase.getId() != null && confBase.getId().intValue() > 0){
 						eventLogService.saveUserEventLog(currentUser, 
 								EventLogConstants.SITEUSER_CONF_RESERVATION_CREATE, "创建预约会议成功",
@@ -827,6 +834,7 @@ public class ConfController extends BaseController {
 		List<ConfBase> confList = confService.getCycleConfDate(cycleId, currentUser);
 		request.setAttribute("confList", confList);
 		request.setAttribute("delCycle", delCycle);
+		request.setAttribute("curYear", DateUtil.getDateStrCompact(currentUser.getUserLocalTime(), "yyyy-MM-dd HH:mm:ss").substring(0,4));
 		return new ActionForward.Forward("/jsp/user/updateReservation_Conf.jsp");
 	}
 	
@@ -983,7 +991,11 @@ public class ConfController extends BaseController {
 				conf.setPriviBits(priviBits);
 				conf.setClientConfig(clientConfig);
 				conf = confService.checkConfFunc(conf, currentUser);
-				confBase = confService.updateSingleReservationConf(conf, currentSite, currentUser);
+				if(conf.isBelongPermanentConf()){
+					confBase = confService.updatePermanentConf(conf,currentUser);
+				}else{
+					confBase = confService.updateSingleReservationConf(conf, currentSite, currentUser);
+				}
 				if(confBase != null && confBase.getId() != null && confBase.getId().intValue() > 0){
 					eventLogService.saveUserEventLog(currentUser, 
 							EventLogConstants.SITEUSER_CONF_UPDATE, "修改预约会议成功",
@@ -1418,7 +1430,7 @@ public class ConfController extends BaseController {
 		String msg = "设置日历提醒失败！";
 		UserBase currUser = userService.getCurrentUser(request);
 		ConfBase currConf = confService.getConfBasebyConfId(confId);
-		if(currUser!=null){
+		if(currUser!=null && currConf!=null){
 			flag = emailService.sendConfRemindEmail(currUser, currConf);
 		}else{
 			if(email==null) throw new RuntimeException("email can not be null!");
@@ -1607,11 +1619,16 @@ public class ConfController extends BaseController {
 		if(StringUtil.isNotBlank(endTime)){
 			endDate = DateUtil.getGmtDateByTimeZone(DateUtil.StringToDate(endTime, null), currentUser.getTimeZone());
 		}
+		//永久会议
+		PageBean<ConfBase> permanentConfs = null;
 		if(userRole == ConfConstant.CONF_USER_HOST || userRole == 0){
 			getHostConf(confName, dateScopeFlag, beginDate, endDate, pageNo, request, currentUser);
+			
 		}else if(userRole == ConfConstant.CONF_USER_PARTICIPANT){
 			getParticipantConf(confName, dateScopeFlag, beginDate, endDate, pageNo, request, currentUser);
 		}
+		
+		request.setAttribute("permanentConfs", permanentConfs);
 		//当前用户喜好设置时区的时间
 		Date curDate = currentUser.getUserLocalTime();
 		request.setAttribute("defaultDate", curDate);
@@ -1705,6 +1722,13 @@ public class ConfController extends BaseController {
 		int confStatus = IntegerUtil.parseIntegerWithDefaultZero(request.getParameter("confStatus")).intValue();    	  //会议状态：0.所有状态；1.正在进行的；2.即将开始的；3.参加过的
 		int pageNo = IntegerUtil.parseIntegerWithDefaultZero(request.getParameter("pageNo")).intValue();
 		String confName = request.getParameter("confName");
+		if(StringUtil.isNotBlank(confName)) {
+			try {
+				confName = URLDecoder.decode(request.getParameter("confName"),"utf-8");
+			} catch (UnsupportedEncodingException e) {
+				logger.error("我的会议搜索转码错误"+e);
+			}			
+		}
 		String beginTime = request.getParameter("beginTime");
 		String endTime = request.getParameter("endTime");
 		Date beginDate = null;
@@ -1840,9 +1864,10 @@ public class ConfController extends BaseController {
 	 * 未登录情况下查询公开会议
 	 * wangyong
 	 * 2013-4-23
+	 * @throws Exception 
 	 */
 	@AsController(path = "getControlPadPublicConf")
-	public Object getControlPadPublicConf(HttpServletRequest request){
+	public Object getControlPadPublicConf(HttpServletRequest request) throws Exception{
 		SiteBase currentSite = siteService.getSiteBaseBySiteSign(SiteIdentifyUtil.getCurrentBrand());
 		int pageNo = IntegerUtil.parseIntegerWithDefaultZero(request.getParameter("pageNo")).intValue();
 		String beginTime = request.getParameter("beginTime");
@@ -1855,6 +1880,9 @@ public class ConfController extends BaseController {
 		}
 		if(StringUtil.isNotBlank(endTime)){
 			endDate = DateUtil.getGmtDateByTimeZone(DateUtil.StringToDate(endTime, null), currentSite.getTimeZone());
+		}
+		if(confName!=null && !confName.equals("")){
+			confName = URLDecoder.decode(confName, "UTF-8").trim();
 		}
 		getPublicConf(confName, beginDate, endDate, pageNo, request, currentSite);
 		//当前站点时区的时间

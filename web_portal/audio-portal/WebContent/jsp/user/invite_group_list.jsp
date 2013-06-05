@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>群组列表</title>
+<title>${LANG['bizconf.jsp.invite_group_list.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
@@ -18,7 +18,7 @@ function viewContacts(id){
 	parent.parent.viewContact(id);
 }
 
-//查询群组联系人
+//${LANG['bizconf.jsp.invite_group_list.res2']}
 function getContactsData(){
 	var ids = "";
 	$("input[name=id]:checked").each(function(){
@@ -31,8 +31,8 @@ function getContactsData(){
 }
 
 $(document).ready(function(){
-	$(".group_search").watermark('组名');
-	//全选and全不选
+	$(".group_search").watermark('${LANG['bizconf.jsp.add_group.res3']}');
+	//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 	$("#checkAll").click(function(){
 		if($(this).attr("checked")){
 			$("input[name=id]").attr("checked",true);				
@@ -48,7 +48,7 @@ $(document).ready(function(){
 		}
 	});
 	
-// 	remindInfo($("input[name=keyword]").get(0),"输入\"组名\"查找");
+// 	remindInfo($("input[name=keyword]").get(0),"${LANG['bizconf.jsp.invite_group_list.res3']}\"${LANG['bizconf.jsp.add_group.res3']}\"${LANG['bizconf.jsp.invite_group_list.res4']}");
 });
 
 function submitForm(){
@@ -67,9 +67,9 @@ function submitForm(){
             </tr>
             <tr align="center" height="35" class="tr_center" bgcolor="#000066">
               <td width="10%" class="tr_center"><input name="" type="checkbox" id="checkAll" value="" /></td>
-              <td width="25%" class="tr_center">组名</td>
-              <td width="50%" class="tr_center">备注</td>
-              <td width="15%" class="tr_center" style=" border-right:#D2D8DB 1px solid">成员</td>
+              <td width="25%" class="tr_center">${LANG['bizconf.jsp.add_group.res3']}</td>
+              <td width="50%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res12']}</td>
+              <td width="15%" class="tr_center" style=" border-right:#D2D8DB 1px solid">${LANG['bizconf.jsp.invite_group_list.res5']}</td>
             </tr>
             <c:if test="${fn:length(pageModel.datas)<=0}">
 				<tr align="center" bgcolor="#FFFFFF" height="30">
@@ -81,7 +81,7 @@ function submitForm(){
 	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid"><input name="id" type="checkbox" value="${group.id }" /></td>
 	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${group.groupName}</td>
 	              <td class="tr_main"><div style="display:block; width:20em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${group.groupDesc}</div></td>
-	              <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center"><a href="#" onclick="viewContacts('${group.id}');">查看</a></td>
+	              <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center"><a href="#" onclick="viewContacts('${group.id}');">${LANG['bizconf.jsp.invite_group_list.res6']}</a></td>
 	            </tr>
            	</c:forEach>
             <tr>

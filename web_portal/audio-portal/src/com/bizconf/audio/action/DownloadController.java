@@ -9,6 +9,12 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.bizconf.audio.constant.ConfConstant;
+import com.bizconf.audio.service.IpLocatorService;
+import com.bizconf.audio.util.StringUtil;
+import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.annotation.AsController;
 import com.libernate.liberc.annotation.ReqPath;
 import com.libernate.liberc.utils.LiberContainer;
@@ -23,6 +29,8 @@ public class DownloadController {
 	
 	private static final String dirPath = LiberContainer.getContainer().getServletContext().getRealPath("download")+File.separator;
 
+	@Autowired
+	IpLocatorService ipLocatorService;
 	/**
 	 * 下载中心下载会议客户端
 	 * wangyong
@@ -32,6 +40,14 @@ public class DownloadController {
 	public void downConfClient(HttpServletRequest request,HttpServletResponse response){
 //		String dirPath = LiberContainer.getContainer().getServletContext().getRealPath("download")+File.separator;
 		downLoad("mcsetup.exe", dirPath, request, response);
+	}
+	@AsController(path = "downClient")
+	public Object downClient(HttpServletRequest request){
+		String userIp=StringUtil.getIpAddr(request);
+		String ispCode=ipLocatorService.getISPCodeByIP(userIp);
+		String downLoadUrl=ipLocatorService.getDownloadURL(ispCode);
+		request.setAttribute("downLoadUrl", downLoadUrl);
+		return new ActionForward.Forward("/jsp/user/download_center.jsp");
 	}
 	
 	/**

@@ -32,16 +32,16 @@
 	<input name="userId" type="hidden" value="${userId}"/>
 	<table border="0" cellpadding="0" cellspacing="0" class="site_top">
 		<tr height="22">
-	    	<td width="113" align="center">点数</td>
-	        <td width="170" align="center">生效日期</td>
-	        <td width="170" align="center">结束日期</td>
+	    	<td width="113" align="center">${LANG['bizconf.jsp.system.hostlist.res2']}</td>
+	        <td width="170" align="center">${LANG['bizconf.jsp.system.license_list.res1']}</td>
+	        <td width="170" align="center">${LANG['bizconf.jsp.system.license_list.res2']}</td>
 	        <td width="200"></td> 
 	    </tr>
 	    <tr height="36">
 	    	<td align="center"><input id="licenseCount"  name="licNum" type="text" class="text01" /></td>
 	        <td align="center"><input id="effeDate" name="effeDate" type="text" class="text02" /></td>
 	        <td align="center"><input id="expireDate" name="expireDate" type="text" class="text03" /></td>
-	        <td align="center"><a onclick="addLic();" href="#" class="tijiao_btn Public_button">提交</a></td>  
+	        <td align="center"><a onclick="addLic();" href="#" class="tijiao_btn Public_button">${LANG['bizconf.jsp.admin.arrange_org_user.res10']}</a></td>  
 	    </tr>
 	</table>
 </form>
@@ -80,32 +80,32 @@
 	        <td width="210" align="center">
 	         <c:choose>
 					<c:when  test="${lic.effeFlag eq '0' and lic.expireFlag eq '0'}">
-						<a id="modify${lic.id}" href="javascript:;" class="change_btn" onclick="toUpdate(${lic.id});" >修改</a> 
-						<a id="del${lic.id}" href="javascript:;" class="cc_btn" onclick="del(${lic.id});" >删除</a>
-						<a id="stroe${lic.id}" style="display: none;" href="javascript:;" class="change_btn" onclick="stroeData(${lic.id});" >保存</a>&nbsp;
-						<a id="cancel${lic.id}" style="display: none;" href="javascript:;"  class="change_btn" onclick="cancelUpdate(${lic.id})">取消</a>						
+						<a id="modify${lic.id}" href="javascript:;" class="change_btn" onclick="toUpdate(${lic.id});" >${LANG['bizconf.jsp.system.email_template_list.res7']}</a> 
+						<a id="del${lic.id}" href="javascript:;" class="cc_btn" onclick="del(${lic.id});" >${LANG['bizconf.jsp.system.email_template_list.res8']}</a>
+						<a id="stroe${lic.id}" style="display: none;" href="javascript:;" class="change_btn" onclick="stroeData(${lic.id});" >${LANG['bizconf.jsp.system.email_template.res5']}</a>&nbsp;
+						<a id="cancel${lic.id}" style="display: none;" href="javascript:;"  class="change_btn" onclick="cancelUpdate(${lic.id})">${LANG['bizconf.jsp.admin.createOrg.res4']}</a>						
 					</c:when>
 					<c:when test="${lic.effeFlag eq '1' and lic.expireFlag eq '0'}">
-						&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(已生效)</a>
+						&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(${LANG['bizconf.jsp.system.license_list.res3']})</a>
 					</c:when>
 					<c:when test="${lic.expireFlag != '1'}">
-						&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(已过期)</a>
+						&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(${LANG['bizconf.jsp.system.license_list.res4']})</a>
 					</c:when>
 					<c:otherwise>
-						&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(已失效)</a>
+						&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(${LANG['bizconf.jsp.system.license_list.res5']})</a>
 					</c:otherwise>
 				</c:choose>
 <%--				<c:if test="${lic.effeFlag eq '1'}">--%>
-<%--					&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(已生效)</a>--%>
+<%--					&nbsp;<a href="javascript:;" class="cc_btn" style="color: #666" >(${LANG['bizconf.jsp.system.license_list.res3']})</a>--%>
 <%--				</c:if>--%>
 	        </td> 
    		 </tr>
     </c:forEach>
    </c:if>
 </table> </div>
-	<a href="javascript:closeDialog();" style="margin:15px;display:inline-block;" class="Public_button" onclick="closeDialog();">关闭</a>
+	<a href="javascript:closeDialog();" style="margin:15px;display:inline-block;" class="Public_button" onclick="closeDialog();">${LANG['bizconf.jsp.admin.viewNotice.res4']}</a>
 	<c:if test="${userId != '' && userId > 0}">
-		<input class="b_c" name="sendEmail" type="checkbox" value=""/><span class="b_p">发送邮件</span>
+		<input class="b_c" name="sendEmail" type="checkbox" value=""/><span class="b_p">${LANG['bizconf.jsp.system.license_list.res6']}</span>
 	</c:if>	 
 </div>
 </body>
@@ -115,6 +115,7 @@ $(document).ready(function(){
 	
 	$("input[name=effeDate]" ).datepicker({
 		minDate: +0,
+		maxDate:new Date(${site.expireDate.time}),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -125,6 +126,7 @@ $(document).ready(function(){
 	
 	$("input[name=expireDate]" ).datepicker({
 		minDate: +0,
+		maxDate:new Date(${site.expireDate.time}),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -159,6 +161,7 @@ function toUpdate(licId){
 	$("#licNum"+licId).addClass("showborder").attr("readonly",false);
 	$("#effeDate"+licId).addClass("showborder").datepicker({
 		minDate: +0,
+		maxDate:new Date(${site.expireDate.time}),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -169,6 +172,7 @@ function toUpdate(licId){
 	
 	$("#expireDate"+licId).addClass("showborder").datepicker({
 		minDate: +0,
+		maxDate:new Date(${site.expireDate.time}),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -184,11 +188,15 @@ function checkForm(licid){
 		count = $("#licNum"+licid).val();
 	}
 	if(!count){
-		parent.errorDialog("请输入点数");
+		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res7']}");
 		return false;
 	}
-	if(count && !count.isInteger()){
-		parent.errorDialog("点数必须是整数");
+	if(count && (count==0 || count<-5000 || count>5000) ){
+		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res8']}");
+		return false;
+	}
+	if(count && !count.isFullInteger()){
+		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res9']}");
 		return false;
 	}
 	var effeDate = $("#effeDate").val();
@@ -196,7 +204,7 @@ function checkForm(licid){
 		effeDate = $("#effeDate"+licid).val();
 	}
 	if(!effeDate){
-		parent.errorDialog("请选择生效日期");
+		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res10']}");
 		return false;
 	}
 	var expireDate = $("#expireDate").val();
@@ -204,13 +212,13 @@ function checkForm(licid){
 		expireDate = $("#expireDate"+licid).val();
 	}	
 	if(!expireDate){
-		parent.errorDialog("请选择结束日期");
+		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res11']}");
 		return false;
 	}
 	var effeDateTemp = effeDate.parseDate();
 	var expireDateTemp = expireDate.parseDate();
 	if(effeDateTemp.after(expireDateTemp)){
-		parent.errorDialog("生效日期不能大于结束日期");
+		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res12']}");
 		return false;
 	}
 	return true;
@@ -250,14 +258,14 @@ function closeDialog() {
 	      	async:false,
 	      	success:function(data){
 				if(data.status == 1){
-					parent.successDialog("邮件已发送！");
+					parent.successDialog("${LANG['bizconf.jsp.system.license_list.res13']}");
 				}else{
-					parent.errorDialog("邮件发送失败！");
+					parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res14']}");
 				} 
 	      	},
 	        error:function(XMLHttpRequest, textStatus, errorThrown) {
 	        	alert(XMLHttpRequest+"\n"+textStatus+"\n"+errorThrown);
-	       		//html = "查询参会人失败！";
+	       		//html = "${LANG['bizconf.jsp.system.license_list.res15']}";
 	       		//$(self).attr("title",html);
 	        }
 		}); 
@@ -276,7 +284,7 @@ function closePup(){
 }
 
 function del(id){
-	parent.confirmDialog("确认删除？",function(){
+	parent.confirmDialog("${LANG['bizconf.jsp.system.license_list.res16']}",function(){
 		window.location = "/system/lic/del?id="+id;	
 	});
 }

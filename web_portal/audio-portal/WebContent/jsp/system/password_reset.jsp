@@ -22,16 +22,16 @@
 		$('#passwordResetForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		var ruleString = {
 				required: {
-					"lp": "请输入密码",
-					"clp": "请输入确认密码",
-					"authCode": "请输入验证码"
+					"lp": "${LANG['bizconf.jsp.admin.password_reset.res1']}",
+					"clp": "${LANG['bizconf.jsp.admin.password_reset.res2']}",
+					"authCode": "${LANG['bizconf.jsp.admin.password_forget.res2']}"
 				},
 				rangelength: {
-					"lp": "字符长度为6~16位",
-					"authCode": "字符长度为4位"
+					"lp": "${LANG['bizconf.jsp.admin.login.res4']}6~16${LANG['bizconf.jsp.admin.login.res5']}",
+					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"
 				},
 				custom: {
-					"equalTo": "确认密码和密码不一致"
+					"equalTo": "${LANG['bizconf.jsp.admin.password_reset.res3']}"
 				}
 		};
 		var v = $("#passwordResetForm").validate({
@@ -73,13 +73,13 @@
 		});	
 	});	
 	</script>
-<title>系统管理员-重置密码</title>
+<title>${LANG['bizconf.jsp.system.createSystemUser.res3']}-${LANG['bizconf.jsp.admin.index.res7']}</title>
 </head>
 
 <body>
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res2']}-->
 <jsp:include page="header.jsp" />  
-<!--页面头部结束-->     
+<!--${LANG['bizconf.jsp.admin.password_forget.res7']}-->     
 
 <div class="main">
 <form action="/system/password/save" name="passwordResetForm" id="passwordResetForm" method="post">
@@ -89,23 +89,23 @@
 	<input type="hidden" name="auth" id="auth" value="${auth}"/>
 	<input type="hidden" name="ts" id="ts" value="${ts}"/>
 	<input type="hidden" name="ln" id="ln" value="${ln}"/>
-  <h3>重置密码</h3>
+  <h3>${LANG['bizconf.jsp.admin.index.res7']}</h3>
   
 	<ul>
-    	<li><span>密码：</span><input id="lp" name="lp" class="text01" type="password" /></li>
-    	<li><span>确认密码：</span><input id="clp" name="clp" class="text01" type="password" /></li>
-    	<li><span>验证码：</span><input id="authCode" name="authCode" type="text" class="text02 " />
-                    <img id="authCodeImg" class="yanzhengma" alt="刷新" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
-                    &nbsp;&nbsp;<a class="change" href="javascript:;" onclick="randomImg()">看不清？换一张</a>
+    	<li><span>${LANG['bizconf.jsp.admin.password_reset.res4']}</span><input id="lp" name="lp" class="text01" type="password" /></li>
+    	<li><span>${LANG['bizconf.jsp.admin.password_reset.res5']}</span><input id="clp" name="clp" class="text01" type="password" /></li>
+    	<li><span>${LANG['bizconf.jsp.admin.password_forget.res11']}</span><input id="authCode" name="authCode" type="text" class="text02 " />
+                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
+                    &nbsp;&nbsp;<a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.admin.password_forget.res12']}</a>
    	    </li>
 	</ul>
 	<div style="clear: both;"></div>
-	<input name="button01" class="button01" type="submit" value="提交"  />
-    <input name="button02" class="button02" type="button" value="取消"  onclick="javascript:back();"/>
+	<input name="button01" class="button01" type="submit" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}"  />
+    <input name="button02" class="button02" type="button" value="${LANG['bizconf.jsp.admin.createOrg.res4']}"  onclick="javascript:back();"/>
 </form>  
 </div>      
 
- <!--页脚版权-->       
+ <!--${LANG['bizconf.jsp.admin.password_forget.res13']}-->       
 <div id="copy">
 <span class="copy_text" >Copyright © 2003-2012 Shanghai Shrine Telecom Co., Ltd. 2012. All rights reserved.Version:eMeeting V5.0</span>
 </div>   
@@ -128,7 +128,7 @@ function resetPass() {
 	data.clp = $("#clp").val();
 	app.resetUserPass(data, function(result) {
 		if (result && result.status==2) {
-			successDialog("密码修改成功", function() {
+			successDialog("${LANG['bizconf.jsp.admin.password_reset.res6']}", function() {
 				//window.location.href = "/system/login";
 			});
 		} else {

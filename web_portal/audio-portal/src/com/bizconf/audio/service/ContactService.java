@@ -1,6 +1,5 @@
 package com.bizconf.audio.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -105,9 +104,10 @@ public interface ContactService {
 	/**
 	 * 获取企业通信录联系人
 	 * @param currUser
+	 * @param orgCode 用户所属机构编号
 	 * @return
 	 */
-	PageBean<UserBase> getEnterpriseContacts(String keyword,Integer pageNo,boolean isSupper,boolean showAll,UserBase currUser);
+	PageBean<UserBase> getEnterpriseContacts(String keyword,Integer pageNo,boolean isSupper,boolean showAll,UserBase currUser, String orgCode);
 	
 	
 	/**

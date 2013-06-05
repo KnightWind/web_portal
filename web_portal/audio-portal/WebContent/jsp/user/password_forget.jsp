@@ -73,41 +73,41 @@
 		}
 	}
 </script>
-<title>忘记密码</title>
+<title>${LANG['bizconf.jsp.conf_invite_refuse.res2']}</title>
 </head>
 <body>
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.conf_invite_recv.res4']}-->
 <jsp:include page="header.jsp" />
 
 <div id="head_bar">
-  <div class="nav_profile"><img src="/static/images/password_bg.png" width="13" height="16" align="absmiddle" /><a href="#"><span>忘记密码？</span></a> </div>
+  <div class="nav_profile"><img src="/static/images/password_bg.png" width="13" height="16" align="absmiddle" /><a href="#"><span>${LANG['bizconf.jsp.login.res11']}</span></a> </div>
   <!--<ul class="nav_help">
-    <li class="bar01" align="absmiddle"><a  title="下载中心" href="#">下载中心</a> </li>
-    <li class="bar02"><a  title="帮助" href="#">帮助</a> </li>
-    <li class="bar03"><a  title="退出" href="#">退出</a> </li>
+    <li class="bar01" align="absmiddle"><a  title="${LANG['bizconf.jsp.download_center.res1']}" href="#">${LANG['bizconf.jsp.download_center.res1']}</a> </li>
+    <li class="bar02"><a  title="${LANG['bizconf.jsp.help.res1']}" href="#">${LANG['bizconf.jsp.help.res1']}</a> </li>
+    <li class="bar03"><a  title="${LANG['bizconf.jsp.password_forget.res1']}" href="#">${LANG['bizconf.jsp.password_forget.res1']}</a> </li>
   </ul>-->
 </div>
-<!--忘记密码-->
+<!--${LANG['bizconf.jsp.conf_invite_refuse.res2']}-->
 <div class="Forget_password ">
 <form action="/user/password/sendEmail" name="passwordForgetForm" id="passwordForgetForm" method="post">
 <div class="main">
   <input type="hidden" name="random" id="random" value=""/>
 	<input type="hidden" name="type" id="type" value="forgetpass"/>
-  <p>*  输入与您账户关联的电子邮件地址。我们将向您发送页面链接，通过该页面您可以轻松创建新密码。</p>
+  <p>*  ${LANG['bizconf.jsp.password_forget.res2']}</p>
 	<ul>
-    	<li><span>邮箱地址：</span><input id="userEmail" name="userEmail" class="text01" type="text" /></li>
-    	<li><span>验证码：</span> 
+    	<li><span>${LANG['bizconf.jsp.password_forget.res3']}</span><input id="userEmail" name="userEmail" class="text01" type="text" /></li>
+    	<li><span>${LANG['bizconf.jsp.password_forget.res4']}</span> 
     	<input id="authCode" name="authCode" type="text" class="text04"/>
-                    <img id="authCodeImg" class="yanzhengma" alt="刷新" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
+                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
                     &nbsp;&nbsp;&nbsp;
-                    <a class="change" href="javascript:;" onclick="randomImg()">看不清？换一张</a></li>
+                    <a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.password_forget.res5']}</a></li>
 	</ul>
 	<div style="clear: both;"></div>
-	<a href="Javascript:" class="bt01"  onclick="javascript:checkForm()">提交</a>
-    <a href="Javascript:" class="bt02"  onclick="javascript:back();">取消</a>
+	<a href="Javascript:" class="bt01"  onclick="javascript:checkForm()">${LANG['bizconf.jsp.add_group.res5']}</a>
+    <a href="Javascript:" class="bt02"  onclick="javascript:back();">${LANG['bizconf.jsp.add_contacts.res13']}</a>
 </div>
 </form>
-<!--页面下部-->
+<!--${LANG['bizconf.jsp.conf_invite_recv.res15']}-->
 <div id="copy_close">
 <jsp:include page="footer.jsp" />
 </div>
@@ -138,7 +138,7 @@ function sendEmail(){
 		if (result && result.status==2) {
 			$("#authCode").val("");
 			$("#userEmail").val("");
-			successDialog("我们已经向"+userEmail+"发送了密码重置邮件, 请注意查收。 ");	
+			successDialog("${LANG['bizconf.jsp.password_forget.res6']}"+userEmail+"${LANG['bizconf.jsp.password_forget.res7']}, ${LANG['bizconf.jsp.password_forget.res8']} ");	
 		} else {
 			errorDialog(result.message);
 		}
@@ -147,7 +147,7 @@ function sendEmail(){
 
 function successDialog(message) {
 	$("<div id=\"successDiv\"/>").alertDialog({
-		"title" : "提示",
+		"title" : "${LANG['bizconf.jsp.conf_invite_recv.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"message": message,
 		"type": "success",

@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css"/>
 <script type="text/javascript" src="${ctx}/static/js/jquery-1.8.3.js"></script> 
-<title>插件验证</title>
+<title>${LANG['bizconf.jsp.common.join_msg.res1']}</title>
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 <cc:confList var="JOIN_TYPE_EMAIL"/>
 <cc:confList var="JOIN_TYPE_OURURL"/>
 <c:if test="${joinType==JOIN_TYPE_SECURE_CODE}">
-<!-- 通过安全会议号进入会议-->
+<!-- ${LANG['bizconf.jsp.common.join_page.res1']}-->
 
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="joinSecureDiv"  style="display:" >
   <tbody>
@@ -29,13 +29,13 @@
     <tr>
       <td class="overlay-bdL"></td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
       
       <td class="overlay-content">
         <div class="First_Steps_quick_a" style=" background:#FFF;">
           <div class="First_Steps_title_a"> <a href="javascript:closeDialog();"></a>
-            <h3 class="tit_a">加入会议</h3>
-            <p class="tit_b">输入安全会议号，快速加入您的会议。</p>
+            <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+            <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res3']}</p>
           </div>
           <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
           <div class="First_Steps_top" style=" background:#FFF"> </div>
@@ -44,20 +44,20 @@
              <form name="joinSecureForm" id="joinSecureForm" method="post" action="/join">
       <input type="hidden" name="joinType" id="joinType" value="${joinType}"/>
               <tr class="box01">
-                <td align="right" class="left_text_a">姓名</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.common.join_page.res4']}</td>
                 <td align="left">
-<%--                  <c:set var="userName" value="请输入用户名"/> --%>
+<%--                  <c:set var="userName" value="${LANG['bizconf.jsp.common.join_page.res5']}"/> --%>
               <c:if test="${currentUser!=null }">
               	<c:set var="userName" value="${currentUser.trueName }"/>
               </c:if>
-              <input class="right_text_a" name="userName" id="userName" type="text"  value="${userName}"  watermark="请输入用户名"/>
+              <input class="right_text_a" name="userName" id="userName" type="text"  value="${userName}"  watermark="${LANG['bizconf.jsp.common.join_page.res5']}"/>
                 </td>
               </tr>
            
               <tr class="box01">
-                <td align="right" class="left_text_a">安全会议号</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.common.join_page.res6']}</td>
                 <td align="left">
-                  <input class="right_text_a" name="code" id="code"  type="text"  watermark="请输入安全会议号" />
+                  <input class="right_text_a" name="code" id="code"  type="text"  watermark="${LANG['bizconf.jsp.common.join_page.res7']}" />
                 </td>
               </tr>
               <tr align="left">
@@ -65,7 +65,7 @@
             	<div style="height: 50px;">
             		<div class="but150">
             			<span class="button_common">
-            				<a  href="javascript:join();"><img src="/static/images/join.png" width="16" height="15" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>加入会议</a>
+            				<a  href="javascript:join();"><img src="/static/images/join.png" width="16" height="15" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>${LANG['bizconf.jsp.common.join_page.res2']}</a>
             			</span>
             		</div>
             	</div>
@@ -77,7 +77,7 @@
           </div> 
       </td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
       
       <td class="overlay-bdR"></td>
     </tr>
@@ -92,7 +92,7 @@
 </c:if>
 <c:if test="${joinType==JOIN_TYPE_CONFID}">
 
-<!-- 通过ID号进入公开会议 -->
+<!-- ${LANG['bizconf.jsp.common.join_page.res8']}ID${LANG['bizconf.jsp.common.join_page.res9']} -->
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="joinPublicDiv" style="display:">
   <tbody>
     <tr class="no-header">
@@ -103,23 +103,23 @@
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
 		<form name="joinConfIdForm" id="joinConfIdForm" method="post" action="/join">
       	<input type="hidden" name="cId" id="cId" value="${cId}"/>
       	<input type="hidden" name="joinType" id="joinType" value="${joinType}"/>
       	<div class="First_Steps_quick_a" style=" background:#FFF">
 	        <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-	          <h3 class="tit_a">加入会议</h3>
-	          <p class="tit_b">输入会议密码，加入您的会议。</p>
+	          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+	          <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res10']}</p>
 	        </div>
         <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
         <div class="First_Steps_top" style=" background:#FFF"> </div>
         <div class="First_Steps_main_quick">
           <table class="box_a_quick02">
             <tr class="box01">
-              <td align="right" class="left_text_a">用户名</td>
+              <td align="right" class="left_text_a">${LANG['bizconf.jsp.admin.arrange_org_user.res8']}</td>
               <td align="left">
-<%--  				<c:set var="userName" value="请输入用户名"/> --%>
+<%--  				<c:set var="userName" value="${LANG['bizconf.jsp.common.join_page.res5']}"/> --%>
               	<c:if test="${currentUser!=null }">
               	<c:set var="userName" value="${currentUser.trueName }"/>
               	</c:if>
@@ -128,9 +128,9 @@
             </tr>
             <c:if test="${passCheck==1}">
             <tr class="box01">
-              <td align="right" class="left_text_a">会议密码</td>
+              <td align="right" class="left_text_a">${LANG['bizconf.jsp.common.join_page.res11']}</td>
               <td align="left">
-              <input class="right_text_a" name="cPass" id="cPass"  type="password"   watermark="请输入会议密码" />
+              <input class="right_text_a" name="cPass" id="cPass"  type="password"   watermark="${LANG['bizconf.jsp.common.join_page.res12']}" />
               </td>
             </tr>
             </c:if>
@@ -140,7 +140,7 @@
 	      		<div class="but150">
 		          	<span class="button_common" style="margin-right: 5px;">
 		          		<a href="javascript:join();">
-		          			<img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-left:5px; margin-right:5px;"/>加入会议
+		          			<img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-left:5px; margin-right:5px;"/>${LANG['bizconf.jsp.common.join_page.res2']}
 		          		</a>	
 		          	</span>
 		          </div>  
@@ -151,7 +151,7 @@
         </div>
       </div>
       </form>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>
@@ -176,7 +176,7 @@
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
 		<form name="joinEmailForm" id="joinEmailForm" method="post" action="/join">
       <input type="hidden" name="cId" id="cId" value="${cId}"/>
       <input type="hidden" name="uId" id="uId" value="${uId}"/>
@@ -184,19 +184,19 @@
       <input type="hidden" name="joinType" id="joinType" value="${joinType}"/>
       <div class="First_Steps_quick_a" style=" background:#FFF">
         <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-          <h3 class="tit_a">加入会议</h3>
-          <p class="tit_b">输入用户名，加入您的会议。</p>
+          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+          <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res10']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
         <div class="First_Steps_top" style=" background:#FFF"> </div>
         <div class="First_Steps_main_quick">
           <table class="box_a_quick02">
             <tr class="box01">
-              <td align="right" class="left_text_a">用户姓名</td>
+              <td align="right" class="left_text_a">${LANG['bizconf.jsp.common.join_page.res13']}</td>
               <td align="left">
  			  	<c:set var="userName" value=""/>
               	<c:if test="${currentUser!=null }"><c:set var="userName" value="${currentUser.trueName }"/></c:if>
-                <input class="right_text_a" name="userName" id="userName" type="text" value="${userName}" watermark="请输入用户名"/>
+                <input class="right_text_a" name="userName" id="userName" type="text" value="${userName}" watermark="${LANG['bizconf.jsp.common.join_page.res5']}"/>
               </td>
             </tr>
             <tr>
@@ -204,7 +204,7 @@
             		<div style="height: 50px;">
             			<div class="but150">
 				          <span class="button_common" style="margin-right: 5px;">
-				          	<a href="javascript:join();"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-left:5px; margin-right:5px;"/>加入会议</a>
+				          	<a href="javascript:join();"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-left:5px; margin-right:5px;"/>${LANG['bizconf.jsp.common.join_page.res2']}</a>
 				          </span>
 				        </div>
             		</div>
@@ -214,7 +214,7 @@
         </div>
       </div>
       </form>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>
@@ -231,7 +231,7 @@
 <%--
 
 
-<!-- 未安装插件时，提示安装插件 -->
+<!-- ${LANG['bizconf.jsp.common.join_page.res14']} -->
 
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0"  id="installPlugDiv" style="display:none">
   <tbody>
@@ -243,27 +243,27 @@
     <tr>
       <td class="overlay-bdL"></td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
       
       <td class="overlay-content">
         <div class="First_Steps_quick_b" style=" background:#FFF">
           <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-            <h3 class="tit_a">加入会议</h3>
-            <p class="tit_b">进入该页面后请避免退出或刷新页面。</p>
+            <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+            <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res15']}</p>
           </div>
           <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
           <div class="First_Steps_top" style=" background:#FFF"> </div>
           <div class="First_Steps_main_quick">
-            <p class="qidong">您尚未安装会议插件，请跟据浏览器弹出的提示安装插件！</p>
+            <p class="qidong">${LANG['bizconf.jsp.common.join_page.res16']}</p>
           </div>
           <!-- <div class="First_Steps_bottom01">
-          <div class="but120"><a href="#"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px;"/>提交</a></div>
+          <div class="but120"><a href="#"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px;"/>${LANG['bizconf.jsp.admin.arrange_org_user.res10']}</a></div>
           
         </div>--> 
         </div>
       </td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
       
       <td class="overlay-bdR"></td>
     </tr>
@@ -280,7 +280,7 @@
 
 
 
-<!-- 加载插件 -->
+<!-- ${LANG['bizconf.jsp.common.join_page.res17']} -->
 
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="loadPlugDiv" style="display:none">
   <tbody>
@@ -292,27 +292,27 @@
     <tr>
       <td class="overlay-bdL"></td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
       
       <td class="overlay-content">
         <div class="First_Steps_quick_b" style=" background:#FFF">
           <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-            <h3 class="tit_a">加入会议</h3>
-            <p class="tit_b">进入该页面后请避免退出或刷新页面。</p>
+            <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+            <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res15']}</p>
           </div>
           <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
           <div class="First_Steps_top" style=" background:#FFF"> </div>
           <div class="First_Steps_main_quick">
-            <p class="qidong_jiazai">正在加载插件，请稍等...</p>
+            <p class="qidong_jiazai">${LANG['bizconf.jsp.common.join_page.res18']}...</p>
             <img src="/static/images/loading.gif" width="32" height="32" style=" margin:0px auto; display:block; margin-bottom:30px;" /> </div>
           <!-- <div class="First_Steps_bottom01">
-          <div class="but120"><a href="#"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px;"/>提交</a></div>
+          <div class="but120"><a href="#"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px;"/>${LANG['bizconf.jsp.admin.arrange_org_user.res10']}</a></div>
           
         </div>--> 
         </div>
       </td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
       
       <td class="overlay-bdR"></td>
     </tr>
@@ -328,7 +328,7 @@
 
 
 
-<!-- 启动Client -->
+<!-- ${LANG['bizconf.jsp.common.join_page.res19']}Client -->
 
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="startClientDiv" style="display:none">
   <tbody>
@@ -340,19 +340,19 @@
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
 		<div class="First_Steps_quick_b" style=" background:#FFF">
         <div class="First_Steps_title_a"> <a   href="javascript:"  onclick="javascript:closeDialog();" ></a>
-          <h3 class="tit_a">加入会议</h3>
-          <p class="tit_b">输入您的会议安全号，快速加入您的会议。</p>
+          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+          <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res20']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
         <div class="First_Steps_top" style=" background:#FFF"> </div>
         <div class="First_Steps_main_quick">
-         <p class="qidong">请稍后，正在启动客户端...</p>
+         <p class="qidong">${LANG['bizconf.jsp.common.join_page.res21']}...</p>
         </div>
       </div>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>
@@ -365,7 +365,7 @@
 </table>
  
  
- <!-- 下载Client -->
+ <!-- ${LANG['bizconf.jsp.common.join_page.res22']}Client -->
  <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="downClientDiv" style="display:none">
     <tbody>
       <tr class="no-header">
@@ -376,26 +376,26 @@
       <tr>
         <td class="overlay-bdL"></td>
         
-        <!--弹出层主题内容区域开始========================================================================-->
+        <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
         
         <td class="overlay-content"> 
 
         <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-          <h3 class="tit_a">加入会议</h3>
-          <p class="tit_b">通过该页面您可以下载会议客户端进入会议。</p>
+          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
+          <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res23']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
         <div class="First_Steps_top" style=" background:#FFF"> </div>
         <div class="First_Steps_main_quick">
-         <p class="qidong_top">您尚未安装会议客户端，要进入会议，您需要下载，安装并运行会议系统</p>
-         <a href="javascript:" class="go_down" id="downLoadLink" onclick="">立即下载</a>
-         <p class="qidong"><a href="#" style=" text-decoration:underline;color:#4B92D1"><img src="/static/images/help_bg.png" width="16" height="15" align="absmiddle" style=" margin-right:5px; " />如果会议系统未启动，请点击查看此帮助!</a></p>
+         <p class="qidong_top">${LANG['bizconf.jsp.common.join_page.res24']}</p>
+         <a href="javascript:" class="go_down" id="downLoadLink" onclick="">${LANG['bizconf.jsp.common.join_page.res25']}</a>
+         <p class="qidong"><a href="#" style=" text-decoration:underline;color:#4B92D1"><img src="/static/images/help_bg.png" width="16" height="15" align="absmiddle" style=" margin-right:5px; " />${LANG['bizconf.jsp.common.join_page.res26']}!</a></p>
         </div>
       
       </div>
     </td>
         
-        <!--弹出层主题内容区域开始========================================================================-->
+        <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
         
         <td class="overlay-bdR"></td>
       </tr>
@@ -416,7 +416,7 @@
 
 
 
-<!-- 错误的信息提示 -->
+<!-- ${LANG['bizconf.jsp.common.join_page.res27']} -->
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="joinMtgErrorDiv" style="display:none">
   <tbody>
     <tr class="no-header">
@@ -427,14 +427,14 @@
     <tr>
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
-      <!--弹出层主题内容区域开始========================================================================-->  
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
 		<form name="joinForm" id="joinForm" method="post" action="/join">
 	      	<input type="hidden" name="cId" id="cId" value="${cId}"/>
 	      	<input type="hidden" name="joinType" id="joinType" value="${joinType}"/>
 	      	<div class="First_Steps_quick_a" style=" background:#FFF">
 		        <div class="First_Steps_title_a" style="height: 52px;"> 
 		        	<a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-		          	<h3 class="tit_a">信息提示</h3>
+		          	<h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res28']}</h3>
 		        </div>
 	        	<div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
 	        	<div class="First_Steps_top" style=" background:#FFF"> </div>
@@ -451,13 +451,13 @@
 		        <div class="First_Steps_bottom01"  style="height: 30px;">
 		        	<div class="but150">
 		        		<span class="button_common">
-		        			<a href="javascript:" onclick="closeDialog();"><img src="/static/images/cross.png" width="16" height="15" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>关闭</a>
+		        			<a href="javascript:" onclick="closeDialog();"><img src="/static/images/cross.png" width="16" height="15" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>${LANG['bizconf.jsp.admin.viewNotice.res4']}</a>
 		        		</span>
 		        	</div>
 		        </div>
 	      </div>
       </form>
-      <!--弹出层主题内容区域开始========================================================================-->      
+      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
       </td>
       <td class="overlay-bdR"></td>
     </tr>
@@ -495,14 +495,14 @@ function join(){
 	var userName=$("#userName").val();
 	var cPass=$("#cPass").val();
 	if(userName==null || userName==""  ){
-		parent.errorDialog("请输入用户名");
+		parent.errorDialog("${LANG['bizconf.jsp.common.join_page.res5']}");
 		isTip=true;
 		chkStatus=false;
 	}
 	<c:if test="${passCheck==1}">
 	if(cPass==null || $.trim(cPass)==""  ){
 		if(!isTip){
-			parent.errorDialog("请输入会议密码");
+			parent.errorDialog("${LANG['bizconf.jsp.common.join_page.res12']}");
 		}
 		isTip=true;
 		chkStatus=false;
@@ -517,13 +517,13 @@ function join(){
 	var userName=$("#userName").val();
 	var code=$("#code").val();
 	if(userName==null || userName=="" ){
-		parent.errorDialog("请输入用户名");
+		parent.errorDialog("${LANG['bizconf.jsp.common.join_page.res5']}");
 		isTip=true;
 		chkStatus=false;
 	}
 	if(code==null || $.trim(code)=="" ){
 		if(!isTip){
-			parent.errorDialog("请输入安全会议号");
+			parent.errorDialog("${LANG['bizconf.jsp.common.join_page.res7']}");
 		}
 		isTip=true;
 		chkStatus=false;
@@ -537,7 +537,7 @@ function join(){
 	var userName=$("#userName").val();
 	var code=$("#code").val();
 	if(userName==null || userName==""){
-		parent.errorDialog("请输入用户名");
+		parent.errorDialog("${LANG['bizconf.jsp.common.join_page.res5']}");
 		isTip=true;
 		chkStatus=false;
 	}
@@ -559,7 +559,7 @@ function join(){
 	
 }
 
-<%--	//显示错误信息
+<%--	//${LANG['bizconf.jsp.common.join_page.res29']}
 function showError(){
 	$("#joinSecureDiv").hide();
 	$("#joinPublicDiv").hide();
@@ -581,14 +581,14 @@ function showError(){
 	
 	
 	
-	//系统加载
+	//${LANG['bizconf.jsp.common.join_page.res30']}
 	window.onload=	function() {
 		var frame = parent.$("#joinMeeting");
 		frame.trigger("loaded");
 		resetFrameHeight();
 	}
 	
-	//关闭层
+	//${LANG['bizconf.jsp.common.join_page.res31']}
 	function closeDialog() {
 		var dialog = parent.$("#joinMeeting");
 		dialog.trigger("closeDialog");
@@ -629,18 +629,18 @@ function showJoinDiv(){
 		</c:if>
 		</c:if>
 /*
-	*  下载Client方法
+	*  ${LANG['bizconf.jsp.common.join_page.res22']}Client${LANG['bizconf.jsp.common.join_page.res32']}
 	*/
 	function download(){
-		//调用下载的URL地址，去下载Client
+		//${LANG['bizconf.jsp.common.join_page.res33']}URL${LANG['bizconf.jsp.common.join_page.res34']}Client
 		//$("#downClientDiv").show();
 		//window.open("/join/download?cId="+cId);
 		$("#downForm").submit();
 		closeDialogForDelay();
-		//alert("正在下载中，请稍候…………");
+		//alert("${LANG['bizconf.jsp.common.join_page.res35']}");
 	}
 	
-	//延时关闭层
+	//${LANG['bizconf.jsp.common.join_page.res36']}
 	function closeDialogForDelay(){
 		window.setTimeout(closeDialog,2000);
 	}

@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>${siteBase.siteName}--会议系统</title>
+<title>${siteBase.siteName}--${LANG['bizconf.jsp.index.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css?ver=${version}"/>
@@ -14,13 +14,10 @@
 
 <fmt:formatDate var="serverDate" value="${defaultDate}" type="date" pattern="yyyy/MM/dd HH:mm:ss"/>
 <script language="javascript">
-<!--
-/*屏蔽所有的js错误*/
-function killerrors() {
-return true;
-}
-window.onerror = killerrors;
-//-->
+ function killerrors() {
+	 return true;
+ }
+ window.onerror = killerrors;
 </script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-ui-1.9.2.custom.min.js?ver=${version}"></script>
@@ -50,7 +47,7 @@ $(function() {
 <script type="text/javascript">
 
 /*
- *页面上动态调整Iframe的宽高
+ *${LANG['bizconf.jsp.index.res4']}Iframe${LANG['bizconf.jsp.index.res5']}
  *	
  */
 
@@ -118,45 +115,22 @@ jQuery(function($) {
 		}
 	});
 
-	//left menu selected
-	$('.nav_li').click(function() {
-		var href = $(this).find("a").attr("link");
-		if(href!="/jsp/user/help.jsp"){
-			var loginUser = "${user}";
-			if(loginUser) {
-				$('.nav_menu').find("li").removeClass("nav_li_active");
-				$(this).addClass("nav_li_active");
-				$("#mainFrame").attr("src", href);	
-			} else {
-				if(href=="/jsp/user/download_center.jsp" || href=="/user/conf/getPublicControlPadIndex"){
-					$('.nav_menu').find("li").removeClass("nav_li_active");
-					$(this).addClass("nav_li_active");
-					$("#mainFrame").attr("src", href);	
-				} else {
-					login();	
-				}	
-			}
-		}
-	});
-	$('.nav_ul').click(function() {
-		var ul = $(this).next();
-		var link = $(this).find("a");
-		if (ul.is(":visible")) {
-			link.attr("style", "background:url('/static/images/new02.png') no-repeat scroll right center transparent");
-			ul.slideUp();
-		} else {
-			link.attr("style", "background:url('/static/images/new01.png') no-repeat scroll right center transparent");
-			ul.slideDown();
-		}
-	});
-	//left menu hover
-// 	$('.nav_menu li').hover(function() {
-// 		if(!$(this).hasClass("nav_li_active")){
-// 			$(this).addClass("nav_li_hover");	
-// 		}
-// 	}, function() {
-// 		$(this).removeClass("nav_li_hover");
-// 	});
+	//left menu
+	$(".nav-menu").slideBar({
+        clickCallback: function(elem) {
+            var isIgnore = elem.hasClass("isParent");
+            if (!isIgnore) {
+                var href = elem.attr("href");
+                var loginUser = "${user.id}";
+    			if(loginUser || href=="/downCenter/downClient" || href=="/user/conf/getPublicControlPadIndex") {
+                    showURL(href);	
+    			} else {
+    				login();
+    			}
+            } 
+        }
+    });
+	
 	//resize iframe height
 	$("#mainFrame").load(function(){
 		resizeHeight();  
@@ -168,18 +142,7 @@ jQuery(function($) {
 		var lang = $(this).val();
 		changeLang(lang);
 	});
-	//
-// 	$(window).bind("scroll", function(){
-// 		var scrollTop = $(window).scrollTop();
-// 		var width = $("body").width()-220;
-// 		var navTop = 122;
-// 		$("#mainFrame").width(width+20);
-// 		if(scrollTop>navTop){
-// 			$("#tool_bar").width(width).css({"position":"fixed"});	
-// 		} else {
-// 			$("#tool_bar").width(width).css({"position":"relative"});
-// 		}
-// 	});
+
 	$(window).bind("resize", function() {
 		resizeHeight();
 		//resizeFloatBar();
@@ -190,7 +153,7 @@ jQuery(function($) {
 	if(needResetPass != null && needResetPass =="true"){
 		resetPass();
 	}
-	
+	//findFastIp();
 });
 window.setInterval(resizeHeight, 1000);
 function resizeHeight() {
@@ -200,36 +163,45 @@ function resizeHeight() {
 		if(height<screenHeight) {
 			height = screenHeight;
 		}
-		if(height<550){
-			height = 550;
+		if(height<600){
+			height = 600;
 		}
 		$("#mainFrame").height(height);
 		$(".main_right").height(height);
 		$(".main_left").height(height);	
 	}
 }
-function resizeFloatBar() {
-	if($(document).scrollTop()==0){
-		$("#tool_bar").css({"position":"relative"});
+      
+function loadImg(param) {
+	if(!ISFASTIP) {
+		ISFASTIP=true;
+		var fastIp = $(param).attr("domain");
+		$.cookie("b_down_s", fastIp);
 	}
-	var width = $("body").width()-210;
-	if($.browser.msie && $.browser.version<7){
-		width-=20;//fixed ie6 iframe float down
-	}
-	$("#tool_bar").width(width);
-	$("#mainFrame").width(width+20);
 }
+
+function findFastIp() {
+	var autoUrl = "${downloadServers}";
+	autoUrl = autoUrl.split(",");
+	var container = $("#b_down_s");
+	for(var i=0;i<autoUrl.length;i++) {
+		var param = autoUrl[i].trim();
+		var ipUrl = formatIpUrl(param);
+		$('<img style="display:none" src='+ipUrl+' width=0 height=0 onLoad="loadImg(this)" domain='+param+'>').appendTo(container);
+	}
+}
+
 function reloadPage() {
 	window.location.href="/";
 }
 //refresh Main Iframe Content
 function showURL(url) {
-	url+="?t="+ Math.random();
+	url = addUrlParam(url, "t", Math.random());
 	$('#mainFrame').attr("src", url);
 }
 //refresh Child Iframe
 function showChildURL(url) {
-	url+="?t="+ Math.random();
+	url = addUrlParam(url, "t", Math.random());
 	$("#mainFrame")[0].contentWindow.$("#contentFrame").attr("src", url);
 }
 
@@ -256,92 +228,18 @@ function showTabPanel(elem, callback) {
 	}
 }
 function jumpToMeetingPanel(result) {
-	$(".nav_li").removeClass("nav_li_active");
-	$(".preside_li").addClass("nav_li_active");
+	$(".nav-menu li").removeClass("active");
+	var favorLi = $(".nav-menu").find(".ico11").parent();
+	favorLi.addClass("active");
 	showURL("/user/conf/getControlPadIndex?userRole=1");
 }
 
 function jumpToFavorLi(url) {
 	url+="?t="+ Math.random();
-	$(".nav_li").removeClass("nav_li_active");
-	$("#favorSetUp").addClass("nav_li_active");
+	$(".nav-menu li").removeClass("active");
+	var favorLi = $(".nav-menu").find(".ico6").parent();
+	favorLi.addClass("active");
 	$("#mainFrame").attr("src", url); 
-}
-function showMeetingPanel(result) {
-	hideTabPanel("running_list", function(runElem) {
-		showTabPanel("coming_list", function() {
-			var elem = null;
-			if(runElem){
-				elem = runElem;
-			}
-			insertMeeting(elem, result);
-		});
-	});		
-}
-function insertMeeting(elem, result) {
-	var comingList = window.frames["mainFrame"].document.getElementById("coming_list");
-	if(comingList) {
-		insertMeetTR(comingList, result);
-	} else {
-		insertFirstMeet(elem, result);
-	}
-}
-
-function insertFirstMeet(prevElem, result) {
-	var noData = window.frames["mainFrame"].document.getElementById("no_data");
-	$(noData).remove();
-	var tabTitle = null;
-	if(prevElem){
-		tabTitle = $("<div class='tab_title'></div>").insertAfter(prevElem);	
-	} else {
-		prevElem = window.frames["mainFrame"].document.getElementById("main_container");
-		tabTitle = $("<div class='tab_title'></div>").appendTo(prevElem);
-	}
-	var left = $("<div align='left' style='float: left;width:45%'></div>").appendTo(tabTitle);
-		$("<span onclick='toggleIcon(this)' class='panel_icon panel_icon_off'>&nbsp;</span>").appendTo(left);
-		$("<span onclick='toggleIcon(this)' class='m_title'>即将开始</span>").appendTo(left);
-		$("<div class='number_taxt'><div class='no_left'></div><div class='no_center'><span class='meeting-count'>0</span></div><div class='no_right'></div></div>").appendTo(left);
-	var right = $("<div align='right' style='float: right;width:50%'></div>").appendTo(tabTitle);
-	$("<input type='text' name='' class='m_search' onkeyup='quickSearch(this)'>").appendTo(right);
-	var comingList = $("<div style='display: block;' class='tab_content' id='coming_list'>").insertAfter(tabTitle);
-	insertMeetTR(comingList, result);
-}
-function insertMeetTR(comingList, result){
-// 	var containers = $(comingList).find(".extras-container");
-// 	$.each(containers, function(i, domEle) {
-// 		var sortTime = $(domEle).find(".date-holder").attr("sorttime");
-// 		var startTime = result.confBase[0].startTime;
-// 		console.log("sortTime="+sortTime+" startTime="+startTime);
-// 		if(compareDate(startTime, sortTime)){
-// 			tabTitle = $(domEle).prev();
-// 			return false;
-// 		}
-// 	});
-	var newDiv = $("<div class='extras-container' style='display:none;text-align:center;'></div>");
-	var loading = $("<img src='/static/images/loading.gif' width='32px' height='32px' style='margin-top: 10px;'/>").appendTo(newDiv);
-	newDiv.prependTo(comingList);
-	newDiv.slideDown(function() {
-		if(result){
-			//update count
-			var countSpan = $(comingList).prev().find(".meeting-count");
-			var count = parseInt(countSpan.text(), 10)+1;
-			countSpan.text(count);
-			//load new meeting div
-			var id = result.confBase[0].id;
-			app.bookMeetingSuccess(id, function(data) {
-				if(data){
-					newDiv.empty();
-					$(newDiv).append(data);
-					mainFrame.window.refreshTips();
-					resizeHeight();	
-				} else {
-					alert("插入会议失败, 没有返回任何数据");
-				}
-			});	
-		} else {
-			alert("插入会议失败");
-		}
-	});
 }
 
 //refresh group list
@@ -353,22 +251,47 @@ function refreshChildIframe() {
 	var iframeSrc = $("#mainFrame")[0].contentWindow.$("#contentFrame").attr("src");
 	showChildURL(iframeSrc);
 }
+//show billing detail
+function showTelDetail(id) {
+	$("<div id=\"billingView\"/>").showDialog({
+		"title" : "${LANG['bizconf.jsp.index.res8']}",
+		"dialogClass" : "ui-dialog-user",
+		"url" : "/common/billing/showTelDetail?userId="+id,
+		"type" : VIEW_TYPE.billing,
+		"action" : ACTION.create,
+		"width" : 624,
+		"height" : 587
+	});
+}
 
+//show billing detail
+function showDataFeeDetail(id) {
+	$("<div id=\"dataFeeView\"/>").showDialog({
+		"title" : "${LANG['bizconf.jsp.index.res8']}",
+		"dialogClass" : "ui-dialog-user",
+		"url" : "/common/billing/showDataDetail?userId="+id,
+		"type" : VIEW_TYPE.billing,
+		"action" : ACTION.create,
+		"width" : 624,
+		"height" : 587
+	});
+}
+//
 function showConflogs(id) {
 	$("<div id=\"logview\"/>").showDialog({
-		"title" : "入会详情",
+		"title" : "${LANG['bizconf.jsp.index.res8']}",
 		"dialogClass" : "ui-dialog-user",
-		"url" : "http://meeting.confcloud.cn/user/conflog/loglist?confId="+id,
+		"url" : "/user/conflog/loglist?userPage=true&confId="+id,
 		"type" : VIEW_TYPE.group,
 		"action" : ACTION.create,
 		"width" : 804,
-		"height" : 534
+		"height" : 574
 	});
 }
 //add group
 function addGroup(id) {
 	$("<div id=\"addGroup\"/>").showDialog({
-		"title" : "添加群组",
+		"title" : "${LANG['bizconf.jsp.add_group.res1']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/group/editGroup?id="+id,
 		"type" : VIEW_TYPE.group,
@@ -380,7 +303,7 @@ function addGroup(id) {
 //view contact
 function viewContact(id) {
 	$("<div id=\"viewContact\"/>").showDialog({
-		"title" : "查看联系人",
+		"title" : "${LANG['bizconf.jsp.index.res9']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/group/showContacts?viewOnly=1&group_id="+id,
 		"type" : VIEW_TYPE.contact,
@@ -392,7 +315,7 @@ function viewContact(id) {
 //add contact
 function addContact(id) {
 	$("<div id=\"addContact\"/>").showDialog({
-		"title" : "添加联系人",
+		"title" : "${LANG['bizconf.jsp.add_contacts.res1']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/contact/editContact?id="+id,
 		"type" : VIEW_TYPE.contact,
@@ -404,7 +327,7 @@ function addContact(id) {
 //import contact
 function importContact() {
 	$("<div id=\"importContact\"/>").showDialog({
-		"title" : "导入联系人",
+		"title" : "${LANG['bizconf.jsp.index.res10']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/contact/goContactsSelect",
 		"type" : VIEW_TYPE.contact,
@@ -416,7 +339,7 @@ function importContact() {
 //add contact from group
 function addContactFromGroup(id) {
 	$("<div id=\"importContact\"/>").showDialog({
-		"title" : "添加用户",
+		"title" : "${LANG['bizconf.jsp.index.res11']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/group/importContacts?group_id="+id,
 		"type" : VIEW_TYPE.contact,
@@ -428,7 +351,7 @@ function addContactFromGroup(id) {
 //bulk import contact
 function bulkImportContact() {
 	$("<div id=\"importContact\"/>").showDialog({
-		"title" : "批量导入联系人",
+		"title" : "${LANG['bizconf.jsp.index.res12']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/contact/importPop",
 		"type" : VIEW_TYPE.contact,
@@ -440,7 +363,7 @@ function bulkImportContact() {
 //invent contact
 function inventContact(confId) {
 	$("<div id=\"inventContact\"/>").showDialog({
-		"title" : "邀请参会人",
+		"title" : "${LANG['bizconf.jsp.conf_list_main.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/contact/goInviteContacts?confId="+confId,
 		"type" : VIEW_TYPE.attendee,
@@ -452,7 +375,7 @@ function inventContact(confId) {
 //invent contact
 function editInventContact(confId) {
 	$("<div id=\"eidtInventContact\"/>").showDialog({
-		"title" : "邀请参会人",
+		"title" : "${LANG['bizconf.jsp.conf_list_main.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/inviteUser?confId="+confId,
 		"type" : VIEW_TYPE.attendee,
@@ -463,7 +386,7 @@ function editInventContact(confId) {
 }
 function contactImport() {
 	$("<div id=\"importContact\"/>").showDialog({
-		"title" : "邀请联系人",
+		"title" : "${LANG['bizconf.jsp.index.res13']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/contact/importPop",
 		"type" : VIEW_TYPE.attendee,
@@ -475,7 +398,7 @@ function contactImport() {
 //conf info
 function viewConf(id) {
 	$("<div id=\"viewMeeting\"/>").showDialog({
-		"title" : "会议详情",
+		"title" : "${LANG['bizconf.jsp.index.res14']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/conf/view/" + id,
 		"type" : VIEW_TYPE.bookMeeting,
@@ -488,7 +411,7 @@ function viewConf(id) {
 //view group
 function viewGroup(id) {
 	$("<div id=\"viewGroup\"/>").showDialog({
-		"title" : "查看群组成员",
+		"title" : "${LANG['bizconf.jsp.index.res15']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/group/showContacts?group_id=" + id,
 		"type" : VIEW_TYPE.group,
@@ -499,27 +422,27 @@ function viewGroup(id) {
 }
 //create or update createNewReservationConf
 function createReservationConf(id) {
-	var loginUser = "${user}";
+	var loginUser = "${user.id}";
 	if(loginUser){
 		if (id) {
 			$("<div id=\"bookMeeting\"/>").showDialog({
-				"title" : "修改预约会议",
+				"title" : "${LANG['bizconf.jsp.index.res16']}",
 				"dialogClass" : "ui-dialog-user",
 				"url" : "/user/conf/update/" + id,
 				"type" : VIEW_TYPE.bookMeeting,
 				"action" : ACTION.update,
 				"width" : 684,
-				"height" : 464
+				"height" : 580
 			});
 		} else {
 			$("<div id=\"bookMeeting\"/>").showDialog({
-				"title" : "创建预约会议",
+				"title" : "${LANG['bizconf.jsp.index.res17']}",
 				"dialogClass" : "ui-dialog-user",
 				"url" : "/user/conf/createReservationConf",
 				"type" : VIEW_TYPE.bookMeeting,
 				"action" : ACTION.create,
 				"width" : 684,
-				"height" : 464
+				"height" : 580
 			});
 		}
 		
@@ -527,23 +450,23 @@ function createReservationConf(id) {
 		login();	
 	}
 }
-//重新创建会议
+//${LANG['bizconf.jsp.attended_conf_list.res2']}
 function reCreateReservationConf(id) {
 	$("<div id=\"bookMeeting\"/>").showDialog({
-		"title" : "重新创建会议",
+		"title" : "${LANG['bizconf.jsp.attended_conf_list.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/conf/reCreateconf/" + id,
 		"type" : VIEW_TYPE.bookMeeting,
 		"action" : ACTION.update,
 		"width" : 684,
-		"height" : 464
+		"height" : 580
 	});	
 }
 
 //update all ReservationConf
 function updateReservationConf(id) {
 	$("<div id=\"updateOneMeeting\"/>").showDialog({
-		"title" : "修改周期会议其中一条会议",
+		"title" : "${LANG['bizconf.jsp.index.res18']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/conf/getCycleConfDate/" + id,
 		"type" : VIEW_TYPE.bookMeeting,
@@ -555,7 +478,7 @@ function updateReservationConf(id) {
 
 function delACycleConf(id) {
 	$("<div id=\"updateOneMeeting\"/>").showDialog({
-		"title" : "修改周期会议其中一条会议",
+		"title" : "${LANG['bizconf.jsp.index.res18']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/conf/getCycleConfDate/" + id+"?delCycle=1",
 		"type" : VIEW_TYPE.bookMeeting,
@@ -565,25 +488,25 @@ function delACycleConf(id) {
 	});	
 }
 
-//修改周期会议中所有会议的信息
+//${LANG['bizconf.jsp.conf_list_index.res5']}
 function updateCycleMeetingInfo(id) {
 	$("<div id=\"bookMeeting\"/>").showDialog({
-		"title" : "修改周期会议中所有会议的信息",
+		"title" : "${LANG['bizconf.jsp.conf_list_index.res5']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/conf/updateCycleConfInfo/" + id,
 		"type" : VIEW_TYPE.bookMeeting,
 		"action" : ACTION.update,
 		"width" : 680,
-		"height" : 460
+		"height" : 580
 	});	
 }
 
 //createImmediatelyConf
 function createImmediatelyConf() {
-	var loginUser = "${user}";
+	var loginUser = "${user.id}";
 	if(loginUser){
 		$("<div id=\"joinMeeting\"/>").showDialog({
-			"title" : "创建即时会议",
+			"title" : "${LANG['bizconf.jsp.index.res19']}",
 			"dialogClass" : "ui-dialog-user",
 			"url" : "/user/conf/createImmediatelyConf",
 			"type" : VIEW_TYPE.tempMeeting,
@@ -598,7 +521,7 @@ function createImmediatelyConf() {
 function joinImmediatelyConf(result) {
 	var url = "/join?joinType=${JOIN_TYPE_CONFID}&cId="+result.id;
 	$("<div id=\"joinMeeting\"/>").showDialog({
-		"title" : "创建即时会议",
+		"title" : "${LANG['bizconf.jsp.index.res19']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : url,
 		"type" : VIEW_TYPE.linkTempMeeting,
@@ -611,20 +534,20 @@ function joinImmediatelyConf(result) {
 //add calendar
 function addCalendar(id) {
 	$("<div id=\"addCalendar\"/>").showDialog({
-		"title" : "添加日历提醒",
+		"title" : "${LANG['bizconf.jsp.conf_invite_recv.res3']}",
 		"dialogClass" : "ui-dialog-user",
-		"url" : "/jsp/user/add_calendar_notice.jsp",
+		"url" : "/user/email/outlook",
 		"data": id,
 		"type" : VIEW_TYPE.calendar,
 		"action" : ACTION.create,
-		"width" : 474,
+		"width" : 484,
 		"height" : 204
 	});	
 }
 //quick attendConf
 function attendConf() {
 	$("<div id=\"quickMeeting\"/>").showDialog({
-		"title" : "快速入会",
+		"title" : "${LANG['bizconf.jsp.help.res8']}",
 		"dialogClass" : "ui-dialog-smile",
 		"url" : "/user/conf/attendConf",
 		"type" : VIEW_TYPE.quickMeeting,
@@ -639,9 +562,9 @@ function joinMeeting(joinType,cId){
 	if(joinType==null || joinType==""){
 		return false;
 	}
-	var titleName="快速入会";
+	var titleName="${LANG['bizconf.jsp.help.res8']}";
 	if(joinType=="${JOIN_TYPE_CONFID}"){
-		titleName="加入会议";
+		titleName="${LANG['bizconf.jsp.conf_list_index.res48']}";
 	}
 	var divHeight="auto";
 	if ($.browser.msie && $.browser.version<7) {
@@ -694,9 +617,9 @@ function joinMeetingReload(){
 	if(joinType==null || joinType==""){
 		return false;
 	}
-	var titleName="快速入会";
+	var titleName="${LANG['bizconf.jsp.help.res8']}";
 	if(joinType=="${JOIN_TYPE_CONFID}"){
-		titleName="加入会议";
+		titleName="${LANG['bizconf.jsp.conf_list_index.res48']}";
 	}
 	
 	$("<div id=\"joinMeeting\"/>").showDialog({
@@ -718,7 +641,7 @@ function joinMeetingReload(){
 	
 }
 function joinMeetingFromEmail(joinMtgUrl){
-	var  titleName="加入会议";
+	var  titleName="${LANG['bizconf.jsp.conf_list_index.res48']}";
 	$("<div id=\"joinMeeting\"/>").showDialog({
 		"title" : titleName,
 		"dialogClass" : "ui-dialog-user",
@@ -731,7 +654,7 @@ function joinMeetingFromEmail(joinMtgUrl){
 }
 function errorDialog(message, callback) {
 	$("<div id=\"errorDiv\"/>").alertDialog({
-		"title" : "提示",
+		"title" : "${LANG['bizconf.jsp.conf_invite_recv.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"type": "error",
 		"message": message,
@@ -742,7 +665,7 @@ function errorDialog(message, callback) {
 
 function confirmDialog(message, callback) {
 	$("<div id=\"confirmDiv\"/>").alertDialog({
-		"title" : "提示",
+		"title" : "${LANG['bizconf.jsp.conf_invite_recv.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"type": "confirm",
 		"message": message,
@@ -753,7 +676,7 @@ function confirmDialog(message, callback) {
 
 function successDialog(message) {
 	$("<div id=\"successDiv\"/>").alertDialog({
-		"title" : "提示",
+		"title" : "${LANG['bizconf.jsp.conf_invite_recv.res2']}",
 		"dialogClass" : "ui-dialog-user",
 		"message": message,
 		"type": "success",
@@ -763,9 +686,9 @@ function successDialog(message) {
 
 function logout() {
 	$("<div/>").alertDialog({
-		"title": "提示",
+		"title": "${LANG['bizconf.jsp.conf_invite_recv.res2']}",
 		"dialogClass" : "ui-dialog-user",
-		"message" : "确定要退出吗?",
+		"message" : "${LANG['bizconf.jsp.index.res20']}?",
 		"type": "confirm",
 		"actions": ["${LANG['system.cancel']}", "${LANG['system.ok']}"],
 		"callback" : function() {
@@ -776,7 +699,7 @@ function logout() {
 }
 function login() {
 	$("<div id=\"loginDialog\"/>").showDialog({
-		"title" : "登录",
+		"title" : "${LANG['bizconf.jsp.index.res21']}",
 		"dialogClass" : "ui-dialog-user",
 		"url" : "/user/login",
 		"type" : VIEW_TYPE.login,
@@ -789,18 +712,17 @@ function login() {
 function popupNotice() { 
 	var noticeId = "${sysNotice.id}";
 	if(noticeId){
-		var data = {};
-		data.id = "${sysNotice.id}";
-		data.title = "${sysNotice.title}";
-		data.content = $("#noticeText").html();
+// 		var data = {};
+// 		data.id = "${sysNotice.id}";
+// 		data.title = "${sysNotice.title}";
+// 		data.content = $("#noticeText").html();
 		//data.content = "${sysNotice.content}";
 		var existId = $.cookie("noticeId");
 		if( !existId || (existId && existId!=noticeId) ){
 			$("<div id=\"popupNotice\"/>").showDialog({
-				"title" : "公告",
+				"title" : "${LANG['bizconf.jsp.index.res22']}",
 				"dialogClass" : "ui-dialog-user",
-				"data": data,
-				"url" : "/jsp/user/viewNotice.jsp",
+				"url" : "/user/notice/popUpNotice/"+noticeId,
 				"type" : VIEW_TYPE.notice,
 				"action" : ACTION.view,
 				"width" : 677,
@@ -811,13 +733,13 @@ function popupNotice() {
 }
 
 /*
- * 企业管理员修改企业用户密码后，企业用户第一次登陆成功后需重置密码
+ * ${LANG['bizconf.jsp.index.res23']}
  */
 function resetPass(){
 	$("<div id=\"resetPass\"/>").showDialog({
-		"title" : "重置密码",
+		"title" : "${LANG['bizconf.jsp.index.res24']}",
 		"dialogClass" : "ui-dialog-user",
-		"url" : "/jsp/user/resetPass.jsp",
+		"url" : "/user/resetPass",
 		"type" : VIEW_TYPE.notice,
 		"action" : ACTION.view,
 		"width" : 474,
@@ -854,7 +776,7 @@ function closeRemindBar() {
 	$("#remindBar").hide();
 }
 function jumpToFavor() {
-	var loginUser = "${user}";
+	var loginUser = "${user.id}";
 	if(loginUser) {
 		jumpToFavorLi("/user/favor/getTimeZone");
 	} else {
@@ -926,8 +848,8 @@ function getMonthEnd(date) {
 			<tbody>
 				<tr>
 					<td align="center" style="font-size: 16px;">
-						您的浏览器可能与本站点不兼容，建议您使用IE7或Firefox3.6及以上版本!&nbsp;&nbsp;&nbsp;
-						<a class="remind_link" type="button" href="javascript:closeRemindBar();">&nbsp;&nbsp;不再提醒&nbsp;&nbsp;</a>
+						${LANG['bizconf.jsp.index.res25']}IE7${LANG['bizconf.jsp.index.res26']}Firefox3.6${LANG['bizconf.jsp.index.res27']}!&nbsp;&nbsp;&nbsp;
+						<a class="remind_link" type="button" href="javascript:closeRemindBar();">&nbsp;&nbsp;${LANG['bizconf.jsp.index.res28']}&nbsp;&nbsp;</a>
 					</td>
 				</tr>
 			</tbody>
@@ -935,14 +857,14 @@ function getMonthEnd(date) {
 	</div>
 </c:if>
 <cc:confList var="JOIN_TYPE_EMAIL"/>
-<!--页面头部开始-->
+<!--${LANG['bizconf.jsp.conf_invite_recv.res4']}-->
 <jsp:include page="header.jsp" />
 
 <div id="head_bar">
   <div class="nav_profile" >
   	<c:if test="${!empty user}">
   		<img style="float: left; margin-right: 10px;margin-top: 14px;_margin-top: 0px;" class="png" src="${baseUrlStatic}/images/header_bar_01.png" width="14" height="16" align="absmiddle" />
-  		<span class="nav_name" title="${user.trueName }">${LANG['website.message.welcome']}，${user.trueName }&nbsp;&nbsp;</span>
+  		<span class="nav_name" title="${user.trueName }">${LANG['website.message.welcome']}${LANG['bizconf.jsp.index.res29']}${user.trueName }&nbsp;&nbsp;</span>
   		<a style="display:inline-block;" href="javascript:void(0);" onclick="logout();return false;">${LANG['website.message.logout']}</a>
   	</c:if>
   	<c:if test="${empty user }">
@@ -967,17 +889,141 @@ function getMonthEnd(date) {
     <li class="time_bj" align="absmiddle" onclick="jumpToFavor();"><a style="font-weight: bold;	" title="${siteBase.fullTimeZoneDesc }${LANG['website.message.time']}" href="javascript:;">${siteBase.timeZoneDesc }${LANG['website.message.time']}</a></li>
     <li class="language_box">
       <form name="form" id="form">
-        <select name="jumpMenu_language" id="jumpMenu_language" style="padding: 2px">
-          <option selected="selected">中文版</option>
+        <select name="jumpMenu_language" id="jumpMenu_language" style="padding: 2px;width: 65px;">
+          <option selected="selected">${LANG['bizconf.jsp.conf_invite_refuse.res1']}</option>
 <!--           <option>English</option> -->
         </select>
       </form>
     </li>
   </ul>  
 </div>
-<!--页面左部-->
+<!--${LANG['bizconf.jsp.index.res30']}-->
 <div class="main_left">
-  <ul class="nav_menu">
+<ul class="nav-menu">
+  <c:if test="${!isLogined}">
+	  <li class="active">
+	      <a href="/user/conf/getPublicControlPadIndex" class="ico0" >
+	          <span class="icon0-img"></span>
+	          <span class="icon0-span">${LANG['user.menu.conf.public']}</span>
+	          <span class="icon-arrow"></span>
+	      </a>
+	  </li>
+  </c:if>
+  <c:if test="${isLogined}">
+  <li>
+      <a href="javascript:;" class="isParent ico1 nav-ul-on" >
+          <span class="icon1-img"></span>
+          <span class="icon1-span">${LANG['user.menu.conf.myconf']}</span>
+          <span class="icon-arrow"></span>
+      </a>
+      <ul>
+          <li class="active">
+              <a href="/user/conf/getControlPadIndex?userRole=1" class="ico11">
+                  <span class="icon11-img"></span>
+                  <span class="icon11-span">${LANG['user.menu.conf.myhost']}</span>
+                  <span></span>
+              </a>
+          </li>
+          <li>
+              <a href="/user/conf/getControlPadIndex?userRole=2" class="ico12">    
+                  <span class="icon12-img"></span>
+                  <span class="icon12-span">${LANG['user.menu.conf.myact']}</span>
+                  <span></span>
+              </a>
+          </li>
+      </ul>
+  </li>
+  </c:if>
+  <li>
+      <a href="/user/contact/goContacts" class="ico2">
+          <span class="icon2-img"></span>
+          <span class="icon2-span">${LANG['siteAdmin.eventlog.type.4200']}</span>
+          <span></span>
+      </a>
+  </li>
+  <li>
+      <a href="/user/notice/list" class="ico3">
+          <span class="icon3-img"></span>
+          <span class="icon3-span">${LANG['system.menu.notice.list']}</span>
+          <span></span>
+      </a>
+  </li>
+  <c:if test="${isLogined}"> 
+  <li>
+      <a href="javascript" class="isParent ico4 nav-ul-off">
+          <span class="icon4-img"></span>
+          <span class="icon4-span">${LANG['bizconf.jsp.hostConfloglist.res2']}</span>
+          <span class="icon-arrow"></span> 
+      </a>
+      <ul style="display:none;">
+          <li>
+              <a href="/user/conflog/list?isCreator=true" class="ico41">
+                  <span class="icon41-img"></span>
+                  <span class="icon41-span">${LANG['bizconf.jsp.index.res32']}</span>
+                  <span></span>
+              </a>
+          </li>
+          <li>
+              <a href="/user/conflog/list?isCreator=false" class="ico42">
+                  <span class="icon42-img"></span>
+                  <span class="icon42-span">${LANG['bizconf.jsp.index.res33']}</span>
+                  <span></span> 
+              </a>
+          </li>
+      </ul>
+  </li>
+  </c:if>
+  <c:if test="${isConfHost}">
+	  <li>
+	      <a href="/user/confConfig/getConfConfig" class="ico5">
+	          <span class="icon5-img"></span>
+	          <span class="icon5-span">${LANG['user.menu.conf.default.setup']}</span>
+	          <span></span>
+	      </a>
+	  </li>
+  </c:if>
+  <c:if test="${isLogined}">
+	  <li>
+	      <a href="/user/favor/getTimeZone" class="ico6">
+	          <span class="icon6-img"></span>
+	          <span class="icon6-span">${LANG['user.menu.conf.favor.setup']}</span>
+	          <span></span>
+	      </a>
+	  </li>
+	  <li>
+	      <a href="/user/profile" class="ico7">
+	          <span class="icon7-img"></span>
+	          <span class="icon7-span">${LANG['user.menu.conf.person.setup']}</span>
+	          <span></span>
+	      </a>
+	  </li>
+  </c:if>
+  <li>
+      <a href="javascript:;" class="isParent ico8 nav-ul-off">
+          <span class="icon8-img"></span>
+          <span class="icon8-span">${LANG['user.menu.conf.support']}</span>
+          <span class="icon-arrow"></span>
+      </a>
+      <ul style="display:none;">
+            <li>
+                <a href="/help" target="_blank" class="ignore ico81">
+                    <span class="icon81-img"></span>
+                    <span class="icon81-span">${LANG['bizconf.jsp.help.res1']}</span>
+                    <span></span>
+                </a>
+            </li>
+            <li>
+                <a href="/downCenter/downClient" class="ico82">    
+                    <span class="icon82-img"></span>
+                    <span class="icon82-span">${LANG['user.menu.conf.down.center']}</span>
+                    <span></span>
+                </a>
+            </li>
+        </ul>
+  </li>
+</ul>
+
+  <ul class="nav_menu" style="display: none;">
   	<c:if test="${!isLogined}">
   	<li class="nav_li nav_li_active" flag="publicConf">
     	<span class="m01_public">
@@ -1012,25 +1058,29 @@ function getMonthEnd(date) {
     	<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon04.png" width="25" height="22" />
     	<a href="javascript:;" link="/user/notice/list" target="mainFrame">${LANG['system.menu.notice.list']}</a>
     </li>
+<%--    <li class="nav_li m03" flag="myContact">--%>
+<%--    	<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon05.png" width="25" height="25" />--%>
+<%--    	<a href="javascript:;" link="<%=request.getContextPath()%>/common/billing/userBillList" target="mainFrame">${LANG['bizconf.jsp.index.res31']}</a>--%>
+<%--    </li>--%>
 
-<%--    <c:if test="${isLogined}"> --%>
-<%-- 	<li class=""> --%>
-<%--    		<span class="m07 nav_ul">--%>
-<%--    			<img  class="m01_img" src="${baseUrlStatic}/images/set_ico.png" width="25" height="22" /> --%>
-<%--   			<a href="javascript:;" target="mainFrame" style="background:url('/static/images/new02.png') no-repeat scroll right center transparent">会议报告</a> --%>
-<%--   		</span> --%>
-<%--   		<ul style="display: none;"> --%>
-<%-- 	    	<li class="nav_li m09"  flag="myPresideReport">--%>
-<%-- 	    		<img  class="m09_img" src="${baseUrlStatic}/images/icon_a.png" width="22" height="22" /> --%>
-<%-- 	    		<a href="javascript:;" link="/user/conflog/list?isCreator=true" target="mainFrame">我主持的</a>--%>
-<%--	    	</li> --%>
-<%-- 	    	<li class="nav_li m09"  flag="myAttendReport"> --%>
-<%-- 	    		<img  class="m09_img" src="${baseUrlStatic}/images/icon_b.png" width="20" height="20" /> --%>
-<%-- 	    		<a href="javascript:;" link="/user/conflog/list?isCreator=false"  target="mainFrame">我参加的</a>--%>
-<%--	    	</li> --%>
-<%-- 	    </ul> --%>
-<%--   	</li>    --%>
-<%--    </c:if> --%>
+    <c:if test="${isLogined}"> 
+ 	<li class=""> 
+    		<span class="m07 nav_ul">
+    			<img  class="m01_img" src="${baseUrlStatic}/images/set_ico.png" width="25" height="22" /> 
+   			<a href="javascript:;" target="mainFrame" style="background:url('/static/images/new02.png') no-repeat scroll right center transparent">${LANG['bizconf.jsp.hostConfloglist.res2']}</a> 
+   		</span> 
+   		<ul style="display: none;"> 
+ 	    	<li class="nav_li m09"  flag="myPresideReport">
+ 	    		<img  class="m09_img" src="${baseUrlStatic}/images/icon_a.png" width="22" height="22" /> 
+ 	    		<a href="javascript:;" link="/user/conflog/list?isCreator=true" target="mainFrame">${LANG['bizconf.jsp.index.res32']}</a>
+	    	</li> 
+ 	    	<li class="nav_li m09"  flag="myAttendReport"> 
+ 	    		<img  class="m09_img" src="${baseUrlStatic}/images/icon_b.png" width="20" height="20" /> 
+ 	    		<a href="javascript:;" link="/user/conflog/list?isCreator=false"  target="mainFrame">${LANG['bizconf.jsp.index.res33']}</a>
+	    	</li> 
+ 	    </ul> 
+   	</li>    
+    </c:if>
 
     <c:if test="${isConfHost}">
     	<li class="nav_li m06" flag="meetConfig">
@@ -1056,17 +1106,17 @@ function getMonthEnd(date) {
     		<ul style="display: none;">
     			<li class="nav_li m09" flag="helpCenter">
 		    		<img  class="m09_img" src="${baseUrlStatic}/images/hele_new.png" width="20" height="20" />
-		    		<a href="/jsp/user/help.jsp" link="/jsp/user/help.jsp" target="_blank">帮助</a>
+		    		<a href="/help" link="/help" target="_blank">${LANG['bizconf.jsp.help.res1']}</a>
 		    	</li>
 		    	<li class="nav_li m09" flag="downloadCenter">
 		    		<img  class="m09_img" src="${baseUrlStatic}/images/download_new.png" width="20" height="20" />
-		    		<a href="javascript:;" link="/jsp/user/download_center.jsp" target="mainFrame">${LANG['user.menu.conf.down.center']}</a>
+		    		<a href="javascript:;" link="/downCenter/downClient" target="mainFrame">${LANG['user.menu.conf.down.center']}</a>
 		    	</li>
 		    </ul>
     	</li>    
   </ul>
 </div>
-<!--页面主体-->
+<!--${LANG['bizconf.jsp.index.res34']}-->
 <div class="main_right">
 <c:if test="${isLogined}"> 
   <iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getControlPadIndex?userRole=1#"></iframe>
@@ -1075,7 +1125,7 @@ function getMonthEnd(date) {
    <iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getPublicControlPadIndex"></iframe>
 </c:if>
 </div>
-<!--页面下部-->
+<!--${LANG['bizconf.jsp.conf_invite_recv.res15']}-->
 <jsp:include page="footer.jsp" />
 
 
@@ -1092,6 +1142,7 @@ function getMonthEnd(date) {
   </form>
   </div>
   <div id="noticeText" style="display: none;">${sysNotice.content}</div>
+  <div style="display: none;" id="b_down_s"></div>
 </body>
 </html>
 

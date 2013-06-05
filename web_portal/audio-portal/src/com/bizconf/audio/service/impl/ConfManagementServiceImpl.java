@@ -32,6 +32,7 @@ import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapInvitedUser;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapQueryPage;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestCancelConfRequest;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestCreateConfRequest;
+import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestGetConfRealtimeStatRequest;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestGetDataConfInfoRequest;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestInviteUsersRequest;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestModifyConfRequest;
@@ -42,6 +43,7 @@ import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestQueryUsersStatusReq
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequestStartConfRequest;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapRequester;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseCreateConfResponse;
+import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseGetDataConfInfoResponse;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseInviteUsersResponse;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapResponseModifyConfResponse;
@@ -56,6 +58,7 @@ import com.bizconf.audio.soap.conf.ESpaceMeetingAsSoapUserStatus;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsStringKV;
 import com.bizconf.audio.soap.conf.ESpaceMeetingCmuLocator;
 import com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseCreateConfResponseHolder;
+import com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponseHolder;
 import com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseGetDataConfInfoResponseHolder;
 import com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseInviteUsersResponseHolder;
 import com.bizconf.audio.soap.conf.holders.ESpaceMeetingAsSoapResponseModifyConfResponseHolder;
@@ -94,7 +97,7 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 			ESpaceMeetingAsSoapConfManagementService stub = locator.getESpaceMeetingAsSoapConfManagementService(new java.net.URL(CONF_URL));
 			ESpaceMeetingAsSoapRequestCreateConfRequest request = new ESpaceMeetingAsSoapRequestCreateConfRequest();
 			ESpaceMeetingAsSoapToken token = genToken();
-			if(confInfo.getHostKey()!=null && !"".equals(confInfo.getHostKey())){
+			if(confInfo.getHostKey()!=null && !"".equals(confInfo.getHostKey().trim())){
 				token.setKwargs(new ESpaceMeetingAsStringKV[]{new ESpaceMeetingAsStringKV("EXT_CHAIRMAN_PWD",confInfo.getHostKey())});
 			}
 			request.setToken(token);
@@ -104,21 +107,22 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 			request.setConfType(1);
 			if(isImmediatelyConf){
 				request.setConfType(0);
-			}else if(confInfo.getPermanentConf().intValue() == 1){
-				request.setConfType(3);
 			}
+//			else if(confInfo.getPermanentConf().intValue() == 1){
+//				request.setConfType(3);
+//			}
 			request.setExtConfType(1001);
 			request.setAccessCode(confInfo.getCallPhone());
 			request.setAgenda(confInfo.getConfDesc());//会议描叙
 			request.setMaxMemberAmount(confInfo.getMaxUser());
 			request.setUsers(getHostUser(currUserBase, currentsite.getSiteSign()));
 			//TEST VALUE
-			request.setMaxSpokesmanAmount(3);
+			request.setMaxSpokesmanAmount(2);
 			request.setMinReservedAmount(2);
 			
 			request.setSubject(confInfo.getConfName());//会议主题
 			request.setConfCreateType(confInfo.getCreateType());//会议创建方式
-			request.setFuncBits(confInfo.getFuncBits());//暂时测试数据 confInfo.getFuncBits()
+			request.setFuncBits(confInfo.getFuncBits());
 			request.setMediaBits(confInfo.getMediaBits());
 			request.setDuration(confInfo.getDuration());
 			request.setBeginDatetime(sdf.format(DateUtil.getBejingDateByGmtDate(confInfo.getStartTime())));
@@ -183,6 +187,13 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 	public ConfBase queryConfInfo(String confId, SiteBase currentsite,UserBase currUserBase) {
 		ConfBase confBase = null;
 		try{
+			logger.info("queryConfInfo confId:"+confId);
+			logger.info("queryConfInfo currentsite:"+currentsite);
+			logger.info("queryConfInfo curruser:"+currUserBase);
+			
+			if(confId==null || "".equals(confId)){
+				return null;
+			}
 			ESpaceMeetingCmuLocator locator = getLocator();
 			ESpaceMeetingAsSoapConfManagementService stub = locator.getESpaceMeetingAsSoapConfManagementService(new java.net.URL(CONF_URL));
 			ESpaceMeetingAsSoapRequestQueryConfInfoRequest request = new ESpaceMeetingAsSoapRequestQueryConfInfoRequest();
@@ -195,6 +206,7 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 			ESpaceMeetingAsSoapResult result = stub.queryConfInfo(request, holder);
 			if(result.getErrCode()!=ConstantUtil.AS_COMMON_SUCCESS_CODE){
 				//TODO 添加日志信息
+				logger.error("queryConfInfo soap massge "+result.getErrCode());
 			}else{
 				confBase = tansfroToConfBase(holder.value.getConfInfo());
 			}
@@ -310,7 +322,11 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 			ESpaceMeetingCmuLocator locator = getLocator();
 			ESpaceMeetingAsSoapConfManagementService stub = locator.getESpaceMeetingAsSoapConfManagementService(new java.net.URL(CONF_URL));
 			ESpaceMeetingAsSoapRequestModifyConfRequest request = new ESpaceMeetingAsSoapRequestModifyConfRequest();
-			request.setToken(genToken());
+			ESpaceMeetingAsSoapToken token = genToken();
+			if(confInfo.getHostKey()!=null && !"".equals(confInfo.getHostKey().trim())){
+				token.setKwargs(new ESpaceMeetingAsStringKV[]{new ESpaceMeetingAsStringKV("EXT_CHAIRMAN_PWD",confInfo.getHostKey())});
+			}
+			request.setToken(token);
 			request.setRequester(getRequester(currentsite.getSiteSign(), currUserBase));
 			request.setConfId(confInfo.getConfHwid());
 			request.setConfType(1);//预约会议
@@ -412,6 +428,7 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 			int pageSize,SiteBase currSite,UserBase currUser) {
 		ESpaceMeetingAsSoapUserStatus[] userStatus = null;
 		try{
+			if(pageNo<1)pageNo=1;
 			ESpaceMeetingCmuLocator locator = getLocator();
 			ESpaceMeetingAsSoapConfManagementService stub = locator.getESpaceMeetingAsSoapConfManagementService(new java.net.URL(CONF_URL));
 			ESpaceMeetingAsSoapRequestQueryUsersStatusRequest request = new ESpaceMeetingAsSoapRequestQueryUsersStatusRequest();
@@ -432,7 +449,11 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 				 logger.info("soap get user status error errorCode:"+result.getErrCode());
 				 throw new RuntimeException("soap get user status error errorCode:"+result.getErrCode());
 			}else{
+				String[] ids = result.getArgs();
 				userStatus = holder.value.getStatuses();
+				for (int i = 0; i < userStatus.length; i++) {
+					userStatus[i].setUserId(ids[i]);
+				}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -449,6 +470,7 @@ public class ConfManagementServiceImpl extends BaseSoapService implements ConfMa
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		ESpaceMeetingAsSoapUserStatus[] userStatus = null;
 		try{
+			if(pageNo<1)pageNo=1;
 			ESpaceMeetingCmuLocator locator = getLocator();
 			ESpaceMeetingAsSoapConfManagementService stub = locator.getESpaceMeetingAsSoapConfManagementService(new java.net.URL(CONF_URL));
 			ESpaceMeetingAsSoapRequestQueryUsersStatusRequest request = new ESpaceMeetingAsSoapRequestQueryUsersStatusRequest();
@@ -531,7 +553,7 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 		boolean flag = false;
 		try{
 			SiteBase currSite = confLogic.getConfSiteBase(conf.getSiteId());
-			ESpaceMeetingAsSoapUserStatus[] userStatus = queryConfUserStatus(conf.getConfHwid(), 1, 2000, currSite, null);
+			ESpaceMeetingAsSoapUserStatus[] userStatus = queryConfUserStatus(conf.getConfHwid(), 1, 6000, currSite, null);
 			int pcNum = 0;
 			int phoneNum = 0;
 			if(userStatus!=null && userStatus.length>0){
@@ -541,6 +563,13 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 					}else if(userStatus[i].getTermType()== ConfConstant.CONF_USER_TERM_TYPE_MOBILE && "1".equals(userStatus[i].getUserOnlineStatus())){
 						phoneNum++;
 					}
+				}
+				
+				if(conf.getBelongConfId()!=null && conf.getBelongConfId().intValue()>0){
+					ConfBase base = libernate.getEntity(ConfBase.class, conf.getBelongConfId());
+					base.setPcNum(pcNum);
+					base.setPhoneNum(phoneNum);
+					libernate.updateEntity(base,"id","pc_num","phone_num");
 				}
 				conf.setPcNum(pcNum);
 				conf.setPhoneNum(phoneNum);
@@ -843,7 +872,7 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 	
 	public static void testqueryConfUserStatus(String confId){
 		try{
-			ESpaceMeetingAsSoapConfManagementServicebindingStub stub = new ESpaceMeetingAsSoapConfManagementServicebindingStub(new java.net.URL("http://42.62.20.72:8996/eSpaceMeeting/ConfManagementService"),null);
+			ESpaceMeetingAsSoapConfManagementServicebindingStub stub = new ESpaceMeetingAsSoapConfManagementServicebindingStub(new java.net.URL("http://10.184.130.16:8996/eSpaceMeeting/ConfManagementService"),null);
 			ESpaceMeetingAsSoapRequestQueryUsersStatusRequest request = new ESpaceMeetingAsSoapRequestQueryUsersStatusRequest();
 			
 			//request.setToken(token);
@@ -881,12 +910,15 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 				System.out.println("will show the status!");
 				System.out.println("total count = "+holder.value.getTotalCount());
 				ESpaceMeetingAsSoapUserStatus[] espaceUsers = holder.value.getStatuses();
-				for(ESpaceMeetingAsSoapUserStatus userStatus : espaceUsers){
-					 System.out.print("name:"+userStatus.getUserName());
-					 System.out.print("userId:"+userStatus.getUserId());
-					 System.out.print("online "+userStatus.getUserOnlineStatus());
-					 System.out.print("JoinDatetime:"+userStatus.getJoinDatetime());
-					 System.out.print("userRole:"+userStatus.getRole());
+				
+				String[] ids = result.getArgs();
+				for (int i = 0; i < espaceUsers.length; i++){
+					espaceUsers[i].setUserId(ids[i]);
+					 System.out.println("name:"+espaceUsers[i].getUserName());
+					 System.out.println("userId:"+espaceUsers[i].getUserId());
+					 System.out.println("online "+espaceUsers[i].getUserOnlineStatus());
+					 System.out.println("JoinDatetime:"+espaceUsers[i].getJoinDatetime());
+					 System.out.println("userRole:"+espaceUsers[i].getRole());
 					 System.out.println("--------");
 				}
 			}
@@ -953,7 +985,7 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 			request.setToken(token);
 			request.setRequester(requester);
 			
-			request.setConfStatusList(new int[]{0,1,2});
+			request.setConfStatusList(new int[]{0,2});
 			
 			ESpaceMeetingAsSoapQueryPage page = new ESpaceMeetingAsSoapQueryPage();
 			page.setCurrentPage(1);
@@ -968,15 +1000,15 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 				System.out.println(result.getErrCode());
 			}else{
 				ESpaceMeetingAsSoapConfInfo[] confInfos = holder.value.getConfInfos();
-				System.out.println("当前总会议数："+confInfos.length);
+//				System.out.println("当前总会议数："+confInfos.length);
 				int temp = 0;
 				for (int i = 0; i < confInfos.length; i++) {
 					ESpaceMeetingAsSoapConfInfo conf = confInfos[i];
 					if(requester.getEnterpriseId().equals(conf.getEnterpriseId())){
-						System.out.println("nterpriseId = "+conf.getEnterpriseId());
+						System.out.println("enterpriseId = "+conf.getEnterpriseId());
 						System.out.println("confName "+conf.getSubject());
 						System.out.println("huiyiID  "+conf.getConfId());
-						System.out.println("huiyi点数 "+conf.getMaxMemberAmount());
+						System.out.println("会议点数 "+conf.getMaxMemberAmount());
 						System.out.println("会议状态："+conf.getConfStatus());
 						System.out.println("会议开始时间："+conf.getBeginDatetime());
 						System.out.println("会议结束时间："+conf.getEndDatetime());
@@ -1037,23 +1069,75 @@ public ESpaceMeetingAsSoapResponseGetDataConfInfoResponse queryDataConfInfo(Stri
 		}
 	}
 	
+	@Override
+	public boolean setingOnlineUserNum(ConfBase conf) {
+		boolean flag = false;
+		try{
+			ESpaceMeetingCmuLocator locator = getLocator();
+			ESpaceMeetingAsSoapConfManagementService stub = locator.getESpaceMeetingAsSoapConfManagementService(new java.net.URL(CONF_URL));
+			
+			ESpaceMeetingAsSoapRequestGetConfRealtimeStatRequest request = new ESpaceMeetingAsSoapRequestGetConfRealtimeStatRequest();
+			
+			request.setConfId(conf.getConfHwid());
+			request.setStatItemList(new String[]{"online_user_number"});
+			request.setToken(genToken());
+			ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse resp = new ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponse();
+			ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponseHolder holder = new ESpaceMeetingAsSoapResponseGetConfRealtimeStatResponseHolder(resp);
+			ESpaceMeetingAsSoapResult result = stub.getConfRealtimeStat(request, holder);
+			int onlineNum = 0;
+			if(result.getErrCode()!=ConstantUtil.AS_COMMON_SUCCESS_CODE){
+				logger.error("call get online user soap inteface failed! error code:"+result.getErrCode());
+			}else{
+				ESpaceMeetingAsStringKV[] datas = holder.value.getStatData();
+				for (int i = 0; i < datas.length; i++) {
+					if(datas[i].getK().equals("online_user_number")){
+						String num = datas[i].getV();
+						try{
+							onlineNum = Integer.parseInt(num);
+							logger.info("conf: "+conf.getConfHwid()+"  getConfRealtimeStat soap massge: "+num);
+							//获取成功
+							flag = true;
+						}catch(Exception e){
+							
+						}
+						break;
+					}
+				}
+			}
+			conf.setPcNum(onlineNum);
+			if(conf.getBelongConfId()!=null && conf.getBelongConfId()>0){
+				conf.setId(conf.getBelongConfId());
+			}
+			libernate.updateEntity(conf,"id","pc_num");
+		}catch(Exception e){
+			flag = false;
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
 	public static void main(String[] args){
 		//testupdateConf();
-		//queryConf("meeting", "00100001165");
+		queryConf("meeting", "00100009323");
+		
+//		ConfManagementServiceImpl impl = new ConfManagementServiceImpl();
+//		ConfBase conf = new ConfBase();
+//		conf.setConfHwid("00100010832");
+//		impl.setingOnlineUserNum(conf);
+//		String id = impl.getDefAreaId();
 		//testcreateConf();
-//		testqueryConfUserStatus();
+		//testqueryConfUserStatus("00100010832");
 		//cancelMeeting("00100000142");
 		
 		//queryConf("meeting", "00100002062");
 		//testcreateConf();
-		testqueryConfUserStatus("00100001621");
+//		testqueryConfUserStatus("00100008104");
 		//cancelMeeting("00100000839");
-//		testqueryConfList("jack");      //查询所有AS的会议
+//		testqueryConfList("meeting");      //查询所有AS的会议
 //		testqueryConfList();      //查询所有AS的会议
 		
 //		queryDataConfInfos("meeting","00100001230");
 	}
 
-	
 	
 }

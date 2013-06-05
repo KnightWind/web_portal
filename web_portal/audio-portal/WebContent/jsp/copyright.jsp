@@ -12,6 +12,6 @@
 </style>
 </head>
 <body>
-<div class="copyright-text">版权所有 &copy; 2013 上海上海会畅通讯股份有限公司</div>
+<div class="copyright-text">${LANG['bizconf.jsp.copyright.res1']} &copy; 2013 ${LANG['bizconf.jsp.copyright.res2']}</div>
 </body>
 </html>

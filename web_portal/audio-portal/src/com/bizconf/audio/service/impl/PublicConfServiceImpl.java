@@ -179,7 +179,7 @@ public class PublicConfServiceImpl extends BaseService implements
 		List<Object> valueList = new ArrayList<Object>();
 		StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append(" SELECT * FROM t_conf_base ");
-		sqlBuilder.append(" WHERE site_id= ?  AND public_flag= ? AND del_flag= ?  AND conf_status = ? ");
+		sqlBuilder.append(" WHERE site_id= ?  AND public_flag= ? AND del_flag= ?  AND conf_status = ? and (permanent_conf = 0 or permanent_conf = 1)");
 		valueList.add(currentSite.getId());
 		valueList.add(ConfConstant.CONF_PUBLIC_FLAG_TRUE);
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);

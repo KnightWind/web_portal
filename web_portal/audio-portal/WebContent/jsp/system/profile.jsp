@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>管理员个人信息修改</title>
+<title>${LANG['bizconf.jsp.system.profile.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/style.css"/>
 <link rel="stylesheet" type="text/css" href="/static/js/tipsy-master/src/stylesheets/tipsy.css" />
@@ -20,6 +20,7 @@ $(function() {
 		required: {
 			"username": "${LANG['system.user.trueName.input']}",
 			"enname": "${LANG['system.user.enName.input']}",
+			"orgpassword": "${LANG['system.admin.profile.msg3']}",
 			"password": "${LANG['system.user.loginPass.input']}",
 			"confirmpass": "${LANG['system.user.confirmPass.input']}",
 			"email": "${LANG['system.user.email.input']}",
@@ -38,7 +39,7 @@ $(function() {
 			"email": "${LANG['system.user.email.custom']}",
 			"mobile": "${LANG['system.sysUser.mobile.custom']}",
 			"equalTo": "${LANG['system.user.confirmpass.custom']}",
-			"checkMobile": "请输入正确的电话格式"
+			"checkMobile": "${LANG['bizconf.jsp.admin.profile.res2']}"
 		}
 	};
 	$("#profileForm").find("input").not(".skipThese").uniform();
@@ -64,7 +65,7 @@ $(function() {
 		errorClass: "warning",
 		rules: {
             'trueName' : {required:true, rangelength: [1, 32], checkUserName:true},
-            'enName' : {notRequired:true, rangelength: [1, 32], checkUserName:true},
+            'enName' : {notRequired:true, rangelength: [1, 32], checkEnName:true},
             'email' : {required:true, rangelength: [6, 64], email: true},
             'telephone' : {notRequired:true, rangelength:[4, 32], checkMobile: true}
         },
@@ -72,6 +73,7 @@ $(function() {
         messages: {
             'trueName' : {required:ruleString.required.username, rangelength: ruleString.rangelength.username},
             'enName' : {required:ruleString.required.enname, rangelength: ruleString.rangelength.enName},
+            'orgPass' : {required:ruleString.required.orgpassword, rangelength: ruleString.rangelength.password},
             'loginPass' : {required:ruleString.required.password, rangelength: ruleString.rangelength.password},
             'loginPass2' : {required:ruleString.required.confirmpass, rangelength: ruleString.rangelength.email, equalTo: ruleString.custom.equalTo},
             'email' : {required:ruleString.required.email, rangelength: ruleString.rangelength.email, email: ruleString.custom.email},
@@ -182,13 +184,38 @@ $(function() {
 	$("#loginPass").val("");
 	$("#loginPass2").val("");
 	
-	$("#loginPass").change(function() {
+	$("#orgPass").change(function() {
 		if($(this).val() && $(this).val().length>0) {
+			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
-			$(this).tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
+			$("#loginPass").rules("remove");
+			$("#loginPass2").rules("remove");
+		}
+	});
+	
+	$("#loginPass").change(function() {
+		if($(this).val() && $(this).val().length>0) {
+			$("#orgPass").rules("add", { required: true, rangelength: [6, 16]});
+			$(this).rules("add", { required: true, rangelength: [6, 16]});
+			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
+		} else {
+			$(this).rules("remove");
+			$("#orgPass").rules("remove");
+			$("#loginPass2").rules("remove");
+		}
+	});
+	
+	$("#loginPass2").change(function() {
+		if($(this).val() && $(this).val().length>0) {
+			$(this).rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
+			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
+			$("#orgPass").rules("add", { required: true, rangelength: [6, 16]});
+		} else {
+			$(this).rules("remove");
+			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");
 		}
 	});

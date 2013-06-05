@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
 import com.bizconf.audio.constant.ConstantUtil;
+import com.bizconf.audio.dao.DAOProxy;
 import com.bizconf.audio.entity.SiteBase;
+import com.bizconf.audio.entity.SystemUser;
 import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.service.EmailService;
 import com.bizconf.audio.service.SiteService;
@@ -192,6 +194,49 @@ public class ResetPasswordController  extends BaseController {
 		}
 		results.put("status", ConstantUtil.EMAIL_FLAG_SECCEED);
 		results.put("message", "密码修改成功");
+		return JsonUtil.parseMapToJsonStr(results);
+	}
+	
+	
+	/**
+	 * 超级站点管理员修改普通站点管理员密码后，普通站点管理员第一次登陆成功后需重置密码
+	 * wangyong
+	 * 2013-5-31
+	 */
+	@AsController(path = "resetPass")
+	@Post
+	public Object resetPass(HttpServletRequest request){
+		Map<String, Object> results = new HashMap<String, Object>();
+		UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
+		String orgPass = request.getParameter("orgPass");
+		String newPass = request.getParameter("loginPass");
+		if(!StringUtil.isNotBlank(orgPass) || !StringUtil.isNotBlank(newPass)){
+			results.put("status", ConstantUtil.RESET_PASS_FAILED);
+			results.put("message", "请输入密码！");
+			return JsonUtil.parseMapToJsonStr(results);	
+		}
+		if(StringUtil.isNotBlank(orgPass)){
+			String inputOrgPass = MD5.encodePassword(orgPass, "MD5");
+			if(!currentSiteAdmin.getLoginPass().equals(inputOrgPass)){
+				results.put("status", ConstantUtil.RESET_PASS_FAILED);
+				results.put("message", "原密码错误，请重新输入！");
+				return JsonUtil.parseMapToJsonStr(results);	
+			}
+		}
+		if (StringUtil.isNotBlank(newPass)) {
+			currentSiteAdmin.setLoginPass(MD5.encodePassword(newPass, "MD5"));
+			currentSiteAdmin.setPassEditor(currentSiteAdmin.getId());
+			try {
+				DAOProxy.getLibernate().updateEntity(currentSiteAdmin);
+			} catch (Exception e) {
+				logger.error("重置密码失败！"+e);
+				results.put("status", ConstantUtil.RESET_PASS_FAILED);
+				results.put("message", "重置密码失败！");
+				return JsonUtil.parseMapToJsonStr(results);	
+			}
+		}
+		results.put("status", ConstantUtil.RESET_PASS_SUCCEED);
+		results.put("message", "重置密码成功！");
 		return JsonUtil.parseMapToJsonStr(results);
 	}
 }

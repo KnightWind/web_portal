@@ -191,7 +191,6 @@ public class ConfBase implements java.io.Serializable {
 		第16位	私聊
 		第17位	组聊
 		第22位	媒体共享
-
 	 * */
 	private String clientConfig = "";
 	
@@ -284,8 +283,13 @@ public class ConfBase implements java.io.Serializable {
 	/**
 	 * 是否永久会议
 	 */
-	private Integer permanentConf = 0; //0：非永久会议    1:永久会议
-
+	private Integer permanentConf = 0; //0：非永久会议    1:永久主会议 2:永久会议子会议
+	
+	
+	private Integer belongConfId = 0;//所属永久会议ID 如果为永久会议时使用   默认：0  
+	
+	
+	
 	/** default constructor */
 	public ConfBase() {
 	}
@@ -436,7 +440,14 @@ public class ConfBase implements java.io.Serializable {
 	}
 
 	public Integer getDuration() {
-		return this.duration;
+		if(this.duration!=null && this.duration.intValue()>0){
+			return this.duration;
+		}else if(this.endTime!=null){
+			Long l = new Long((this.endTime.getTime()-this.startTime.getTime())/60000);
+			return l.intValue();
+		}else{
+			return 0;
+		}
 	}
 
 	public void setDuration(Integer duration) {
@@ -650,11 +661,11 @@ public class ConfBase implements java.io.Serializable {
 	public Integer getCreateType() {
 		return this.createType;
 	}
-
+	
 	public void setCreateType(Integer createType) {
 		this.createType = createType;
 	}
-
+	
 	public Integer getDelFlag() {
 		return this.delFlag;
 	}
@@ -698,7 +709,7 @@ public class ConfBase implements java.io.Serializable {
 	public Integer getTimeZoneId() {
 		return timeZoneId;
 	}
-
+	
 	public void setTimeZoneId(Integer timeZoneId) {
 		this.timeZoneId = timeZoneId;
 	}
@@ -729,6 +740,14 @@ public class ConfBase implements java.io.Serializable {
 
 	public void setPermanentConf(Integer permanentConf) {
 		this.permanentConf = permanentConf;
+	}
+	
+	public Integer getBelongConfId() {
+		return belongConfId;
+	}
+
+	public void setBelongConfId(Integer belongConfId) {
+		this.belongConfId = belongConfId;
 	}
 
 	public void setPhoneNum(Integer phoneNum) {
@@ -812,7 +831,18 @@ public class ConfBase implements java.io.Serializable {
 			return false;
 		return true;
 	}
-
+	
+	public boolean isBelongPermanentConf(){
+		if(this.getPermanentConf()!=null && this.getPermanentConf().intValue() ==1){
+			return true;
+		}
+		else if(getEndTime()!=null && (getEndTime().getTime() - getStartTime().getTime())>24*3600000l){
+			setPermanentConf(1);
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() {
 		return "ConfBase [id=" + id + ", confHwid=" + confHwid + ", siteId="
@@ -835,7 +865,10 @@ public class ConfBase implements java.io.Serializable {
 				+ ", createUser=" + createUser + ", createType=" + createType
 				+ ", delFlag=" + delFlag + ", delTime=" + delTime
 				+ ", delUser=" + delUser + ", delType=" + delType
-				+ ", timeZone=" + timeZone + ", timeZoneId=" + timeZoneId + "]";
+				+ ", timeZone=" + timeZone + ", timeZoneId=" + timeZoneId
+				+ ", pcNum=" + pcNum + ", phoneNum=" + phoneNum + ", hostKey="
+				+ hostKey + ", permanentConf=" + permanentConf
+				+ ", belongConfId=" + belongConfId + "]";
 	}
 
 }

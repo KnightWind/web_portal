@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>添加联系人</title>
+<title>${LANG['bizconf.jsp.add_contacts.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
@@ -56,7 +56,7 @@
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&]{1,32}$/.test(value);
 	 	}, ruleString.custom.checkEnName);
 		$.validator.addMethod("checkTelphone", function(value, element) {       
-	    	return this.optional(element) || /^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$/.test(value);
+	    	return this.optional(element) || /^((\+?[0-9]{2,4}\-[0-9]{3,4}\-)|([0-9]{3,4}\-))?([0-9]{7,8})(\-[0-9]+)?$/.test(value);
 	 	}, ruleString.custom.checkPhone);
 		$.validator.addMethod("checkMobile", function(value, element) {       
 	    	return this.optional(element) || /^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$/.test(value);
@@ -73,8 +73,8 @@
 	            'contactNameEn' : {notRequired:true, rangelength: [1, 32], checkEnName:true},
 	            'contactEmail' : {required:true, rangelength:[6, 64], email: true},
 	            'contactPhone' : {required:true, rangelength: [4, 32], checkTelphone:true},
-	            'contactMobile' : {notRequired:true, rangelength: [4, 32], checkTelphone:true},
-	            'remark' : {notRequired:true, maxlength: 256, checkMobile:true}
+	            'contactMobile' : {notRequired:true, rangelength: [4, 32], checkMobile:true},
+	            'remark' : {notRequired:true, maxlength: 256}
 	        },
 	        messages: {
 	            'contactName' : {required:ruleString.required.contactName, rangelength: ruleString.rangelength.contactName},
@@ -145,44 +145,44 @@
       <tr>
         <td class="overlay-bdL"></td>
         <td class="overlay-content"> 
-        <!--弹出层主题内容区域开始========================================================================-->
+        <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
       	<div class="First_Steps_quick_a" style=" background:#FFF;height: 464px;">
 	        <div class="First_Steps_title_a"> <a href="javascript:closeDialog();"></a>
-	          <h3 class="tit_a">添加联系人</h3>
-	          <p class="tit_b">添加您个人通讯录成员, 方便快速邀请用户入会。</p>
+	          <h3 class="tit_a">${LANG['bizconf.jsp.add_contacts.res1']}</h3>
+	          <p class="tit_b">${LANG['bizconf.jsp.add_contacts.res3']}, ${LANG['bizconf.jsp.add_contacts.res4']}</p>
 	        </div>
         	<div style=" background:#fff">
         		<img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" />
         	</div>
         	<div class="First_Steps_top" style=" background:#FFF"> </div>
         	<p class="annotation_text">
-        		联系电话：外呼电话会议时默认以联系电话为主进行外呼；<br />
-        		邮箱地址：系统自动发送会议信息到该邮箱。
+        		${LANG['bizconf.jsp.add_contacts.res5']}<br />
+        		${LANG['bizconf.jsp.add_contacts.res6']}
         	</p>
 	        <div class="First_Steps_main_quick">
 	          <table class="box_a_quick" cellpadding="0" cellspacing="0" border="0" >
 	            <tr class="box01">
-	              <td align="right" class="left_text_a"><label class='red_star'>*</label>用户名</td>
+	              <td align="right" class="left_text_a"><label class='red_star'>*</label>${LANG['bizconf.jsp.add_contacts.res7']}</td>
 	              <td align="left"><input class="right_text_a" id="contactName" name="contactName" type="text" value="${contact.contactName}" /></td>
 	            </tr>
 	            <tr class="box01">
-	              <td align="right" class="left_text_a">英文名</td>
+	              <td align="right" class="left_text_a">${LANG['bizconf.jsp.add_contacts.res8']}</td>
 	              <td align="left"><input class="right_text_a" id="contactNameEn" name="contactNameEn" type="text" value="${contact.contactNameEn}"/></td>
 	            </tr>
 	            <tr class="box01">
-	              <td align="right" class="left_text_a"><label class='red_star'>*</label>邮箱</td>
+	              <td align="right" class="left_text_a"><label class='red_star'>*</label>${LANG['bizconf.jsp.add_contacts.res9']}</td>
 	              <td align="left"><input class="right_text_a" id="contactEmail" name="contactEmail" type="text" value="${contact.contactEmail}" /></td>
 	            </tr>
 	            <tr class="box01">
-	              <td align="right" class="left_text_a"><label class='red_star'>*</label>联系电话</td>
+	              <td align="right" class="left_text_a"><label class='red_star'>*</label>${LANG['bizconf.jsp.add_contacts.res10']}</td>
 	              <td align="left"><input class="right_text_a" id="contactPhone" name="contactPhone" type="text" value="${contact.contactPhone}"  /></td>
 	            </tr>
 	             <tr class="box01">
-	              <td align="right" class="left_text_a">手机号码</td>
+	              <td align="right" class="left_text_a">${LANG['bizconf.jsp.add_contacts.res11']}</td>
 	              <td align="left"><input class="right_text_a" id="contactMobile" name="contactMobile" type="text" value="${contact.contactMobile}"/></td>
 	            </tr>
 	            <tr class="box01">
-	              <td align="right" valign="top" class="left_text_a">备注</td>
+	              <td align="right" valign="top" class="left_text_a">${LANG['bizconf.jsp.add_contacts.res12']}</td>
 	              <td align="left"><textarea  class="right_text_b" id="remark" name="remark"  value="${contact.contactDesc}">${contact.contactDesc}</textarea></td>
 	            </tr>
 	          </table>
@@ -190,7 +190,7 @@
        
           	<div class="btn_a">
           		<span class="button_common">
-          			<a href="javascript:closeDialog();"><img src="/static/images/quxiao.png" width="14" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;" />取消</a>
+          			<a href="javascript:closeDialog();"><img src="/static/images/quxiao.png" width="14" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;" />${LANG['bizconf.jsp.add_contacts.res13']}</a>
           		</span>
           	</div>
           	<div class="btn_q">
@@ -198,17 +198,17 @@
           			<a href="javascript:submitForm();"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;"/>
           			<c:choose>
 	          			<c:when test="${contact !=null}">
-	          				完成
+	          				${LANG['bizconf.jsp.add_contacts.res14']}
 	          			</c:when>
 	          			<c:otherwise>
-	          				添加
+	          				${LANG['bizconf.jsp.add_contacts.res15']}
 	          			</c:otherwise>
           			</c:choose>
 					</a>
 				</span>
 			</div>
       	</div>
-        <!--弹出层主题内容区域开始========================================================================-->
+        <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
    		</td>
         <td class="overlay-bdR"></td>
       </tr>

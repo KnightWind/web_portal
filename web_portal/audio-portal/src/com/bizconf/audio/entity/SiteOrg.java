@@ -17,6 +17,9 @@ public class SiteOrg implements java.io.Serializable {
 	private static final long serialVersionUID = 5968277066642463072L;
 	private Integer id;
 	private Integer siteId;
+
+	private Integer parentId;
+	
 	private String orgCode;
 	private String orgName;
 	private String orgDesc;
@@ -35,10 +38,14 @@ public class SiteOrg implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public SiteOrg(Integer siteId, String orgCode, String orgName,
-			String orgDesc, Integer orgLevel, Integer orgSort, Date createTime,
-			Integer createUser, Integer delFlag, Date delTime, Integer delUser) {
+	public SiteOrg(Integer id, Integer siteId, Integer parentId,
+			String orgCode, String orgName, String orgDesc, Integer orgLevel,
+			Integer orgSort, Date createTime, Integer createUser,
+			Integer delFlag, Date delTime, Integer delUser) {
+		super();
+		this.id = id;
 		this.siteId = siteId;
+		this.parentId = parentId;
 		this.orgCode = orgCode;
 		this.orgName = orgName;
 		this.orgDesc = orgDesc;
@@ -57,6 +64,7 @@ public class SiteOrg implements java.io.Serializable {
 		return this.id;
 	}
 
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -67,6 +75,14 @@ public class SiteOrg implements java.io.Serializable {
 
 	public void setSiteId(Integer siteId) {
 		this.siteId = siteId;
+	}
+	
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
 	}
 
 	public String getOrgCode() {
@@ -149,7 +165,7 @@ public class SiteOrg implements java.io.Serializable {
 		this.delUser = delUser;
 	}
 	
-	public void init(UserBase currentSiteAdmin){
+	public void init(UserBase currentSiteAdmin, int parentId){
 		this.createUser = currentSiteAdmin.getId();
 		this.delUser = 0;
 		this.createTime = DateUtil.getGmtDate(null);
@@ -159,10 +175,10 @@ public class SiteOrg implements java.io.Serializable {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		this.orgCode = "100";
 		this.orgLevel = 1;
 		this.orgSort = 1;
 		this.siteId = currentSiteAdmin.getSiteId();
+		this.parentId = parentId;
 	}
 
 	@Override
@@ -192,7 +208,8 @@ public class SiteOrg implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "SiteOrg [id=" + id + ", siteId=" + siteId + ", orgCode="
+		return "SiteOrg [id=" + id + ", siteId=" + siteId + ", parentId="
+				+ parentId + ",  orgCode="
 				+ orgCode + ", orgName=" + orgName + ", orgDesc=" + orgDesc
 				+ ", orgLevel=" + orgLevel + ", orgSort=" + orgSort
 				+ ", createTime=" + createTime + ", createUser=" + createUser

@@ -9,20 +9,77 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>添加企业用户</title>
+<title>${LANG['bizconf.jsp.admin.edit_userbase.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/popupbox.css"/>
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
-	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">	
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css" />	
+	<style type="text/css">
+		#orgLevel1 {
+			width: 70px;
+		}
+	</style>
+	
+	<%@ include file="/jsp/common/cookie_util.jsp"%>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
+	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/development-bundle/ui/minified/i18n/jquery-ui-i18n.min.js"></SCRIPT>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js"></script>
 	<script type="text/javascript" src="${baseUrlStatic}/js/tipsy-master/src/javascripts/jquery.tipsy.js"></script>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js"></SCRIPT>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js"></SCRIPT>
+	<fmt:formatDate var="userExprieDate" value="${userBase.exprieDate}" pattern="yyyy-MM-dd"/>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		var lang = getBrowserLang(); 
+		if (lang=="zh-cn") {
+			$.datepicker.setDefaults( $.datepicker.regional[ "zh-CN" ] );
+		} else {
+			$.datepicker.setDefaults( $.datepicker.regional[ "en-GB" ] );
+		}
+		$( "#userDateText" ).datepicker({
+			minDate: +0,
+			changeMonth: true,
+			changeYear: true,			
+			dateFormat: "yy-mm-dd",
+			showOn: "both",
+			buttonImage: "/static/images/calendar.jpg",
+			buttonImageOnly: true,
+			onClose: function() {
+			}
+		});
+		
+
+		var now = new Date();
+		var year = now.getFullYear();
+		var month = now.getMonth()+2;
+		month = month<10?"0"+month:month;
+		var day = now.getDate();
+		day = day<10?"0"+day:day;
+		var tempDate = year+"-"+month+"-"+day;
+		var permanetUser = "${userBase.permanentUser}";
+		var userDate = "${userExprieDate}";
+		if(userDate){
+			if(permanetUser && permanetUser=="true"){
+				$( "#userDateText" ).val(tempDate);
+			} else {
+				$( "#userDateText" ).val(userDate);	
+			}
+		} else {
+			$( "#userDateText" ).val(tempDate);	
+		}
+		if(permanetUser){
+			if(permanetUser=="true"){
+				$("input:radio[name=userDateRadio]:eq(0)").attr("checked",'checked');
+			} else {
+				$("input:radio[name=userDateRadio]:eq(1)").attr("checked",'checked');
+			}
+		}
+		
+		
 		$("#saveUserForm").find("input, select, textarea").not(".skipThese").uniform();
 		$('#saveUserForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		var ruleString = {
@@ -64,9 +121,9 @@
 	 	}, "");
 		$.validator.addMethod("noSpace", function(value, element) {
 			return value=="" || (value != ""&&value.indexOf(" ") < 0 );
-	 	}, "密码中不能含有空格");
+	 	}, "${LANG['bizconf.jsp.admin.add_site_user.res2']}");
 		$.validator.addMethod("checkLoginName", function(value, element) {       
-	    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+	    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
 	 	}, ruleString.custom.checkLoginName);
 		$.validator.addMethod("checkUserName", function(value, element) {       
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&\s\u4e00-\u9fa5]{1,32}$/.test(value);
@@ -128,7 +185,7 @@
 			var frame = parent.$("#userDiv");
 			frame.trigger("closeDialog");
 		});
-
+		
 		//update passworld required to verify or disable
 		var siteId = "${userBase.id}";
 		if (siteId && siteId.length>0) {
@@ -138,6 +195,139 @@
 			$("#loginPass").rules("add", {noSpace: true, required:true, rangelength:[6, 16]});
 			$("#confirmPass").rules("add", {noSpace: true, required:true, rangelength:[6, 16], equalTo: '#loginPass'});
 		}
+		
+		//org
+		
+		$("#orgLevel1").change(function() {
+			var level4 = $("#orgLevel4");
+			var level3 = $("#orgLevel3");
+			var level2 = $("#orgLevel2");
+			level4.hide();
+			level3.hide();
+			var id = $(this).val();
+			if(id==0){
+				level2.hide();
+				level2.find("option:eq(0)").attr("selected", "selected");
+				level3.find("option:eq(0)").attr("selected", "selected");
+				level4.find("option:eq(0)").attr("selected", "selected");
+			} else {
+				level2.empty();
+				$("<option pid='-1' value='0' selected='selected'>${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>").appendTo(level2);
+				$(".orgOptions").each(function(){
+					var pid = $(this).attr("pid");
+					var value = $(this).attr("value");
+					var name = $(this).attr("name");
+		            if(pid==id) {
+		            	$("<option pid="+pid+" value="+value+">"+name+"</option>").appendTo(level2);
+		            }
+		    	});   
+// 				$("#orgLevel2 option").each(function(){
+// 					var pid = $(this).attr("pid");
+// 					if(pid=="-1"){
+// 						$(this).attr("selected", "selected");
+// 					}
+// 		            if(pid==id || pid=="-1") {
+// 		            	$(this).show();
+// 		            } else {
+// 		            	$(this).hide();
+// 		            }
+// 		    	});   
+				level2.show();
+			}
+        });
+		
+		$("#orgLevel2").change(function() {
+			var level4 = $("#orgLevel4");
+			var level3 = $("#orgLevel3");
+			var level1 = $("#orgLevel1");
+			level4.hide();
+			var id = $(this).val(); 
+			if(id==0){
+				level3.hide();
+				level3.find("option:eq(0)").attr("selected", "selected");
+				level4.find("option:eq(0)").attr("selected", "selected");
+			} else {
+				level3.empty();
+				$("<option pid='-1' value='0' selected='selected'>${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>").appendTo(level3);
+				$(".orgOptions").each(function(){
+					var pid = $(this).attr("pid");
+					var value = $(this).attr("value");
+					var name = $(this).attr("name");
+		            if(pid==id) {
+		            	$("<option pid="+pid+" value="+value+">"+name+"</option>").appendTo(level3);
+		            }
+		    	});
+// 				$("#orgLevel3 option").each(function(){
+// 					var pid = $(this).attr("pid");
+// 					if(pid=="-1"){
+// 						$(this).attr("selected", "selected");
+// 					}
+// 		            if(pid==id || pid=="-1") {
+// 		            	$(this).show();
+// 		            } else {
+// 		            	$(this).hide();
+// 		            }
+// 		    	});   
+				level3.show();
+			}
+        });
+		
+		$("#orgLevel3").change(function() {
+			var level4 = $("#orgLevel4");
+			var level2 = $("#orgLevel2");
+			level4.find(".org-option").remove();
+			var id = $(this).val();
+			if(id==0){
+				level4.hide();
+				level4.find("option:eq(0)").attr("selected", "selected");
+			} else {
+				level4.empty();
+				$("<option pid='-1' value='0' selected='selected'>${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>").appendTo(level4);
+				$(".orgOptions").each(function(){
+					var pid = $(this).attr("pid");
+					var value = $(this).attr("value");
+					var name = $(this).attr("name");
+		            if(pid==id) {
+		            	$("<option pid="+pid+" value="+value+">"+name+"</option>").appendTo(level4);
+		            }
+		    	});
+// 				$("#orgLevel4 option").each(function(){
+// 					var pid = $(this).attr("pid");
+// 					if(pid=="-1"){
+// 						$(this).attr("selected", "selected");
+// 					}
+// 					if(pid==id || pid=="-1") {
+// 		            	$(this).show();
+// 		            } else {
+// 		            	$(this).hide();
+// 		            }
+// 		    	});
+				level4.show();
+			}
+        });
+		
+		$("#orgLevel4").change(function() {
+			var id = $(this).val();
+        });
+		displayOrgOption();
+		
+		showFunc($("select[name=userRole]"));
+		$("input[name='autoFlag']").attr("disabled", "disabled");
+		var checked = $("input[name='phoneFlag']").attr("checked");
+		if(checked=="checked"){
+			$("input[name='autoFlag']").removeAttr("disabled");
+		}
+		$("input[name='phoneFlag']").change(function() {
+			var value = $(this).val();
+			var checked = $(this).attr("checked");
+			if(checked=="checked"){
+				$("input[name='autoFlag']").removeAttr("disabled");
+			} else {
+				$("input[name='autoFlag']").attr("disabled", "disabled");
+				$("input[name='autoFlag']").removeAttr("checked", "checked");
+			}
+			$.uniform.update();
+		});
 	});	
 	
 	function saveSysUser() {
@@ -151,11 +341,27 @@
 		user.mobile = $("#mobile").val();
 		user.remark = $("#remark").val();
 		user.userRole = $("select[name=userRole]").val();
-		user.orgId = $("#orgId").val();
+// 		user.orgId = $("#orgId").val();
+		var orgListTR = $(".orgListTR");
+		if(orgListTR && orgListTR.length>0){
+			var orgId = getSelectOrg();	
+			if(orgId && orgId>0){
+				user.orgId = orgId;
+			}
+		}
+		
+		var exprieDateRadio = $('input:radio[name="userDateRadio"]:checked').val();
+		if(exprieDateRadio=="2"){
+			user.exprieDate = $("#userDateText").val()+" 23:59:59"; 
+		}
+		
 		var func = {};
-		<c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_LIST}" varStatus="status"><c:set var="eachFieldName" value="${eachField[1]}"/><c:if test='${sitePower[eachFieldName]==EMPOWER_ENABLED && fn:indexOf(eachFieldName,"Flag")>-1 && eachField[2]==1}'>
-		func.${eachFieldName} = $("input[name=${eachFieldName}]:checked").length>0?1:0;
-		</c:if></c:forEach>
+		<c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_LIST}" varStatus="status">
+			<c:set var="eachFieldName" value="${eachField[1]}"/>
+			<c:if test='${sitePower[eachFieldName]==EMPOWER_ENABLED && fn:indexOf(eachFieldName,"Flag")>-1 && eachField[2]==1}'>
+			func.${eachFieldName} = $("input[name=${eachFieldName}]:checked").length>0?1:0;
+			</c:if>
+		</c:forEach>
 		//func.phoneFlag = $("input[name=phoneFlag]:checked").length>0?1:0;
 		//func.autoFlag = $("input[name=autoFlag]:checked").length>0?1:0;
 		
@@ -177,18 +383,133 @@
 	}
 	
 	function showFunc(obj){
-		if(obj.value==1){
+		if($(obj).val()==1){
 			$("#conffuc").show();
 		}else{
 			$("#conffuc").hide();
 		}
 	}
+	
+	function initLevelOrg(id, elem){
+		app.getAdminLevelOrg(id, function(result) {
+			if(result && result.status==1){
+				var orgUserList = result.orgUserList;
+				for ( var i = 0; i < orgUserList.length; i++) {
+					var org = orgUserList[i];
+					$("<option class='org-option' value="+org.id+">"+org.orgName+"</option>").appendTo(elem);	
+				}
+				elem.show();
+			}
+		});
+	}
+	
+	function displayOrgOption() {
+		var dep1 = "${dep1}";
+		if(dep1){
+			$("#orgLevel1").val(dep1);
+			var level2 = $("#orgLevel2");
+			level2.empty();
+			$("<option pid='-1' value='0' selected='selected'>${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>").appendTo(level2);
+			$(".orgOptions").each(function(){
+				var pid = $(this).attr("pid");
+				var value = $(this).attr("value");
+				var name = $(this).attr("name");
+	            if(pid==dep1) {
+	            	$("<option pid="+pid+" value="+value+">"+name+"</option>").appendTo(level2);
+	            }
+	    	});   
+			level2.show();
+		}
+		var dep2 = "${dep2}";
+		if(dep2){
+			$("#orgLevel2").val(dep2).show();
+			var level3 = $("#orgLevel3");
+			level3.empty();
+			$("<option pid='-1' value='0' selected='selected'>${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>").appendTo(level3);
+			$(".orgOptions").each(function(){
+				var pid = $(this).attr("pid");
+				var value = $(this).attr("value");
+				var name = $(this).attr("name");
+	            if(pid==dep2) {
+	            	$("<option pid="+pid+" value="+value+">"+name+"</option>").appendTo(level3);
+	            }
+	    	});   
+			level3.show();
+// 			$("#orgLevel3 option").each(function(){
+// 				var pid = $(this).attr("pid");
+// 				if(pid=="-1"){
+// 					$(this).attr("selected", "selected");
+// 				}
+// 	            if(pid==dep2 || pid=="-1") {
+// 	            	$(this).show();
+// 	            } else {
+// 	            	$(this).hide();
+// 	            }
+// 	    	});
+// 			$("#orgLevel3").show();
+		}
+		var dep3 = "${dep3}";
+		if(dep3){
+			$("#orgLevel3").val(dep3).show();
+			var level4 = $("#orgLevel4");
+			level4.empty();
+			$("<option pid='-1' value='0' selected='selected'>${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>").appendTo(level4);
+			$(".orgOptions").each(function(){
+				var pid = $(this).attr("pid");
+				var value = $(this).attr("value");
+				var name = $(this).attr("name");
+	            if(pid==dep3) {
+	            	$("<option pid="+pid+" value="+value+">"+name+"</option>").appendTo(level4);
+	            }
+	    	});   
+			level4.show();
+// 			$("#orgLevel4 option").each(function(){
+// 				var pid = $(this).attr("pid");
+// 				if(pid=="-1"){
+// 					$(this).attr("selected", "selected");
+// 				}
+// 	            if(pid==dep3 || pid=="-1") {
+// 	            	$(this).show();
+// 	            } else {
+// 	            	$(this).hide();
+// 	            }
+// 	    	});
+// 			$("#orgLevel4").show();
+		}
+		var dep4 = "${dep4}";
+		if(dep4){
+			$("#orgLevel4").val(dep4).show();
+		}
+	}
+	
+	function relateOrg() {
+		parent.relateOrg();
+	}
+	
+	function getSelectOrg() {
+		var orgId = $("#orgLevel4").val();
+		if(orgId==0){
+			orgId = $("#orgLevel3").val();
+			if(orgId==0){
+				orgId = $("#orgLevel2").val();
+				if(orgId==0){
+					orgId = $("#orgLevel1").val();
+				}
+			}
+		}
+		return orgId;
+	}
+	
 	</script>	
 </head> 
 <body onload="loaded()">
 <form id="saveUserForm"  action="" method="post">
      		<input type="hidden" name="id" value="${userBase.id}"/>
-			<table class="table_create_system_user">
+     		<c:forEach var="org" items="${orgList}" end="0">
+     			<c:set var="rootOrg" value="${org.id }"/>
+     		</c:forEach>
+     		<input type="hidden" id="rootOrgId" name="rootOrgId" value="${rootOrg}"/>
+			<table class="table_create_system_user" style="height: 423px">
 				  <tr>
 				    <td align="right">
 				      <label class='red_star'>*</label>${LANG['system.sysUser.list.loginName']}
@@ -229,21 +550,58 @@
 				      <input id="enName" name="enName" class="create_system_user_input" type="text" value="${userBase.enName}"/>
 				    </td>
 				  </tr>
-				  
-				  <tr>
-				    <td align="right">
-				      	用户机构
-				    </td>
-				    <td class="table-td">
-				       <select name="orgId" id="orgId">
-                           <option <c:if test="${!empty userBase && userBase.orgId eq '0'}">selected</c:if> value="0" >无</option>
-                           <c:forEach var="org" items="${orgList}" >
-                              <option <c:if test="${!empty userBase && userBase.orgId eq org.id}">selected</c:if> value="${org.id}" >${org.orgName}</option>
-                           </c:forEach>
-                       </select>
-				    </td>
-				  </tr>
-				  
+				  <c:if test="${fn:length(orgList)>0 }">
+ 				  <tr class="orgListTR"> 
+ 				    <td align="right"> 
+ 				      	${LANG['bizconf.jsp.admin.edit_userbase.res3']} 
+ 				    </td> 
+ 				    <td class="table-td">
+<!--  				    	<input class="skipThese" type="button" value="${LANG['bizconf.jsp.admin.edit_userbase.res4']}" onclick="relateOrg()"/> -->
+<!--  				    	<label id="relate_org"></label>  -->
+<!--  				       <select name="" id="">  -->
+<%--                            <option <c:if test="${!empty userBase && userBase.orgId eq '0'}">selected</c:if> value="0" >${LANG['bizconf.jsp.admin.edit_userbase.res5']}</option> --%>
+<%--                            <c:forEach var="org" items="${orgList}" > --%>
+<%--                                <option level="${org.orgLevel }" <c:if test="${!empty userBase && userBase.orgId eq org.id}">selected</c:if> value="${org.id}" >${org.orgName}</option> --%>
+<%--                            </c:forEach> --%>
+<!--                         </select> -->
+                        <c:forEach var="org" items="${orgList}" >
+                        	<span class="orgOptions" style="display: none;" level="${org.orgLevel }" value="${org.id}" pid="${org.parentId}" name="${org.orgName}"></span>
+                        </c:forEach>
+                        <select class="skipThese" id="orgLevel1" name="" style="padding: 3px; border: 1px solid #ABADB3;width:80px;">
+                        	<option pid="-1" value="0">${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>
+		              		<c:forEach var="org" items="${orgList}" >
+		              			<c:if test="${org.orgLevel==1}">
+		              				<option level="${org.orgLevel }" value="${org.id}" <c:if test="${!empty dep1 && dep1 eq org.id}">selected</c:if>>${org.orgName}</option>
+		              			</c:if>
+		              		</c:forEach>
+		              	</select>
+		              	<select class="skipThese" id="orgLevel2" name="" style="padding: 3px; border: 1px solid #ABADB3;margin-left: 5px;display: none;width:80px;">
+		              		<option pid="-1" value="0">${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>
+		              		<c:forEach var="org" items="${orgList}" >
+		              			<c:if test="${org.orgLevel==2}">
+		              				<option pid="${org.parentId}" value="${org.id}" <c:if test="${!empty dep2 && dep2 eq org.id}">selected</c:if>>${org.orgName}</option>
+		              			</c:if>
+		              		</c:forEach>
+		              	</select>
+		              	<select class="skipThese" id="orgLevel3" name="" style="padding: 3px; border: 1px solid #ABADB3;margin-left: 5px;display: none;width:80px;">
+		              		<option pid="-1" value="0">${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>
+		              		<c:forEach var="org" items="${orgList}" >
+		              			<c:if test="${org.orgLevel==3}">
+		              				<option pid="${org.parentId}" value="${org.id}" <c:if test="${!empty dep3 && dep3 eq org.id}">selected</c:if>>${org.orgName}</option>
+		              			</c:if>
+		              		</c:forEach>
+		              	</select>
+		              	<select class="skipThese" id="orgLevel4" name="" style="padding: 3px; border: 1px solid #ABADB3;margin-left: 5px;display: none;width:80px;">
+		              		<option pid="-1" value="0">${LANG['bizconf.jsp.admin.edit_userbase.res2']}</option>
+		              		<c:forEach var="org" items="${orgList}" >
+		              			<c:if test="${org.orgLevel==4}">
+		              				<option pid="${org.parentId}" value="${org.id}" <c:if test="${!empty dep4 && dep4 eq org.id}">selected</c:if>>${org.orgName}</option>
+		              			</c:if>
+		              		</c:forEach>
+		              	</select>
+ 				    </td> 
+ 				  </tr> 
+				  </c:if>
 				  <c:choose>
 					<c:when test="${site.chargeMode eq 1}">
 						<input type="hidden" name="userRole" value="2"/>
@@ -254,16 +612,16 @@
 						      ${LANG['site.admin.edituser.userrole']}
 						    </td>
 						    <td class="table-td">
-						      <select name="userRole" onchange="showFunc(this);">
-				               	<option value="1" <c:if test="${userBase.userRole eq '1'}">selected="selected"</c:if>>${LANG['site.admin.edituser.role1']}</option>
-						      	<option value="2" <c:if test="${empty userBase || userBase.userRole eq '2'}">selected="selected"</c:if>>${LANG['site.admin.edituser.role2']}</option>
+						      <select class="skipThese" name="userRole" onchange="showFunc(this);" style="padding: 3px; border: 1px solid #ABADB3;width:80px;">
+				               	<option value="1" <c:if test="${empty userBase or userBase.userRole eq '1'}">selected="selected"</c:if>>${LANG['site.admin.edituser.role1']}</option>
+						      	<option value="2" <c:if test="${userBase.userRole eq '2'}">selected="selected"</c:if>>${LANG['site.admin.edituser.role2']}</option>
 				              </select>
 						    </td>
 						</tr>
 						<c:if test="${sitePower != null}"> 
 						<tr id="conffuc" <c:if test="${empty userBase || userBase.userRole eq '2'}">style="display:none"</c:if> >
 						    <td align="right">
-						      会议功能
+						      ${LANG['bizconf.jsp.admin.edit_userbase.res6']}
 						    </td>
 						    <td class="table-td">
 						    <%--
@@ -273,42 +631,51 @@
 						    <c:if test="${eachField[0]==EMPOWER_CODE_VIDEO || eachField[0]==EMPOWER_CODE_AUDIO }"><c:set var="tmpNum" value="${tmpNum+1 }"/></c:if>
 						    --%>
 						    <table width="100%" border="0" >
-								<tr><c:set var="modNum" value="0"/><c:set var="modMax" value="4"/><c:set var="tmpNum" value="0"/>
+								<tr>
+								<c:set var="modNum" value="0"/>
+								<c:set var="modMax" value="4"/>
+								<c:set var="tmpNum" value="0"/>
 								<c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_LIST}" varStatus="status">
-									<c:set var="eachFieldName" value="${eachField[1]}"/><c:set var="modNum" value="${tmpNum % modMax }"/>
-									<c:if test="${modNum ==0  && tmpNum > 0}"></tr><tr><c:set var="tmpNum" value="0"/></c:if>
+									<c:set var="eachFieldName" value="${eachField[1]}"/>
+									<c:set var="modNum" value="${tmpNum % modMax }"/>
+									<c:if test="${modNum ==0  && tmpNum > 0}">
+										</tr><tr>
+										<c:set var="tmpNum" value="0"/>
+									</c:if>
 									<c:if test='${sitePower[eachFieldName]==EMPOWER_ENABLED && fn:indexOf(eachFieldName,"Flag")>-1 && eachField[3]==1}'>
-									<td>
-									<input class="extraConfig" name="${eachFieldName}" id="${eachFieldName}" type="checkbox" value="${EMPOWER_ENABLED}"  <c:if test="${userConfig[eachFieldName]==EMPOWER_ENABLED && userConfig.userId > 0 }"> checked </c:if> />
-									<label><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</label>
-									</td>
-									<%--<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"><td id="videoNumTd"></td> </c:if>--%>
-									<c:set var="tmpNum" value="${tmpNum+1}"/>
+										<td>
+											<input class="extraConfig" name="${eachFieldName}" id="${eachFieldName}" type="checkbox" value="${EMPOWER_ENABLED}"  <c:if test="${userConfig[eachFieldName]==EMPOWER_ENABLED && userConfig.userId > 0 }"> checked </c:if> />
+											<label>
+												<c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}
+											</label>
+										</td>
+										<%--<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"><td id="videoNumTd"></td> </c:if>--%>
+										<c:set var="tmpNum" value="${tmpNum+1}"/>
 									</c:if>
 								</c:forEach>
 								<c:if test="${modNum>0}">
-								<c:forEach begin="${modNum+1 }" end="${modMax}" >
-									<td>&nbsp;</td>
-								</c:forEach>
+									<c:forEach begin="${modNum+1 }" end="${modMax}" >
+										<td>&nbsp;</td>
+									</c:forEach>
 								</c:if>
 								</tr>
 							</table>
-<%-- 						      <input type="checkbox" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> <c:if test="${siteConfig.phoneFlag eq 0}">disabled="disabled"</c:if> value="1" name="phoneFlag"/>电话&nbsp; 
- 						      <input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if> <c:if test="${siteConfig.autoFlag eq 0}">disabled="disabled"</c:if> />自动外呼&nbsp; 
- 						      <input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if> <c:if test="${siteConfig.shareMediaFlag eq 0}">disabled="disabled"</c:if> />媒体共享&nbsp; 
- 						      <input type="checkbox" value="1" name="recordFlag"<c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if> <c:if test="${siteConfig.recordFlag eq 0}">disabled="disabled"</c:if>/>录制 
+<%-- 						      <input type="checkbox" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> <c:if test="${siteConfig.phoneFlag eq 0}">disabled="disabled"</c:if> value="1" name="phoneFlag"/>${LANG['bizconf.jsp.admin.conf_list.res9']}&nbsp; 
+ 						      <input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if> <c:if test="${siteConfig.autoFlag eq 0}">disabled="disabled"</c:if> />${LANG['bizconf.jsp.admin.edit_userbase.res7']}&nbsp; 
+ 						      <input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if> <c:if test="${siteConfig.shareMediaFlag eq 0}">disabled="disabled"</c:if> />${LANG['bizconf.jsp.admin.edit_userbase.res8']}&nbsp; 
+ 						      <input type="checkbox" value="1" name="recordFlag"<c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if> <c:if test="${siteConfig.recordFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res9']} 
  						    
 							  <c:if test="${siteConfig.phoneFlag eq 1}"> 
-						      <input type="checkbox" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> value="1" name="phoneFlag"/>电话&nbsp;
+						      <input type="checkbox" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> value="1" name="phoneFlag"/>${LANG['bizconf.jsp.admin.conf_list.res9']}&nbsp;
 						      </c:if>
 						      <c:if test="${siteConfig.autoFlag eq 1}">
-						      <input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if>  />自动外呼&nbsp;
+						      <input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if>  />${LANG['bizconf.jsp.admin.edit_userbase.res7']}&nbsp;
 						      </c:if>
 						      <c:if test="${siteConfig.shareMediaFlag eq 1}">
-						      <input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if>  />媒体共享&nbsp;
+						      <input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if>  />${LANG['bizconf.jsp.admin.edit_userbase.res8']}&nbsp;
 						      </c:if>
 						      <c:if test="${siteConfig.recordFlag eq 1}">
-						      <input type="checkbox" value="1" name="recordFlag"<c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if> />录制
+						      <input type="checkbox" value="1" name="recordFlag"<c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if> />${LANG['bizconf.jsp.admin.edit_userbase.res9']}
 						      </c:if>
  						      --%>
 						    </td>
@@ -316,6 +683,16 @@
 						</c:if>
 					</c:otherwise>
 				  </c:choose>
+				  <tr>
+				    <td align="right">
+				      <label class='red_star'>*</label>用户有效期限 
+				    </td> 
+				    <td class="table-td">
+				      <input name="userDateRadio" class="" type="radio" value="1" checked="checked" />一直有效 : 
+				      <input name="userDateRadio" class="" type="radio" value="2" />截止到
+				      <input id="userDateText" class="" value="" type="text" style="width:90px;" readonly="readonly"/><span style="margin-left: 10px;">有效</span>
+				    </td>
+				  </tr>
 				  <tr>
 				    <td align="right">
 				      <label class='red_star'>*</label>${LANG['system.sysUser.list.email']}

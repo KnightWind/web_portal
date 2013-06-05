@@ -1091,10 +1091,16 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 			EmailConfig sysConfig = emailLogic.getSysEmailConfig(site.getId());
 			
 			UserBase admin = emailLogic.getSiteSupperMasterBySiteId(site.getId());
-			//获取邮件内容
-			Map<String, Object> datas = new HashMap<String,Object>();
+			//获取邮件内容.
+			
+			
+			
+			
+		
+		Map<String, Object> datas = new HashMap<String,Object>();
 			datas.put("user",admin);
-			datas.put("exp_date", SiteConstant.BEFORE_SITE_EXP_REMIND_DATES);
+//			datas.put("exp_date", SiteConstant.BEFORE_SITE_EXP_REMIND_DATES);
+			datas.put("exp_date", site.getExpireDateNumber());
 			String emailContent  = EmailContentGenerator.getInstance().genContent(EmailConstant.SITE_EXPIRED_REMIND, datas);
 			logger.info("the email content:"+emailContent);
 			SendMail mailInfo=new SendMail();

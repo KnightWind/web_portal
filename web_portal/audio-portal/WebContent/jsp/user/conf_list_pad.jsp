@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>主会议列表</title>
+<title>${LANG['bizconf.jsp.conf_list_pad.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/conf_list.css?ver=${version}"/>
@@ -16,7 +16,7 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/tipsy-master/src/javascripts/jquery.tipsy.js?ver=${version}"></script>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js?ver=${version}"></SCRIPT>
 <script type="text/javascript" src="${baseUrlStatic}/js/util.js?ver=${version}"></script>
-
+<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/date.js?ver=${version}"></SCRIPT>
 <script type="text/javascript">
 
 function initJoinConf(){
@@ -24,7 +24,7 @@ function initJoinConf(){
 }
 initJoinConf();
 /*
- * 查看会议详情
+ * ${LANG['bizconf.jsp.conf_list_index.res3']}
  */
 function viewConf(id){
 	parent.parent.viewConf(id);
@@ -36,7 +36,7 @@ function updateBookMeeting(id) {
 function updateAllBookMeeting(id) {
 	parent.parent.updateReservationConf(id);
 }
-//删除单个周期会议
+//${LANG['bizconf.jsp.conf_list_index.res4']}
 function delSignleConf(id) {
 	parent.parent.delACycleConf(id);
 }
@@ -44,13 +44,13 @@ function editInventContact(id) {
 	parent.parent.editInventContact(id);
 }
 /*
- * 重新创建会议
+ * ${LANG['bizconf.jsp.attended_conf_list.res2']}
  */
 function reCreateReservationConf(id) {
 	parent.parent.reCreateReservationConf(id);
 }
 /*
- * 修改周期会议中所有会议的信息
+ * ${LANG['bizconf.jsp.conf_list_index.res5']}
  * updateCycleBookMeetingInfo()
  */
 function updateCycleBookMeetingInfo(id) {
@@ -70,7 +70,7 @@ function sendNoticeEmail(id) {
 					parent.parent.errorDialog(result.message);
 				}
 			}
-		},{message:"正在添加日历提醒...", ui:parent});		
+		},{message:"${LANG['bizconf.jsp.add_calendar_notice.res9']}...", ui:parent});		
 	} else {
 		parent.parent.addCalendar(id);
 	}
@@ -112,7 +112,7 @@ function showInfoView(info,id,event){
 	var targetObj = myEvent.srcElement || myEvent.target;
 	var offset = $(targetObj).offset();
 	
-	$("#"+id).find(".mySpan").html("主持人："+info);
+	$("#"+id).find(".mySpan").html("${LANG['bizconf.jsp.conf_list_index.res6']}"+info);
 	//$("#"+id).css("left", myEvent.clientX-120 + "px").css("top",myEvent.clientY-60 + "px");
 	$("#"+id).css("z-index", "99").css("left", offset.left-60 + "px").css("top",offset.top-60 + "px");
 	$("#"+id).css("visibility", "");
@@ -145,7 +145,7 @@ function showDivOp(id,data,myEvent){
 	$("#"+id).find(".bgview").empty();
 	$("#"+id).find(".bgview").append("<div  style=\"padding-top: 6px; width:100%;\"></div>");
 	if(data.length==0){
-		$("#"+id).find(".bgview").append("<div><span class=\"mySpan\" style=\"line-height: 25px;\">"+'尚无参会者'+"</span></div>");
+		$("#"+id).find(".bgview").append("<div><span class=\"mySpan\" style=\"line-height: 25px;\">"+'${LANG['bizconf.jsp.conf_list_index.res7']}'+"</span></div>");
 	}
 	for(var i=0;i<data.length;i++){
 		$("#"+id).find(".bgview").append("<div><span class=\"mySpan\" style=\"line-height: 25px;\">"+data[i].name+"</span></div>");				
@@ -183,8 +183,9 @@ function refreshData(confId,id,myEvent){
 function joinMeeting(joinType,cId){//cId,cPass,code){
 	parent.parent.joinMeeting(joinType,cId);
 } 
+
 function delConf(confId){
-	parent.parent.confirmDialog("确认取消会议？",function(){
+	parent.parent.confirmDialog("${LANG['bizconf.jsp.attended_conf_list.res3']}",function(){
 		$.ajax({
 	      	type: "POST",
 	      	url:"/user/conf/delete/"+confId,
@@ -193,7 +194,28 @@ function delConf(confId){
 				if(data){
 					 window.location.reload(true);
 				}else{
-					parent.parent.errorDialog('取消会议出现异常！');
+					parent.parent.errorDialog('${LANG['bizconf.jsp.attended_conf_list.res4']}');
+				}
+	      	},
+	        error:function(XMLHttpRequest, textStatus, errorThrown) {
+	        	alert(XMLHttpRequest+"\n"+textStatus+"\n"+errorThrown);
+	        }
+		}); 
+	});	
+}
+
+
+function delConfForPerConf(confId){
+	parent.parent.confirmDialog("${LANG['bizconf.jsp.conf_list_pad.res2']}",function(){
+		$.ajax({
+	      	type: "POST",
+	      	url:"/user/conf/delete/"+confId,
+	      	dataType:"json",
+	      	success:function(data){
+				if(data){
+					 window.location.reload(true);
+				}else{
+					parent.parent.errorDialog('${LANG['bizconf.jsp.conf_list_pad.res3']}');
 				}
 	      	},
 	        error:function(XMLHttpRequest, textStatus, errorThrown) {
@@ -203,10 +225,10 @@ function delConf(confId){
 	});	
 }
 /*
- * 所有企业用户都可以隐藏已错过的会议
+ * ${LANG['bizconf.jsp.conf_list_index.res8']}
  */
 function hideConf(confId){
-	parent.parent.confirmDialog("确认隐藏会议？",function(){
+	parent.parent.confirmDialog("${LANG['bizconf.jsp.conf_list_index.res9']}",function(){
 		$.ajax({
 	      	type: "POST",
 	      	url:"/user/conf/hide/"+confId,
@@ -215,7 +237,7 @@ function hideConf(confId){
 				if(data){
 					 window.location.reload(true);
 				}else{
-					parent.parent.errorDialog('隐藏会议出现异常！');
+					parent.parent.errorDialog('${LANG['bizconf.jsp.conf_list_index.res10']}');
 				}
 	      	},
 	        error:function(XMLHttpRequest, textStatus, errorThrown) {
@@ -226,7 +248,7 @@ function hideConf(confId){
 }
 
 function delAllConf(cycId,confId){
-	parent.parent.confirmDialog("确认取消整个周期会议？",function(){
+	parent.parent.confirmDialog("${LANG['bizconf.jsp.conf_list_index.res11']}",function(){
 		$.ajax({
 	      	type: "POST",
 	      	url:"/user/conf/deleteCycleConfInfo/"+cycId+"?confId="+confId,
@@ -235,7 +257,7 @@ function delAllConf(cycId,confId){
 				if(data){
 					 window.location.reload(true);
 				}else{
-					parent.parent.errorDialog('取消周期会议失败！');
+					parent.parent.errorDialog('${LANG['bizconf.jsp.conf_list_index.res12']}');
 				}
 	      	},
 	        error:function(XMLHttpRequest, textStatus, errorThrown) {
@@ -247,7 +269,7 @@ function delAllConf(cycId,confId){
 
 function inventContact(confId){
 	parent.parent.inventContact(confId);
-// 	//alert("邀请");	inviteFirst.jsp
+// 	//alert("${LANG['bizconf.jsp.conf_list_index.res13']}");	inviteFirst.jsp
 // 	var url = "/user/contact/goInviteContacts";
 // 	var features = "height=670, width=990, top=100, left=150,toolbar=no, menubar=no, scrollbars=no, resizable=yes, location=yes, status=yes";
 // 	window.open(url,"inviteMeeting",features);	
@@ -262,17 +284,17 @@ function refreshTips() {
 }
 
 var $l = {
-	seconds: "不到 1 分钟",
-	minute: "大约 1 分钟",
-	minutes: "%d 分钟",
-	hour: "大约 1 小时",
-	hours: "大约 %d 小时",
-	day: "1 天",
-	days: "%d 天",
-	month: "大约 1 个月",
-	months: "%d 月",
-	year: "大约 1 年",
-	years: "%d 年"
+	seconds: "${LANG['bizconf.jsp.conf_list_index.res14']} 1 ${LANG['bizconf.jsp.attended_conf_list.res10']}",
+	minute: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.attended_conf_list.res10']}",
+	minutes: "%d ${LANG['bizconf.jsp.attended_conf_list.res10']}",
+	hour: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.conf_list_index.res16']}",
+	hours: "${LANG['bizconf.jsp.conf_list_index.res15']} %d ${LANG['bizconf.jsp.conf_list_index.res16']}",
+	day: "1 ${LANG['bizconf.jsp.conf_list_index.res17']}",
+	days: "%d ${LANG['bizconf.jsp.conf_list_index.res17']}",
+	month: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.conf_list_index.res18']}",
+	months: "%d ${LANG['bizconf.jsp.conf_list_index.res19']}",
+	year: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.conf_list_index.res20']}",
+	years: "%d ${LANG['bizconf.jsp.conf_list_index.res20']}"
 };
 function substitute(string, number) {
     return string.replace(/%d/i, number);
@@ -300,38 +322,40 @@ function switchDuration() {
 	$(".durationTime").each(function(index, elem){
 		var status = $(elem).attr("status");
 		var duration = $(elem).attr("duration");
-			duration = parseInt(duration, 10);
-		var duraHour = duration/60>>0;
-		var duraMis = duration%60;
 		var duraText = "";
-		if(duraHour>0){
-			duraText += duraHour+" 小时";
-		}
-		if(duraMis>0){
-			duraText += duraMis+" 分钟";
-		} 
-		if(!duraText){
-			duraText = "0 分钟";
-		}
-		$(elem).find(".durationMin").text(duraText);
-// 		if(status && status=="run"){
-// 			var dateEndStr = $(elem).attr("endtime").replace(/-/g,"/");
-// 			var endDate = new Date(dateEndStr);
-// 			var currentDate = new Date("${serverDate}");
-// 		    var distanceMillis = endDate.getTime()-currentDate.getTime();
-// 		    var words = getwords(distanceMillis);
-		    //过去的会议
-// 		    var prefix = "";
-// 		    var suffix = "后会议结束";  
-// 		    var title = prefix+words+suffix;
-// 		    var title = prefix+duraText+suffix;
-// 		    $(elem).attr("title", title);			
-// 		} else {
-		    var prefix = "会议时长:";
+		if(duration && duration=="${LANG['bizconf.jsp.conf_list_pad.res4']}"){
+			var endTime = $(elem).attr("endTime");
+			var date = "";
+			var time = "";
+			if(endTime){
+				date = endTime.substring(0,10);
+				time = endTime.substring(11);
+			}
+			duraText = "${LANG['bizconf.jsp.conf_list_pad.res4']}";
+			$(elem).find(".durationMin").html(date+"\n"+time);
+			 var prefix = "${LANG['bizconf.jsp.attendConfloglist.res7']}:";
+			 var suffix = "";
+			 var title = prefix+endTime+suffix;
+			$(elem).attr("title", title);
+		} else {
+			duration = parseInt(duration, 10);
+			var duraHour = duration/60>>0;
+			var duraMis = duration%60;
+			if(duraHour>0){
+				duraText += duraHour+" ${LANG['bizconf.jsp.conf_list_index.res16']}";
+			}
+			if(duraMis>0){
+				duraText += duraMis+" ${LANG['bizconf.jsp.attended_conf_list.res10']}";
+			}
+			if(!duraText){
+				duraText = "0 ${LANG['bizconf.jsp.attended_conf_list.res10']}";
+			}
+			$(elem).find(".durationMin").text(duraText);
+		    var prefix = "${LANG['bizconf.jsp.conf_list_index.res23']}:";
 		    var suffix = "";
 		    var title = prefix+duraText+suffix;
 			$(elem).attr("title", title);
-// 		}
+		}
 	});
 }
 function switchTime() {
@@ -349,7 +373,6 @@ function switchTime() {
 }
 
 function switchWords(currentDate, startDate, endDate, elem) {
-	console.log("currentDate="+currentDate);
 	var currentYear = currentDate.getFullYear();
 	var currentMonth = currentDate.getMonth();
 	var startYear = startDate.getFullYear();
@@ -358,11 +381,11 @@ function switchWords(currentDate, startDate, endDate, elem) {
 		var currentDay = currentDate.getDate();
 		var startDay = startDate.getDate();
 		if((startDay-currentDay)==0){
-			$(elem).find(".date").text("今天");
+			$(elem).find(".date").text("${LANG['bizconf.jsp.conf_list.res3']}");
 		} else if((startDay-currentDay)==1) {
-			$(elem).find(".date").text("明天");
+			$(elem).find(".date").text("${LANG['bizconf.jsp.conf_list_index.res24']}");
 		} else if((startDay-currentDay)==-1) {
-			$(elem).find(".date").text("昨天");
+			$(elem).find(".date").text("${LANG['bizconf.jsp.conf_list_index.res25']}");
 		} else {
 			$(elem).find(".date").text(formatDate(startDate));
 		}
@@ -371,21 +394,21 @@ function switchWords(currentDate, startDate, endDate, elem) {
 	}
 }
 function switchTitle(currentDate, startDate, endDate, elem, status) {
-    //过去的会议
+    //${LANG['bizconf.jsp.conf_list_index.res21']}
     var prefix = "";
-    var suffix = "前加入的会议";    
+    var suffix = "${LANG['bizconf.jsp.conf_list_index.res26']}";    
     if(status=="come"){
-    //即将开始的会议   
+    //${LANG['bizconf.jsp.conf_list_index.res27']}   
     	prefix = "";
-        suffix = "后开始会议";
+        suffix = "${LANG['bizconf.jsp.conf_list_index.res28']}";
     } else if(status=="run"){
-    //正在进行的会议
-    	prefix = "会议已开始";
+    //${LANG['bizconf.jsp.conf_list_index.res29']}
+    	prefix = "${LANG['bizconf.jsp.conf_list_index.res30']}";
         suffix = "";    
     } else if(status=="miss"){
-    //错过的会议
+    //${LANG['bizconf.jsp.conf_list_index.res31']}
     	prefix = "";
-        suffix = "前错过的会议";    
+        suffix = "${LANG['bizconf.jsp.conf_list_index.res32']}";    
     }
     var distanceMillis = currentDate.getTime()-startDate.getTime();
     var words = getwords(distanceMillis);
@@ -411,12 +434,12 @@ function quickSearch(elem) {
 		$(container).show();
 	}
 }
-//查询会议参会人
+//${LANG['bizconf.jsp.conf_list_index.res34']}
 jQuery(function($) {
 	refreshTips();	
 	showPassConf();
 	getParticipantInfo();
-	$(".m_search").watermark('会议主题、参会人');
+	$(".m_search").watermark('${LANG['bizconf.jsp.conf_list_index.res33']}');
 	$(".has_more").click(function() {
 		var hasMoreBtn = $(this);
 		hasMoreBtn.hide();
@@ -424,8 +447,32 @@ jQuery(function($) {
 		var hasContainer = $(this).closest(".has_more_container");
 		loading.show();
 		var data = {};
+		var options = {};
 		data.userRole = parent.$("#conf_user_role").val();
 		data.dateScopeFlag = parent.$("#date_scope_flag").val();
+		if(data.dateScopeFlag==3){
+			var beginTime = parent.$("#monthStart").val();
+			var endTime = parent.$("#monthEnd").val();
+			if(beginTime && endTime){
+				options.beginTime = beginTime.parseDate().format("yyyy-MM-dd hh:mm:ss");
+				options.endTime = endTime.parseDate().add(DateType.DAY,1).format("yyyy-MM-dd hh:mm:ss");//+" 00:00:00"
+			}
+		}
+		if(data.dateScopeFlag==4){
+			var beginTime = parent.$("#allStart").val();
+			var endTime = parent.$("#allEnd").val();
+			if(beginTime){
+				options.beginTime = beginTime.parseDate().format("yyyy-MM-dd hh:mm:ss");
+				
+			}
+			if(endTime) {
+				options.endTime = endTime.parseDate().add(DateType.DAY,1).format("yyyy-MM-dd hh:mm:ss");//+" 00:00:00"
+			}
+		}
+		var confName =  parent.$(".m_search_list").val();
+		if(confName && confName!="${LANG['bizconf.jsp.attendConfloglist.res3']}"){
+			options.confName = confName;
+		}
 		data.confStatus = $(this).attr("status");
 		data.pageNo = parseInt($(this).attr("pageNo"), 10);
 		app.loadMoreConf(data,function(result) {
@@ -440,7 +487,7 @@ jQuery(function($) {
 			}
 			parent.refreshIHeight();
 			refreshTips();
-		});
+		}, options);
 	});
 	parent.refreshIHeight();
 });
@@ -464,7 +511,7 @@ function getParticipantInfo(){
 	      	data:{confId:confId},
 	      	dataType:"json",
 	      	success:function(data){
-				html ="尚未邀请人";
+				html ="${LANG['bizconf.jsp.conf_list_index.res35']}";
 				if(data){
 					var renshu = "<img src=\"${baseUrlStatic}/images/ico24.png\" width=\"20\" height=\"20\" align=\"absmiddle\" />";
 					if(data.length>0){
@@ -484,7 +531,7 @@ function getParticipantInfo(){
 	      	},
 	        error:function(XMLHttpRequest, textStatus, errorThrown) {
 	        	//alert(XMLHttpRequest+"\n"+textStatus+"\n"+errorThrown);
-	       		html = "查询参会人失败！";
+	       		html = "${LANG['bizconf.jsp.conf_list_index.res36']}";
 	       		$(self).attr("original-title",html);
 	        }
 		});  
@@ -507,7 +554,7 @@ window.setInterval(refreshTips, 60000);
 <div class="main_content" id="main_container" style="margin: 0px;">
 <fmt:setLocale value="en-us"/>
 
- <!--正在进行的的会议-->
+ <!--${LANG['bizconf.jsp.conf_list_index.res40']}-->
 <c:if test="${fn:length(dringConfList)>0 }">
 <div class="conf_list_container">
 	<div class="tab_title">
@@ -516,10 +563,10 @@ window.setInterval(refreshTips, 60000);
 	      	<span class="m_title" onclick="toggleIcon(this)">
 	      	<c:choose>
 	      		<c:when test="${user != null}">
-	      			正在进行
+	      			${LANG['bizconf.jsp.conf_list_index.res41']}
 	      		</c:when>
 	      		<c:otherwise>
-	      			正在进行
+	      			${LANG['bizconf.jsp.conf_list_index.res41']}
 	      		</c:otherwise>
 	      	</c:choose>
 	      	</span>
@@ -535,15 +582,16 @@ window.setInterval(refreshTips, 60000);
 	</div>
 	<div id="running_list" class="tab_content" style="display: block;">
 	<c:if test="${fn:length(dringConfList)<=0}">
-		<div class="empty_result">抱歉，没有正在进行的会议</div>
+		<div class="empty_result">${LANG['bizconf.jsp.conf_list_pad.res5']}</div>
 	</c:if>
-	<div class="empty_result" style="display: none;">抱歉，没有找到符合条件的会议</div>
+	<div class="empty_result" style="display: none;">${LANG['bizconf.jsp.conf_list_index.res42']}</div>
+	<cc:confList var="CONF_PERMANENT_ENABLED_MAIN"/>
 	<c:forEach var="dringConf" items="${dringConfList}" varStatus="dringStatus">
 	<div class="extras-container">
 		<div class="extras-tr">
 	      	<div class="date_part">
-	      	  <fmt:formatDate var="runStartTime" value="${dringConf.startTime}" pattern="yyyy-MM-dd HH:mm:ss" />
-	      	  <fmt:formatDate var="runEndTime" value="${dringConf.endTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+	      	  <fmt:formatDate var="runStartTime" value="${dringConf.startTime}" pattern="yyyy-MM-dd HH:mm" />
+	      	  <fmt:formatDate var="runEndTime" value="${dringConf.endTime}" pattern="yyyy-MM-dd HH:mm" />
 	          <div class="timeago date-holder" title="${runStartTime}" startTime="${runStartTime}" endTime="${runEndTime}" status="run"> 
 	          	<span class="date">
 	          		<fmt:formatDate value="${dringConf.startTime}" pattern="yyyy-MM-dd" />
@@ -560,13 +608,13 @@ window.setInterval(refreshTips, 60000);
 			        			<c:if test="${confCyc.id eq dringConf.cycleId}">
 			        				<c:choose>
 			        					<c:when test="${confCyc.cycleType eq '1'}">
-			        						<span style="color:#47ADE9;">(日会议)</span>
+			        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res43']})</span>
 			        					</c:when>
 			        					<c:when test="${confCyc.cycleType eq '2'}">
-			        						<span style="color:#47ADE9;">(周会议)</span>
+			        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res44']})</span>
 			        					</c:when>
 			        					<c:when test="${confCyc.cycleType eq '3'}">
-			        						<span style="color:#47ADE9;">(月会议)</span>
+			        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res45']})</span>
 			        					</c:when>
 			        				</c:choose>
 			        			</c:if>
@@ -578,17 +626,27 @@ window.setInterval(refreshTips, 60000);
 			<div class="action_part">
 				<table  border="0" align="right" cellpadding="0" cellspacing="0">
           			<tr>
-          				<td><div class="k02 viewtip durationTime" title="会议时长:${dringConf.duration}分钟" duration="${dringConf.duration}" endTime="${runEndTime}" status="run"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${dringConf.duration}分钟</div></div></td>
-			            <td><div class="k02 k09 viewtip" title="主持人${dringConf.compereName}"><img src="${baseUrlStatic}/images/mac.png" width="18" height="21" align="absmiddle" /><div class="k02_span">${dringConf.compereName}</div></div></td>
+	          			<c:if test="${user.id eq dringConf.compereUser and dringConf.permanentConf eq 1}">
+	          				<td class="" ><!-- ${LANG['bizconf.jsp.conf_list_index.res53']} -->
+		          					<div class="k_f" onclick="inventContact(${dringConf.id})"><img src="/static/images/yaoqing.png" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res13']}</div>
+		          			</td>
+	          			</c:if>
+          				<c:if test="${dringConf.permanentConf eq 0}">
+	          				<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${dringConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${dringConf.duration}" endTime="${runEndTime}" status="run"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${dringConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
+          				</c:if>
+          				<c:if test="${dringConf.permanentConf eq 1}">
+	          				<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.attendConfloglist.res7']}:" duration="${LANG['bizconf.jsp.conf_list_pad.res4']}" endTime="<fmt:formatDate value="${dringConf.endTime}" pattern="yyyy-MM-dd HH:mm" />" status="run"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin"  style="text-align: center;white-space:normal;line-height:normal;">${LANG['bizconf.jsp.conf_list_pad.res4']}</div></div></td>
+          				</c:if>
+			            <td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${dringConf.compereName}"><img src="${baseUrlStatic}/images/mac.png" width="18" height="21" align="absmiddle" /><div class="k02_span">${dringConf.compereName}</div></div></td>
 <%--			            <td><div name="attendeer" confId="${dringConf.id}" class="k04 attendee" title=""><img src="${baseUrlStatic}/images/renshu.png" width="20" height="20" align="absmiddle" />${dringConf.maxUser}</div></td>--%>
-			            <td><div class="k04 attendee" title="在线人数：${dringConf.pcNum+dringConf.phoneNum}"><img src="${baseUrlStatic}/images/renshu.png" width="20" height="20" align="absmiddle" />${dringConf.pcNum+dringConf.phoneNum}</div></td>
-			            <td><div class="extras-default viewtip"  title="查看会议选项" onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
+			            <td><div class="k04 attendee" title="${LANG['bizconf.jsp.conf_list_index.res46']}${dringConf.pcNum+dringConf.phoneNum}"><img src="${baseUrlStatic}/images/renshu.png" width="20" height="20" align="absmiddle" />${dringConf.pcNum+dringConf.phoneNum}</div></td>
+			            <td><div class="extras-default viewtip"  title="${LANG['bizconf.jsp.conf_list_index.res47']}" onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
 			            <td><div class="k06" onclick="javascript:joinMeeting(1,'${dringConf.id}');">
 			            		<c:if test="${user.id != dringConf.compereUser}">
-			            			<a href="javascript:;">加入会议</a>
+			            			<a href="javascript:;">${LANG['bizconf.jsp.conf_list_index.res48']}</a>
 			            		</c:if>
 			            		<c:if test="${user.id eq dringConf.compereUser}">
-			            			<a href="javascript:;">进入会议</a>
+			            			<a href="javascript:;">${LANG['bizconf.jsp.conf_list_index.res49']}</a>
 			            		</c:if>
 			            </div></td>
           			</tr>
@@ -598,7 +656,13 @@ window.setInterval(refreshTips, 60000);
 		</div>
    		<div class="extras-action">
    			<div align="right" style="padding-top:10px">
-	   			<a class="email05" href="javascript:;" onclick="viewConf(${dringConf.id});"><img src="${baseUrlStatic}/images/xiangq.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;" />查看详情</a>
+		 		<c:if test="${dringConf.createUser eq user.id && CONF_PERMANENT_ENABLED_MAIN eq dringConf.permanentConf}">
+		 		<a class="email04" href="javascript:;" onclick="delConfForPerConf(${dringConf.id});">
+		 			<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.add_contacts.res13']}
+		 		</a>
+		 		</c:if>
+	   			<a class="email05" href="javascript:;" onclick="viewConf(${dringConf.id});"><img src="${baseUrlStatic}/images/xiangq.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res50']}</a>
+	   			
    			</div>
    		</div>		
 	</div>	
@@ -607,15 +671,15 @@ window.setInterval(refreshTips, 60000);
 	<div  class="has_more_container">
 		<div style="display: none;width: 180px;margin: 0 auto;position: relative;text-align: left;">
 			<img src="/static/images/loading.gif" alt="" />
-			<span style="position: absolute;left: 35px;">正在加载中...</span>
+			<span style="position: absolute;left: 35px;">${LANG['bizconf.jsp.conf_list_pad.res6']}...</span>
 		</div>
-		<a class="has_more" href="javascript:;" status="1" pageNo="2">点击显示更多信息</a>
+		<a class="has_more" href="javascript:;" status="1" pageNo="2">${LANG['bizconf.jsp.conf_list_pad.res7']}</a>
 	</div>
 	</c:if>
 </div> 	
 </div>   
 </c:if>
- <!--即将开始的的会议-->
+ <!--${LANG['bizconf.jsp.conf_list_index.res51']}-->
 <%-- <c:if test="${fn:length(upcomingConfList)>0 }">  --%>
 <div class="conf_list_container">
 <div class="tab_title">
@@ -624,10 +688,10 @@ window.setInterval(refreshTips, 60000);
       	<span class="m_title" onclick="toggleIcon(this)">
 	      	<c:choose>
 	      		<c:when test="${user != null}">
-			      	即将开始
+			      	${LANG['bizconf.jsp.conf_list_index.res52']}
 	      		</c:when>
 	      		<c:otherwise>
-	      			即将开始
+	      			${LANG['bizconf.jsp.conf_list_index.res52']}
 	      		</c:otherwise>
 	      	</c:choose>
       	</span>
@@ -645,23 +709,23 @@ window.setInterval(refreshTips, 60000);
 	<c:if test="${fn:length(upcomingConfList)<=0}">
 		<div id="no_data" class="no_meeting">
 		  	<div class="no_meeting_box">
-		    	<p>您好，您当前没有即将开始的会议</p>
+		    	<p>${LANG['bizconf.jsp.conf_list_pad.res8']}</p>
 		    	<c:if test="${empty user}">
-		    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">预约会议</a>
+		    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">${LANG['bizconf.jsp.conf_list_index.res39']}</a>
 		    	</c:if>
 		    	<c:if test="${!empty user && user.userRole==1 }">
-		    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">预约会议</a>
+		    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">${LANG['bizconf.jsp.conf_list_index.res39']}</a>
 		    	</c:if>
 		    </div>
 		</div>
 	</c:if>
-	<div class="empty_result" style="display: none;">抱歉，没有找到符合条件的会议</div>
+	<div class="empty_result" style="display: none;">${LANG['bizconf.jsp.conf_list_index.res42']}</div>
   	<c:forEach var="upcomingConf" items="${upcomingConfList}" varStatus="upcomingStatus">
   	<div class="extras-container">
 		<div class="extras-tr">
 			<div class="date_part">
-				<fmt:formatDate var="comingStartTime" value="${upcomingConf.startTime}" pattern="yyyy-MM-dd HH:mm:ss" />
-				<fmt:formatDate var="comingEndTime" value="${upcomingConf.endTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+				<fmt:formatDate var="comingStartTime" value="${upcomingConf.startTime}" pattern="yyyy-MM-dd HH:mm" />
+				<fmt:formatDate var="comingEndTime" value="${upcomingConf.endTime}" pattern="yyyy-MM-dd HH:mm" />
 	          <div class="timeago date-holder" title="${comingStartTime}" startTime="${comingStartTime}" endTime="${comingEndTime}" status="come"> 
 		        <span class="date">
    		      		<fmt:formatDate value="${upcomingConf.startTime}" pattern="yyyy-MM-dd" />
@@ -679,13 +743,13 @@ window.setInterval(refreshTips, 60000);
 			        			<c:if test="${confCyc.id eq upcomingConf.cycleId}">
 			        				<c:choose>
 			        					<c:when test="${confCyc.cycleType eq '1'}">
-			        						<span style="color:#47ADE9;">(日会议)</span>
+			        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res43']})</span>
 			        					</c:when>
 			        					<c:when test="${confCyc.cycleType eq '2'}">
-			        						<span style="color:#47ADE9;">(周会议)</span>
+			        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res44']})</span>
 			        					</c:when>
 			        					<c:when test="${confCyc.cycleType eq '3'}">
-			        						<span style="color:#47ADE9;">(月会议)</span>
+			        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res45']})</span>
 			        					</c:when>
 			        				</c:choose>
 			        			</c:if>
@@ -698,22 +762,27 @@ window.setInterval(refreshTips, 60000);
 			<div class="action_part">
 				<table  border="0" align="right" cellpadding="0" cellspacing="0">
 	          		<tr>
-	          			<td class="" ><!-- 邀请（主持人专用） -->
+	          			<td class="" ><!-- ${LANG['bizconf.jsp.conf_list_index.res53']} -->
 	          				<c:if test="${user.id eq upcomingConf.compereUser}">
-	          					<div class="k_f" onclick="inventContact(${upcomingConf.id})"><img src="/static/images/yaoqing.png" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />邀请</div>
+	          					<div class="k_f" onclick="inventContact(${upcomingConf.id})"><img src="/static/images/yaoqing.png" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res13']}</div>
 	          				</c:if>
 	          			</td>
-	          			<td><div class="k02 viewtip durationTime" title="会议时长:${upcomingConf.duration}分钟" duration="${upcomingConf.duration}"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${upcomingConf.duration}分钟</div></div></td>
-	            		<td><div class="k02 k09 viewtip" title="主持人${upcomingConf.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.png" width="20" height="20" align="absmiddle" /><div class="k02_span">${upcomingConf.compereName}</div></div></td>
+	          			<c:if test="${upcomingConf.permanentConf eq 0}">
+	          				<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${upcomingConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${upcomingConf.duration}"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${upcomingConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
+	          			</c:if>
+	          			<c:if test="${upcomingConf.permanentConf eq 1}">
+	          				<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_pad.res4']}" duration="${LANG['bizconf.jsp.conf_list_pad.res4']}" endTime="<fmt:formatDate value="${upcomingConf.endTime}" pattern="yyyy-MM-dd HH:mm" />" ><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin" style="text-align: center;white-space:normal;line-height:normal;">${LANG['bizconf.jsp.conf_list_pad.res4']}</div></div></td>
+	          			</c:if>
+	            		<td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${upcomingConf.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.png" width="20" height="20" align="absmiddle" /><div class="k02_span">${upcomingConf.compereName}</div></div></td>
 	            		<td><div onclick="<c:if test="${!empty user}">editInventContact('${upcomingConf.id}')</c:if>" name="attendeer" confId="${upcomingConf.id}" class="k04 attendee" title=""><img src="${baseUrlStatic}/images/ico24.png" width="20" height="20" align="absmiddle" /></div></td>
-	            		<td><div title="查看会议选项" class="viewtip extras-default"  onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
+	            		<td><div title="${LANG['bizconf.jsp.conf_list_index.res47']}" class="viewtip extras-default"  onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
 	            		<td>
 		            		<div class="k06" onclick="javascript:joinMeeting(1,'${upcomingConf.id}');">
 			            		<c:if test="${user.id != upcomingConf.compereUser}">
-			            			<a href="javascript:;">加入会议</a>
+			            			<a href="javascript:;">${LANG['bizconf.jsp.conf_list_index.res48']}</a>
 			            		</c:if>
 			            		<c:if test="${user.id eq upcomingConf.compereUser}">
-			            			<a href="javascript:;">开始会议</a>
+			            			<a href="javascript:;">${LANG['bizconf.jsp.conf_list_index.res54']}</a>
 			            		</c:if>
 		            		</div>
 	            		</td>
@@ -733,19 +802,20 @@ window.setInterval(refreshTips, 60000);
 						 <c:choose>
 						 	<c:when test="${upcomingConf.cycleId!=0}">
 								<a class="email04" href="javascript:;" onclick="delAllConf(${upcomingConf.cycleId},${upcomingConf.id});">
-									<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>取消全部</a>
-								<a class="email04" href="javascript:;" onclick="delSignleConf(${upcomingConf.cycleId});">
-									<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>取消</a>
+									<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.conf_list_index.res55']}</a>
+								<a class="email04" href="javascript:;" onclick="delConf(${upcomingConf.id});">
+									<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a>
 							 	<a class="email05" href="javascript:;" onclick="updateCycleBookMeetingInfo(${upcomingConf.id})">
-									<img src="${baseUrlStatic}/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;"/>修改全部</a>	
-								<a class="email05" href="javascript:;" onclick="updateAllBookMeeting(${upcomingConf.cycleId})">
-									<img src="${baseUrlStatic}/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;"/>修改</a>
+									<img src="${baseUrlStatic}/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.conf_list_index.res56']}</a>	
+<!--								<a class="email05" href="javascript:;" onclick="updateAllBookMeeting(${upcomingConf.cycleId})">-->
+								<a class="email05" href="javascript:;" onclick="updateBookMeeting(${upcomingConf.id})">
+									<img src="${baseUrlStatic}/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.conf_list_index.res57']}</a>
 						 	</c:when>
 						 	<c:otherwise>
 						 		<a class="email04" href="javascript:;" onclick="delConf(${upcomingConf.id});">
-									<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>取消</a>
+									<img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a>
 						 		<a class="email05" href="javascript:;" onclick="updateBookMeeting(${upcomingConf.id})">
-								<img src="${baseUrlStatic}/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;"/>修改</a>	
+								<img src="${baseUrlStatic}/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.conf_list_index.res57']}</a>	
 						 	</c:otherwise>
 						 </c:choose>
 					 </c:if>
@@ -757,20 +827,20 @@ window.setInterval(refreshTips, 60000);
 	<div  class="has_more_container">
 		<div style="display: none;width: 180px;margin: 0 auto;position: relative;text-align: left;">
 			<img src="/static/images/loading.gif" alt="" />
-			<span style="position: absolute;left: 35px;">正在加载中...</span>
+			<span style="position: absolute;left: 35px;">${LANG['bizconf.jsp.conf_list_pad.res6']}...</span>
 		</div>
-		<a class="has_more" href="javascript:;" status="2" pageNo="2">点击显示更多信息</a>
+		<a class="has_more" href="javascript:;" status="2" pageNo="2">${LANG['bizconf.jsp.conf_list_pad.res7']}</a>
 	</div>
 	</c:if>
 </div>
 </div> 
 <%-- </c:if>  --%>
-<!--参加过的会议-->
+<!--${LANG['bizconf.jsp.conf_list_pad.res9']}-->
 	<div class="conf_list_container" id="pass_conf_container" style="display: none;">
 		<div class="tab_title">
 			<div align="left" style="float: left;width:45%">
 		      	<span class="panel_icon panel_icon_off" onclick="toggleIcon(this)">&nbsp;</span>
-		      	<span class="m_title" onclick="toggleIcon(this)">已参加</span>
+		      	<span class="m_title" onclick="toggleIcon(this)">${LANG['bizconf.jsp.conf_list_pad.res10']}</span>
 		       	<div class="number_taxt">
 		       		<div class="no_left"></div>
 		            <div class="no_center"><span class="meeting-count">${AttendedConfRows}</span></div>
@@ -785,16 +855,18 @@ window.setInterval(refreshTips, 60000);
 			<c:if test="${fn:length(attendedConfList)<=0}">
 				<div id="no_data" class="no_meeting">
 				  	<div class="no_meeting_box">
-				    	<p>您好，您当前没有已参加的会议</p>
+				    	<p>${LANG['bizconf.jsp.conf_list_pad.res11']}</p>
 				    	<c:if test="${empty user}">
-				    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">预约会议</a>
+				    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">${LANG['bizconf.jsp.conf_list_index.res39']}</a>
 				    	</c:if>
 				    	<c:if test="${!empty user && user.userRole==1 }">
-				    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">预约会议</a>
+				    		<a href="javascript:;" onclick="parent.parent.createReservationConf()">${LANG['bizconf.jsp.conf_list_index.res39']}</a>
 				    	</c:if>
 				    </div>
 				</div>
 			</c:if>
+			
+			<cc:confList var="CONF_PERMANENT_UNABLE"/>
 		    <c:forEach var="attendedConf" items="${attendedConfList}" varStatus="attendedStatus">
 		    <div class="extras-container">	
 				<div class="extras-tr">
@@ -820,13 +892,13 @@ window.setInterval(refreshTips, 60000);
 					        			<c:if test="${confCyc.id eq attendedConf.cycleId}">
 					        				<c:choose>
 					        					<c:when test="${confCyc.cycleType eq '1'}">
-					        						<span style="color:#47ADE9;">(日会议)</span>
+					        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res43']})</span>
 					        					</c:when>
 					        					<c:when test="${confCyc.cycleType eq '2'}">
-					        						<span style="color:#47ADE9;">(周会议)</span>
+					        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res44']})</span>
 					        					</c:when>
 					        					<c:when test="${confCyc.cycleType eq '3'}">
-					        						<span style="color:#47ADE9;">(月会议)</span>
+					        						<span style="color:#47ADE9;">(${LANG['bizconf.jsp.conf_list_index.res45']})</span>
 					        					</c:when>
 					        				</c:choose>
 					        			</c:if>
@@ -841,14 +913,14 @@ window.setInterval(refreshTips, 60000);
 					<div class="action_part" style="float: right;">
 						<table  border="0" align="right" cellpadding="0" cellspacing="0">
 				          <tr>
-				           	<td><div class="k02 viewtip durationTime" title="会议时长:${attendedConf.duration}分钟"  duration="${attendedConf.duration}"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${attendedConf.duration}分钟</div></div></td>
-				            <td><div class="k02 k09 viewtip" title="主持人${attendedConf.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.png" width="20" height="20" align="absmiddle" /><div class="k02_span">${attendedConf.compereName}</div></div></td>
+				           	<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${attendedConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}"  duration="${attendedConf.duration}"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${attendedConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
+				            <td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${attendedConf.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.png" width="20" height="20" align="absmiddle" /><div class="k02_span">${attendedConf.compereName}</div></div></td>
 				            <td><div  name="attendeer" confId="${attendedConf.id}" class="k04 attendee" title=""><img src="${baseUrlStatic}/images/renshu.png" width="20" height="20" align="absmiddle" />${attendedConf.maxUser}</div></td>
-				            <td><div class="extras-default viewtip" title="查看会议选项"  onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
+				            <td><div class="extras-default viewtip" title="${LANG['bizconf.jsp.conf_list_index.res47']}"  onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
 				              <td>
 				            	<div class="k06">
 				            		<c:if test="${user.id eq attendedConf.createUser}">
-				            			<a href="javascript:;" onclick="reCreateReservationConf(${attendedConf.id})">重新创建</a>
+				            			<a href="javascript:;" onclick="reCreateReservationConf(${attendedConf.id})">${LANG['bizconf.jsp.attended_conf_list.res11']}</a>
 			              			</c:if>
 				            	</div>
 				           	  </td>
@@ -859,10 +931,10 @@ window.setInterval(refreshTips, 60000);
 				</div>
 		   		<div class="extras-action">
 					<div align="right" style="padding-top:10px">
-						<c:if test="${user.id eq attendedConf.createUser}">
-		   					<a class="email04" href="#" onclick="delConf(${attendedConf.id});"><img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;" />删除</a>
+						<c:if test="${user.id eq attendedConf.createUser && CONF_PERMANENT_UNABLE eq attendedConf.permanentConf}">
+		   					<a class="email04" href="#" onclick="delConf(${attendedConf.id});"><img src="${baseUrlStatic}/images/ico005.png" width="12" height="17" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.attended_conf_list.res12']}</a>
 		   				</c:if>
-		   				<a class="email05" href="javascript:;" onclick="viewConf(${attendedConf.id});"><img src="${baseUrlStatic}/images/xiangq.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;" />查看详情</a>
+		   				<a class="email05" href="javascript:;" onclick="viewConf(${attendedConf.id});"><img src="${baseUrlStatic}/images/xiangq.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res50']}</a>
 		   			</div>
 				</div>
 			</div>	
@@ -871,14 +943,14 @@ window.setInterval(refreshTips, 60000);
 				<div  class="has_more_container">
 					<div style="display: none;width: 180px;margin: 0 auto;position: relative;text-align: left;">
 						<img src="/static/images/loading.gif" alt="" />
-						<span style="position: absolute;left: 35px;">正在加载中...</span>
+						<span style="position: absolute;left: 35px;">${LANG['bizconf.jsp.conf_list_pad.res6']}...</span>
 					</div>
-					<a class="has_more" href="javascript:;" status="3" pageNo="2">点击显示更多信息</a>
+					<a class="has_more" href="javascript:;" status="3" pageNo="2">${LANG['bizconf.jsp.conf_list_pad.res7']}</a>
 				</div>
 			</c:if>
 		</div>    
 	</div>
-<!--参加过的会议结束-->	   
+<!--${LANG['bizconf.jsp.conf_list_pad.res12']}-->	   
 </div>
 <!--   space -->
 <div style="height: 80px;width: 500px">&nbsp;</div>

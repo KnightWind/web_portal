@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>添加主持人</title>
+<title>${LANG['bizconf.jsp.system.add_site_user.res1']}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/Popup.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/reset.css"/>
@@ -21,6 +21,25 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js"></SCRIPT>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		
+		$("input[name='autoFlag']").attr("disabled", "disabled");
+		var checked = $("input[name='phoneFlag']").attr("checked");
+		if(checked=="checked"){
+			$("input[name='autoFlag']").removeAttr("disabled");
+		}
+		$("input[name='phoneFlag']").change(function() {
+			var value = $(this).val();
+			var checked = $(this).attr("checked");
+			if(checked=="checked"){
+				$("input[name='autoFlag']").removeAttr("disabled");
+			} else {
+				$("input[name='autoFlag']").attr("disabled", "disabled");
+				$("input[name='autoFlag']").removeAttr("checked", "checked");
+			}
+			$.uniform.update();
+		});
+		
+		
 		$('#saveUserForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		var ruleString = {
 				required: {
@@ -59,7 +78,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 	}, "");
 		$.validator.addMethod("noSpace", function(value, element) {
 			return value=="" || (value != ""&&value.indexOf(" ") < 0 );
-	 	}, "密码中不能含有空格");
+	 	}, "${LANG['bizconf.jsp.admin.add_site_user.res2']}");
 		$.validator.addMethod("checkLoginName", function(value, element) {       
 	    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
 	 	}, ruleString.custom.checkLoginName);
@@ -70,9 +89,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&]{1,32}$/.test(value);
 	 	}, ruleString.custom.checkEnName);
 		/**
-			手机号码  以 1 开头，第二位是 3、5 或者 8
+			${LANG['bizconf.jsp.admin.add_site_user.res3']}  ${LANG['bizconf.jsp.admin.add_site_user.res4']} 1 ${LANG['bizconf.jsp.admin.add_site_user.res5']} 3${LANG['bizconf.jsp.admin.add_site_user.res6']}5 ${LANG['bizconf.jsp.admin.add_site_user.res7']} 8
 			13211111111, 015111111111, +8615811111111, +86015811111111, (+86)13111111111
-			固定电话 区号-市话号码-分机
+			${LANG['bizconf.jsp.admin.add_site_user.res8']} ${LANG['bizconf.jsp.admin.add_site_user.res9']}-${LANG['bizconf.jsp.admin.add_site_user.res10']}-${LANG['bizconf.jsp.admin.add_site_user.res11']}
 			1334567890, 031-3145678-123, 010-11111111, (+86)010-13901691-123
 		*/
 		$.validator.addMethod("checkMobile", function(value, element) {       
@@ -90,8 +109,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	            'enName' : {required:true, rangelength:[1, 32], checkEnName:true},
 	            'userEmail' : {required:true, rangelength:[6, 32], email: true},
 	            'mobile' : {notRequired:true, rangelength:[4, 32], checkMobile: true},
-	            'remark' : {notRequired:true, maxlength: 256}
-	        },
+	            'remark' : {notRequired:true, maxlength: 256},
+	        	'licNum':{required:true,digits:true,min:1,max:100}
+			},
 	        messages: {
 	            'loginName' : {required:ruleString.required.loginName, rangelength: ruleString.rangelength.loginName},
 	            'trueName' : {required:ruleString.required.trueName, rangelength: ruleString.rangelength.trueName},
@@ -154,6 +174,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		user.mobile = $("#mobile").val();
 		user.remark = $("#remark").val();
 		user.id = "${user.id}";
+		if($("#licNum").length>0){
+			user.licNum = $("#licNum").val();
+		}
 		
 		user.phoneFlag = $("input[name=phoneFlag]:checked").length>0?1:0;
 		user.autoFlag = $("input[name=autoFlag]:checked").length>0?1:0;
@@ -172,50 +195,57 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body onload="loaded()">
 <form id="saveUserForm" action="" method="post">
         		<input type="hidden" name="id" value="${user.id}"/>
-<table border="0" cellpadding="0" cellspacing="0" class="host_main">
+<table border="0" cellpadding="0" cellspacing="0" class="host_main" style="margin-top: 6px;">
 	<tr>
-    	<td class="host_left" align="right">*登录名</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</td>
         <td class="host_right"><input id="loginName" type="text" name="loginName" value="${user.loginName}"/></td>
     </tr>
     <tr>
-    	<td class="host_left" align="right">*密码</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.user_info.res3']}</td>
         <td class="host_right"><input id="loginPass" name="loginPass"  type="password" /></td>
     </tr>
     <tr>
-    	<td class="host_left" align="right">*确认密码</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.resetPass.res7']}</td>
         <td class="host_right"><input id="confirmPass" name="confirmPass"  type="password" /></td>
     </tr>
     <tr>
-    	<td class="host_left" align="right">*用户名</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.arrange_org_user.res8']}</td>
         <td class="host_right"><input id="trueName" name="trueName"  type="text" value="${user.trueName}"></td>
     </tr>
     <tr>
-    	<td class="host_left" align="right">*英文名</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.user_info.res2']}</td>
         <td class="host_right"><input id="enName" name="enName"  type="text" value="${user.enName}"></td>
     </tr>
+    <!--  -->
+    <c:if test="${empty user}">
+	    <tr>
+	    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.system.add_site_user.res2']}</td>
+	        <td class="host_right"><input id="licNum" name="licNum"  type="text" ></td>
+	    </tr>
+    </c:if>
     <tr>
-    	<td class="host_left" align="right">*会议功能</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.edit_userbase.res6']}</td>
         <td class="host_checkbox">
-        	<input name="phoneFlag" type="checkbox" value="1" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> value="1" name="phoneFlag"  <c:if test="${siteConfig.phoneFlag eq 0}">disabled="disabled"</c:if> />电话
-        	<input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if>   <c:if test="${siteConfig.autoFlag eq 0}">disabled="disabled"</c:if>/>自动外呼
-        	<input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if>  <c:if test="${siteConfig.shareMediaFlag eq 0}">disabled="disabled"</c:if>/>媒体共享
-        	<input type="checkbox" value="1" name="recordFlag" <c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if>  <c:if test="${siteConfig.recordFlag eq 0}">disabled="disabled"</c:if>/>录制
+        	<input name="phoneFlag" type="checkbox" value="1" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> value="1" name="phoneFlag"  <c:if test="${siteConfig.phoneFlag eq 0}">disabled="disabled"</c:if> />${LANG['bizconf.jsp.admin.conf_list.res9']}
+        	<input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if>   <c:if test="${siteConfig.autoFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res7']}
+        	<input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if>  <c:if test="${siteConfig.shareMediaFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res8']}
+        	<input type="checkbox" value="1" name="recordFlag" <c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if>  <c:if test="${siteConfig.recordFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res9']}
         </td>
     </tr>
     <tr>
-    	<td class="host_left" align="right">*邮箱</td>
+    	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.arrange_org_user.res9']}</td>
         <td class="host_right"><input id="userEmail" name="userEmail" type="text" value="${user.userEmail}" ></td>
     </tr>
     <tr>
-    	<td class="host_left" align="right">电话</td>
+    	<td class="host_left" align="right">${LANG['bizconf.jsp.admin.conf_list.res9']}</td>
         <td class="host_right"><input id="mobile" name="mobile"  type="text" value="${user.mobile}"></td>
     </tr>
     <tr>
-    	<td class="host_left" align="right" valign="top" colspan="1" rowspan="3" ><span style=" padding-top:5px; display:block">备注</span></td>
+    	<td class="host_left" align="right" valign="top" colspan="1" rowspan="3" ><span style=" padding-top:5px; display:block">${LANG['bizconf.jsp.admin.createOrg.res3']}</span></td>
         <td class="host_right"><textarea id="remark" name="remark"  cols="1" rows="3"  style=" width:330px; height:60px; margin-top:5px; ">${user.remark }</textarea></td>
     </tr>
 </table>
-<input type="submit" class="summit_btn Public_button" value="提交"><a class="close_btn Public_button" href="#" onclick="closeDiaglog();">取消</a>
+<input type="submit" class="summit_btn Public_button" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}"><a class="close_btn Public_button" href="#" onclick="closeDiaglog();">${LANG['bizconf.jsp.admin.createOrg.res4']}</a>
 </form>
 </body>
 </html>

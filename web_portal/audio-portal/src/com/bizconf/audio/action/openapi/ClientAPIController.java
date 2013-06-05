@@ -3,6 +3,9 @@ package com.bizconf.audio.action.openapi;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.constant.ConstantUtil;
@@ -16,6 +19,7 @@ import com.bizconf.audio.service.ContactService;
 import com.bizconf.audio.service.EmailService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.UserService;
+import com.bizconf.audio.util.StringUtil;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.annotation.AsController;
 import com.libernate.liberc.annotation.CParam;
@@ -23,6 +27,8 @@ import com.libernate.liberc.annotation.ReqPath;
 
 @ReqPath(value = {"ClientAPI", "conference"})
 public class ClientAPIController {
+	
+	private Logger logger=Logger.getLogger(ClientAPIController.class);
 
 	@Autowired
 	ClientAPIService clientAPIService;
@@ -49,8 +55,9 @@ public class ClientAPIController {
 	 * @return
 	 */
 	@AsController(path = "getPreParameter.jsp")
-	public Object getPreParameter(@CParam("random") int random) {
-		String preParam = clientAPIService.getPreParam(random);
+	public Object getPreParameter(@CParam("random") int random,HttpServletRequest request) {
+		String clientIp=StringUtil.getIpAddr(request);
+		String preParam = clientAPIService.getPreParam(random,clientIp);
 		return new ActionForward.Text("<parameter>" + preParam + "</parameter>");
 	}
 
@@ -75,6 +82,9 @@ public class ClientAPIController {
 	@AsController(path = "terminateConf.jsp")
 	public Object terminateConf(@CParam("confid") int confId) {
 		int code = 0;
+		logger.info(confId+"=stop");
+		System.out.println(confId+"=stop");
+		
 		return new ActionForward.TextXML("<result>" + code + "</result>");
 	}
 

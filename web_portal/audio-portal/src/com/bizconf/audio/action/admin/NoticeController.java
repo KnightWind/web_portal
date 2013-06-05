@@ -157,30 +157,22 @@ public class NoticeController extends BaseController{
 		if(notice != null){
 			UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
 			if(!StringUtil.isNotBlank(notice.getTitle()) || !StringUtil.isNotBlank(notice.getContent())){
-//				if(!StringUtil.isNotBlank(notice.getTitle()) || !StringUtil.isNotBlank(notice.getContent()) || notice.getStopTime() == null){
 				return ResourceHolder.getInstance().getResource("system.notice.contents.input");
 			}else{
 				try {
-//					if(DateUtil.getGmtDate(notice.getStopTime()).compareTo(DateUtil.getGmtDate(null)) <= 0){
-//						return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.date.errorTime"));
-//					}
 					notice = (Notice) ObjectUtil.parseHtml(notice, "title", "content");	//字符转义
 					creatFlag = noticeService.publishNotice(currentSiteAdmin, notice.getTitle(), notice.getContent());
 					if(creatFlag){
-						eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_CREATE, 
-								ResourceHolder.getInstance().getResource("system.notice.list.Create.1"), 
-								EventLogConstants.EVENTLOG_SECCEED, notice, request);   //创建成功后写EventLog
 						return returnJsonStr(ConstantUtil.CREATENOTICE_SUCCEED, ResourceHolder.getInstance().getResource("system.notice.list.Create.1"));
 					}else{
-						eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_CREATE, 
-								ResourceHolder.getInstance().getResource("system.notice.list.Create.2"), 
-								EventLogConstants.EVENTLOG_FAIL, notice, request);   //创建失败后写EventLog
 						return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"));
 					}
 				} catch (Exception e) {
-					eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_CREATE, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"), EventLogConstants.EVENTLOG_FAIL, notice, request);   //创建失败后写EventLog
 					logger.error("站点管理员发布站点公告出错!"+e);
 					return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"));
+				} finally {
+					sysHelpAdminEventLog(creatFlag, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
+							EventLogConstants.SYSTEM_HELP_NOTICE_CREATE, EventLogConstants.SITE_NOTICE_CREATE, "站点管理员发布站点公告", null, request);
 				}
 			}
 		}
@@ -214,19 +206,14 @@ public class NoticeController extends BaseController{
 			int noticeId = notice.getId();
 			String title = notice.getTitle();
 			String content = notice.getContent();
-//			Date expireTime = notice.getStopTime();
-//			if(DateUtil.getGmtDate(notice.getStopTime()).compareTo(DateUtil.getGmtDate(null)) <= 0){
-//				return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.date.errorTime"));
-//			}
 			if(noticeId > 0 && StringUtil.isNotBlank(title) && StringUtil.isNotBlank(content)){
-//				if(noticeId > 0 && StringUtil.isNotBlank(title) && StringUtil.isNotBlank(content) && expireTime != null){
 				updateFlag = noticeService.updateNotice(noticeId, title, content);
 			}
+			sysHelpAdminEventLog(updateFlag, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
+					EventLogConstants.SYSTEM_HELP_NOTICE_UPDATE, EventLogConstants.SITE_NOTICE_UPDATE, "站点管理员修改站点公告", null, request);
 			if(updateFlag){
-				eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_UPDATE,  ResourceHolder.getInstance().getResource("system.notice.list.Update.1"), EventLogConstants.EVENTLOG_SECCEED, notice, request);   //修改成功后写EventLog
 				return returnJsonStr(ConstantUtil.CREATENOTICE_SUCCEED,  ResourceHolder.getInstance().getResource("system.notice.list.Update.1"));
 			}else{
-				eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_UPDATE,  ResourceHolder.getInstance().getResource("system.notice.list.Update.2"), EventLogConstants.EVENTLOG_FAIL, notice, request);   //修改失败后写EventLog
 				return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.list.Update.2"));
 			}
 		}
@@ -266,14 +253,14 @@ public class NoticeController extends BaseController{
 		int delStatus = ConstantUtil.DELSITE_SUCCEED;
 		if(delFlag){
 			//传入参数需修改
-			eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_DELETE, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus), EventLogConstants.EVENTLOG_SECCEED, id, request);   //删除成功后写EventLog
 			setInfoMessage(request, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus));
 		}else{
 			delStatus = ConstantUtil.DELSITE_FAIL;
 			//传入参数需修改
-			eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_NOTICE_DELETE, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus), EventLogConstants.EVENTLOG_FAIL, id, request);   //删除失败后写EventLog
 			setErrMessage(request, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus));
 		}
+		sysHelpAdminEventLog(delFlag, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
+				EventLogConstants.SYSTEM_HELP_NOTICE_DELETE, EventLogConstants.SITE_NOTICE_DELETE, "站点管理员删除站点公告", null, request);
 		return new ActionForward.Forward("/admin/notice/list");
 	}
 	

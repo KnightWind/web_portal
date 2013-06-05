@@ -31,8 +31,8 @@ $(function() {
 });
 
 function enterSumbit(url){  
-    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-    if (event.keyCode == 13){       //监听回车键
+    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.admin.conf_list.res3']}   
+    if (event.keyCode == 13){       //${LANG['bizconf.jsp.admin.conf_list.res4']}
     	resetPageNo();
     	logsForm.action=url;
     	logsForm.submit();	
@@ -63,7 +63,7 @@ function enterSumbit(url){
    
   </div>
     	<div id="search-condition" style="display: none; width:100%; height: 300px;">
-    		搜索内容
+    		${LANG['bizconf.jsp.system.eventlog_list.res1']}
     	</div>
 <table width="98.5%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" style=" margin-left:10px; margin-right:10px; border:#D6D6D6 1px solid; border-top:none; border-bottom:none;">
   <cc:sort var="SORT_ASC"/><cc:sort var="SORT_DESC"/>

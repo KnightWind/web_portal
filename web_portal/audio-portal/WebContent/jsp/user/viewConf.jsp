@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>查看会议详情</title>
+	<title>${LANG['bizconf.jsp.conf_list_index.res3']}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- Css -->	
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
@@ -13,7 +13,8 @@
 
 <!-- Javascript -->
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></SCRIPT>
-
+<cc:confList var="CONF_CYCLE_INFINITE_TRUE"/>
+<cc:confList var="CONF_CYCLE_INFINITE_FALSE"/>
 <script type="text/javascript">
 	$(function() {
 		var confType = "${confType}";
@@ -42,7 +43,7 @@ function copyConfLink(meintext) {
 		// the IE-manier
 		window.clipboardData.setData("Text", meintext);
 	} else {
-		parent.errorDialog("您使用的浏览器不支持此复制功能，请使用Ctrl+C或鼠标右键");
+		parent.errorDialog("${LANG['bizconf.jsp.viewConf.res1']}Ctrl+C${LANG['bizconf.jsp.viewConf.res2']}");
 	}
 
 }
@@ -60,7 +61,7 @@ function copyConfLink(meintext) {
       <tr>
         <td class="overlay-bdL"></td>
         
-             <!--弹出层主题内容区域开始========================================================================-->
+             <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
       
       <td class="overlay-content">
         <div class="First_Steps_quick_meeting02" style=" background:#FFF">
@@ -72,31 +73,35 @@ function copyConfLink(meintext) {
           <div class="First_Steps_main_quick_meeting">
             <table width="320" cellpadding="0" cellspacing="0" border="0" id="xx_meeting02" style=" float:left;">
               <tr>
-                <td align="right" class="xx_07">${LANG['system.list.meeting.title']}：</td>
+                <td align="right" class="xx_07">${LANG['system.list.meeting.title']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left"><span class="xx_08">${conf.confName }</span></td>
               </tr>
             
              <c:if test="${!empty confCycle}">
                <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.mode.regular']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.mode.regular']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left"><span class="xx_08">${cycleMode }</span></td>
               </tr> 
              <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.duplicate']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.duplicate']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left">
                 <span class="xx_08">
-                <fmt:formatDate value="${confCycle.beginDate}" pattern="yyyy-MM-dd" />----<fmt:formatDate value="${confCycle.endDate}" pattern="yyyy-MM-dd" />
+                <c:if test="${confCycle.infiniteFlag == CONF_CYCLE_INFINITE_FALSE}">
+	                <fmt:formatDate value="${confCycle.beginDate}" pattern="yyyy-MM-dd" />----<fmt:formatDate value="${confCycle.endDate}" pattern="yyyy-MM-dd" />
+                </c:if>
+                <c:if test="${confCycle.infiniteFlag == CONF_CYCLE_INFINITE_TRUE}">
+	                	${LANG['bizconf.jsp.create_Reservation_Conf.res34']}
+                </c:if>
                 </span>
                 </td>
               </tr> 
              </c:if> 
               
-              
                 <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.starttime']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.starttime']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left">
                 	<span class="xx_08">
-	                	<fmt:formatDate value="${conf.startTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+	                	<fmt:formatDate value="${conf.startTime}" pattern="yyyy-MM-dd HH:mm" />
 			            <c:if test="${!empty user }">
 			            	(${user.timeZoneDesc })
 			            </c:if>
@@ -107,14 +112,27 @@ function copyConfLink(meintext) {
                 </td>
               </tr>
               <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.duration']}：</td>
-                <td align="left"><span class="xx_08">${duration}</span></td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.duration']}${LANG['bizconf.jsp.viewConf.res3']}</td>
+                <td align="left"><span class="xx_08">
+                <c:if test="${conf.permanentConf eq 1}">${LANG['bizconf.jsp.viewConf.res4']}
+                	<fmt:formatDate value="${conf.endTime}" pattern="yyyy-MM-dd HH:mm" />
+			            <c:if test="${!empty user }">
+			            	(${user.timeZoneDesc })
+			            </c:if>
+			            <c:if test="${empty user }">
+		                	(${site.timeZoneDesc })
+			            </c:if>
+                </c:if>
+                <c:if test="${conf.permanentConf eq 0}">
+               	 ${duration}
+                </c:if>
+                </span></td>
               </tr>
              
-              <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.invite.number']}：</td>
-                <td align="left"><span class="xx_08">${inviteUserCount}</span></td>
-              </tr>
+<!--              <tr>-->
+<!--                <td align="right" class="xx_07">${LANG['user.menu.conf.invite.number']}${LANG['bizconf.jsp.viewConf.res3']}</td>-->
+<!--                <td align="left"><span class="xx_08">${inviteUserCount}</span></td>-->
+<!--              </tr>-->
               
             <c:if test="${!empty user}">   
               <tr>
@@ -123,11 +141,20 @@ function copyConfLink(meintext) {
               </tr>
               <c:if test="${user.id eq conf.compereUser}">
 	              <tr>
-	                <td align="right" class="xx_07" valign="top">${LANG['user.menu.conf.host.confid']}:</td>
-	                <td align="left" valign="top">
-	                  <p class="xx_08">${conf.compereSecure }</p>
+	                <td align="right" class="xx_07">${LANG['user.menu.conf.host.confid']}:</td>
+	                <td align="left">
+	                  <p class="xx_08">${conf.compereSecure } </p>
 	                </td>
 	              </tr>
+	              
+	              <c:if test="${conf.hostKey != ''}">
+		              <tr>
+		                <td align="right" class="xx_07">${LANG['bizconf.jsp.create_Reservation_Conf.res58']}:</td>
+		                <td align="left">
+		                  <p class="xx_08">${conf.hostKey}</p>
+		                </td>
+		              </tr>
+	              </c:if>
               </c:if>
             </c:if>  
               
@@ -138,18 +165,22 @@ function copyConfLink(meintext) {
             <table width="320" cellpadding="0" cellspacing="0" border="0" id="xx_meeting02">
               
                <tr class="confTypeTR">
-                <td align="right" class="xx_07">${LANG['user.menu.conf.conftype']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.conftype']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left">
                 	<span class="xx_08" title="${confType }">${confType}</span>
                	</td>
               </tr>
             
               <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.aheadtime']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.aheadtime']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left"><span class="xx_08">${ aheadTime}</span></td>
               </tr>
               <tr>
-                <td align="right" class="xx_07">${LANG['user.menu.conf.func']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.invite.number']}${LANG['bizconf.jsp.viewConf.res3']}</td>
+                <td align="left"><span class="xx_08">${inviteUserCount}</span></td>
+              </tr>
+              <tr>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.func']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left"><span class="xx_08" title="${clientFunc}">${clientFunc} </span></td>
               </tr>
               <cc:confList var="CONF_STATUS_FINISHED"/>
@@ -157,26 +188,26 @@ function copyConfLink(meintext) {
 	              <c:if test="${!empty user}"> 
 	              	<c:if test="${user.id eq conf.compereUser}">
 		              <tr>
-		                <td align="right" class="xx_07">${LANG['user.menu.conf.host.url']}：</td>
+		                <td align="right" class="xx_07">${LANG['user.menu.conf.host.url']}${LANG['bizconf.jsp.viewConf.res3']}</td>
 		                <td align="left"><span class="" style="margin-left: 5px;"><input readonly="readonly" onmouseover="this.select()" type="text" value="${hostUrl}" style="width: 150px;height:20px;line-height:20px;border:1px solid #666666"/></span></td>
 		              </tr>
 		            </c:if>
 		              
 		              <tr>
-		                <td align="right" class="xx_07">${LANG['user.menu.conf.act.url']}：</td>
+		                <td align="right" class="xx_07">${LANG['user.menu.conf.act.url']}${LANG['bizconf.jsp.viewConf.res3']}</td>
 		                <td align="left"><span class="" style="margin-left: 5px;"><input readonly="readonly" onmouseover="this.select()" type="text" value="${userUrl }" style="width: 150px;height:20px;line-height:20px;border:1px solid #666666"/></span></td>
 		              </tr>
 	             </c:if>
 	             
 	             <c:if test="${empty user && conf.publicFlag == 1}">
 	           		  <tr>
-		                <td align="right" class="xx_07">${LANG['user.menu.conf.act.url']}：</td>
+		                <td align="right" class="xx_07">${LANG['user.menu.conf.act.url']}${LANG['bizconf.jsp.viewConf.res3']}</td>
 		                <td align="left"><span class="" style="margin-left: 5px;"><input readonly="readonly" onmouseover="this.select()" type="text" value="${userUrl }" style="width: 150px;height:20px;line-height:20px;border:1px solid #666666"/></span></td>
 	              	  </tr>
 	             </c:if>
              </c:if>
               <tr class="confDescTR">
-                <td align="right" class="xx_07">${LANG['user.menu.conf.desc']}：</td>
+                <td align="right" class="xx_07">${LANG['user.menu.conf.desc']}${LANG['bizconf.jsp.viewConf.res3']}</td>
                 <td align="left">
                   <p class="xx_08">${conf.confDesc }</p>
                 </td>
@@ -216,17 +247,17 @@ function copyConfLink(meintext) {
         </div>
       </td>
       
-      <!--弹出层主题内容区域开始========================================================================-->
+      <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
       
       
       
       
-<!--              弹出层主题内容区域开始======================================================================== -->
+<!--              ${LANG['bizconf.jsp.add_contacts.res2']}======================================================================== -->
         
 <!--         <td class="overlay-content">  -->
 <!--   <div class="First_Steps_quick_meeting" style=" background:#FFF;height: 384px"> -->
 <!--     <div class="First_Steps_title_meeting"> <a href="javascript:closeDialog();"></a>  -->
-<!--      <h3 class="tit_a_meeting">会议信息</h3> -->
+<!--      <h3 class="tit_a_meeting">${LANG['bizconf.jsp.create_Reservation_Conf.res69']}</h3> -->
      
 <!--     </div> -->
 <!--     <div style=" background:#fff"><img class="toa_quick_meeting" src="/static/images/min.jpg" width="410" height="1" /></div> -->
@@ -234,11 +265,11 @@ function copyConfLink(meintext) {
 <!--     <div class="First_Steps_main_quick_meeting"> -->
 <!--       <table width="400" cellpadding="0" cellspacing="0" border="0" id="xx_meeting"> -->
 <!--        	<tr> -->
-<!--         	<td align="right" class="xx_01">会议主题：</td> -->
+<!--         	<td align="right" class="xx_01">${LANG['bizconf.jsp.conf_invite_recv.res6']}</td> -->
 <%--             <td align="left"><span class="xx_02">${conf.confName }</span></td> --%>
 <!--         </tr> -->
 <!--         <tr> -->
-<!--         	<td align="right" class="xx_01">开始时间：</td> -->
+<!--         	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res5']}</td> -->
 <!--             <td align="left"> -->
 <%-- 	            <span class="xx_02"><fmt:formatDate value="${conf.startTime}" pattern="yyyy-MM-dd HH:mm:ss" /> --%>
 <%-- 	            <c:if test="${!empty user }"> --%>
@@ -252,7 +283,7 @@ function copyConfLink(meintext) {
 <!--         </tr> -->
 <%--         <c:if test="${!empty confCycle}"> --%>
 <!-- 	        <tr> -->
-<!-- 	        	<td align="right" class="xx_01">周期时间：</td> -->
+<!-- 	        	<td align="right" class="xx_01">${LANG['bizconf.jsp.create_Reservation_Conf.res114']}</td> -->
 <!-- 	            <td align="left"> -->
 <!-- 	            <span class="xx_02"> -->
 <%-- 	            <fmt:formatDate value="${confCycle.beginDate}" pattern="yyyy-MM-dd" /> -- --%>
@@ -262,40 +293,40 @@ function copyConfLink(meintext) {
 <!-- 	        </tr> -->
 <%--         </c:if> --%>
 <!--         <tr> -->
-<!--         	<td align="right" class="xx_01">会议时长：</td> -->
+<!--         	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res6']}</td> -->
 <%--             <td align="left"><span class="xx_02">${duration}</span></td> --%>
 <!--         </tr> -->
 <%--         <c:if test="${conf.confType != 0}"> --%>
 <!-- 	        <tr> -->
-<!-- 	        	<td align="right" class="xx_01">会议功能：</td> -->
+<!-- 	        	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res7']}</td> -->
 <%-- 	            <td align="left"><span class="xx_02">${confType}</span></td> --%>
 <!-- 	        </tr> -->
 <%--         </c:if> --%>
 <!--         <tr> -->
-<!--         	<td align="right" class="xx_01">参会方数：</td> -->
+<!--         	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res8']}</td> -->
 <%--             <td align="left"><span class="xx_02">${confUserNum}</span></td> --%>
 <%--              <td align="left"><span class="xx_02">${inviteUserCount}</span></td> --%>
 <!--         </tr> -->
 <%--         <c:if test="${!empty user}"> --%>
 <%--         	<c:if test="${user.id eq conf.compereUser}"> --%>
 <!-- 			    <tr> -->
-<!-- 		        	<td align="right" class="xx_01">主持人会议安全号：</td> -->
+<!-- 		        	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res9']}</td> -->
 <%-- 		            <td align="left"><span class="xx_02">${conf.compereSecure }</span></td> --%>
 <!-- 		        </tr> -->
 <%--         	</c:if> --%>
 <!-- 	        <tr> -->
-<!-- 	        	<td align="right" class="xx_01">与会者安全会议号：</td> -->
+<!-- 	        	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res10']}</td> -->
 <%-- 	            <td align="left"><span class="xx_02">${conf.userSecure }</span></td> --%>
 <!-- 	        </tr> -->
 <%-- 	        <c:if test="${conf.publicFlag == 1}"> --%>
 <!-- 		        <tr> -->
-<!-- 		        	<td align="right" class="xx_01">公开会议会议密码：</td> -->
+<!-- 		        	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res11']}</td> -->
 <%-- 		            <td align="left"><span class="xx_02">${conf.publicConfPass }</span></td> --%>
 <!-- 		        </tr> -->
 <%-- 	        </c:if> --%>
 <%--         </c:if> --%>
 <!--         <tr> -->
-<!--         	<td align="right" class="xx_01">会议描述：</td> -->
+<!--         	<td align="right" class="xx_01">${LANG['bizconf.jsp.viewConf.res12']}</td> -->
 <%--             <td align="left"><p class="xx_02">${conf.confDesc }</p></td> --%>
 <!--         </tr> -->
 <!--       </table> -->
@@ -303,7 +334,7 @@ function copyConfLink(meintext) {
 <!--     <div style="position: absolute;bottom: 5px;"> -->
 <!--       <div class="btn09"> -->
 <!--       	<span class="button_common"> -->
-<!--       		<a href="javascript:closeDialog();"><img src="/static/images/back.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:5px"/>返回</a> -->
+<!--       		<a href="javascript:closeDialog();"><img src="/static/images/back.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:5px"/>${LANG['bizconf.jsp.enContacts_list.res8']}</a> -->
 <!--       	</span> -->
 <!--       </div> -->
 <%--       <cc:confList var="CONF_STATUS_OPENING"/> --%>
@@ -316,10 +347,10 @@ function copyConfLink(meintext) {
 <%-- 	      <a href="javascript:;" onclick="javascript:joinMeeting(${JOIN_TYPE_CONFID},'${conf.id}');"> --%>
 <!-- 	      <img src="/static/images/join.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:2px"/> -->
 <%-- 	      		<c:if test="${user.id != conf.compereUser}"> --%>
-<!--            			加入会议 -->
+<!--            			${LANG['bizconf.jsp.conf_list_index.res48']} -->
 <%--            		</c:if> --%>
 <%--            		<c:if test="${user.id eq conf.compereUser}"> --%>
-<!--            			开始会议 -->
+<!--            			${LANG['bizconf.jsp.conf_list_index.res54']} -->
 <%--            		</c:if> --%>
 <!--    		  </a> -->
 <!--    		  </span> -->
@@ -333,7 +364,7 @@ function copyConfLink(meintext) {
 <!-- </div> -->
 <!--  </td> -->
         
-<!--         弹出层主题内容区域开始======================================================================== -->
+<!--         ${LANG['bizconf.jsp.add_contacts.res2']}======================================================================== -->
       
       
       

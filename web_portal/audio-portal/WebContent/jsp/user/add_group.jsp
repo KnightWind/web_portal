@@ -107,40 +107,40 @@ function saveGroup() {
       <tr>
         <td class="overlay-bdL"></td>
         <td class="overlay-content"> 
-        <!--==================================弹出层主题内容区域开始======================================-->
+        <!--==================================${LANG['bizconf.jsp.add_contacts.res2']}======================================-->
         
         <div class="First_Steps_quick_a" style=" background:#FFF">
 	        <div class="First_Steps_title_a"> <a href="javascript:;" onclick="closeDialog()"></a>
-	          <h3 class="tit_a">添加群组</h3>
-	          <p class="tit_b">添加完群组后，可在查看成员中添加联系人</p>
+	          <h3 class="tit_a">${LANG['bizconf.jsp.add_group.res1']}</h3>
+	          <p class="tit_b">${LANG['bizconf.jsp.add_group.res2']}</p>
 	        </div>
         	<div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
         	<div class="First_Steps_top" style=" background:#FFF"> </div>
         	<div class="First_Steps_main_quick">
           		<table class="box_a_quick">
 		            <tr class="box01">
-		              <td align="right" class="left_text_a"><label class='red_star'>*</label>组名</td>
+		              <td align="right" class="left_text_a"><label class='red_star'>*</label>${LANG['bizconf.jsp.add_group.res3']}</td>
 		              <td align="left"><input class="right_text_a" id="groupName" name="groupName" class="text04" type="text" value="${group.groupName}" /></td>
 		            </tr>
 		            <tr class="box01">
-		              <td align="right" class="left_text_a" valign="top">描述</td>
+		              <td align="right" class="left_text_a" valign="top">${LANG['bizconf.jsp.add_group.res4']}</td>
 		              <td align="left"><textarea  class="right_text_b" id="groupDesc" name="groupDesc" cols="" rows="">${group.groupDesc}</textarea></td>
 		            </tr>
           		</table>
         	</div>
           	<div class="but15">
           		<span class="button_common" style=" margin-bottom:20px; margin-right:30px;">
-          			<a href="javascript:closeDialog();"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>取消</a>
+          			<a href="javascript:closeDialog();"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>${LANG['bizconf.jsp.add_contacts.res13']}</a>
           		</span>
           	</div>
           	<div class="but16">
           		<span class="button_common">
-          			<a href="javascript:submitForm();"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;"/>提交</a>
+          			<a href="javascript:submitForm();"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px;"/>${LANG['bizconf.jsp.add_group.res5']}</a>
           		</span>
           	</div>
       	</div>
         
-		<!--==================================弹出层主题内容区域开始======================================-->
+		<!--==================================${LANG['bizconf.jsp.add_contacts.res2']}======================================-->
    		</td>
         <td class="overlay-bdR"></td>
       </tr>

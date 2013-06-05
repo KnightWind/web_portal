@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +35,7 @@ import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SiteOrg;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.interceptors.SiteAdminInterceptor;
 import com.bizconf.audio.logic.ConfLogic;
 import com.bizconf.audio.logic.ConfUserLogic;
 import com.bizconf.audio.service.ConfService;
@@ -55,6 +58,7 @@ import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.LiberCFile;
 import com.libernate.liberc.annotation.AsController;
 import com.libernate.liberc.annotation.CParam;
+import com.libernate.liberc.annotation.Interceptors;
 import com.libernate.liberc.annotation.ReqPath;
 import com.libernate.liberc.utils.LiberContainer;
 
@@ -64,6 +68,7 @@ import com.libernate.liberc.utils.LiberContainer;
  * @date 2013-2-17
  */
 @ReqPath("entUser")
+@Interceptors({SiteAdminInterceptor.class})
 public class EnterpriseAdminsController extends BaseController{
 	private final Logger logger = Logger.getLogger(EnterpriseAdminsController.class);
 	
@@ -106,20 +111,31 @@ public class EnterpriseAdminsController extends BaseController{
 		}else{
 			pageModel = enterpriseAdminsService.getUserBases(keyword, sortField, sortRule, userBase.getSiteId(),userBase.getId(), pageNo);
 		}
-		
-		//站点功能授权信息 
-//		EmpowerConfig siteConfig = empowerConfigService.getSiteApplyEmpowerBySiteId(userBase.getSiteId());
-		//每个用户的功能授权信息
-//		Map<Integer,EmpowerConfig> configMap = empowerConfigService.getUsersPermissions(pageModel.getDatas());
-//		request.setAttribute("siteConfig", siteConfig);
-//		request.setAttribute("configMap", configMap);
-		
-		
+		if(pageModel != null && pageModel.getDatas() != null){
+			Map<Integer, String> orgNamesMap = getOrgNames(pageModel.getDatas());   //获取每个会议的参会人个数
+			request.setAttribute("orgNamesMap", orgNamesMap);
+		}
 		request.setAttribute("keyword", keyword);
 		request.setAttribute("sortField", sortField);
 		request.setAttribute("sortRule", sortRule);
 		request.setAttribute("pageModel", pageModel);
 		return new ActionForward.Forward("/jsp/admin/site_user_list.jsp");
+	}
+	
+	/**
+	 * 获取每个用户的组织机构名称
+	 * wangyong
+	 * 2013-3-25
+	 */
+	private Map<Integer,String> getOrgNames(List<UserBase> userList){
+		Map<Integer,String> orgNamesMap = new HashMap<Integer, String>();
+		if(userList != null && userList.size() > 0){
+			for(UserBase user:userList){
+				SiteOrg org = orgService.getSiteOrgById(user.getOrgId());
+				orgNamesMap.put(user.getId(), org == null ? "- -" : org.getOrgName());
+			}
+		}
+		return orgNamesMap;
 	}
 	
 	/**
@@ -131,11 +147,10 @@ public class EnterpriseAdminsController extends BaseController{
 	public Object delEnterpriseUsers(HttpServletRequest request){
 		boolean deleteFlag = false;
 		UserBase user = userService.getCurrentSiteAdmin(request);
-		SiteBase site = siteService.getCurrentSiteBaseByAdminLogin(request);
 		String[] ids = request.getParameterValues("id");
+		logger.info("批量删除站点用户ID：" + ids);
 		deleteFlag = enterpriseAdminsService.deleteUserBases(ids, user.getId());
-		
-		if(deleteFlag){
+//		if(deleteFlag){
 			//======删除该用户创建的会议======
 //			for (int i = 0; i < ids.length; i++) {
 //				Integer creatorId = Integer.parseInt(ids[i]);
@@ -153,15 +168,12 @@ public class EnterpriseAdminsController extends BaseController{
 //					}
 //				}
 //			}
-			
-			eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_DELETE_BATCH, 
-					ResourceHolder.getInstance().getResource("siteAdmin.siteUser.delete.batch.1"), 
-					EventLogConstants.EVENTLOG_SECCEED, ids, request);   //删除成功后写EventLog
-		}else{
-			eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_DELETE_BATCH, 
-					ResourceHolder.getInstance().getResource("siteAdmin.siteUser.delete.batch.2"), 
-					EventLogConstants.EVENTLOG_FAIL, ids, request);   //删除成功后写EventLog
-		}
+//			eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_DELETE_BATCH, 
+//					ResourceHolder.getInstance().getResource("siteAdmin.siteUser.delete.batch.1"), 
+//					EventLogConstants.EVENTLOG_SECCEED, ids, request);   //删除成功后写EventLog
+//		}
+		sysHelpAdminEventLog(deleteFlag, userService.getCurrentSysAdmin(request), user, 
+				EventLogConstants.SYSTEM_ADMIN_USER_DELETE_BATCH, EventLogConstants.SITE_ADMIN_USER_DELETE_BATCH, "批量删除站点用户", null, request);
 		return new ActionForward.Forward("/admin/entUser/listAll");
 	}
 	
@@ -178,20 +190,11 @@ public class EnterpriseAdminsController extends BaseController{
 		String[] ids = request.getParameterValues("id");
 		try {
 			lockFlag = enterpriseAdminsService.changeLockState(ids, ConstantUtil.USER_STATU_LOCK);
-			if(lockFlag){
-				eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_LOCK_BATCH, 
-						ResourceHolder.getInstance().getResource("siteAdmin.siteUser.lock.batch.1"), 
-						EventLogConstants.EVENTLOG_SECCEED, ids, request);   //锁定成功后写EventLog
-			}else{
-				eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_LOCK_BATCH, 
-						ResourceHolder.getInstance().getResource("siteAdmin.siteUser.lock.batch.2"), 
-						EventLogConstants.EVENTLOG_FAIL, ids, request);   //锁定失败后写EventLog
-			}
 		} catch (Exception e) {
-			eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_LOCK_BATCH, 
-					ResourceHolder.getInstance().getResource("siteAdmin.siteUser.lock.batch.2"), 
-					EventLogConstants.EVENTLOG_FAIL, ids, request);   //锁定失败后写EventLog
 			logger.error("批量锁定用户出错",e);
+		}finally{
+			sysHelpAdminEventLog(lockFlag, userService.getCurrentSysAdmin(request), user, 
+					EventLogConstants.SYSTEM_ADMIN_USER_LOCK_BATCH, EventLogConstants.SITE_ADMIN_USER_LOCK_BATCH, "批量锁定 站点用户", null, request);
 		}
 		return new ActionForward.Forward("/admin/entUser/listAll");
 	}
@@ -209,20 +212,11 @@ public class EnterpriseAdminsController extends BaseController{
 		String[] ids = request.getParameterValues("id");
 		try {
 			lockFlag = enterpriseAdminsService.changeLockState(ids, ConstantUtil.USER_STATU_UNLOCK);
-			if(lockFlag){
-				eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_ACTIVE_BATCH, 
-						ResourceHolder.getInstance().getResource("siteAdmin.siteUser.active.batch.1"), 
-						EventLogConstants.EVENTLOG_SECCEED, ids, request);   //解锁成功后写EventLog
-			}else{
-				eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_ACTIVE_BATCH, 
-						ResourceHolder.getInstance().getResource("siteAdmin.siteUser.active.batch.2"), 
-						EventLogConstants.EVENTLOG_FAIL, ids, request);   //解锁失败后写EventLog
-			}
 		} catch (Exception e) {
-			eventLogService.saveAdminEventLogBatch(user, EventLogConstants.SITE_ADMIN_USER_ACTIVE_BATCH, 
-					ResourceHolder.getInstance().getResource("siteAdmin.siteUser.active.batch.2"), 
-					EventLogConstants.EVENTLOG_FAIL, ids, request);   //解锁失败后写EventLog
 			logger.error("批量解锁用户出错",e);
+		} finally{
+			sysHelpAdminEventLog(lockFlag, userService.getCurrentSysAdmin(request), user, 
+					EventLogConstants.SYSTEM_ADMIN_USER_ACTIVE_BATCH, EventLogConstants.SITE_ADMIN_USER_ACTIVE_BATCH, "批量解锁 站点用户", null, request);
 		}
 		return new ActionForward.Forward("/admin/entUser/listAll");
 	}
@@ -262,15 +256,8 @@ public class EnterpriseAdminsController extends BaseController{
 		UserBase user = userService.getCurrentSiteAdmin(request);
 		String[] ids = request.getParameterValues("id");
 		deleteFlag = enterpriseAdminsService.deleteUserBases(ids, user.getId());
-		if(deleteFlag){
-			eventLogService.saveAdminEventLog(user, EventLogConstants.SITE_ADMIN_SITEADMIN_DELETE,
-					ResourceHolder.getInstance().getResource("siteAdmin.list.delete.1"), 
-					EventLogConstants.EVENTLOG_SECCEED, null, request);   //删除成功后写EventLog
-		}else{
-			eventLogService.saveAdminEventLog(user, EventLogConstants.SITE_ADMIN_SITEADMIN_DELETE, 
-					ResourceHolder.getInstance().getResource("siteAdmin.list.delete.2"), 
-					EventLogConstants.EVENTLOG_FAIL, null, request);   //删除成功后写EventLog
-		}
+		sysHelpAdminEventLog(deleteFlag, userService.getCurrentSysAdmin(request), user, 
+				EventLogConstants.SYSTEM_ADMIN_SITEADMIN_DELETE, EventLogConstants.SITE_ADMIN_SITEADMIN_DELETE, "删除某个普通管理员", null, request);
 		return new ActionForward.Forward("/admin/entUser/list");
 	}
 	
@@ -312,6 +299,9 @@ public class EnterpriseAdminsController extends BaseController{
 //			request.setAttribute("user", user);
 //			request.setAttribute("config", config);
 			userBase = userService.getUserBaseById(userId);
+			if(userBase != null && userBase.getId().intValue() > 0){
+				getOrgParentId(userBase.getOrgId(), request);     //修改
+			}
 		}
 		EmpowerConfig userConfig=empowerConfigService.makeEmpowerForUser(sitePower, userPower);
 		List<SiteOrg> orgList = orgService.getSiteOrgList(currUser.getSiteId()).getDatas();
@@ -325,7 +315,41 @@ public class EnterpriseAdminsController extends BaseController{
 	}
 	
 	/**
-	 * 修改或者新建普通站点用户
+	 * 修改用户时，获得用户所在机构的级别
+	 * 1.组织机构最多4级
+	 * 2.返回前台页面每级所对应的orgId
+	 * 3.以递归的形式获取orgId
+	 * shhc
+	 * 2013-5-21
+	 */
+	private boolean getOrgParentId(int orgId, HttpServletRequest request){
+        SiteOrg org = orgService.getSiteOrgById(orgId);
+        if(org == null || org.getId().intValue() <= 0){
+        	return false;
+        }
+        int orgLevel = org.getOrgLevel().intValue();
+        switch (orgLevel) {
+		case 4:
+			request.setAttribute("dep4", orgId);
+			getOrgParentId(org.getParentId(), request);
+			break;
+		case 3:
+			request.setAttribute("dep3", orgId);
+			getOrgParentId(org.getParentId(), request);
+			break;
+		case 2:
+			request.setAttribute("dep2", orgId);
+			getOrgParentId(org.getParentId(), request);
+			break;
+		case 1:
+			request.setAttribute("dep1", orgId);
+			break;
+		}
+        return true;
+    }
+	
+	/**
+	 * 查看普通站点用户信息
 	 * @param id
 	 * @param request
 	 * @return
@@ -340,10 +364,12 @@ public class EnterpriseAdminsController extends BaseController{
 			EmpowerConfig config = empowerConfigService.getUserEmpowerConfigByUserId(user.getId());
 			if(user != null && user.getId().intValue() > 0){
 				List<SiteOrg> orgList = orgService.getSiteOrgList(user.getSiteId()).getDatas();
-				for(SiteOrg org : orgList){
-					if(user.getOrgId().intValue() == org.getId().intValue()){
-						request.setAttribute("orgName", org.getOrgName());
-						break;
+				if(orgList!=null && !orgList.isEmpty()){
+					for(SiteOrg org : orgList){
+						if(user.getOrgId().intValue() == org.getId().intValue()){
+							request.setAttribute("orgName", StringUtil.isNotBlank(org.getOrgName()) ? org.getOrgName() : "无");
+							break;
+						}
 					}
 				}
 			}
@@ -372,6 +398,7 @@ public class EnterpriseAdminsController extends BaseController{
 			orgUser.setLoginName(user.getLoginName());
 			orgUser.setTrueName(user.getTrueName());
 			orgUser.setEnName(user.getEnName());
+			orgUser.setRemark(user.getRemark());
 			if(StringUtil.isNotBlank(user.getUserEmail())){
 				userBase =	userService.getSiteAdminByEmail(userAdmin.getSiteId(), user.getUserEmail());
 				if(userBase != null && userBase.getId() != null && userBase.getId().intValue() != user.getId().intValue()){
@@ -387,23 +414,24 @@ public class EnterpriseAdminsController extends BaseController{
 			}
 			orgUser.setMobile(user.getMobile());
 			if(StringUtil.isNotBlank(user.getLoginPass())){
+				orgUser.setPassEditor(userAdmin.getId());
 				orgUser.setLoginPass(MD5.encodePassword(user.getLoginPass(), "MD5"));
 			}
 			if(userService.siteUserSaveable(orgUser)){
+				
 				boolean flag = enterpriseAdminsService.updateUserBase(orgUser);
 				if(flag){
 					orgUser.setLoginPass(user.getLoginPass());//邮件给用户时显示的密码
 					emailService.updateSiteAdmin(orgUser);
 				}
+				sysHelpAdminEventLog(flag, userService.getCurrentSysAdmin(request), userAdmin, 
+						EventLogConstants.SYSTEM_ADMIN_SITEADMIN_UPDATE, EventLogConstants.SITE_ADMIN_SITEADMIN_UPDATE, "修改普通站点管理员", user, request);
 			}else{
-				eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_SITEADMIN_UPDATE, 
-						ResourceHolder.getInstance().getResource("siteAdmin.list.update.2"), 
-						EventLogConstants.EVENTLOG_FAIL, user, request);   //修改失败后写EventLog
+				sysHelpAdminEventLog(false, userService.getCurrentSysAdmin(request), userAdmin, 
+						EventLogConstants.SYSTEM_ADMIN_SITEADMIN_UPDATE, EventLogConstants.SITE_ADMIN_SITEADMIN_UPDATE, "修改普通站点管理员", user, request);
 				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.list.update.2"));
 			}
-			eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_SITEADMIN_UPDATE, 
-					ResourceHolder.getInstance().getResource("siteAdmin.list.update.1"), 
-					EventLogConstants.EVENTLOG_SECCEED, user, request);   //修改成功后写EventLog
+			
 			return returnJsonStr(ConstantUtil.CREATESITEUSER_SUCCEED, ResourceHolder.getInstance().getResource("siteAdmin.list.update.1"));
 		}else{
 			UserBase creator = userService.getCurrentSiteAdmin(request);
@@ -423,23 +451,24 @@ public class EnterpriseAdminsController extends BaseController{
 			initSiteAdmin(user,creator);
 			String orgPass = user.getLoginPass();
 			userBase = null;
+			boolean createFlag = false;
 			if(userService.siteUserSaveable(user)){
+				user.setPassEditor(userAdmin.getId());
 				userBase = enterpriseAdminsService.saveUserBase(user);
 				if(userBase != null && userBase.getId() > 0){
+					createFlag = true;
 					user.setLoginPass(orgPass);//明文密码 发送给用户
 					emailService.createSiteAdminEmail(user);
 				}else{
 					return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.list.create.2"));
 				}
 			}else{
-				eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_SITEADMIN_CREATE, 
-						ResourceHolder.getInstance().getResource("siteAdmin.list.create.2"), 
-						EventLogConstants.EVENTLOG_FAIL, userBase, request);   //创建失败后写EventLog
+				sysHelpAdminEventLog(false, userService.getCurrentSysAdmin(request), userAdmin, 
+						EventLogConstants.SYSTEM_ADMIN_SITEADMIN_CREATE, EventLogConstants.SITE_ADMIN_SITEADMIN_CREATE, "新建普通站点管理员", user, request);
 				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.list.create.2"));
 			}
-			eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_SITEADMIN_CREATE, 
-					ResourceHolder.getInstance().getResource("siteAdmin.list.create.1"), 
-					EventLogConstants.EVENTLOG_SECCEED, userBase, request);   //创建成功后写EventLog
+			sysHelpAdminEventLog(true, userService.getCurrentSysAdmin(request), userAdmin, 
+					EventLogConstants.SYSTEM_ADMIN_SITEADMIN_CREATE, EventLogConstants.SITE_ADMIN_SITEADMIN_CREATE, "新建普通站点管理员", user, request);
 			return returnJsonStr(ConstantUtil.CREATESITEUSER_SUCCEED, ResourceHolder.getInstance().getResource("siteAdmin.list.create.1"));
 		}
 	}
@@ -465,6 +494,20 @@ public class EnterpriseAdminsController extends BaseController{
 		EmpowerConfig userPower=null;
 		String eachFieldName="";
 		Integer eachValue;
+		
+		//保存用户时，保存组织机构orgCode
+		if(user != null && user.getOrgId() != null && user.getOrgId().intValue() > 0){
+			SiteOrg org = orgService.getSiteOrgById(user.getOrgId());
+			if(org != null){
+				user.setOrgCode(org.getOrgCode());
+			}else{
+				user.setOrgCode("");
+			}
+		}else{
+			user.setOrgId(0);
+			user.setOrgCode("");
+		}
+		
 		if(user.getId()!=null && user.getId()>0){
 			UserBase orgUser = userService.getUserBaseById(user.getId());
 			orgUser.setLoginName(user.getLoginName());
@@ -474,6 +517,8 @@ public class EnterpriseAdminsController extends BaseController{
 			orgUser.setMobile(user.getMobile());
 			orgUser.setUserRole(user.getUserRole());
 			orgUser.setOrgId(user.getOrgId());
+			orgUser.setOrgCode(user.getOrgCode());
+			orgUser.setExprieDate(user.getExprieDate());
 			if(StringUtil.isNotBlank(user.getUserEmail())){
 				userBase =	userService.getSiteUserByEmail(userAdmin.getSiteId(), user.getUserEmail());
 				if(userBase != null && userBase.getId() != null && userBase.getId().intValue() != user.getId().intValue()){
@@ -491,8 +536,9 @@ public class EnterpriseAdminsController extends BaseController{
 				orgUser.setLoginPass(MD5.encodePassword(user.getLoginPass(), "MD5"));
 				orgUser.setPassEditor(userAdmin.getId());   //若管理员修改用户密码，则记录操作人ID
 			}
+			boolean flag = false;
 			if(userService.siteUserSaveable(orgUser)){
-				boolean flag = enterpriseAdminsService.updateUserBase(orgUser);
+				flag = enterpriseAdminsService.updateUserBase(orgUser);
 				if(flag){
 					userPower= empowerConfigService.getUserEmpowerConfigByUserId(user.getId());
 					
@@ -538,24 +584,19 @@ public class EnterpriseAdminsController extends BaseController{
 //								eachValue=IntegerUtil.parseInteger(ObjectUtil.getFieldValue(config, eachFieldName));
 //								ObjectUtil.setFieldValue(userPower, eachFieldName, eachValue);
 							}
-							
-							
 						}
 						empowerConfigService.updateEmpowerConfig(userPower);
 					}
-					eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_USER_UPDATE, 
-							ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.1"), 
-							EventLogConstants.EVENTLOG_SECCEED, user, request);   //修改成功后写EventLog
-					
 					orgUser.setLoginPass(user.getLoginPass());//明文密码发送给用户
 					emailService.updateSiteUserEmail(orgUser);
 				}
 			}else{
-				eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_USER_UPDATE, 
-						ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.2"), 
-						EventLogConstants.EVENTLOG_FAIL, user, request);   //修改失败后写EventLog
+				sysHelpAdminEventLog(false, userService.getCurrentSysAdmin(request), userAdmin, 
+						EventLogConstants.SYSTEM_ADMIN_USER_UPDATE, EventLogConstants.SITE_ADMIN_USER_UPDATE, "修改普通站点用户", user, request);
 				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.2")+":该用户名已存在");
 			}
+			sysHelpAdminEventLog(flag, userService.getCurrentSysAdmin(request), userAdmin, 
+					EventLogConstants.SYSTEM_ADMIN_USER_UPDATE, EventLogConstants.SITE_ADMIN_USER_UPDATE, "修改普通站点用户", user, request);
 			return returnJsonStr(ConstantUtil.CREATESITEUSER_SUCCEED, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.1"));
 		}else{
 			initSiteAdmin(user,userAdmin);
@@ -574,10 +615,14 @@ public class EnterpriseAdminsController extends BaseController{
 					return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.4"));
 				}
 			}
+			
+			
+			boolean flag = false;
 			if(userService.siteUserSaveable(user)){
 				userBase = enterpriseAdminsService.saveUserBase(user);
 				
 				if(userBase != null && userBase.getId() > 0){
+					flag = true;
 					//保存权限设置
 					userPower=globalPower;
 					//config.setSiteId(userAdmin.getSiteId());
@@ -600,21 +645,18 @@ public class EnterpriseAdminsController extends BaseController{
 						}
 					}
 					empowerConfigService.saveEmpowerConfig(userPower);
-					
-					eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_USER_CREATE, 
-							ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.1"), 
-							EventLogConstants.EVENTLOG_SECCEED, userBase, request);   //创建成功后写EventLog
 					user.setLoginPass(orgPass);
 					emailService.createSiteUser(user);
 				}else{
-					eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_USER_CREATE, 
-							ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"), 
-							EventLogConstants.EVENTLOG_FAIL, userBase, request);   //创建失败后写EventLog
 					return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
 				}
 			}else{
+				sysHelpAdminEventLog(false, userService.getCurrentSysAdmin(request), userAdmin, 
+						EventLogConstants.SYSTEM_ADMIN_USER_CREATE, EventLogConstants.SITE_ADMIN_USER_CREATE, "新建普通站点用户", user, request);
 				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2")+":该用户名已存在");
 			}
+			sysHelpAdminEventLog(flag, userService.getCurrentSysAdmin(request), userAdmin, 
+					EventLogConstants.SYSTEM_ADMIN_USER_CREATE, EventLogConstants.SITE_ADMIN_USER_CREATE, "新建普通站点用户", user, request);
 			return returnJsonStr(ConstantUtil.CREATESITEUSER_SUCCEED, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.1"));
 		}
 	}
@@ -725,6 +767,14 @@ public class EnterpriseAdminsController extends BaseController{
 	public Object importUserBases(@CParam("excelfile") LiberCFile file,HttpServletRequest request,HttpServletResponse response){
 		UserBase currUser = userService.getCurrentSiteAdmin(request);
 		SiteBase site = siteService.getSiteBaseById(currUser.getSiteId());
+//		List<SiteOrg> siteOrgList = orgService.getSiteOrgList(site.getId()).getDatas();
+//		SiteOrg siteOrg = null;
+//		if(siteOrgList != null){
+//			for(SiteOrg org:siteOrgList){
+//				siteOrg = org;
+//				break;
+//			}
+//		}
 		try {
 			List<UserBase> importusers = new ArrayList<UserBase>();//可成功导入的用户
 			List<UserBase> repeatusers = new ArrayList<UserBase>();//数据库中已存在的用户
@@ -744,6 +794,10 @@ public class EnterpriseAdminsController extends BaseController{
 					user.setTrueName(objs[2]==null?"":objs[2].toString());
 					user.setEnName(objs[3]==null?"":objs[3].toString());
 					user.setPassEditor(currUser.getId());
+//					if(siteOrg != null){
+//						user.setOrgId(siteOrg.getId());
+//						user.setOrgCode(siteOrg.getOrgCode());
+//					}
 					//userRole
 					if(site.getChargeMode()!=null && site.getChargeMode().intValue()==1){
 						user.setUserRole(ConstantUtil.USERROLE_PARTICIPANT);
@@ -840,8 +894,6 @@ public class EnterpriseAdminsController extends BaseController{
 		siteUser.setSiteId(creator.getSiteId());
 		siteUser.setDelFlag(ConstantUtil.DELFLAG_UNDELETE);
 		siteUser.setErrorCount(0);
-		siteUser.setOrgCode("");
-		siteUser.setOrgId(0);
 		siteUser.setUserLogo("");
 		siteUser.setUserSort(0);
 		siteUser.setUserStatus(ConstantUtil.LOCKFLAG_UNLOCK);

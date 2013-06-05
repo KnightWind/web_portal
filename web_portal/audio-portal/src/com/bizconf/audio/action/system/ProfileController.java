@@ -33,7 +33,7 @@ public class ProfileController extends BaseController {
 		if(StringUtil.isNotBlank(orgPass)){
 			String inputOrgPass = MD5.encodePassword(orgPass, "MD5");
 			if(!oldUser.getLoginPass().equals(inputOrgPass)){
-				this.setErrMessage(inv.getRequest(), "set profile failed.the original password incorrect");
+				this.setErrMessage(inv.getRequest(), "个人信息修改失败，原始密码输入错误");
 				return new ActionForward.Forward("/system/profile");
 			}
 		}
@@ -44,6 +44,10 @@ public class ProfileController extends BaseController {
 		oldUser.setMobile(newUser.getMobile());
 		oldUser.setPassEditor(oldUser.getId());
 		if (newUser.getLoginPass() != null && newUser.getLoginPass().length() > 0) {
+			if(StringUtil.isEmpty(orgPass)){
+				this.setErrMessage(inv.getRequest(), "如需修改密码，请输入正确的原始密码");
+				return new ActionForward.Forward("/system/profile");
+			}
 			oldUser.setLoginPass(MD5.encodePassword(newUser.getLoginPass(), "MD5"));
 		}
 		
@@ -51,10 +55,10 @@ public class ProfileController extends BaseController {
 			DAOProxy.getLibernate().updateEntity(oldUser);
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.setErrMessage(inv.getRequest(), "set profile failed.");
+			this.setErrMessage(inv.getRequest(), "个人信息修改失败");
 		}
 		
-		this.setInfoMessage(inv.getRequest(), "set profile ok");
+		this.setInfoMessage(inv.getRequest(), "个人信息修改成功");
 		
 		return new ActionForward.Forward("/system/profile");
 	}

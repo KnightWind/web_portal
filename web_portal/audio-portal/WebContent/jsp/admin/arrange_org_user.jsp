@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>企业用户管理</title>
+<title>${LANG['bizconf.jsp.admin.arrange_org_user.res1']}</title>
 
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/popupbox.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
@@ -27,7 +27,7 @@
 </c:if>
 <script type="text/javascript">
 	
-	//批量提交
+	//${LANG['bizconf.jsp.admin.arrange_org_user.res2']}
 	function submitBatch(){
 		var data = {};
 		data.orgId = $("#orgId").val();
@@ -37,7 +37,7 @@
 			data.id.push(id);
 		});
 		if(data.id.length==0){	 
-			parent.errorDialog("请至少选择一个");
+			parent.errorDialog("${LANG['bizconf.jsp.admin.arrange_org_user.res3']}");
 			return;
 		} else {
 			data.id = data.id.join(",");
@@ -49,7 +49,7 @@
 						parent.errorDialog(result.message);
 					}
 				}
-			}, {message:"保存数据...", ui:parent});
+			}, {message:"${LANG['bizconf.jsp.admin.arrange_org_user.res4']}...", ui:parent});
 		}
 	}
 	
@@ -68,7 +68,7 @@
 	}
 	
 	$(document).ready(function(){
-		//全选and全不选
+		//${LANG['bizconf.jsp.admin.arrange_org_user.res5']}and${LANG['bizconf.jsp.admin.arrange_org_user.res6']}
 		$("#checkAll").click(function(){
 			if($(this).attr("checked")){
 				$("input[name=id]").attr("checked",true);				
@@ -87,7 +87,7 @@
 </script>
 </head>
 <body onload="loaded()">
-<form id="query" name="query" action="" method="post">
+<form id="query" name="query" action="/admin/org/getOrgUserList/${orgId}" method="post">
 		<div style="margin:10px auto;width: 710px;height: 405px;">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" style="border:#A3C5DE 1px solid; border-top:none; border-bottom:none;">
         <tr class="table002" height="32" >
@@ -98,15 +98,25 @@
                 <td width="5%" height="38" bgcolor="d3eaef" class="STYLE10">
                   <div align="center"><span><input type="checkbox" id="checkAll"/></span></div>
                 </td>
-                <td width="30%" height="38" bgcolor="d3eaef" class="STYLE10">
-                  <div align="center"><span>登录名</span></div>
-                </td>
-                <td width="30%"  height="38" bgcolor="d3eaef" class="STYLE10" >
-                  <div align="center" ><span>用户名</span></div>
-                </td>
-                <td width="35%"  height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;">
-                  <div align="center" ><span>邮箱</span></div>
-                </td>
+<!--                <td width="30%" height="38" bgcolor="d3eaef" class="STYLE10">-->
+<!--                  <div align="center"><span>${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</span></div>-->
+<!--                </td>-->
+<!--                <td width="30%"  height="38" bgcolor="d3eaef" class="STYLE10" >-->
+<!--                  <div align="center" ><span>${LANG['bizconf.jsp.admin.arrange_org_user.res8']}</span></div>-->
+<!--                </td>-->
+<!--                <td width="35%"  height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;">-->
+<!--                  <div align="center" ><span>${LANG['bizconf.jsp.admin.arrange_org_user.res9']}</span></div>-->
+<!--                </td>-->
+                <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.login.name']}</span></div></td>
+	            <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
+	            <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['site.admin.edituser.userrole']}</span></div></td>
+	            <td width="20%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.email']}</span></div></td>
+	            <td width="16%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.telephone']}</span></div></td>
+	            <td width="7%" height="38" bgcolor="d3eaef" class="STYLE10">
+	            <div align="center">
+		            <span>${LANG['site.admin.userlist.userstatu']}</span>
+	            </div>
+	            </td>
               </tr>
 
               <c:if test="${fn:length(pageModel.datas)<=0 }">
@@ -124,9 +134,29 @@
 			        <td height="32">
 	                  <div align="center"><span><input name="id" type="checkbox" value="${user.id }" /></span></div>
 	                </td>
-			        <td height="32"><div align="center">${user.loginName }</div></td>
-			        <td height="32"><div align="center">${user.trueName }</div></td>
-			        <td height="32"><div align="center">${user.userEmail }</div></td>
+<!--			        <td height="32"><div align="center">${user.loginName }</div></td>-->
+<!--			        <td height="32"><div align="center">${user.trueName }</div></td>-->
+<!--			        <td height="32"><div align="center">${user.userEmail }</div></td>-->
+					<td height="32"><div align="center"><span>${user.loginName }</span></div></td>
+		            <td height="32"><div align="center"><span>${user.trueName }</span></div></td>
+		            <td height="32">
+		            <div align="center">
+			            <c:if test="${user.userRole eq '1'}">
+				            ${LANG['site.admin.edituser.role1']}
+			            </c:if>
+			            <c:if test="${user.userRole eq '2'}">
+				            ${LANG['site.admin.edituser.role2']}
+			            </c:if>
+		            </div></td>
+		            <td height="32"><div align="center">${user.userEmail }</div></td>
+		            <td height="32"><div align="center">${user.mobile }</div></td>
+		            <td height="32">
+			            <div align="center">
+			            	<c:if test="${user.userStatus eq '0'}">${LANG['system.site.list.Status.lock']}</c:if>
+			            	<c:if test="${user.userStatus eq '1'}">${LANG['site.admin.userlist.active']}</c:if>
+			            </div>
+		            </td>
+			        
 			      </tr>
 			     </c:forEach>
 		      </c:if>
@@ -142,8 +172,8 @@
       </tr>
       </table>
 		</div>
-      <input name="emile_btn01" class="emile_btn01_PP" type="button"  value="提交" onclick="submitBatch()" style=" margin-right:30px;margin-left: 20px;"/>
-      <input name="emile_btn01" class="emile_btn01_PP" type="button"  value="返回" onclick="closeDialog()"/> 
+      <input name="emile_btn01" class="emile_btn01_PP" type="button"  value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" onclick="submitBatch()" style=" margin-right:30px;margin-left: 20px;"/>
+      <input name="emile_btn01" class="emile_btn01_PP" type="button"  value="${LANG['bizconf.jsp.admin.arrange_org_user.res11']}" onclick="closeDialog()"/> 
 </form>
 </body>
 </html>

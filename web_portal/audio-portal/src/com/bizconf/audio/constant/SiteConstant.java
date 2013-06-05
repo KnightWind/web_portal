@@ -176,12 +176,12 @@ public class SiteConstant {
 //		{"7","whiteBoardFlag","0"},
 //		{"8","noteFlag","0"},
 		{"9","videoFlag","0","0"},
-//		{"10","audioFlag","0"},
+		{"10","audioFlag","0","0"},
 //		{"11","noticeFlag","0"},
 //		{"12","fileFlag","0"},
 //		{"13","questionFlag","0"},
-		{"14","videoNumber","0","0"}//,
-//		{"15","audioNumber","0"}
+		{"14","videoNumber","0","0"},
+		{"15","audioNumber","0","0"}
 	};
 	
 	public static final List<String[]> EMPOWER_CODE_FIELD_LIST =Arrays.asList(EMPOWER_CODE_FIELD_ARRAY);
@@ -246,4 +246,10 @@ public class SiteConstant {
 	
 	//提前提醒日期
 	public static final Integer BEFORE_SITE_EXP_REMIND_DATES = 30; 
+	
+	//创建站点时license最小值
+	public static final int SITE_CREATE_MIN_LICENSE = 2;
+	//创建站点时license最大值
+	public static final int SITE_CREATE_MAX_LICENSE = 5000;
+	
 }

@@ -15,7 +15,7 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js"></script>
 <script type="text/javascript"> 
 $(function() {
-	$("#operator").watermark('操作员');
+	$("#operator").watermark('${LANG['bizconf.jsp.admin.site_eventlog_list.res1']}');
 	$("#logsForm").find("input, select").not(".skipThese").uniform();
 	$('#site-list tr').hover(function() {
 			$(this).addClass('tr-hover');
@@ -29,8 +29,8 @@ $(function() {
 });
 
 function enterSumbit(url){  
-    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-    if (event.keyCode == 13){       //监听回车键
+    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.admin.conf_list.res3']}   
+    if (event.keyCode == 13){       //${LANG['bizconf.jsp.admin.conf_list.res4']}
     	resetPageNo();
     	logsForm.action=url;
     	logsForm.submit();	
@@ -79,8 +79,8 @@ function enterSumbit(url){
 	  </div>
 	  </td>
       <td width="15%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.module"]}&nbsp;</span></div></td>
-      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>会议名称</span></div></td>
-      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>会议功能</span></div></td>
+      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.list.meeting.title"]}</span></div></td>
+      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.list.meeting.type"]}</span></div></td>
       <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.user"]}</span></div></td>
       <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.object"]}&nbsp;</span></div></td>
       <td width="10%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span>${LANG["system.eventlog.title.option.ip"]}</span></div></td>

@@ -104,7 +104,7 @@ public class LicenseController extends BaseController{
 		SiteBase site = siteService.getSiteBaseById(license.getSiteId());
 		boolean addflag = false;
 		//site.getChargeMode().intValue()!=1 &&
-		if(DateUtil.getGmtDate(license.getEffeDate()).before(DateUtil.getGmtDate(null))){
+		if(license.getEffeDate().before(DateUtil.getGmtDate(null))){
 			SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
 			if(license.getLicNum().intValue()>0){
 				addflag = true;
@@ -177,7 +177,21 @@ public class LicenseController extends BaseController{
 	public Object delHostUser(@CParam("id") int id,@CParam("pageNo") int pageNo, HttpServletRequest request) throws Exception{
 		UserBase user = userService.getUserBaseById(id);
 		SystemUser currentUser = userService.getCurrentSysAdmin(request);
-		enterpriseAdminService.deleteUserBase(id, currentUser.getId());
+		SiteBase site = siteService.getSiteBaseById(user.getSiteId());
+		
+		//删除namehost用户的同时 删除该namehost 的 license
+		SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
+		int licNum = asSite.getLicense() + licService.getHostLicenseNum(user.getId());
+		site.setLicense(licNum);
+		//添加license到as
+		String updateInfo = siteService.soapUpdateSite(site,true);
+		if(updateInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
+			if(licService.delHostLicenses(user.getId())){
+				enterpriseAdminService.deleteUserBase(id, currentUser.getId());
+			}
+		}else{
+			logger.error("update site  license num  fialed");
+		}
 		//======删除该用户创建的会议======
 //		List<ConfBase> confs = confLogic.getConfBasesByCreator(id);
 //		for (Iterator<ConfBase> it = confs.iterator(); it.hasNext();) {
@@ -193,7 +207,6 @@ public class LicenseController extends BaseController{
 //				emailService.confCancelEmail(confUsers, conf);
 //			}
 //		}
-		
 		return new ActionForward.Redirect("/system/lic/listHost?siteId="+user.getSiteId());
 	}
 	
@@ -288,11 +301,16 @@ public class LicenseController extends BaseController{
 						license.init();
 						license.setCreateUser(userAdmin.getId());
 						SiteBase site = siteService.getSiteBaseById(license.getSiteId());
+						license.setEffeDate(DateUtil.getGmtDate(null));
+						license.setExpireDate(site.getExpireDate());
+						license.setUserId(userBase.getId());
 						if(DateUtil.getGmtDate(license.getEffeDate()).before(DateUtil.getGmtDate(null))){
 							SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
 							boolean flag = false;
 							if(license.getLicNum().intValue()>0){
 								flag = true;
+							}else{
+								throw new RuntimeException("init license num can not less then 0!");
 							}
 							int licNum = asSite.getLicense() + license.getLicNum();
 							site.setLicense(licNum);
@@ -307,7 +325,9 @@ public class LicenseController extends BaseController{
 						licService.saveOrUpdate(license);
 					}
 					userBase.setLoginPass(orgPass);
-					emailService.createNameHost(userBase, null);
+					
+					List<License> lics = licService.getHostLicenses(userBase.getId());
+					emailService.createNameHost(userBase, lics);
 				}else{
 					return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
 				}

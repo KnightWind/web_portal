@@ -7,31 +7,31 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/jion_meeting.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/style.css?ver=${version}"/>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
-<title>入会日志</title>
+<title>${LANG['bizconf.jsp.attendConfloglist.res1']}</title>
 </head>
 <body onload="loaded();">
 <form id="query" name="query" action="/user/conflog/attendConflist" method="post">
 <input type="hidden" value="${userId}" name="userId" />
 <div class="First_Steps_invite" style=" background:#FFF; border-radius:3px;">
           <div class="jianju"></div>
-          <!--联系人开始-->
+          <!--${LANG['bizconf.jsp.attendConfloglist.res2']}-->
           <div class="First_Steps_main_invite" style=" background:#FFF;">
             <table width="750" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >
 		        <tr align="center" height="35" class="tr_center" bgcolor="#000066">
-		        <td width="20%" class="tr_center">会议主题</td>
-		        <td width="8%" class="tr_center">参会人次</td>
-		        <td width="8%" class="tr_center">主持人</td>
-		        <td width="12%" class="tr_center">开始时间</td>
-		        <td width="12%" class="tr_center">结束时间</td>
-		        <td width="12%" class="tr_center">加入时间</td>
-		        <td  width="12%" class="tr_center" style=" border-right:#D2D8DB 1px solid">退出时间</td>
+		        <td width="20%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res3']}</td>
+		        <td width="8%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res4']}</td>
+		        <td width="8%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res5']}</td>
+		        <td width="12%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res6']}</td>
+		        <td width="12%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res7']}</td>
+		        <td width="12%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res8']}</td>
+		        <td  width="12%" class="tr_center" style=" border-right:#D2D8DB 1px solid">${LANG['bizconf.jsp.attendConfloglist.res9']}</td>
 		      </tr>
 	    <c:if test="${fn:length(pageModel.datas)<=0}">
 			<tr class="table001" height="32"  >
 				<td class="STYLE19" height="32" colspan="11" align="center"> ${LANG['website.common.msg.list.nodata']} </td>
 			</tr>
 		</c:if>
-		<c:forEach var="log" items="${pageModel.datas}" varStatus="status">
+		<c:forEach var="conf" items="${pageModel.datas}" varStatus="status">
 	        <tr align="center" bgcolor="#FFFFFF" height="32">
 	        <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${conf.confName}</td>
 	        <td class="tr_main">${numMap[conf.id]}</td>
@@ -53,7 +53,7 @@
             </table>
           </div>
           <div class="First_Steps_bottom_b" style="position: absolute;bottom: 0px;left:20px;">
-          	<input type="button" class="create_system_user_button" value="关闭" onclick="closeDialog()" />
+          	<input type="button" class="create_system_user_button" value="${LANG['bizconf.jsp.attendConfloglist.res10']}" onclick="closeDialog()" />
           </div>
         </div>
   </form>

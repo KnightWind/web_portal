@@ -16,6 +16,7 @@ import com.bizconf.audio.entity.Notice;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.User;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.interceptors.SiteStatusInterceptor;
 import com.bizconf.audio.interceptors.UserInterceptor;
 import com.bizconf.audio.service.NoticeService;
 import com.bizconf.audio.service.SiteService;
@@ -42,6 +43,7 @@ import com.libernate.liberc.exception.LiberCFileException;
  */
 @ReqPath("")
 //@Interceptors(UserInterceptor.class)
+@Interceptors(SiteStatusInterceptor.class)
 public class IndexController extends BaseController{
 	private final  Logger logger=Logger.getLogger(IndexController.class);
 	@Autowired
@@ -113,7 +115,10 @@ public class IndexController extends BaseController{
 		return "user:" + id + ", site: " + SiteIdentifyUtil.getCurrentBrand();
 	}
 	
-	
+	@AsController(path="resetPass")
+	public Object resetPass(@CParam("id") int id, HttpServletRequest request) throws Exception {
+		return new ActionForward.Forward("/jsp/user/resetPass.jsp");
+	}
 
 	
 	@AsController

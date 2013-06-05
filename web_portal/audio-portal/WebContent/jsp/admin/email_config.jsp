@@ -123,7 +123,7 @@
 		$("#checkForm :input").tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		$.validator.addMethod("noSpace", function(value, element) {
 			return value=="" || (value != ""&&value.indexOf(" ") < 0 );
-	 	}, "不能含有空格");
+	 	}, "${LANG['bizconf.jsp.admin.email_config.res1']}");
 		var v = $("#configForm").validate({
 			onkeyup: false,
 			errorClass: "warning",
@@ -136,11 +136,11 @@
 	        },
 
 	        messages: {
-	            'emailHost' : {noSpace:"邮件服务器地址不能有空格", required:"${LANG['system.email.config.host.warninfo2']}",rangelength:"${LANG['system.email.config.lengthinfo32']}"},
+	            'emailHost' : {noSpace:"${LANG['bizconf.jsp.admin.email_config.res2']}", required:"${LANG['system.email.config.host.warninfo2']}",rangelength:"${LANG['system.email.config.lengthinfo32']}"},
 	            'emailName' : {required:"${LANG['system.email.config.host.warninfo3']}",rangelength:"${LANG['system.email.config.lengthinfo32']}"},
 	            'emailSender' : {required:"${LANG['system.email.config.host.warninfo1']}", email: "${LANG['system.email.config.host.warninfo6']}",rangelength:"${LANG['system.email.config.lengthinfo64']}"},
 	            'emailAccount' : {required:"${LANG['system.email.config.host.warninfo4']}",rangelength:"${LANG['system.email.config.lengthinfo32']}"},
-	            'emailPassword' : {noSpace:"密码不能含有空格", required:"${LANG['system.email.config.host.warninfo5']}",rangelength:"${LANG['system.email.config.lengthinfo32']}"}
+	            'emailPassword' : {noSpace:"${LANG['bizconf.jsp.admin.email_config.res3']}", required:"${LANG['system.email.config.host.warninfo5']}",rangelength:"${LANG['system.email.config.lengthinfo32']}"}
 	        
 	        },
 	        success: function (label) {

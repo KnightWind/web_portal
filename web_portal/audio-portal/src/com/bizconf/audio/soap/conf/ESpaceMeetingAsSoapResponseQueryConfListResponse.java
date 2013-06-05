@@ -22,7 +22,7 @@ public class ESpaceMeetingAsSoapResponseQueryConfListResponse  implements java.i
            this.totalCount = totalCount;
     }
 
-    
+
     /**
      * Gets the confInfos value for this ESpaceMeetingAsSoapResponseQueryConfListResponse.
      * 

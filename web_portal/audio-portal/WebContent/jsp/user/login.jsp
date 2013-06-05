@@ -19,15 +19,24 @@
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js?ver=${version}"></SCRIPT>
 <script type="text/javascript">
 $(function() {
+	if ($.browser.msie && $.browser.version<7) {//for ie6 png
+		$(".png").each(function() {
+			$(this).attr('width',$(this).width());
+			$(this).attr('height',$(this).height());
+			var imgSrc = $(this).attr('src');
+			$(this).get(0).runtimeStyle.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader' + '(src=\'' + imgSrc + '\', sizingMethod=\'scale\');';
+			$(this).attr('src', '/static/images/blank.gif');
+		});		
+	}
 	var sessionFlag = "${userSessionFlag}";
 	if(sessionFlag && sessionFlag=="true"){
 		reloadPage();
 	}
 	$('.placeValid').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 0.65 });
 	fillInUserName();
-	$("#loginName").watermark('登录名');
-	$("#loginPass").watermark('密码');
-	$("#authCode").watermark('验证码');
+	$("#loginName").watermark('${LANG['bizconf.jsp.login.res1']}');
+	$("#loginPass").watermark('${LANG['bizconf.jsp.login.res2']}');
+	$("#authCode").watermark('${LANG['bizconf.jsp.login.res3']}');
 	
 	$("#authCodeImg").width(66);
 	$("#authCodeImg").height(22);
@@ -45,9 +54,9 @@ $(function() {
 			userlogin();
 		},
         messages: {
-            'loginName' : {required:'用户名必须填'},
-            'loginPass' : {required:'密码必须填'},
-            'authCode'  : {required:'验证码必须填'}
+            'loginName' : {required:'${LANG['bizconf.jsp.login.res4']}'},
+            'loginPass' : {required:'${LANG['bizconf.jsp.login.res5']}'},
+            'authCode'  : {required:'${LANG['bizconf.jsp.login.res6']}'}
         },
 
         success: function (label) {
@@ -162,7 +171,7 @@ function checkRemember() {
 	}
 }
 </script>
-<title>登录</title>
+<title>${LANG['bizconf.jsp.index.res21']}</title>
 </head>
 
 <body onload="loaded()">
@@ -180,23 +189,24 @@ function checkRemember() {
     <div class="add19_center_center"> 
       <!--login-->
       <div class="logo_main">
-        <div class="login_head"> <img class="login_heade_left" src="${baseUrlStatic}/images/user_login.png" width="36" height="29" align="absmiddle" />
-          <h2>用户登录</h2>
+        <div class="login_head">
+        	<div class="login_heade_left">&nbsp;</div>
+          	<h2>${LANG['bizconf.jsp.login.res7']}</h2>
         	<a class="dialog-close-button" style="float: right;margin-top:6px;margin-right:8px;" href="javascript:closeDialog();">&nbsp;</a>  
 		</div>
         <div class="login_main">
           <div class="login_main_left">
           	<c:if test="${!empty siteBase.siteLogo}">
-          		<img class="login_main_left_logo" src="${siteBase.siteLogo}" height="48" />
+          		<img class="png login_main_left_logo" onerror="this.src='${baseUrlStatic}/images/logo_bg.png';" src="${siteBase.siteLogo}" height="48" />
           	</c:if>
           	<c:if test="${empty siteBase.siteLogo}">
-          		<img class="login_main_left_logo" src="${baseUrlStatic}/images/logo.png" height="48" />
+          		<img class="png login_main_left_logo" onerror="this.src='${baseUrlStatic}/images/logo_bg.png';" src="${baseUrlStatic}/images/logo.png" height="48" />
           	</c:if>
           	<c:if test="${!empty siteBase}">
             	<h3 class="login_main_left_name">${siteBase.siteName}</h3>
           	</c:if>
           	<c:if test="${empty siteBase}">
-            	<h3 class="login_main_left_name"><img src="${baseUrlStatic}/images/user_name.png" width="138" height="25" /></h3>
+            	<h3 class="login_main_left_name"><img class="png" src="${baseUrlStatic}/images/user_name.png" width="138" height="25" /></h3>
           	</c:if> 
           </div>
           <div class="login_main_right">
@@ -205,10 +215,8 @@ function checkRemember() {
               <tr>
                 <td colspan="3">
                 <div class="text_boder">
-                	<b class="text_boder_img"><img src="${baseUrlStatic}/images/admin_bg.png" width="13" height="16" /></b>
-                	<input class="placeholder placeValid" name="loginName" id="loginName" type="text" watermark="用户名" tabindex="1"/>
-<!--                 	<input class="placeholder" name="" type="text" value="登录名" onfocus="this.value=' '; this.onfocus=null;" /> -->
-                    <!--<label>登录名</label>-->
+					<b class="text_boder_img"><img class="png" src="${baseUrlStatic}/images/admin_bg.png" width="13" height="16" /></b>
+                	<input class="placeholder placeValid" name="loginName" id="loginName" type="text" watermark="${LANG['bizconf.jsp.add_contacts.res7']}" tabindex="1"/>
                 </div>
                 </td>
                 </tr>
@@ -216,10 +224,10 @@ function checkRemember() {
                 <tr>
                 <td colspan="3">
                 <div class="text_boder01">
-                	<b class="text_boder_img"><img src="${baseUrlStatic}/images/password_bg.png" width="13" height="16" /></b>
-<!--                 	<input class="placeholder01" name="" type="text" value="密码" onfocus="this.value=' '; this.onfocus=null;" /> -->
-                	<input class="placeholder01 placeValid" name="loginPass" id="loginPass" type="password" watermark="密码" tabindex="2"/>
-                    <!--<label>登录名</label>-->
+                	<b class="text_boder_img"><img class="png" src="${baseUrlStatic}/images/password_bg.png" width="13" height="16" /></b>
+<!--                 	<input class="placeholder01" name="" type="text" value="${LANG['bizconf.jsp.admin.user_info.res3']}" onfocus="this.value=' '; this.onfocus=null;" /> -->
+                	<input class="placeholder01 placeValid" name="loginPass" id="loginPass" type="password" watermark="${LANG['bizconf.jsp.login.res2']}" tabindex="2"/>
+
                 </div>
                 </td>
                 </tr>
@@ -227,15 +235,14 @@ function checkRemember() {
                 <tr>
                 <td>
                 <div class="text_boder02">
-                	<b class="text_boder_img"><img src="${baseUrlStatic}/images/identifying_code.png" width="15" height="16" /></b>
-<!--                 	<input class="placeholder02" name="" type="text" value="验证码" onfocus="this.value=' '; this.onfocus=null;" /> -->
-						<input class="placeholder02 placeValid" name="authCode" type="text" id="authCode" maxlength="4" watermark="验证码" tabindex="3"/>
-                    <!--<label>登录名</label>-->
+                	<b class="text_boder_img"><img class="png" src="${baseUrlStatic}/images/identifying_code.png" width="15" height="16" /></b>
+<!--                 	<input class="placeholder02" name="" type="text" value="${LANG['bizconf.jsp.admin.login.res9']}" onfocus="this.value=' '; this.onfocus=null;" /> -->
+						<input class="placeholder02 placeValid" name="authCode" type="text" id="authCode" maxlength="4" watermark="${LANG['bizconf.jsp.login.res3']}" tabindex="3"/>
                   </div>
                 </td>
                 <td align="left">
 <!--                 	<img class="text_boder02_code" src="${baseUrlStatic}/images/identifying_code_img.png" width="67" height="22" align="absmiddle" /> -->
-                	<img  class="text_boder02_code" align="absmiddle" id="authCodeImg" class="yanzheng" alt="刷新" src=""  width="0" height="0" onclick="randomImg()"/>
+                	<img  class="text_boder02_code" align="absmiddle" id="authCodeImg" class="yanzheng" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" onclick="randomImg()"/>
                 </td>
                 </tr>
                 
@@ -243,11 +250,11 @@ function checkRemember() {
                   <td colspan="3">
                   	<ul class="text_boder03">
                   		
-                      <li><input id="remember_me" name="remember_me" type="checkbox" value="" /><span onclick="checkRemember()" style="cursor: pointer;">记住用户名</span></li>
+                      <li><input id="remember_me" name="remember_me" type="checkbox" value="" /><span onclick="checkRemember()" style="cursor: pointer;">${LANG['bizconf.jsp.login.res9']}</span></li>
                       
-<!--                       <li><input class="text_boder03_checkbox" name="" type="checkbox" value="" />SSL安全登录</li> -->
+<!--                       <li><input class="text_boder03_checkbox" name="" type="checkbox" value="" />SSL${LANG['bizconf.jsp.login.res10']}</li> -->
                       
-                      <li><a href="/user/password/forget" target="_blank">忘记密码？</a></li>
+                      <li><a href="/user/password/forget" target="_blank">${LANG['bizconf.jsp.login.res11']}</a></li>
                       
                       </ul>
                   </td>
@@ -255,8 +262,8 @@ function checkRemember() {
                 
                 <tr>
                 	<td colspan="3">
-<!--                 		<a class="login_type" href="#">登&nbsp;&nbsp;录</a> -->
-                		<input class="login_type"  type="submit" class="denglu" name="loginBtn" value="登录"/>
+<!--                 		<a class="login_type" href="#">${LANG['bizconf.jsp.login.res12']}&nbsp;&nbsp;${LANG['bizconf.jsp.login.res13']}</a> -->
+                		<input class="login_type"  type="submit" class="denglu" name="loginBtn" value="${LANG['bizconf.jsp.index.res21']}"/>
                 	</td>
                 </tr>
                 

@@ -36,11 +36,11 @@ $(function() {
 	//show or hide search input
 	$(".gaoji").toggle(function () {
 	    $("#search-condition").slideDown(function() {
-		    parent.resizeHeight();//增加高度
+		    parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res1']}
 	    });
 	}, function () {
 		$("#search-condition").slideUp(function() {
-			parent.resizeHeight();//减少高度
+			parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res2']}
 		});
 	});
 	var lang = getBrowserLang();
@@ -80,8 +80,8 @@ function checkForm(){
 }
 
 function enterSumbit(url){  
-    var event=arguments.callee.caller.arguments[0]||window.event;//消除浏览器差异   
-    if (event.keyCode == 13){       //监听回车键
+    var event=arguments.callee.caller.arguments[0]||window.event;//${LANG['bizconf.jsp.admin.conf_list.res3']}   
+    if (event.keyCode == 13){       //${LANG['bizconf.jsp.admin.conf_list.res4']}
     	resetPageNo();
     	confForm.action=url;
     	confForm.submit();	
@@ -90,7 +90,7 @@ function enterSumbit(url){
 
 
 $(document).ready(function(){
-	$("#titleOrSiteSign").watermark('会议主题、企业标识、企业名称');
+	$("#titleOrSiteSign").watermark('${LANG['bizconf.jsp.system.conf_list.res1']}');
 	$("#search-condition").find("input[type=text]").each(function(){
 		if($(this).val()){
 			$("#search-condition").show();
@@ -168,7 +168,7 @@ $(document).ready(function(){
      <tr class="table003" height="38" >
         <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.CompanyName']}</span></div></td>
         <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.SiteSign']}</span></div></td>
-        <cc:sort var="SORT_ASC"/><cc:sort var="SORT_DESC"/><cc:sort var="CONFBASE_SORT_CONFNAME"/><cc:sort var="CONFBASE_SORT_CONFTYPE"/><cc:sort var="CONFBASE_SORT_STATUS"/><cc:sort var="CONFBASE_SORT_STARTTIME"/>
+        <cc:sort var="SORT_ASC"/><cc:sort var="SORT_DESC"/><cc:sort var="CONFBASE_SORT_ENDTIME"/><cc:sort var="CONFBASE_SORT_CONFTYPE"/><cc:sort var="CONFBASE_SORT_STATUS"/><cc:sort var="CONFBASE_SORT_STARTTIME"/>
         <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.list.meeting.title']}</span>
 		</div></td>
         <td width="12%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_CONFTYPE}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.type']}&nbsp;</span>
@@ -187,10 +187,10 @@ $(document).ready(function(){
 	        <c:if test="${CONFBASE_SORT_STARTTIME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
        </div></td>
        <!--   <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.list.meeting.stop.time']}&nbsp;</span></div></td>-->
-       	<td width="14%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_CONFNAME}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.stop.time']}&nbsp;</span>
-		 	<c:if test="${CONFBASE_SORT_CONFNAME!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
-	        <c:if test="${CONFBASE_SORT_CONFNAME==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
-	        <c:if test="${CONFBASE_SORT_CONFNAME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
+       	<td width="14%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_ENDTIME}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.stop.time']}&nbsp;</span>
+		 	<c:if test="${CONFBASE_SORT_ENDTIME!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
+	        <c:if test="${CONFBASE_SORT_ENDTIME==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
+	        <c:if test="${CONFBASE_SORT_ENDTIME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
        
 		</div></td>
         <td width="7%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none"><div class="STYLE_none" style="border-right:none"><div align="center"><span>${LANG['system.list.meeting.license']}</span></div></td>
@@ -208,7 +208,7 @@ $(document).ready(function(){
         <td height="32"  class="STYLE19"><div align="center"  class="siteNameDiv_${confInfo.siteId }">--</div></td> 
         <td height="32" class="STYLE19"><div align="center" class="siteSignDiv_${confInfo.siteId }">-- </div></td>
         <td height="32" class="STYLE19"><div align="center">${confInfo.confName }
-        <c:if test="${confInfo.cycleId!=null && confInfo.cycleId>0 }"><span id="cycleId_${confInfo.cycleId}">（日）</span></c:if>
+        <c:if test="${confInfo.cycleId!=null && confInfo.cycleId>0 }"><span id="cycleId_${confInfo.cycleId}">${LANG['bizconf.jsp.admin.conf_list.res7']}</span></c:if>
         </div></td>
          <c:set var="typeLang" value="conf.type.list.${confInfo.confType}"/>
         <td height="32" class="STYLE19"><div align="center">${LANG[typeLang]}</div></td>
@@ -225,15 +225,15 @@ $(document).ready(function(){
          <c:choose>
          <c:when test="${CONF_STATUS_OPENING == confInfo.confStatus}">
 			<td height="32"><div align="center" class="STYLE21">--</div></td>
-	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');"  name="attend_user" align="center"  title="PC:${confInfo.pcNum}<br/>phonecall:${confInfo.phoneNum}" >${confInfo.pcNum+confInfo.phoneNum}</div></td>
+	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');"  name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${confInfo.pcNum}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${confInfo.phoneNum}" >${confInfo.pcNum+confInfo.phoneNum}</div></td>
       	 </c:when>
       	 <c:when test="${CONF_STATUS_FINISHED == confInfo.confStatus}">
             <td height="32"><div align="center" class="STYLE21"><fmt:formatDate value="${confInfo.endTime}" pattern="yyyy-MM-dd HH:mm"/></div></td>
-	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');" name="attend_user" align="center"  title="电脑:${terminalPcs[confInfo.id]}<br/>电话:${terminalPhones[confInfo.id]}" >${allTerminals[confInfo.id]}</div></td>
+	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');" name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${terminalPcs[confInfo.id]}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${terminalPhones[confInfo.id]}" >${allTerminals[confInfo.id]}</div></td>
       	 </c:when>
        	 <c:otherwise>
             <td height="32"><div align="center" class="STYLE21"><fmt:formatDate value="${confInfo.endTime}" pattern="yyyy-MM-dd HH:mm"/></div></td>
-	       	<td height="32" class="STYLE21" ><div  name="attend_user" align="center"  title="电脑:${terminalPcs[confInfo.id]}<br/>电话:${terminalPhones[confInfo.id]}" >${allTerminals[confInfo.id]}</div></td>
+	       	<td height="32" class="STYLE21" ><div  name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${terminalPcs[confInfo.id]}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${terminalPhones[confInfo.id]}" >${allTerminals[confInfo.id]}</div></td>
        	 </c:otherwise>
 		</c:choose>
 <%--     martin modify here  <td height="32" class="STYLE21" ><div  name="attend_user" align="center"  ${divIdStr} title="PC:${terminalPcs[confInfo.id]}<br/>phonecall:${terminalPhones[confInfo.id]}" >0</div></td>--%>
@@ -261,7 +261,7 @@ $(document).ready(function(){
 	}
 	initPage();
 	
-	//初始化站点信息
+	//${LANG['bizconf.jsp.system.conf_list.res2']}
 	function initSiteInfo(){
 		<c:if test="${siteList!=null && fn:length(siteList) > 0}">
 		var siteArray=new Array();
@@ -281,7 +281,7 @@ $(document).ready(function(){
 		}
 		</c:if>
 	}
-	//初始化会议人数信息
+	//${LANG['bizconf.jsp.system.conf_list.res3']}
 	function initConfUser(){
 		<c:if test="${userCountList!=null && fn:length(userCountList) > 0}">
 		var userCountArray=new Array();

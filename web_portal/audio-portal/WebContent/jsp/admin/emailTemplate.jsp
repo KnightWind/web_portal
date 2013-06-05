@@ -71,7 +71,7 @@ $(function() {
 		});
 	});
 	
-	/*更新模板内容*/
+	/*${LANG['bizconf.jsp.admin.emailTemplate.res1']}*/
 	function updateAdminEmailTemplate(type) {
 		app.updateAdminEmailTemplate(type, function(result) {
 			if (result && result.emailContent) {
@@ -80,7 +80,7 @@ $(function() {
 			}
 		});
 	}
-	/*保存模板内容*/
+	/*${LANG['bizconf.jsp.admin.emailTemplate.res2']}*/
 	function saveAdminEmailTemplate() {
 		var tid = $("#eTempId").val();
 		var t_content = "";
@@ -102,7 +102,7 @@ $(function() {
 			}
 		});
 	}	
-	/*恢复模板内容*/
+	/*${LANG['bizconf.jsp.admin.emailTemplate.res3']}*/
 	function resetAdminEmailTemplate() {
 		var type = $("select[name=tempType]").val();
 		app.resetAdminEmailTemplate(type, function(result) {

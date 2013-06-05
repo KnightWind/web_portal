@@ -1,4 +1,4 @@
-<!--企业联系人列表 -->
+<!--${LANG['bizconf.jsp.enContacts_list.res1']} -->
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="/jsp/common/taglibs.jsp"%>
 <%
@@ -11,13 +11,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>企业联系人列表</title>
+<title>${LANG['bizconf.jsp.enContacts_list.res1']}</title>
 <link rel="stylesheet" type="text/css"
 	href="${baseUrlStatic}/css/enterprise/rightbox.css?ver=${version}" />
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></script>	
 <script type="text/javascript">
 	function delUser(id){
-		if(confirm("确认从该联系人？")){
+		if(confirm("${LANG['bizconf.jsp.enContacts_list.res2']}")){
 			//query.action="/user/group/delContactsFormGroup";
 			//$("input[name=id]").val(id);
 			//query.submit();
@@ -46,7 +46,7 @@
 <body>
 <form id="query" name="query" action="/user/contact/showEnterpriseContacts" method="post">
 	<div>
-		<input type="button" value="从企业联系人导入" onclick="showArea('importFromContacts','importFromFile');" /> &nbsp; <input type="button" value="手动导入" onclick="showArea('importFromFile','importFromContacts');" />
+		<input type="button" value="${LANG['bizconf.jsp.enContacts_list.res3']}" onclick="showArea('importFromContacts','importFromFile');" /> &nbsp; <input type="button" value="${LANG['bizconf.jsp.enContacts_list.res4']}" onclick="showArea('importFromFile','importFromContacts');" />
 	</div>
 	<div id="importFromContacts" class="main_content">
 		<div class="m_top">
@@ -61,30 +61,30 @@
 				</td>
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>账户</span>
+						<span>${LANG['bizconf.jsp.enContacts_list.res5']}</span>
 					</div>
 				</td>
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>姓名</span>
-					</div>
-				</td>
-				
-				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
-						align="center">
-						<span>邮箱地址</span>
+						<span>${LANG['bizconf.jsp.enContacts_list.res6']}</span>
 					</div>
 				</td>
 				
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>手机号码</span>
+						<span>${LANG['bizconf.jsp.add_calendar_notice.res7']}</span>
 					</div>
 				</td>
 				
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>联系电话</span>
+						<span>${LANG['bizconf.jsp.add_contacts.res11']}</span>
+					</div>
+				</td>
+				
+				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
+						align="center">
+						<span>${LANG['bizconf.jsp.add_contacts.res10']}</span>
 					</div>
 				</td>
 			</tr>
@@ -141,7 +141,7 @@
 									    height: 24px;
 									    line-height: 24px;
 									    text-align: center;
-									    width: 72px;" value="导入" />&nbsp;&nbsp;&nbsp;&nbsp;
+									    width: 72px;" value="${LANG['bizconf.jsp.enContacts_list.res7']}" />&nbsp;&nbsp;&nbsp;&nbsp;
 				</td>
 				<td align="left">
 					&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" onclick="javascript:window.close();" style="background: url('/static/images/button01.jpg') no-repeat scroll 0 0 transparent;
@@ -149,7 +149,7 @@
 					    height: 24px;
 					    line-height: 24px;
 					    text-align: center;
-					    width: 72px;" value="返回"  />
+					    width: 72px;" value="${LANG['bizconf.jsp.enContacts_list.res8']}"  />
 				</td>
 			</tr>	
 		</table>

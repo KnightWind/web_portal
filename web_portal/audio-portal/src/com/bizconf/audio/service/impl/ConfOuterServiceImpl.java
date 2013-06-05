@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import org.springframework.stereotype.Service;
 
+import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.entity.ConfOuter;
 import com.bizconf.audio.service.ConfOuterService;
 import com.bizconf.audio.util.StringUtil;
@@ -41,8 +42,12 @@ public class ConfOuterServiceImpl extends BaseService implements ConfOuterServic
 		ConfOuter outer=null;
 		if(!StringUtil.isEmpty(mtgKey)){
 			StringBuffer sqlBuffer=new StringBuffer();
-			sqlBuffer.append("select * from t_conf_outer tco where tco.mtg_key = ? and tco.site_sign=?");
-			Object[] values=new Object[]{mtgKey,siteSign};
+			sqlBuffer.append(" select tco.* from t_conf_outer tco,t_conf_base tcb");
+			sqlBuffer.append(" where tco.mtg_key = ? and tco.site_sign=?");
+			sqlBuffer.append(" and tcb.id=tco.conf_id");
+			sqlBuffer.append(" and tcb.conf_status<=?");
+			sqlBuffer.append(" order by id desc");
+			Object[] values=new Object[]{mtgKey,siteSign,ConfConstant.CONF_STATUS_OPENING};
 			try {
 				outer=libernate.getEntityCustomized(ConfOuter.class, sqlBuffer.toString(), values);
 			} catch (SQLException e) {

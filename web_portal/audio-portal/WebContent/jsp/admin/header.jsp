@@ -3,10 +3,10 @@
 <div id="head">
     <div class="header_left">
     <c:if test="${!empty siteBase.siteLogo}">
-		<img class="logo" src="${siteBase.siteLogo}" height="48" onerror="this.src='${baseUrlStatic}/images/logo.png';"/>
+		<img id="logo_icon" class="logo" src="${siteBase.siteLogo}" width="100" height="48" onerror="this.src='${baseUrlStatic}/images/logo.png';"/>
 	</c:if>
 	<c:if test="${empty siteBase.siteLogo}">
-		<img class="logo" src="/static/images/logo.png" height="48" alt=""/>
+		<img id="logo_icon" class="logo" src="/static/images/logo.png" width="100" height="48" alt=""/>
 	</c:if>
     <span class="name">${siteBase.siteName}</span>
     </div>
@@ -24,14 +24,14 @@
         		</li>
 <%-- 			    <li><img class="geli" src="${baseUrlStatic}/images/geli.jpg" width="2" height="24" /></li> --%>
 <%-- 			    <li><img class="help" src="${baseUrlStatic}/images/help.jpg" width="16" height="16" /></li> --%>
-<%-- 			    <li><a  title="帮助" href="#">${LANG['website.message.help']}</a></li> --%>
+<%-- 			    <li><a  title="${LANG['bizconf.jsp.admin.CopyOfadminIndex.res4']}" href="#">${LANG['website.message.help']}</a></li> --%>
 			    <li><img class="geli" src="${baseUrlStatic}/images/geli.jpg" width="2" height="24" /></li>
 			    <li><img class="go_out" src="${baseUrlStatic}/images/go_out.jpg" width="16" height="16" /></li>
-			    <li><a  title="退出" href="javascript:logout();">${LANG['website.message.logout']}</a></li>
+			    <li><a  title="${LANG['bizconf.jsp.admin.CopyOfadminIndex.res5']}" href="javascript:logout();">${LANG['website.message.logout']}</a></li>
 			</ul> 
      	</div>
         <div class="header_right02">
-        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['website.message.welcome']}，${user.trueName }！</span></div>
+        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['website.message.welcome']}${LANG['bizconf.jsp.admin.header.res1']}${user.trueName }${LANG['bizconf.jsp.admin.CopyOfadminIndex.res7']}</span></div>
         </div>
         
   </div>

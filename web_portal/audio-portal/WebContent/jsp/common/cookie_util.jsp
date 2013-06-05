@@ -11,7 +11,7 @@
 		return this.replace(/(^\s*)|(\s*$)/g,"");
 	};
 	/**
-	 *验证字符串是否为空
+	 *${LANG['bizconf.jsp.common.cookie_util.res1']}
 	 */
 	String.prototype.isEmpty = function() {
 		if (this == null || this.trim().length == 0) {
@@ -111,7 +111,7 @@
 	}
 
 	/**
-	 * 清空Cookie
+	 * ${LANG['bizconf.jsp.common.cookie_util.res2']}Cookie
 	 * @param {Object} cName
 	 * @param {Object} domain
 	 */
@@ -150,7 +150,7 @@
 					baseLang = "en-us";
 					break;
 				case "zh":
-					/* 中文 */
+					/* ${LANG['bizconf.jsp.common.cookie_util.res3']} */
 					baseLang = "zh-cn";
 					break;
 				default:

@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ include file="/jsp/common/taglibs.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -76,9 +76,12 @@
 .menu_text{ color:#858585;}
 .menu_text td{ padding-top:3px;}
 </style>
+
+<%@ include file="/jsp/common/cookie_util.jsp"%>
 <!-- Javascript -->
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
+<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/development-bundle/ui/minified/i18n/jquery-ui-i18n.min.js"></SCRIPT>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/tipsy-master/src/javascripts/jquery.tipsy.js"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
@@ -92,12 +95,15 @@
 <cc:siteList var="EMPOWER_CODE_VIDEO"/>
 <cc:siteList var="EMPOWER_CODE_AUDIO"/>
 <cc:siteList var="EMPOWER_ENABLED"/>
+<cc:siteList var="SITE_CREATE_MIN_LICENSE"/>
+<cc:siteList var="SITE_CREATE_MAX_LICENSE"/>
+
 <div style="margin: 0px auto;">
 <form name="createSiteForm" id="createSiteForm" action="" method="post">
 <input type="hidden" name="recordRequestPrimaryServiceID" id="recordRequestPrimaryServiceID" value="100" />
 <input type="hidden" name="recordClientServices" id="recordClientServices" value="1,3" />
 <ul id="stepForm" class="ui-accordion-container">
-	<!-- 第一步 -->
+	<!-- ${LANG['bizconf.jsp.system.createSite.res1']} -->
 	<li id="sf1" class='step'>
 		<table cellpadding="0" cellspacing="0" border="0" class="site_nav" >
 		  <tr height="40" align="center">
@@ -141,7 +147,7 @@
 			</tr>
 			<tr>
 				<td align="right">
-					<span class='red_star'>*</span>站点时区
+					<span class='red_star'>*</span>${LANG['bizconf.jsp.system.createSite.res2']}
 				</td>
 				<td class="step-td">
 					<select id="timeZoneId" name="timeZoneId">
@@ -176,7 +182,7 @@
 							<img id="previewImg" src="/static/images/logo.png" alt=""/>			   
 					   	</c:if>
 					   	<img id="previewLoadImg" src="/static/images/loading.gif">
-					   	<div style="color: red;width: 200px; margin-left: 110px;">支持jpg,bmp,png,gif格式，256K。<br />建议大小为：100*48</div>
+					   	<div style="color: red;width: 200px; margin-left: 110px;">${LANG['bizconf.jsp.system.createSite.res3']}jpg,bmp,png,gif${LANG['bizconf.jsp.system.createSite.res4']}256K${LANG['bizconf.jsp.system.createSite.res5']}<br />${LANG['bizconf.jsp.system.createSite.res6']}100*48</div>
 					</div>
 				</td>
 			</tr>
@@ -202,7 +208,7 @@
 			</div>
 		</div>
 	</li>
-	<!-- 第二步 -->
+	<!-- ${LANG['bizconf.jsp.system.createSite.res7']} -->
 	<li id="sf2" style="display: none;" class='step'>
 		<table cellpadding="0" cellspacing="0" border="0" class="site_nav" >
 		  <tr height="40" align="center">
@@ -225,7 +231,7 @@
 					<input name="hireMode" type="radio" value="1" checked="checked"/>
 						<label>${LANG['system.site.list.hireMode.month']}</label>
 					<input name="hireMode" type="radio" value="2"/>
-						<label>计时</label>						
+						<label>${LANG['bizconf.jsp.system.createSite.res8']}</label>						
 				</td>
 			</tr>
 			<tr>
@@ -274,27 +280,38 @@
 				</td>
 			</tr>
 			<tr>
-				<td align="right">会议功能</td>
+				<td align="right" valign="top">
+					<span style="position: relative;top:10px;">${LANG['bizconf.jsp.admin.edit_userbase.res6']}</span>
+				</td>
 				<td class="step-td">
 				<table width="100%" border="0" >
 					<tr><c:set var="modNum" value="0"/><c:set var="tmpNum" value="1"/>
 					<c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
 					
 						<c:if test='${fn:indexOf(eachField[1],"Flag")>-1}'>
-						<td><c:set var="eachFieldName" value="${eachField[1]}"/><c:if test="${eachField[0]==EMPOWER_CODE_VIDEO || eachField[0]==EMPOWER_CODE_AUDIO }"><c:set var="tmpNum" value="${tmpNum+1 }"/></c:if>
-						<input class="extraConfig" name="${eachFieldName}" id="${eachFieldName}" type="checkbox" <c:if test="${empowerConfig[eachFieldName]==EMPOWER_ENABLED }"> checked </c:if> 
-						value="${EMPOWER_ENABLED}"  <c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"> onclick="javascript:showVideoNum();" </c:if>   <c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"> onclick="javascript:showAudioNum();" </c:if> />
+						<td><c:set var="eachFieldName" value="${eachField[1]}"/>
+						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO || eachField[0]==EMPOWER_CODE_AUDIO }"><c:set var="tmpNum" value="${tmpNum+1 }"/></c:if>
+						<input class="extraConfig" name="${eachFieldName}" id="${eachFieldName}" type="checkbox" 
+						<c:if test="${empowerConfig[eachFieldName]==EMPOWER_ENABLED }"> checked </c:if> 
+						value="${EMPOWER_ENABLED}" 
+						 <c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"> onclick="javascript:showVideoNum();" </c:if>  
+						  <c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"> onclick="javascript:showAudioNum();" </c:if> />
 						<label><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</label>
 						</td>
-						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"><td id="videoNumTd"></td> </c:if>
-						<c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"><td id="audioNumTd"></td> </c:if>  
+						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"><td id="videoNumTd"></td> 
+						</c:if>
+						<c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"><td id="audioNumTd"></td> </c:if> 
 						<c:if test="${(fieldSatus.index+tmpNum) % 4==0 }"></tr><tr></c:if><c:set var="modNum" value="${(fieldSatus.index+tmpNum) %4 }"/>
 						</c:if>
 					</c:forEach>
+						<%--<label>${LANG['system.site.empower.item.10']}</label>
+						<td id="audioNumTd"></td>
+						 --%>
 					<c:if test="${modNum>0}">
 					<c:forEach begin="${modNum }" end="3" >
 						<td>&nbsp;</td>
 					</c:forEach>
+				
 					</c:if>
 					</tr>
 				</table>
@@ -306,13 +323,13 @@
 						<c:if test="${(fieldSatus.index+1) % 4==0 }"><br/></c:if>
 					</c:forEach>
 					<input class="extraConfig" name="phoneFlag" type="checkbox" <c:if test=""> checked </c:if> value="${EMPOWER_ENABLED}" />
-						<label>电话功能</label>
+						<label>${LANG['bizconf.jsp.system.createSite.res9']}</label>
 			        <input class="extraConfig" name="autoFlag" type="checkbox" value="${EMPOWER_ENABLED}"/>
-			        	<label>外呼与会者</label>
+			        	<label>${LANG['bizconf.jsp.system.createSite.res10']}</label>
 			        <input class="extraConfig" name="shareMediaFlag" type="checkbox" value="${EMPOWER_ENABLED}" />
-			        	<label>媒体共享</label>
+			        	<label>${LANG['bizconf.jsp.admin.edit_userbase.res8']}</label>
 			        <input class="extraConfig" name="recordFlag" type="checkbox" value="${EMPOWER_ENABLED}" />
-			        	<label>录制</label>
+			        	<label>${LANG['bizconf.jsp.admin.edit_userbase.res9']}</label>
 			        --%>
 				</td>
 			</tr>
@@ -328,7 +345,7 @@
 			</div>		
 		</div>
 	</li>
-	<!-- 第三步 -->
+	<!-- ${LANG['bizconf.jsp.system.createSite.res11']} -->
 	<li id="sf3" style="display: none" class='step'>
 		<table cellpadding="0" cellspacing="0" border="0" class="site_nav">
 		  <tr height="40" align="center">
@@ -423,12 +440,14 @@
 </div>
 </body>
 </html>
+<fmt:formatDate var="effeDate" value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/>
+<fmt:formatDate var="expireDate" value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/>
 <c:if test="${!empty siteBase}">   
-	<script type="text/javascript"> //修改站点
+	<script type="text/javascript"> //${LANG['bizconf.jsp.system.createSite.res12']}
 		$(function() {
 			$("#siteName").val("${siteBase.siteName}");
 			$("#enName").val("${siteBase.enName}");
-			$("#siteSign").val("${siteBase.siteSign}");
+			$("#siteSign").val("${siteBase.siteSign}").attr("disabled",'disabled');
 			$("#license").val("${siteBase.license}");
 			$("#timeZoneId").val("${siteBase.timeZoneId}");
 			var siteFlag = "${siteBase.siteFlag}";
@@ -437,12 +456,13 @@
 			} else {
 				$("input:radio[name=siteFlag]:eq(1)").attr("checked",'checked');
 			}
-			var effeDate = "${siteBase.effeDate}";
+			
+			var effeDate = '${effeDate}';
 			if (effeDate && effeDate.length>0) {
 				effeDate = effeDate.substring(0, 10);
 			}
 			$("#effeDate").val(effeDate);
-			var expireDate = "${siteBase.expireDate}";
+			var expireDate = '${expireDate}';
 			if (expireDate && expireDate.length>0) {
 				expireDate = expireDate.substring(0, 10);
 			}
@@ -455,7 +475,7 @@
 			$("#userEmail").val("${siteAdmin.userEmail}");
 			$("#mobile").val("${siteAdmin.mobile}");
 			$("#remark").val("${siteAdmin.remark}");
-			//设置租用模式
+			//${LANG['bizconf.jsp.system.createSite.res13']}
 			var hireMode = "${siteBase.hireMode}";
 			if (hireMode=="1") {
 				$("input:radio[name=hireMode]:eq(0)").attr("checked",'checked');
@@ -464,7 +484,7 @@
 				$("input:radio[name=hireMode]:eq(1)").attr("checked",'checked');
 				$("input:radio[name=hireMode]").attr("disabled",'disabled');
 			}
-			//设置计费类型
+			//${LANG['bizconf.jsp.system.createSite.res14']}
 			var chargeMode = "${siteBase.chargeMode}";
 			if(chargeMode=="4") {
 				$(".mode-time-span").show();
@@ -485,7 +505,7 @@
 					$("input:radio[name=chargeMode]").attr("disabled",'disabled');
 				}	
 			}
-			//最大参会人数
+			//${LANG['bizconf.jsp.system.createSite.res15']}
 			$("#license").attr("disabled",'disabled').css("color", "#cccccc");
 			<%--
 			<c:if test="${empowerConfig.phoneFlag==EMPOWER_ENABLED}">
@@ -522,15 +542,24 @@ function showVideoNum(){//videoFlag
 			}
 			videoNum=parseInt(videoNum,10);
 			var stdStr="";
-			for(var ii=0;ii<=16;ii++){
+			
+			for(var ii=0;ii<=6;ii++){
 				stdStr="";
 				if(videoNum==ii){
 					stdStr="selected";
 				}
 				selectHtml+="<option value='"+ii+"' "+stdStr+">"+ii+"</option>";
 			}
+			if(videoNum=="16"){
+				stdStr="selected";
+			}else{
+				stdStr="";
+			}
+			selectHtml+="<option value='16' "+stdStr+">16</option>";
+			
 			selectHtml+="";
 			selectHtml+="</select>";
+			selectHtml+=" ${LANG['bizconf.jsp.system.createSite.res16']}";
 		}
 	}
 	$("#videoNumTd").html(selectHtml);
@@ -549,19 +578,18 @@ function showAudioNum(){
 			}
 			audioNum=parseInt(audioNum,10);
 			var stdStr="";
-			for(var ii=0;ii<=6;ii++){
+			
+			for(var ii=0;ii<=16;ii++){
 				stdStr="";
 				if(audioNum==ii){
 					stdStr="selected";
 				}
 				selectHtml+="<option value='"+ii+"' "+stdStr+">"+ii+"</option>";
 			}
-			if(audioNum==16){
-				stdStr="selected";
-			}
-			selectHtml+="<option value='16' "+stdStr+">16</option>";
+			
 			selectHtml+="";
 			selectHtml+="</select>";
+			selectHtml+=" ${LANG['bizconf.jsp.system.createSite.res16']}";
 		}
 	}
 	$("#audioNumTd").html(selectHtml);
@@ -570,7 +598,12 @@ function showAudioNum(){
 showVideoNum();
 showAudioNum();
 $(document).ready(function(){
-	
+	var lang = getBrowserLang(); 
+	if (lang=="zh-cn") {
+		$.datepicker.setDefaults( $.datepicker.regional[ "zh-CN" ] );
+	} else {
+		$.datepicker.setDefaults( $.datepicker.regional[ "en-GB" ] );
+	}
 	$("#effeDate, #expireDate").datepicker({
 		minDate: +0,
 		changeMonth: true,
@@ -603,8 +636,12 @@ $(document).ready(function(){
 				"loginName": "${LANG['system.site.list.loginName.remote']}",
 				"userEmail": "${LANG['system.site.list.userEmail.remote']}"
 			},
+			minlength: {
+				"license": "${LANG['system.site.list.license.minlength']}"
+			},
 			maxlength: {
-				"remark": "${LANG['system.site.list.remark.maxlength']}"
+				"remark": "${LANG['system.site.list.remark.maxlength']}",
+				"license": "${LANG['system.site.list.license.maxlength']}"
 			},
 			rangelength: {
 				"siteName": "${LANG['system.site.list.siteName.rangelength']}",
@@ -648,7 +685,7 @@ $(document).ready(function(){
     	return true;
  	}, "");
 	$.validator.addMethod("checkSiteName", function(value, element) {   
-    	return this.optional(element) || /^[a-zA-Z0-9_\-&\u4e00-\u9fa5]{4,32}$/.test(value);
+    	return this.optional(element) || /^[a-zA-Z0-9_\s\-&\u4e00-\u9fa5]{1,32}$/.test(value);
  	}, ruleString.custom.checkSiteName);
 	
 	$.validator.addMethod("checkEnName", function(value, element) {       
@@ -656,7 +693,7 @@ $(document).ready(function(){
  	}, ruleString.custom.checkEnName);
 	
 	$.validator.addMethod("checkSiteSign", function(value, element) {       
-    	return this.optional(element) || /^[a-zA-Z0-9\-]{1,32}$/.test(value);
+    	return this.optional(element) || /^[a-zA-Z0-9_\-&]{1,16}$/.test(value);
  	}, ruleString.custom.checkSiteSign);	
 	
 	$.validator.addMethod("checkUserName", function(value, element) {       
@@ -676,9 +713,9 @@ $(document).ready(function(){
     	return v1<=v2;
  	}, ruleString.custom.endDate);
 	/**
-	手机号码  以 1 开头，第二位是 3、5 或者 8
+	${LANG['bizconf.jsp.admin.add_site_user.res3']}  ${LANG['bizconf.jsp.admin.add_site_user.res4']} 1 ${LANG['bizconf.jsp.admin.add_site_user.res5']} 3${LANG['bizconf.jsp.admin.add_site_user.res6']}5 ${LANG['bizconf.jsp.admin.add_site_user.res7']} 8
 	13211111111, 015111111111, +8615811111111, +86015811111111, (+86)13111111111
-	固定电话 区号-市话号码-分机
+	${LANG['bizconf.jsp.admin.add_site_user.res8']} ${LANG['bizconf.jsp.admin.add_site_user.res9']}-${LANG['bizconf.jsp.admin.add_site_user.res10']}-${LANG['bizconf.jsp.admin.add_site_user.res11']}
 	1334567890, 031-3145678-123, 010-11111111, (+86)010-13901691-123
 	*/
 	$.validator.addMethod("checkMobile", function(value, element) {       
@@ -693,9 +730,9 @@ $(document).ready(function(){
 			saveOrCreateSite();
 		},
 		rules: {
-            'siteName' : {pageRequired:true, rangelength: [4, 32], checkSiteName:true},
-            'enName' : {pageRequired:true,  rangelength: [4, 64], checkEnName:true},
-            'siteSign' : {pageRequired:true, rangelength: [1, 32], checkSiteSign:true, remote: {
+            'siteName' : {pageRequired:true, rangelength: [1, 32], checkSiteName:true},
+            'enName' : {pageRequired:true,  rangelength: [1, 64], checkEnName:true},
+            'siteSign' : {pageRequired:true, rangelength: [1, 16], checkSiteSign:true, remote: {
             	url: '/system/site/siteSignValidate',
             	type: 'post',
             	data: {
@@ -712,7 +749,7 @@ $(document).ready(function(){
                     }
             	}
             }},
-            'license' : {pageRequired:true, digits: true},
+            'license' : {pageRequired:true, digits: true, min:"${SITE_CREATE_MIN_LICENSE}", max:"${SITE_CREATE_MAX_LICENSE}"},
             'effeDate' : {pageRequired:true, dateISO:true},
             'expireDate' : {pageRequired:true, dateISO:true, endDate: true},
             'trueName' : {pageRequired:true, rangelength: [1, 32],checkUserName:true},
@@ -774,7 +811,7 @@ $(document).ready(function(){
             'siteName' : {pageRequired:ruleString.pageRequired.siteName, checkSiteName:ruleString.custom.checkSiteName, rangelength: ruleString.rangelength.siteName},
             'enName' : {pageRequired:ruleString.pageRequired.enName, checkEnName: ruleString.custom.checkEnName,  rangelength: ruleString.rangelength.enName},
             'siteSign' : {pageRequired:ruleString.pageRequired.siteSign,checkSiteSign:ruleString.custom.checkSiteSign, remote: ruleString.remote.siteSign, rangelength: ruleString.rangelength.siteSign},
-            'license' : {pageRequired:ruleString.pageRequired.license, digits: ruleString.custom.digits},
+            'license' : {pageRequired:ruleString.pageRequired.license, digits: ruleString.custom.digits, min:ruleString.minlength.license, max:ruleString.maxlength.license},
             'effeDate' : {pageRequired:ruleString.pageRequired.effeDate, dateISO:ruleString.custom.dateISO},
             'expireDate' : {pageRequired:ruleString.pageRequired.expireDate, dateISO:ruleString.custom.dateISO, endDate: ruleString.custom.endDate},
             'trueName' : {pageRequired:ruleString.pageRequired.clientName, checkUserName:ruleString.custom.checkUserName, rangelength: ruleString.rangelength.clientName},
@@ -875,7 +912,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	//设置租用模式
+	//${LANG['bizconf.jsp.system.createSite.res13']}
 	$("input[name='hireMode']").change(function() {
 		var value = $(this).val();
 		if (value==1) {
@@ -892,7 +929,7 @@ $(document).ready(function(){
 		}
 		$.uniform.update();
 	});
-	//设置计费类型
+	//${LANG['bizconf.jsp.system.createSite.res14']}
 	$("input[name='chargeMode']").change(function() {
 		var value = $(this).val();
 		if (value==1) {
@@ -902,7 +939,14 @@ $(document).ready(function(){
 		}
 	});
 	
-	//开启外乎
+	//${LANG['bizconf.jsp.system.createSite.res17']}
+	
+	$("input[name='autoFlag']").attr("disabled", "disabled");
+	var checked = $("input[name='phoneFlag']").attr("checked");
+	if(checked=="checked"){
+		$("input[name='autoFlag']").removeAttr("disabled");
+	}
+	
 	$("input[name='phoneFlag']").change(function() {
 		var value = $(this).val();
 		var checked = $(this).attr("checked");
@@ -998,7 +1042,7 @@ function loaded() {
 
 
 /**
- * 根据日期
+ * ${LANG['bizconf.jsp.system.createSite.res18']}
  * @returns {Number}
  */
 

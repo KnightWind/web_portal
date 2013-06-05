@@ -3,9 +3,11 @@ package com.bizconf.audio.action.user;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,7 @@ import com.bizconf.audio.service.ConfService;
 import com.bizconf.audio.service.EnterpriseAdminService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.UserService;
+import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.ExcelUtil;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.annotation.AsController;
@@ -66,6 +69,7 @@ public class ConflogController extends BaseController{
 	@AsController(path = "list")
 	public Object logsList(@CParam("keyword") String keyword,@CParam("userId") Integer userId, @CParam("pageNo")Integer pageNo,@CParam("isCreator")boolean isCreator, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
+		
 		PageBean<ConfBase> page = confService.getConfBasePage(pageNo, ConstantUtil.PAGESIZE_DEFAULT, currUser, isCreator);
 		String forward = "/jsp/user/hostConfloglist.jsp";
 		if(!isCreator){
@@ -76,9 +80,10 @@ public class ConflogController extends BaseController{
 		}
 		//参会人次
 		Map<Integer, Integer> numMap = confLogService.getConflogNumByConf(page==null?null:page.getDatas());
+		request.setAttribute("currUser", currUser);
 		request.setAttribute("numMap", numMap);
-		
 		request.setAttribute("pageModel", page);
+		
 		return new ActionForward.Forward(forward);
 	}
 	
@@ -95,13 +100,14 @@ public class ConflogController extends BaseController{
 		request.setAttribute("cls", clMap);
 		//参会人次
 		Map<Integer, Integer> numMap = confLogService.getConflogNumByConf(page==null?null:page.getDatas());
+		request.setAttribute("currUser", currUser);
 		request.setAttribute("numMap", numMap);
 		request.setAttribute("pageModel", page);
 		return new ActionForward.Forward("/jsp/user/attendConfloglist.jsp");
 	}
 	
 	@AsController(path = "loglist")
-	public Object detilList(@CParam("confId") Integer confId, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
+	public Object detilList(@CParam("userPage") boolean userPage,@CParam("confId") Integer confId, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
 		ConfBase conf = confService.getConfBasebyConfId(confId);
 		SiteBase confSite = siteService.getSiteBaseById(conf.getSiteId());
 		PageBean<ConfLog> page = null;
@@ -110,9 +116,18 @@ public class ConflogController extends BaseController{
 		}else if(ConfConstant.CONF_STATUS_OPENING.equals(conf.getConfStatus())){
 			page = confManagementService.queryConfUserStatusForPage(conf.getConfHwid(), pageNo, ConstantUtil.PAGESIZE_DEFAULT, confSite, null);
 		}
+		Integer timezone = conf.getTimeZone();
+		if(timezone==null) timezone = confSite.getTimeZone();
+		if(timezone==null) timezone = 28800000;
+		
 		request.setAttribute("pageModel", page);
+		request.setAttribute("timezone", timezone);
 		request.setAttribute("confId", confId);
-		return new ActionForward.Forward("/jsp/user/conflogs.jsp");
+		String forword = "/jsp/user/conflogs.jsp";
+		if(userPage){
+			forword = "/jsp/user/joinConfloglist.jsp";
+		}
+		return new ActionForward.Forward(forword);
 	}
 	
 	@AsController(path = "exportLogs")
@@ -128,14 +143,19 @@ public class ConflogController extends BaseController{
 		//添加数据信息
 		List<ConfLog> logs = null;
 		ConfBase conf = confService.getConfBasebyConfId(confId);
+		
+		Integer timezone = conf.getTimeZone();
 		if(conf!=null){
 			SiteBase confSite = siteService.getSiteBaseById(conf.getSiteId());
+			if(timezone==null) timezone = confSite.getTimeZone();
+			
 			if(ConfConstant.CONF_STATUS_FINISHED.equals(conf.getConfStatus())){
 				logs = confLogService.getAllLogsByConf(confId);
 			}else if(ConfConstant.CONF_STATUS_OPENING.equals(conf.getConfStatus())){
 				logs = confManagementService.queryConfUserStatusForPage(conf.getConfHwid(), 1, 3000, confSite, null).getDatas();
 			}
 		}
+		if(timezone==null) timezone = (int)DateUtil.BJ_TIME_OFFSET;
 		if(logs!=null && logs.size()>0){
 			for (Iterator<ConfLog> tir = logs.iterator(); tir.hasNext();) {
 				ConfLog log =  tir.next();
@@ -148,8 +168,8 @@ public class ConflogController extends BaseController{
 				}else{
 					logdata[1] = "未知";//
 				}
-				logdata[2] = sdf.format(log.getJoinTime());//
-				logdata[3] = sdf.format(log.getExitTime());
+				logdata[2] = sdf.format(DateUtil.getOffsetDateByGmtDate(log.getJoinTime(), timezone.longValue()));//
+				logdata[3] = sdf.format(DateUtil.getOffsetDateByGmtDate(log.getExitTime(), timezone.longValue()));
 				objlist.add(logdata);
 			}
 		}
@@ -167,4 +187,17 @@ public class ConflogController extends BaseController{
 			wb = null;
 		}
 	}
+	
+//	private void setConfPageDate(PageBean<ConfBase> page,Integer timezone){
+//		
+//		if(page!=null && page.getDatas()!=null){
+//			List<ConfBase> confs = page.getDatas();
+//			for (Iterator<ConfBase> itr = confs.iterator(); itr.hasNext();) {
+//				ConfBase conf = itr.next();
+//				if(timezone==null)timezone = conf.getTimeZone();
+//				if(timezone==null)timezone = 2;
+//				conf.setStartTime(DateUtil.getOffsetDateByGmtDate(conf.getStartTime(),timezone.longValue()));
+//			}
+//		}
+//	}
 }

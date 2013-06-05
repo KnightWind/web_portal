@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>预览公告</title>
+	<title>${LANG['bizconf.jsp.admin.viewNotice.res1']}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -29,7 +29,7 @@
 			<tr>
 				<td class="overlay-bdL"></td>
 
-				<!--弹出层主题内容区域开始========================================================================-->
+				<!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
 
 				<td class="overlay-content">
 					<div class="gonggao_main">
@@ -45,23 +45,23 @@
 							<div class="gg_header_b"></div>
 							<div class="message_gg_main">
 								<div  id="content_notice" class="gg_main">
-							    	${notice.content}
+									<textarea style="width:100%;height:100%;text-indent: 0px;">${notice.content}</textarea>
 							     </div>
 							</div>
 						</div>
 						<div class="gg_bottom">
 <!-- 							<input type="checkbox" name="CheckboxGroup1" -->
-<!-- 								class="CheckboxGroup1_01" /><span class="tixing">不在弹出此类提醒！</span> -->
+<!-- 								class="CheckboxGroup1_01" /><span class="tixing">${LANG['bizconf.jsp.admin.viewNotice.res3']}</span> -->
 							<a href="javascript:closeDialog();" class="gg_button"><img
 								src="/static/images/cross.png" width="16" height="16"
-								style="margin-left: 10px; margin-right: 5px;" align="absmiddle" />关闭</a>
+								style="margin-left: 10px; margin-right: 5px;" align="absmiddle" />${LANG['bizconf.jsp.admin.viewNotice.res4']}</a>
 						</div>
 					</div>
 
 					</div>
 				</td>
 
-				<!--弹出层主题内容区域开始========================================================================-->
+				<!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
 
 				<td class="overlay-bdR"></td>
 			</tr>
@@ -83,10 +83,6 @@ function closeDialog(){
 function loaded(){
 	var frame = parent.$("#previewNoticeDiv");
 	frame.trigger("loaded");
-	var data = frame.data("data");
-	if (data) {
-		$("#title_notice").html(data.title);
-		$("#content_notice").html(data.content);
-	}
+
 }
 </script>

@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import com.bizconf.audio.util.CookieUtil;
+import com.bizconf.audio.util.IPLocatorUtil;
 import com.bizconf.audio.util.SiteIdentifyUtil;
 import com.libernate.liberc.annotation.CommonsInterceptor;
 import com.libernate.liberc.interceptor.SysInterceptorExt;
@@ -23,6 +25,7 @@ public class SiteIdentifyInterceptor implements SysInterceptorExt {
 	public Object doAfter(HttpServletRequest arg0, HttpServletResponse arg1,
 			Object arg2) throws IOException {
 		SiteIdentifyUtil.remove();
+		IPLocatorUtil.remove();
 		return null;
 	}
 
@@ -47,6 +50,11 @@ public class SiteIdentifyInterceptor implements SysInterceptorExt {
 		SiteIdentifyUtil.setSiteBrand(brand);
 		
 		request.setAttribute("siteBrand", brand);
+		
+		
+		//get best download url from cookie
+		String bestDownloadServer = CookieUtil.getCookieByDomain(request, "b_down_s", SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
+		IPLocatorUtil.setDownloadServer(bestDownloadServer);
 
 		return null;
 	}

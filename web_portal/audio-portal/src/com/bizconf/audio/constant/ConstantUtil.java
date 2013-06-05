@@ -151,7 +151,7 @@ public class ConstantUtil {
 	public static final int RESET_PASS_SUCCEED = 1;//重置密码成功
 	public static final int RESET_PASS_FAILED = 2; //重置密码失败
 	
-	public static final int CYCLE_CONF_DATE_LIMIT = 30; //每个周期会议最多获取30个有效开始日期
+	public static final int CYCLE_CONF_DATE_LIMIT = 30; //默认每个周期会议最多获取30个有效开始日期
 	
 	/*
 	 * zh-cn,lang_zh.xml
@@ -165,8 +165,12 @@ en-us,lang_en.xml
 		
 	};
 	
-	public static final String JOIN_MTG_PUBLIC_KEY="bizconf";
+	public static final String JOIN_MTG_PUBLIC_KEY="Le5&6y!8oPwI";
 	
+	/*
+	 * 站点下组织机构最高级别
+	 */
+	public static final int SITE_ORG_LEVEL_FIRST = 1;
 	
 	//remove following 4 lines by Chris
 	//public static final String LOGOIMAGE = LiberContainer.getContainer().getServletContext().getRealPath("/logoImage/");

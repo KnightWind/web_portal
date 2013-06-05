@@ -516,4 +516,119 @@ _width:expression((document.documentElement.clientWidth||document.body.clientWid
 
 
 
+/*========================页面样式========================*/
+/*========================页面左侧菜单的样式========================*/
+.nav-menu {
+	margin-top: 20px;
+}
+.nav-menu a {
+       text-decoration: none;
+       cursor: pointer;
+       display: block;
+       height: 40px;
+       line-height: 40px;
+       outline: medium none;
+       overflow: hidden;
+       width: 190px;
+       position: relative;
+       color: #000000;
+       outline: none;
+   }
+   
+   .nav-ul-on .icon-arrow {
+       width:7px;height:7px;display: inline-block;background: url("/static/images/icon-on.png") no-repeat scroll center center transparent;
+       position:relative;left:50px;
+   }
+   /*ie7 hack*/
+*+html .nav-ul-on .icon-arrow {
+    bottom:4px;
+}
+.nav-ul-off .icon-arrow {
+    width:7px;height:7px;display: inline-block;background: url("/static/images/icon-off.png") no-repeat scroll center center transparent;
+    position:relative;left:50px;
+}
+/*ie7 hack*/
+*+html .nav-ul-off .icon-arrow {
+    bottom:4px;
+}
+.icon0-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon1.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon0-span {display: inline-block;position: relative;left: 35px;}
+.icon1-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon1.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon1-span {display: inline-block;position: relative;left: 35px;}
+.icon11-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon11.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:60px;
+}
+.icon11-span {display: inline-block;position: relative;left: 65px;}
+.icon12-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon12.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:60px;
+}
+.icon12-span {display: inline-block;position: relative;left: 65px;}
+.icon2-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon2.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon2-span {display: inline-block;position: relative;left: 35px;} 
+.icon3-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon3.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon3-span {display: inline-block;position: relative;left: 35px;} 
+.icon4-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon4.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon4-span {display: inline-block;position: relative;left: 35px;}
+.icon41-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon41.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:60px;
+}
+.icon41-span {display: inline-block;position: relative;left: 65px;}
+.icon42-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon42.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:60px;
+}
+.icon42-span {display: inline-block;position: relative;left: 65px;} 
+.icon5-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon5.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon5-span {display: inline-block;position: relative;left: 35px;} 
+.icon6-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon6.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon6-span {display: inline-block;position: relative;left: 35px;} 
+.icon7-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon7.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon7-span {display: inline-block;position: relative;left: 35px;} 
+.icon8-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon8.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon8-span {display: inline-block;position: relative;left: 35px;} 
+.icon81-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon81.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:60px;
+}
+.icon81-span {display: inline-block;position: relative;left: 65px;}
+.icon82-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon82.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:60px;
+}
+.icon82-span {display: inline-block;position: relative;left: 65px;} 
 
+.active .ico0, .active .ico11, .active .ico12, .active .ico2, .active .ico3, 
+.active .ico41, .active .ico42, .active .ico5, .active .ico6, 
+.active .ico7, .active .ico81, .active .ico82 {
+    background: url("/static/images/menu_change.jpg") no-repeat scroll 0 0 transparent;
+}

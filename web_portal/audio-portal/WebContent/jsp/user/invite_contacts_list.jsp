@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>群组联系人列表</title>
+<title>${LANG['bizconf.jsp.invite_contacts_list.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
@@ -22,17 +22,19 @@
 			var email= $("td[name=contactEmail"+id+"]").html();
 			var phone= $("td[name=contactPhone"+id+"]").html();
 			var mobile= $("td[name=contactMobile"+id+"]").html();
+			var userId = $("input[name=userId_"+id+"]").val();
 			item.name = name;
 			item.email = email;
 			item.phone = phone || mobile;
+			item.userId = userId;
 			datas.push(item);
 		});
 		return datas;
 	}
 	
 	$(document).ready(function(){
-		$(".contact_search").watermark('用户名、邮箱、联系电话、手机号码');
-		//全选and全不选
+		$(".contact_search").watermark('${LANG['bizconf.jsp.bill_detaillist.res3']}');
+		//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 		$("#checkAll").click(function(){
 			if($(this).attr("checked")){
 				$("input[name=id]").attr("checked",true);				
@@ -47,7 +49,7 @@
 				$("#checkAll").attr("checked",false);
 			}
 		});
-// 		remindInfo($("input[name=keyword]").get(0),"用户名、邮箱、联系电话、手机号码。");
+// 		remindInfo($("input[name=keyword]").get(0),"${LANG['bizconf.jsp.invite_contacts_list.res2']}");
 	});
 	
 	function submitForm(){
@@ -76,11 +78,11 @@
             </tr>
             <tr align="center" height="35" class="tr_center" bgcolor="#000066">
               <td width="5%" class="tr_center"><input name="" type="checkbox" id="checkAll" value="" /></td>
-              <td width="15%" class="tr_center">姓名</td>
-              <td width="15%" class="tr_center">英文名</td>
-              <td width="25%" class="tr_center">邮箱</td>
-              <td width="20%" class="tr_center">联系电话</td>
-              <td width="20%" class="tr_center" style=" border-right:#D2D8DB 1px solid">手机号码</td>
+              <td width="15%" class="tr_center">${LANG['bizconf.jsp.enContacts_list.res6']}</td>
+              <td width="15%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res8']}</td>
+              <td width="25%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res9']}</td>
+              <td width="20%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res10']}</td>
+              <td width="20%" class="tr_center" style=" border-right:#D2D8DB 1px solid">${LANG['bizconf.jsp.add_contacts.res11']}</td>
             </tr>
              <c:if test="${fn:length(pageModel.datas)<=0}">
 				<tr class="table001" height="32"  >
@@ -89,7 +91,7 @@
 			</c:if>
 			<c:forEach var="contact" items="${pageModel.datas}" varStatus="status">
 	            <tr name="contactsItem" align="center" bgcolor="#FFFFFF" height="30">
-	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid"><input name="id" type="checkbox" value="${contact.id}" /></td>
+	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid"><input name="id" type="checkbox" value="${contact.id}" /><input name="userId_${contact.id}" type="hidden" value="${contact.contactId}" /></td>
 	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid" name="contactName${contact.id}">${contact.contactName}</td>
 	              <td class="tr_main" >${contact.contactNameEn}</td>
 	              <td class="tr_main" name="contactEmail${contact.id}">${contact.contactEmail}</td>

@@ -31,14 +31,14 @@ public interface ClientAPIService {
 	 * @param user 当前要加入会议的用户。如果是匿名用户，请构造，至少包含userName和email
 	 * @return
 	 */
-	public String makePreParam(JoinRandom random);
+	public String makePreParam(JoinRandom random,String ip);
 	
 	/**
 	 * 根据random获取小参数，主要给setup调用
 	 * @param random
 	 * @return
 	 */
-	public String getPreParam(long random);
+	public String getPreParam(long random,String ip);
 
 	/**
 	 * 获取客户端启动最终所需要的参数

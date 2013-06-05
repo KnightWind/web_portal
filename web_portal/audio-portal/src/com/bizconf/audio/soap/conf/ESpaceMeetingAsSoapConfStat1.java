@@ -8,6 +8,8 @@
 package com.bizconf.audio.soap.conf;
 
 public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
+    private java.lang.String confId;
+
     private java.lang.String subject;
 
     private java.lang.String creatorUserId;
@@ -16,30 +18,68 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
 
     private java.lang.String endDatetime;
 
+    private int confType;
+
+    private int extConfType;
+
+    private int confState;
+
     private int phoneCount;
 
     private int pcCount;
 
     private int mcuCount;
 
+    private int padCount;
+
     public ESpaceMeetingAsSoapConfStat1() {
     }
 
     public ESpaceMeetingAsSoapConfStat1(
+           java.lang.String confId,
            java.lang.String subject,
            java.lang.String creatorUserId,
            java.lang.String beginDatetime,
            java.lang.String endDatetime,
+           int confType,
+           int extConfType,
+           int confState,
            int phoneCount,
            int pcCount,
-           int mcuCount) {
+           int mcuCount,
+           int padCount) {
+           this.confId = confId;
            this.subject = subject;
            this.creatorUserId = creatorUserId;
            this.beginDatetime = beginDatetime;
            this.endDatetime = endDatetime;
+           this.confType = confType;
+           this.extConfType = extConfType;
+           this.confState = confState;
            this.phoneCount = phoneCount;
            this.pcCount = pcCount;
            this.mcuCount = mcuCount;
+           this.padCount = padCount;
+    }
+
+
+    /**
+     * Gets the confId value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @return confId
+     */
+    public java.lang.String getConfId() {
+        return confId;
+    }
+
+
+    /**
+     * Sets the confId value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @param confId
+     */
+    public void setConfId(java.lang.String confId) {
+        this.confId = confId;
     }
 
 
@@ -124,6 +164,66 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
 
 
     /**
+     * Gets the confType value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @return confType
+     */
+    public int getConfType() {
+        return confType;
+    }
+
+
+    /**
+     * Sets the confType value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @param confType
+     */
+    public void setConfType(int confType) {
+        this.confType = confType;
+    }
+
+
+    /**
+     * Gets the extConfType value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @return extConfType
+     */
+    public int getExtConfType() {
+        return extConfType;
+    }
+
+
+    /**
+     * Sets the extConfType value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @param extConfType
+     */
+    public void setExtConfType(int extConfType) {
+        this.extConfType = extConfType;
+    }
+
+
+    /**
+     * Gets the confState value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @return confState
+     */
+    public int getConfState() {
+        return confState;
+    }
+
+
+    /**
+     * Sets the confState value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @param confState
+     */
+    public void setConfState(int confState) {
+        this.confState = confState;
+    }
+
+
+    /**
      * Gets the phoneCount value for this ESpaceMeetingAsSoapConfStat1.
      * 
      * @return phoneCount
@@ -182,6 +282,26 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
         this.mcuCount = mcuCount;
     }
 
+
+    /**
+     * Gets the padCount value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @return padCount
+     */
+    public int getPadCount() {
+        return padCount;
+    }
+
+
+    /**
+     * Sets the padCount value for this ESpaceMeetingAsSoapConfStat1.
+     * 
+     * @param padCount
+     */
+    public void setPadCount(int padCount) {
+        this.padCount = padCount;
+    }
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof ESpaceMeetingAsSoapConfStat1)) return false;
@@ -194,6 +314,9 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true && 
+            ((this.confId==null && other.getConfId()==null) || 
+             (this.confId!=null &&
+              this.confId.equals(other.getConfId()))) &&
             ((this.subject==null && other.getSubject()==null) || 
              (this.subject!=null &&
               this.subject.equals(other.getSubject()))) &&
@@ -206,9 +329,13 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
             ((this.endDatetime==null && other.getEndDatetime()==null) || 
              (this.endDatetime!=null &&
               this.endDatetime.equals(other.getEndDatetime()))) &&
+            this.confType == other.getConfType() &&
+            this.extConfType == other.getExtConfType() &&
+            this.confState == other.getConfState() &&
             this.phoneCount == other.getPhoneCount() &&
             this.pcCount == other.getPcCount() &&
-            this.mcuCount == other.getMcuCount();
+            this.mcuCount == other.getMcuCount() &&
+            this.padCount == other.getPadCount();
         __equalsCalc = null;
         return _equals;
     }
@@ -220,6 +347,9 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
         }
         __hashCodeCalc = true;
         int _hashCode = 1;
+        if (getConfId() != null) {
+            _hashCode += getConfId().hashCode();
+        }
         if (getSubject() != null) {
             _hashCode += getSubject().hashCode();
         }
@@ -232,9 +362,13 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
         if (getEndDatetime() != null) {
             _hashCode += getEndDatetime().hashCode();
         }
+        _hashCode += getConfType();
+        _hashCode += getExtConfType();
+        _hashCode += getConfState();
         _hashCode += getPhoneCount();
         _hashCode += getPcCount();
         _hashCode += getMcuCount();
+        _hashCode += getPadCount();
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -246,6 +380,12 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("eSpaceMeeting", "eSpaceMeeting.as.soap.ConfStat1"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("confId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "confId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("subject");
         elemField.setXmlName(new javax.xml.namespace.QName("", "subject"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
@@ -270,6 +410,24 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("confType");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "confType"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("extConfType");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "extConfType"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("confState");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "confState"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("phoneCount");
         elemField.setXmlName(new javax.xml.namespace.QName("", "phoneCount"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
@@ -284,6 +442,12 @@ public class ESpaceMeetingAsSoapConfStat1  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("mcuCount");
         elemField.setXmlName(new javax.xml.namespace.QName("", "mcuCount"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("padCount");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "padCount"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);

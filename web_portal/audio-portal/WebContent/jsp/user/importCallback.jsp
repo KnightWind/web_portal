@@ -8,7 +8,7 @@
 	
 	<c:if test="${info == null}">
 		var showinfo = "${LANG['site.user.import.cbinfo1']} ${itemnum} ${LANG['site.user.import.cbinfo2']} ${iptitemnum} ${LANG['site.user.import.cbinfo3']}"
-		//重复的账号有：张三。未导入的有：李四，王五。";
+		//${LANG['bizconf.jsp.importCallback.res1']}";
 		<c:if test="${repeated != null}">
 			showinfo += " ${LANG['site.user.import.cbinfo4']} ";
 			<c:forEach var="rpt" items="${repeated}" varStatus="status">

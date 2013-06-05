@@ -3,7 +3,7 @@
 <div id="head">
     <div class="header_left">
     <img class="logo" src="${baseUrlStatic}/images/logo02.png" height="48" />
-    <span class="name">商会云系统管理平台</span>
+    <span class="name">${LANG['bizconf.jsp.system.header.res1']}</span>
     </div>
     <c:if test="${!empty user}">
 <div class="header_right">
@@ -27,7 +27,7 @@
           
      	</div>
         <div class="header_right02">
-        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['website.message.welcome']}，${user.trueName }！</span></div>
+        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['website.message.welcome']}${LANG['bizconf.jsp.admin.header.res1']}${user.trueName }${LANG['bizconf.jsp.admin.CopyOfadminIndex.res7']}</span></div>
         </div>
         
   </div>    

@@ -2,6 +2,7 @@ package com.bizconf.audio.service.impl;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.LicenseConstant;
+import com.bizconf.audio.entity.BizBilling;
 import com.bizconf.audio.entity.License;
 import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.logic.UserLogic;
 import com.bizconf.audio.service.LicService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.util.DateUtil;
@@ -30,6 +33,8 @@ public class LicServiceImpl extends BaseService implements LicService{
 	
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	UserLogic userLogic;
 	
 	/**
 	 * 获取License列表  
@@ -147,6 +152,58 @@ public class LicServiceImpl extends BaseService implements LicService{
 		return datas;
 	}
 	
+	/**
+	 * 获取nameHost模式下主持人对应点数的最早生效日期
+	 * @param hosts
+	 * @return
+	 */
+	@Override
+	public Map<Integer, Date> getHostsLienseEffeDates(List<UserBase> hosts, long offset){
+		Map<Integer, Date> datas = new HashMap<Integer, Date>(16);
+		if(hosts==null) return datas;
+		for (Iterator<UserBase> it = hosts.iterator(); it.hasNext();) {
+			UserBase userBase = (UserBase) it.next();
+			datas.put(userBase.getId(), getEarlyLienseEffeDate(userBase.getSiteId(), userBase.getId(), offset));
+		}
+		return datas;
+	}
+	
+	private Date getEarlyLienseEffeDate(int siteId, int userId, long offset) {
+		List<Object> values = new ArrayList<Object>();
+		StringBuilder sqlBuilder = new StringBuilder("select * from t_license where del_flag = ? ");
+		values.add(ConstantUtil.DELFLAG_UNDELETE);
+		if (siteId>0) {
+			sqlBuilder.append(" and site_id =? ");
+			values.add(siteId);
+		}
+		if(userId>0){
+			sqlBuilder.append(" and user_id =? ");
+			values.add(userId);
+		}
+		sqlBuilder.append(" order by effe_date asc ");
+		PageBean<License> pageModel = getPageBeans(License.class, sqlBuilder.toString(), 1, values.toArray(new Object[values.size()]));
+		if(pageModel != null && pageModel.getDatas() != null){
+			return DateUtil.getOffsetDateByGmtDate(pageModel.getDatas().get(0).getEffeDate(), offset);
+		}
+		return null;
+	}
+	
+	@Override
+	public Map<String, Integer> getHostsLienseDatasMap(List<BizBilling> hosts,SiteBase site) {
+		Map<String, Integer> datas = new HashMap<String, Integer>(16);
+		if(hosts==null) return datas;
+		for (Iterator it = hosts.iterator(); it.hasNext();) {
+			BizBilling bill = (BizBilling) it.next();
+			if(bill.getUserId()!=null && !bill.getUserId().equals("")){
+				UserBase userBase = userLogic.getUserBaseByLoginName(bill.getUserId(), site.getId());
+				if(userBase!=null){
+					datas.put(bill.getUserId(), getHostLicenseNum(userBase.getId()));
+				}
+			}
+		}
+		return datas;
+	}
+	
 	@Override
 	public int getSiteLicenseNum(Integer siteId) {
 		if(siteId==null) siteId =0;
@@ -177,7 +234,7 @@ public class LicServiceImpl extends BaseService implements LicService{
 				values.add(hostId);
 			}else{
 				return null;
-			} 
+			}
 			sqlBuilder.append(" order by create_time desc ");
 			licenses = libernate.getEntityListBase(License.class, sqlBuilder.toString(), values.toArray());
 		}catch(Exception e){
@@ -265,5 +322,22 @@ public class LicServiceImpl extends BaseService implements LicService{
 			logger.error("获取指定站点的所有点数管理记录出错！" + e);
 		}
 		return licenseList;
+	}
+	
+	
+	@Override
+	public boolean delHostLicenses(Integer userId) {
+		boolean flag = true;
+		StringBuilder sqlBuilder = new StringBuilder("update t_license  set del_flag = ? where user_id =?");
+		List<Object> values = new ArrayList<Object>();
+		values.add(ConstantUtil.DELFLAG_DELETED);
+		values.add(userId);
+		try{
+			libernate.executeSql(sqlBuilder.toString(), values.toArray());
+		}catch(Exception e){
+			flag = false;
+			e.printStackTrace();
+		}
+		return flag;
 	}
 }

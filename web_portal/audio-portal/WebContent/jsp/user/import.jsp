@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
-<title>无标题文档</title>
+<title>${LANG['bizconf.jsp.conf_invite_user_list.res1']}</title>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></SCRIPT>
 <script type="text/javascript">
 function closeDialog(){
@@ -55,7 +55,7 @@ function importContacts(){
 <!--<div class="popup_box_head">
   <div class="popup_box_top_left"></div>
   <div class="popup_box_top_center">
-    <h3>导入用户</h3>
+    <h3>${LANG['bizconf.jsp.import.res1']}</h3>
     <a href="#"><img class="close_bg" src="/static/images/jz_out_bg.gif" width="18" height="18" /></a> </div>
   <div class="popup_box_top_right"></div>
 </div>-->
@@ -80,16 +80,16 @@ function importContacts(){
 						enctype="multipart/form-data">
         <table cellpadding="0" cellspacing="0" border="0" class="make_new">
         	<tr>
-            	<td><h3 class="leading_in_mould">联系人名单</h3></td>
+            	<td><h3 class="leading_in_mould">${LANG['bizconf.jsp.import.res2']}</h3></td>
                 <td><input id="fileipt" name="excelfile" type="file"/></td>
-                <td><a class="down_mould" href="/user/contact/downloadContactsTemplate" style="font-size: 12px; font-family: "宋体", Arial, Helvetica, sans-serif">下载联系人模板</a></td>
+                <td><a class="down_mould" href="/user/contact/downloadContactsTemplate" style="font-size: 12px; font-family: "${LANG['bizconf.jsp.conf_list_index.res2']}", Arial, Helvetica, sans-serif">${LANG['bizconf.jsp.import.res3']}</a></td>
                 <td></td>
             </tr>
         </table>
  </form>
 <%-- <div class="First_Steps_bottom_s" >--%>
-<%--          <div class="but44"><a href="#"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>返回</a></div>--%>
-<%--          <div class="but09"><a href="#"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />导入</a></div>--%>
+<%--          <div class="but44"><a href="#"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>${LANG['bizconf.jsp.enContacts_list.res8']}</a></div>--%>
+<%--          <div class="but09"><a href="#"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />${LANG['bizconf.jsp.enContacts_list.res7']}</a></div>--%>
 <%-- </div>--%>
 </body>
 </html>

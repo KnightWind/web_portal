@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>个人信息设置</title>
+<title>${LANG['bizconf.jsp.profile.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 
@@ -38,7 +38,7 @@ $(function() {
 			"mobile": "${LANG['valid.rangelength432']}"
 		},
 		custom: {
-			"loginName": "${LANG['valid.checkUserName']}",
+			"loginName": "${LANG['valid.checkLoginName']}",
 			"checkUserName": "${LANG['valid.checkUserName']}",
 			"checkEnName": "${LANG['valid.checkEnName']}",
 			"checkMobile": "${LANG['valid.checkPhone']}",
@@ -54,7 +54,7 @@ $(function() {
     	return true;
  	}, "");
 	$.validator.addMethod("checkLoginName", function(value, element) {       
-    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
  	}, ruleString.custom.loginName);
 	
 	$.validator.addMethod("checkUserName", function(value, element) {       
@@ -124,65 +124,65 @@ function saveInfo() {
 <div class="main_content">
 <form name="profileForm" id="profileForm" action="/user/profile/setupInfo" method="post">
   <div class="intercalate_main_top">
-	<h3>个人信息设置</h3>
-    <p>您可以更新个人信息和密码。</p>
+	<h3>${LANG['bizconf.jsp.profile.res1']}</h3>
+    <p>${LANG['bizconf.jsp.profile.res2']}</p>
   </div>
   <table class="Personal_settings_main" cellpadding="0" cellspacing="0" border="0" >
   	<tr height="40">
-    	<td align="right" width="100"><span>*</span>登录名</td>
+    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.login.res1']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " id="loginName" name="loginName" type="text" value="${currentUser.loginName}"/>
         </td>
-        <td align="left"><strong>只允许输入数字或字母,必需在当前企业用户角色下唯一</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res3']},${LANG['bizconf.jsp.profile.res4']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>用户名</td>
+    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.add_contacts.res7']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " name="trueName" id="trueName" type="text" value="${currentUser.trueName}"/></td>
-        <td align="left"><strong>只允许中文或数字或字母或"_"或"&"或"-"</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res5']}"_"${LANG['bizconf.jsp.index.res26']}"&"${LANG['bizconf.jsp.index.res26']}"-"${LANG['bizconf.jsp.index.res26']}${LANG['bizconf.jsp.user.profile.res1']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100">英文名</td>
+    	<td align="right" width="100">${LANG['bizconf.jsp.add_contacts.res8']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " name="enName" id="enName" type="text" value="${currentUser.enName}"/></td>
-        <td align="left"><strong>只允许数字或字母或"_"或"&"或"-"</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res7']}"_"${LANG['bizconf.jsp.index.res26']}"&"${LANG['bizconf.jsp.index.res26']}"-"${LANG['bizconf.jsp.index.res26']}${LANG['bizconf.jsp.user.profile.res1']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>原密码</td>
+    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.profile.res8']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="password" name="oldpassword" id="oldpassword" value=""/></td>
-        <td align="left"><strong>你当前使用的密码</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res9']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>新密码</td>
+    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.profile.res10']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " name="loginPass" id="loginPass" type="password" value=""/></td>
-        <td align="left"><strong>你可以输入任意字符</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res11']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>确认密码</td>
+    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.profile.res12']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="password" name="loginPass2" id="loginPass2"/></td>
-        <td align="left"><strong>你可以输入任意字符</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res11']}</strong></td>
     </tr>
      <tr height="40">
-    	<td align="right" width="100"><span>*</span>邮箱</td>
+    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.add_contacts.res9']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="text" name="userEmail" id="userEmail" value="${currentUser.userEmail}"/></td>
-        <td align="left"><strong>只允许输入数字或字母</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res13']}user@bizconf.cn</strong></td>
     </tr>
      <tr height="40">
-    	<td align="right" width="100">电话</td>
+    	<td align="right" width="100">${LANG['bizconf.jsp.conflogs.res4']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="text" name="mobile" id="mobile" value="${currentUser.mobile}"/></td>
-        <td align="left"><strong>支持手机号码或电话号码（+86 010-88888888）的输入</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res14']}+86 010-88888888${LANG['bizconf.jsp.profile.res15']}</strong></td>
     </tr>
     <tr>
     	<td></td>
         <td>
         <div style="margin-top: 20px;">
         <a class="Personal_settings_main_hold" style="float:left;margin-top:0px;" href="javascript:;" onclick="saveInfo()">
-        	<img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" margin-right:5px;" />保存</a>
+        	<img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.conf_default_setup.res45']}</a>
 	        		<c:if test="${!empty infoMessage}">
 	        			<span class="message_span">
 	        			<img src="/static/images/ys_r_bg.jpg" width="16" height="14" style="margin-left:15px;margin-top:5px;margin-right: 5px"/><label style='color:#258021'>${infoMessage}</label>

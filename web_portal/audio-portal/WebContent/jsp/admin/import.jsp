@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>无标题文档</title>
+<title>${LANG['bizconf.jsp.admin.import.res1']}</title>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></SCRIPT>
 <script type="text/javascript">
 function closeDialog(){
@@ -207,7 +207,7 @@ ul, li {
 <!--<div class="popup_box_head">
   <div class="popup_box_top_left"></div>
   <div class="popup_box_top_center">
-    <h3>导入用户</h3>
+    <h3>${LANG['bizconf.jsp.admin.import.res2']}</h3>
     <a href="#"><img class="close_bg" src="/static/images/jz_out_bg.gif" width="18" height="18" /></a> </div>
   <div class="popup_box_top_right"></div>
 </div>-->

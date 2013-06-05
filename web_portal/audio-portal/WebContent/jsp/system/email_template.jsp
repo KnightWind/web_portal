@@ -3,7 +3,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>邮件模板信息</title>
+		<title>${LANG['bizconf.jsp.system.email_template.res1']}</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="pragma" content="no-cache">
 		<meta http-equiv="cache-control" content="no-cache">
@@ -18,26 +18,26 @@
 	<input type="hidden" name="id" id="id" value="${emailTemplate.id}"/>
 	<input type="hidden" name="siteId" id="siteId" value="${emailTemplate.siteId}"/>
 		<tr>
-			<td colspan="2" align="center"  >邮件模板信息</td>
+			<td colspan="2" align="center"  >${LANG['bizconf.jsp.system.email_template.res1']}</td>
 		</tr>
 		 
 		<tr  >
-			<td   align="right" style="width:180px;">&nbsp;邮件标题：</td>
+			<td   align="right" style="width:180px;">&nbsp;${LANG['bizconf.jsp.system.email_template.res2']}</td>
 			<td> <input type="text" name="emailTitle" id="emailTitle" value="${emailTemplate.emailTitle}" /></td>
 		 </tr> 
 		<tr  >
-			<td   align="right" style="width:180px;">&nbsp;所性类别：</td>
+			<td   align="right" style="width:180px;">&nbsp;${LANG['bizconf.jsp.system.email_template.res3']}</td>
 			<td> <input type="text" name="emailType" id="emailType" value="${emailTemplate.emailType}" /></td>
 		 </tr> 
 		<tr  >
-			<td   align="right" style="width:180px;">&nbsp;邮件内容：</td>
+			<td   align="right" style="width:180px;">&nbsp;${LANG['bizconf.jsp.system.email_template.res4']}</td>
 			<td> <textarea name="emailContent" id="emailContent" >${emailTemplate.emailContent}</textarea></td>
 		 </tr> 
 		
  
 		 
 		 <tr>
-			<td colspan="2"   align="center"  style="padding-bottom:10px"><input type="button" name="saveBtn" onclick="javascript:saveTempalte();" value="保存"/></td>
+			<td colspan="2"   align="center"  style="padding-bottom:10px"><input type="button" name="saveBtn" onclick="javascript:saveTempalte();" value="${LANG['bizconf.jsp.system.email_template.res5']}"/></td>
 		</tr>
 		</form>
 		

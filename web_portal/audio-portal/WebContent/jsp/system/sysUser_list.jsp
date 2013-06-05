@@ -74,7 +74,7 @@ function del(id){
         <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.loginName']}</span></div></td>
         <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
         <td width="12%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.enName']}</span></div></td>
-        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>角色</span></div></td>
+        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['bizconf.jsp.system.createSystemUser.res2']}</span></div></td>
         <td width="13%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.email']}</span></div></td>
         <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.telephone']}</span></div></td>
         <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center" class="caozuo" style="border-right:none"><span>${LANG['system.sysUser.list.operate']}</span></div></td>
@@ -86,7 +86,7 @@ function del(id){
            </td>
          </tr>
       </c:if>
-      <c:if test="${fn:length(systemUserList)>0 }">
+     <c:if test="${fn:length(systemUserList)>0 }">
      <c:forEach var= "systemUser" items = "${systemUserList}"  varStatus="status">
       <tr>
         <td height="32" class="STYLE19">
@@ -94,17 +94,18 @@ function del(id){
         </td>
         <td height="32" class="STYLE19"><div align="center">${systemUser.trueName }</div></td>
         <td height="32" class="STYLE19"><div align="center">${systemUser.enName }</div></td>
-        <td height="32" class="STYLE19"><div align="center">${systemUser.email }</div></td>
         <td height="32" class="STYLE19"><div align="center">
         	<c:choose>
         		<c:when test="${systemUser.sysType eq 999 }">
-        			系统管理员
+        			${LANG['bizconf.jsp.system.createSystemUser.res3']}
         		</c:when>
         		<c:otherwise>
-        			系统客服
+        			${LANG['bizconf.jsp.system.createSystemUser.res4']}
         		</c:otherwise>
         	</c:choose>
-        </div></td>
+        </div> 
+        </td>
+        <td height="32" class="STYLE19"><div align="center">${systemUser.email }</div></td>
         <td height="32" class="STYLE19"><div align="center">${systemUser.mobile }</div></td>
         <td height="32" class="STYLE19">
         	<div align="center" class="STYLE21">

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>企业用户管理</title>
+<title>${LANG['bizconf.jsp.admin.arrange_org_user.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css" />
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/rightbox.css" />
@@ -44,7 +44,7 @@
 		parent.confirmDialog("${LANG['site.admin.userlist.info4']}", function(){
 				$("#query").attr("action","/admin/entUser/lockSiteUsers");
 				$("#query").submit();
-				parent.successDialog("用户已锁定");
+				parent.successDialog("${LANG['bizconf.jsp.admin.site_user_list.res1']}");
 		});
 	}
 	
@@ -56,7 +56,7 @@
 		parent.confirmDialog("${LANG['site.admin.userlist.info6']}", function() {
 				$("#query").attr("action","/admin/entUser/unlockSiteUsers");
 				$("#query").submit();
-				parent.successDialog("用户已激活");
+				parent.successDialog("${LANG['bizconf.jsp.admin.site_user_list.res2']}");
 		});
 	}
 	function doImport() {
@@ -94,14 +94,14 @@
 	
 	$(document).ready(function(){
 		$(".search_user").uniform();
-		$(".search_user").watermark('登录名、用户名、邮箱');
+		$(".search_user").watermark('${LANG['bizconf.jsp.admin.site_org_user.res1']}');
 		$("#btn_search").click(function(){
 			$("#pageNo").val("");
 			$("#query").attr("action","/admin/entUser/listAll");
 			$("#query").submit();
 		});
 		
-		//全选and全不选
+		//${LANG['bizconf.jsp.admin.arrange_org_user.res5']}and${LANG['bizconf.jsp.admin.arrange_org_user.res6']}
 		$("#checkAll").click(function(){
 			if($(this).attr("checked")){
 				$("input[name=id]").attr("checked",true);				
@@ -116,7 +116,7 @@
 				$("#checkAll").attr("checked",false);
 			}
 		});
-		//绑定按键事件
+		//${LANG['bizconf.jsp.admin.site_org_user.res2']}
 		$("input[name=keyword]").keyup(function(event){
 			if(event.keyCode=='13'){
 				$("#pageNo").val("");
@@ -127,7 +127,7 @@
 		
 	});
 	
-	//刷新页面
+	//${LANG['bizconf.jsp.admin.site_org_user.res3']}
 	function refreashPage(){
 		$("#pageNo").val("");
 		$("#sortField").val("");
@@ -186,9 +186,9 @@
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" id="table_box">
 			<tr class="table003" height="38">
-				 <td width="5%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><input type="checkbox" id="checkAll"/></div></td>
-            <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.login.name']}</span></div></td>
-            <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
+			<td width="5%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><input type="checkbox" id="checkAll"/></div></td>
+            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.login.name']}</span></div></td>
+            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
             <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['site.admin.edituser.userrole']}</span></div></td>
             <td width="20%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.email']}</span></div></td>
             <td width="16%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.telephone']}</span></div></td>
@@ -206,6 +206,7 @@
 		        </c:if>
             </div>
             </td>
+            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.org']}</span></div></td>
 			<td width="18%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span>${LANG['system.sysUser.list.operate']}</span></div></td>
 			</tr>
 			<c:if test="${fn:length(pageModel.datas)<=0}">
@@ -235,11 +236,12 @@
 				            	<c:if test="${user.userStatus eq '1'}">${LANG['site.admin.userlist.active']}</c:if>
 				            </div>
 			            </td>
+			            <td height="32"><div align="center">${orgNamesMap[user.id]}</div></td>
 			            <td height="32">
 			            <div align="center" class="STYLE21">
 			            	<a href="#" onclick="toEditUser('${user.id }');">${LANG['system.change']}</a>&nbsp;
 			            	<a href="#" onclick="delUser('${user.id }');">${LANG['system.delete']}</a>&nbsp;
-			            	<a href="#" onclick="parent.showAttendConfs('${user.id }');">参会详情</a>
+			            	<a href="#" onclick="parent.showAttendConfs('${user.id }');">${LANG['bizconf.jsp.admin.index.res16']}</a>
 			            </div></td>
 			         </tr>
 				</c:forEach>

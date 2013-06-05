@@ -12,17 +12,17 @@
 	
 		<table>
 			<tr>
-				<td>企业名称</td>
+				<td>${LANG['bizconf.jsp.system.site_info.res16']}</td>
 				<td><input name="siteName" type="text" value="${siteBase.siteName}"></td>
 				<input name="id" type="hidden" value = "${siteBase.id}">
 			</tr>
 			
 			<tr>
-				<td>企业LOGO</td>
+				<td>${LANG['bizconf.jsp.system.updateInfoBySiteAdmin.res1']}LOGO</td>
 				<td><input name="siteLogo" type="text" value="${siteBase.siteLogo}"></td>
 			</tr>
 			<tr>
-				<td><input name="submit" type="submit"  value="确定"></td>
+				<td><input name="submit" type="submit"  value="${LANG['bizconf.jsp.common.bill_detaillist.res10']}"></td>
 			</tr>
 		
 		</table>

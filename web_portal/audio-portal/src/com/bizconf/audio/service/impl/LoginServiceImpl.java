@@ -60,6 +60,11 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 		if(userBase.getUserStatus()==0){
 			return LoginConstants.LOGIN_ERROR_USER_LOCKED;
 		}
+		
+		if(userBase.isExpried()){
+			return LoginConstants.LOGIN_ERROR_USER_EXPRIED;
+		}
+		
 		if (userBase.getErrorCount().intValue() >= ConstantUtil.MAX_ERROR_COUNT_USER.intValue()) {
 			Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_USER);
 			if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
@@ -136,6 +141,28 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 			return LoginConstants.LOGIN_ERROR_PASSWORD;
 		}
 		
+		//授权
+		String sessionId = getSessionIdForSiteAdmin(userBase.getId()+"");
+		logger.info("loginSiteAdmin  setCookie cookieName="+LoginConstants.SESSION_ID_NAME+ "; domain="+(siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN)+" ; sessionId="+sessionId);
+		logger.info("loginSiteAdmin  setCookie cookieName="+LoginConstants.SITE_ADMIN_USER_SESSION_ID_NAME+ "; domain="+(siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN)+" ; userBase.getId()="+userBase.getId());
+		
+		
+		CookieUtil.setPageCookie(response, LoginConstants.SESSION_ID_NAME, sessionId, 
+				siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
+		CookieUtil.setPageCookie(response, LoginConstants.SITE_ADMIN_USER_SESSION_ID_NAME, 
+				String.valueOf(userBase.getId()), siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
+		if(userBase.getErrorCount().intValue()>0){
+			userBase.setErrorCount(0);
+			userBase.setLastErrorTime(DateUtil.getGmtDate(null));
+			this.updateErrorCount(userBase);
+		}
+		return LoginConstants.LOGIN_ERROR_SUCCESS;
+	}
+	
+	@Override
+	public int loginSiteAdmin(SiteBase site, UserBase userBase, HttpServletResponse response,
+			HttpServletRequest request) throws Exception {
+		String siteBrand = site.getSiteSign();
 		//授权
 		String sessionId = getSessionIdForSiteAdmin(userBase.getId()+"");
 		logger.info("loginSiteAdmin  setCookie cookieName="+LoginConstants.SESSION_ID_NAME+ "; domain="+(siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN)+" ; sessionId="+sessionId);

@@ -145,15 +145,14 @@ public class NoticeController extends BaseController{
 					}
 					notice = (Notice) ObjectUtil.parseHtml(notice, "title", "content");	//字符转义
 					creatFlag = noticeService.publishSysNotice(systemUser, notice.getTitle(), notice.getContent(), notice.getStopTime());
+					saveSystemEventLog(creatFlag, systemUser, EventLogConstants.SYSTEM_NOTICE_CREATE, "系统管理员发布系统公告", notice, request);
 					if(creatFlag){
-						eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_CREATE, ResourceHolder.getInstance().getResource("system.notice.list.Create.1"), EventLogConstants.EVENTLOG_SECCEED, notice, request);   //创建成功后写EventLog
 						return returnJsonStr(ConstantUtil.CREATENOTICE_SUCCEED, ResourceHolder.getInstance().getResource("system.notice.list.Create.1"));
 					}else{
-						eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_CREATE, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"), EventLogConstants.EVENTLOG_FAIL, notice, request);   //创建失败后写EventLog
 						return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"));
 					}
 				} catch (Exception e) {
-					eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_CREATE, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"), EventLogConstants.EVENTLOG_FAIL, notice, request);   //创建失败后写EventLog
+					saveSystemEventLog(false, systemUser, EventLogConstants.SYSTEM_NOTICE_CREATE, "系统管理员发布系统公告", notice, request);
 					logger.error("系统管理员发布系统公告出错!"+e);
 					return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.list.Create.2"));
 				}
@@ -210,11 +209,10 @@ public class NoticeController extends BaseController{
 			if(noticeId > 0 && StringUtil.isNotBlank(title) && StringUtil.isNotBlank(content) && expireTime != null){
 				updateFlag = noticeService.updateSysNotice(noticeId, title, content, expireTime);
 			}
+			saveSystemEventLog(updateFlag, systemUser, EventLogConstants.SYSTEM_NOTICE_UPDATE, "系统管理员修改系统公告", notice, request);
 			if(updateFlag){
-				eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_UPDATE, ResourceHolder.getInstance().getResource("system.notice.list.Update.1"), EventLogConstants.EVENTLOG_SECCEED, notice, request);   //修改成功后写EventLog
 				return returnJsonStr(ConstantUtil.CREATENOTICE_SUCCEED, ResourceHolder.getInstance().getResource("system.notice.list.Update.1"));
 			}else{
-				eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_UPDATE, ResourceHolder.getInstance().getResource("system.notice.list.Update.2"), EventLogConstants.EVENTLOG_FAIL, notice, request);   //修改失败后写EventLog
 				return returnJsonStr(ConstantUtil.CREATENOTICE_FAIL, ResourceHolder.getInstance().getResource("system.notice.list.Update.2"));
 			}
 		}
@@ -252,12 +250,11 @@ public class NoticeController extends BaseController{
 		SystemUser systemUser = userService.getCurrentSysAdmin(request);
 		boolean delFlag = noticeService.deleteSysNoticeById(id, systemUser);
 		int delStatus = ConstantUtil.DELSITE_SUCCEED;
+		saveSystemEventLog(delFlag, systemUser, EventLogConstants.SYSTEM_NOTICE_DELETE, "系统管理员删除系统公告", null, request);
 		if(delFlag){
-			eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_DELETE, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus), EventLogConstants.EVENTLOG_SECCEED, id, request);   //删除成功后写EventLog
 			setInfoMessage(request, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus));
 		}else{
 			delStatus = ConstantUtil.DELSITE_FAIL;
-			eventLogService.saveSystemEventLog(systemUser, EventLogConstants.SYSTEM_NOTICE_DELETE, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus), EventLogConstants.EVENTLOG_FAIL, id, request);   //删除失败后写EventLog
 			setErrMessage(request, ResourceHolder.getInstance().getResource("system.notice.delete." + delStatus));
 		}
 		return new ActionForward.Forward("/system/notice/list");

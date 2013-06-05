@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>站点管理员个人信息修改</title>
+<title>${LANG['bizconf.jsp.admin.profile.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/style.css"/>
 <link rel="stylesheet" type="text/css" href="/static/js/tipsy-master/src/stylesheets/tipsy.css" />
@@ -39,12 +39,12 @@ $(function() {
 			"loginName": "${LANG['system.admin.profile.alertinfo5']}"
 		},
 		custom: {
-			"checkLoginName": "${LANG['system.admin.profile.alertinfo6']}",
+			"checkLoginName": "${LANG['system.sysUser.checkLoginName.custom']}",
 			"checkEnName": "${LANG['system.admin.profile.alertinfo6']}",
 			"checkUserName": "${LANG['system.site.list.checkSiteName.custom']}",
 			"email": "${LANG['system.admin.profile.alertinfo7']}",
 			"equalTo": "${LANG['system.admin.profile.alertinfo8']}",
-			"checkMobile": "请输入正确的电话格式"
+			"checkMobile": "${LANG['bizconf.jsp.admin.profile.res2']}"
 		}
 	};
 	$("#profileForm").find("input").not(".skipThese").uniform();
@@ -56,7 +56,7 @@ $(function() {
     	return true;
  	}, ruleString.custom.checkLoginName);
 	$.validator.addMethod("checkLoginName", function(value, element) {       
-    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
  	}, ruleString.custom.checkLoginName);
 	$.validator.addMethod("checkUserName", function(value, element) {       
     	return this.optional(element) || /^[a-zA-Z0-9_\-&\s\u4e00-\u9fa5]{1,32}$/.test(value);
@@ -217,17 +217,42 @@ $(function() {
 	$("#orgPass").val("");
 	$("#loginPass").val("");
 	$("#loginPass2").val("");
-	$("#loginPass").change(function() {
+
+	$("#orgPass").change(function() {
 		if($(this).val() && $(this).val().length>0) {
+			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
-			$(this).tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
+			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");
 		}
 	});
-
+	
+	$("#loginPass").change(function() {
+		if($(this).val() && $(this).val().length>0) {
+			$("#orgPass").rules("add", { required: true, rangelength: [6, 16]});
+			$(this).rules("add", { required: true, rangelength: [6, 16]});
+			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
+		} else {
+			$(this).rules("remove");
+			$("#orgPass").rules("remove");
+			$("#loginPass2").rules("remove");
+		}
+	});
+	
+	$("#loginPass2").change(function() {
+		if($(this).val() && $(this).val().length>0) {
+			$(this).rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
+			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
+			$("#orgPass").rules("add", { required: true, rangelength: [6, 16]});
+		} else {
+			$(this).rules("remove");
+			$("#loginPass").rules("remove");
+			$("#loginPass2").rules("remove");
+		}
+	});
 });
 </script>
 </body>

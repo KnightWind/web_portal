@@ -1,83 +1,42 @@
 @charset "utf-8";
-
+* {
+	padding:0;
+	margin:0;
+	font-family:"宋体","Arial, Helvetica, sans-serif";
+	font-size:12px;
+}
 /*隐藏横向滚动，垂直滚动根据内容自适应（去除IE默认垂直滚动条）*/
 html {
-        overflow-x: hidden;
-        overflow-y: auto;
-} 
-
+	overflow-x: hidden;
+	overflow-y: auto;
+}
 /* 清除内外边距 */
-body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,fieldset,lengend,button,select,input,textarea,th,td
-        { 
-        margin: 0;
-        padding: 0;
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, fieldset, lengend, button, select, input, textarea, th, td {
+	margin: 0;
+	padding: 0;
+	border:0;
 }
-
 /* 设置默认字体 */
-body,button,input,select,textarea { 
-        font: 12px/1 "\5b8b\4f53", Arial, sans-serif, Helvetica, Tahoma;
-        /*font: 12px/1 "宋体", Arial, sans-serif, Helvetica, Tahoma;*/
+body, button, input, select, textarea {
+	font: 12px/1, Arial, sans-serif, Helvetica, Tahoma;
+	margin:0;
+	padding:0;
+	border:0;/*font: 12px/1 "宋体", Arial, sans-serif, Helvetica, Tahoma;*/
 }
-h1 {
-        font-size: 18px;
-}
-h2 {
-        font-size: 16px;
-}
-h3 {
-        font-size: 14px;
-}
-h4,h5,h6 {
-        font-size: 100%;
-}
-
-/* 重置列表元素 */
-ul,ol {
-        list-style: none;
-} 
-
 /* 重置文本格式元素  */
 a {
-        text-decoration: none;
-        outline:none;
-        color:#333;
+	text-decoration: none;
+	outline:none;
+	color:#333;
 }
-
-
-
-q:before,q:after {
-        content: '';
+ul, li, img, input, a {
+	padding:0;
+	margin:0;
+	border:0;
+	list-style:none;
+	text-decoration:none;
+	outline: medium none;
 }
-
-/* 重置表单元素 */
-legend {
-        color: #000;
-}
-
-fieldset,img,input{
-        border: none;
-}
-
-/* 使得表单元素在 ie 下能继承字体大小 */
-button,input,select,textarea {
-        font-size: 100%; 
-}
-
-/* 重置表格元素 */
-table {
-        border-collapse: collapse;
-        border-spacing: 0;
-}
-/* 清除浮动 */
-.clearfix {
-  *zoom: 1;
-}
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  line-height: 0;
-  content: "";
-}
-.clearfix:after {
-  clear: both;
+input {
+	outline: medium none;
 }

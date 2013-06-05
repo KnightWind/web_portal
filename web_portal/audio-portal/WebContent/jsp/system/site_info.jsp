@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>站点管理</title>
+<title>${LANG['bizconf.jsp.system.site_info.res1']}</title>
 <style type="text/css" title="currentStyle">
 @import "/static/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css";
 @import "/static/js/DataTables-1.9.4/media/css/jquery.dataTables_themeroller.css";
@@ -42,28 +42,28 @@
 				},
                 {
                     "mRender": function ( data, type, row ) {
-                        return  '<a href=\"/' + row.lockFlag + '\">正常</a>';
+                        return  '<a href=\"/' + row.lockFlag + '\">${LANG['bizconf.jsp.system.site_info.res2']}</a>';
                     },
                     "aTargets": [ 6 ]
                 },
                 {
                     "mRender": function ( data, type, row ) {
-                        return  '<a href=\"Details/' + row.id + '\">修改</a>';
+                        return  '<a href=\"Details/' + row.id + '\">${LANG['bizconf.jsp.system.email_template_list.res7']}</a>';
                     },
                     "aTargets": [ 7 ]
                 }
             ],
             "oLanguage": {  
-                "sProcessing": "正在加载数据...",
-                "sZeroRecords": "没有符合项件的数据...",  
-                "sInfo": "共有 _TOTAL_ 项记录",  
-                "sInfoEmpty": "显示 0 至 0 共 0 项",  
+                "sProcessing": "${LANG['bizconf.jsp.system.site_info.res3']}...",
+                "sZeroRecords": "${LANG['bizconf.jsp.system.site_info.res4']}...",  
+                "sInfo": "${LANG['bizconf.jsp.system.site_info.res5']} _TOTAL_ ${LANG['bizconf.jsp.system.site_info.res6']}",  
+                "sInfoEmpty": "${LANG['bizconf.jsp.system.site_info.res7']} 0 ${LANG['bizconf.jsp.admin.mybilling_list.res4']} 0 ${LANG['bizconf.jsp.system.site_info.res8']} 0 ${LANG['bizconf.jsp.system.site_info.res9']}",  
                 "sInfoFiltered": "(_MAX_)",
                 "oPaginate": {
-                    "sFirst": "首页",
-                    "sLast": "尾页",
-                    "sPrevious": "上一页",
-                    "sNext": "下一页"
+                    "sFirst": "${LANG['bizconf.jsp.system.site_info.res10']}",
+                    "sLast": "${LANG['bizconf.jsp.system.site_info.res11']}",
+                    "sPrevious": "${LANG['bizconf.jsp.system.site_info.res12']}",
+                    "sNext": "${LANG['bizconf.jsp.system.site_info.res13']}"
                 }
             },
 		});
@@ -77,22 +77,22 @@
 </head>
 <body>
 <div>
-	<div style="float: left;"><input type="text"/>高级搜索</div>
+	<div style="float: left;"><input type="text"/>${LANG['bizconf.jsp.system.site_info.res14']}</div>
 	<div style="float: right;">
-		<div><input id="create-site" type="button" value="创建站点"/></div>
+		<div><input id="create-site" type="button" value="${LANG['bizconf.jsp.system.site_info.res15']}"/></div>
 	</div>
 </div>
 <table cellpadding="0" cellspacing="0" border="0" class="display" id="site-info">
 	<thead>
 		<tr>
-			<th width="12%">企业名称</th>
-			<th width="12%">企业标识</th>
-			<th width="12%">站点类型</th>
-			<th width="12%">最大参会方数</th>
-			<th width="12%">到期时间</th>
-			<th width="12%">用户名</th>
-			<th width="10%">状态</th>
-			<th width="10%">操作</th>
+			<th width="12%">${LANG['bizconf.jsp.system.site_info.res16']}</th>
+			<th width="12%">${LANG['bizconf.jsp.system.site_info.res17']}</th>
+			<th width="12%">${LANG['bizconf.jsp.system.site_info.res18']}</th>
+			<th width="12%">${LANG['bizconf.jsp.system.site_info.res19']}</th>
+			<th width="12%">${LANG['bizconf.jsp.system.site_info.res20']}</th>
+			<th width="12%">${LANG['bizconf.jsp.admin.arrange_org_user.res8']}</th>
+			<th width="10%">${LANG['bizconf.jsp.system.site_info.res21']}</th>
+			<th width="10%">${LANG['bizconf.jsp.admin.site_org_list.res6']}</th>
 		</tr>
 	</thead>
 	<tbody>

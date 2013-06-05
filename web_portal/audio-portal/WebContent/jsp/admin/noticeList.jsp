@@ -35,11 +35,11 @@ $(function() {
 	
 	$(".gaoji").toggle(function () {
 	    $("#search-condition").slideDown(function() {
-		    parent.resizeHeight();//增加高度
+		    parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res1']}
 	    });
 	}, function () {
 		$("#search-condition").slideUp(function() {
-			parent.resizeHeight();//减少高度
+			parent.resizeHeight();//${LANG['bizconf.jsp.admin.conf_list.res2']}
 		});
 	});
 	
@@ -77,10 +77,11 @@ function del(id){
     <tr class="table002" height="32" >
     <td><table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list">
       <tr class="table003" height="38" >
-        <td width="30%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.Title']}</span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.Title']}</span></div></td>
+        <td width="30%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.Contents']}</span></div></td>
         <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.StartTime']}</span></div></td>
         <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.creator']}</span></div></td>
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;"><div align="center" ><span>${LANG['system.Operate']}</span></div></td>
+        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;"><div align="center" ><span>${LANG['system.Operate']}</span></div></td>
       </tr>
        <c:if test="${fn:length(noticeList)<=0 }">
          <tr>
@@ -93,6 +94,7 @@ function del(id){
      <c:forEach var= "notice" items = "${noticeList}"  varStatus="status">
       <tr class="table001" height="32" >
         <td height="32"><div align="center"><a onclick="viewNotice(${notice.id})" href="javascript:;"><span style="color:#73798E">${notice.title}</span></a></div></td>
+        <td height="32"><div title="${notice.content}" align="center" style="width: 450px;white-space:nowrap;overflow: hidden;">${notice.content }</div></td>
         <td height="32"><div align="center"><fmt:formatDate  value="${notice.startTime}" type="date" pattern="yyyy-MM-dd"/></div></td>
         <td height="32"><div align="center">${publishUserList[status.count-1]}</div></td>
         <td height="32"><div align="center" >

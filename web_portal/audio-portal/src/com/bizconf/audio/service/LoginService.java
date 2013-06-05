@@ -3,6 +3,9 @@ package com.bizconf.audio.service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.bizconf.audio.entity.SiteBase;
+import com.bizconf.audio.entity.UserBase;
+
 public interface LoginService {
 
 	/**
@@ -28,6 +31,19 @@ public interface LoginService {
 	public int loginSiteAdmin(String loginName, String loginPass, String authCode, 
 			HttpServletResponse response, HttpServletRequest request)
 			throws Exception;
+	
+	/**
+	 * 系统管理员管理站点时，模拟超级站点管理员登录
+	 * <p>
+	 * 登录成功后，写入session<br/>
+	 * suid=userId <br/>
+	 * sessionid=md5(uid+"-"+siteSign+"-"+key) <br/>
+	 * cookie domain:xx.yyy.zz <br/>
+	 * @author wangyong
+	 * 2013.5.13
+	 * */
+	public int loginSiteAdmin(SiteBase site, UserBase userBase, HttpServletResponse response, HttpServletRequest request) throws Exception;
+	
 
 	/**
 	 * 系统管理员登录

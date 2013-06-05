@@ -30,50 +30,50 @@ function loaded(){
 </head>
 <body onload="loaded()">
 <div class="xinxi">
-	<h3 class="xinxi01">基本信息</h3>
+	<h3 class="xinxi01">${LANG['bizconf.jsp.system.viewSite.res1']}</h3>
 	<ul>
-    	<li><span class="m_l">企业名称：</span><span class="m_r">${siteBase.siteName}</span></li>
-        <li><span class="m_l">英文名称：</span><span class="m_r">${siteBase.enName}</span></li>
-        <li><span class="m_l">企业标识：</span><span class="m_r">${siteBase.siteSign}</span></li>
+    	<li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res2']}</span><span class="m_r">${siteBase.siteName}</span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res3']}</span><span class="m_r">${siteBase.enName}</span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res4']}</span><span class="m_r">${siteBase.siteSign}</span></li>
        
     </ul>
-    <h3 class="xinxi02">商务信息</h3>
+    <h3 class="xinxi02">${LANG['bizconf.jsp.system.viewSite.res5']}</h3>
     <ul>
 		<c:choose>
 			<c:when test="${siteBase.hireMode==1}">
-				<li><span class="m_l">${LANG['system.site.list.hireMode']}：</span><span class="m_r">${LANG['system.site.list.hireMode.month']}</span></li>			
+				<li><span class="m_l">${LANG['system.site.list.hireMode']}${LANG['bizconf.jsp.admin.conf_list.res6']}</span><span class="m_r">${LANG['system.site.list.hireMode.month']}</span></li>			
 			</c:when>
 			<c:when test="${siteBase.hireMode==2}">
-				<li><span class="m_l">${LANG['system.site.list.hireMode']}：</span><span class="m_r">${LANG['system.site.list.hireMode.minutes']}</span></li>			
+				<li><span class="m_l">${LANG['system.site.list.hireMode']}${LANG['bizconf.jsp.admin.conf_list.res6']}</span><span class="m_r">${LANG['system.site.list.hireMode.minutes']}</span></li>			
 			</c:when>
 		</c:choose>
 		<c:choose>
 			<c:when test="${siteBase.chargeMode==1}">
-				<li><span class="m_l">${LANG['system.site.list.chargeMode']}：</span><span class="m_r">${LANG['system.site.list.chargeMode.Name Host']}</span></li>			
+				<li><span class="m_l">${LANG['system.site.list.chargeMode']}${LANG['bizconf.jsp.admin.conf_list.res6']}</span><span class="m_r">${LANG['system.site.list.chargeMode.Name Host']}</span></li>			
 			</c:when>
 			<c:when test="${siteBase.chargeMode==2}">
-				<li><span class="m_l">${LANG['system.site.list.chargeMode']}：</span><span class="m_r">${LANG['system.site.list.chargeMode.Active User']}</span></li>			
+				<li><span class="m_l">${LANG['system.site.list.chargeMode']}${LANG['bizconf.jsp.admin.conf_list.res6']}</span><span class="m_r">${LANG['system.site.list.chargeMode.Active User']}</span></li>			
 			</c:when>
 			<c:when test="${siteBase.chargeMode==3}">
-				<li><span class="m_l">${LANG['system.site.list.chargeMode']}：</span><span class="m_r">${LANG['system.site.list.chargeMode.Seats']}</span></li>			
+				<li><span class="m_l">${LANG['system.site.list.chargeMode']}${LANG['bizconf.jsp.admin.conf_list.res6']}</span><span class="m_r">${LANG['system.site.list.chargeMode.Seats']}</span></li>			
 			</c:when>
 			<c:when test="${siteBase.chargeMode==4}">
-				<li><span class="m_l">${LANG['system.site.list.chargeMode']}：</span><span class="m_r">${LANG['system.site.list.chargeMode.time']}</span></li>			
+				<li><span class="m_l">${LANG['system.site.list.chargeMode']}${LANG['bizconf.jsp.admin.conf_list.res6']}</span><span class="m_r">${LANG['system.site.list.chargeMode.time']}</span></li>			
 			</c:when>
 		</c:choose>
-        <li><span class="m_l">最大方数：</span><span class="m_r">${siteBase.license }</span></li>
-        <li><span class="m_l">生效日期：</span><span class="m_r"><fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></span></li>
-        <li><span class="m_l">结束日期：</span><span class="m_r"><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res6']}</span><span class="m_r">${siteBase.license }</span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res7']}</span><span class="m_r"><fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res8']}</span><span class="m_r"><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></span></li>
      
     </ul>
-    <h3 class="xinxi03">企业管理员信息</h3>
+    <h3 class="xinxi03">${LANG['bizconf.jsp.system.viewSite.res9']}</h3>
     <ul>
-    	<li><span class="m_l">用户名：</span><span class="m_r">${siteAdmin.trueName}</span></li>
-        <li><span class="m_l">电  话：</span><span class="m_r">${siteAdmin.mobile}</span></li>
-        <li><span class="m_l">邮  箱：</span><span class="m_r">${siteAdmin.userEmail}</span></li>
+    	<li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res10']}</span><span class="m_r">${siteAdmin.trueName}</span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res11']}  ${LANG['bizconf.jsp.system.viewSite.res12']}</span><span class="m_r">${siteAdmin.mobile}</span></li>
+        <li><span class="m_l">${LANG['bizconf.jsp.system.viewSite.res13']}  ${LANG['bizconf.jsp.system.viewSite.res14']}</span><span class="m_r">${siteAdmin.userEmail}</span></li>
         
     </ul>
-	<input name="queren" class="queren" type="button" value="确认" />    
+	<input name="queren" class="queren" type="button" value="${LANG['bizconf.jsp.admin.user_info.res9']}" />    
 </div>
 </body>
 </html>

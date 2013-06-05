@@ -11,9 +11,9 @@
 	<meta http-equiv="expires" content="0">
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css" />
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
 	<%@ include file="/jsp/common/cookie_util.jsp"%>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
@@ -131,7 +131,7 @@
 		<table align="center" cellpadding="4" cellspacing="0" border="0px">
 			<tr>
 				<td colspan="2">
-						<span style="color:red">* 添加新公告后，旧公告将过期</span>
+						<span style="color:red">* ${LANG['bizconf.jsp.system.createNotice.res1']}</span>
 				</td>
 			</tr>
 			<tr>

@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
-import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.EventLogConstants;
 import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.entity.EmpowerConfig;
@@ -61,16 +60,18 @@ public class ConfTelConfigController extends BaseController {
 		String[][] fieldArray=SiteConstant.EMPOWER_CODE_FIELD_ARRAY;
 		if(fieldArray!=null && fieldArray.length > 0){
 			Integer eachValue=null;
+			Integer eachGlobalValue=null;
 			for(String[] field:fieldArray){
 				if(field!=null && field.length > 0 ){
 					eachValue=(Integer)ObjectUtil.getFieldValue(sitePower, field[1]);
-					globalConfig=(EmpowerConfig)ObjectUtil.setFieldValue(globalConfig, field[1], eachValue);
+					eachGlobalValue=(Integer)ObjectUtil.getFieldValue(globalConfig, field[1]);
+					globalConfig=(EmpowerConfig)ObjectUtil.setFieldValue(globalConfig, field[1], eachValue&eachGlobalValue);
 					if("1".equals(field[2])){
 						if(SiteConstant.EMPOWER_ENABLED.equals(eachValue)){
 							powerCount++;
 							request.setAttribute("is"+StringUtil.firstUpper(field[1]), eachValue);
 							if(isNewGlobal){
-								globalConfig.setAutoFlag(SiteConstant.EMPOWER_ENABLED);
+								globalConfig.setAutoFlag(eachValue&eachGlobalValue);
 							}
 						}
 					}
@@ -159,41 +160,16 @@ public class ConfTelConfigController extends BaseController {
 				}
 			}
 		}
-		
-		
-		
-//		empowerConfig.setPhoneFlag(newEmpowerConfig.getPhoneFlag());
-//		if(empowerConfig.getPhoneFlag().intValue() == SiteConstant.EMPOWER_DISABLED){
-//			empowerConfig.setAutoFlag(SiteConstant.EMPOWER_DISABLED);
-//		}else if(empowerConfig.getPhoneFlag().intValue() == SiteConstant.EMPOWER_ENABLED){
-//			empowerConfig.setAutoFlag(newEmpowerConfig.getAutoFlag());
-//		}
-//		empowerConfig.setShareMediaFlag(newEmpowerConfig.getShareMediaFlag());
-//		empowerConfig.setRecordFlag(newEmpowerConfig.getRecordFlag());
-//		if(sitePower == null || sitePower.getPhoneFlag().intValue() == SiteConstant.EMPOWER_DISABLED){     //只要站点未授权，不管页面传值，全局变量必须设置为禁用
-//			empowerConfig.setPhoneFlag(SiteConstant.EMPOWER_DISABLED);
-//		}
-//		if(sitePower == null || sitePower.getAutoFlag().intValue() == SiteConstant.EMPOWER_DISABLED){     //只要站点未授权，不管页面传值，全局变量必须设置为禁用
-//			empowerConfig.setAutoFlag(SiteConstant.EMPOWER_DISABLED);
-//		}
-//		if(sitePower == null || sitePower.getShareMediaFlag().intValue() == SiteConstant.EMPOWER_DISABLED){     //只要站点未授权，不管页面传值，全局变量必须设置为禁用
-//			empowerConfig.setShareMediaFlag(SiteConstant.EMPOWER_DISABLED);
-//		}
-//		if(sitePower == null || sitePower.getRecordFlag().intValue() == SiteConstant.EMPOWER_DISABLED){     //只要站点未授权，不管页面传值，全局变量必须设置为禁用
-//			empowerConfig.setRecordFlag(SiteConstant.EMPOWER_DISABLED);
-//		}
+
 		boolean savedConfig = empowerConfigService.updateSiteEmpowerGlobal(empowerConfig);
 		if(savedConfig){
 			setInfoMessage(request,"修改会议功能全局设置成功！");
-			eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_ADMIN_CONFAUTHORITY_SETUP, 
-					ResourceHolder.getInstance().getResource("siteAdmin.ConfAuthority.update.1"), 
-					EventLogConstants.EVENTLOG_SECCEED, null, request);   //设置成功后写EventLog
 		}else{
 			setErrMessage(request, "修改会议功能全局设置失败！");
-			eventLogService.saveAdminEventLog(currentSiteAdmin, EventLogConstants.SITE_ADMIN_CONFAUTHORITY_SETUP, 
-					ResourceHolder.getInstance().getResource("siteAdmin.ConfAuthority.update.2"), 
-					EventLogConstants.EVENTLOG_FAIL, null, request);   //设置失败后写EventLog
 		}
+		sysHelpAdminEventLog(savedConfig, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
+				EventLogConstants.SYSTEM_ADMIN_CONFAUTHORITY_SETUP, EventLogConstants.SITE_ADMIN_CONFAUTHORITY_SETUP, 
+				"修改会议功能全局设置", null, request);
 		return new ActionForward.Forward("/admin/config/configinfo");
 	}
 	

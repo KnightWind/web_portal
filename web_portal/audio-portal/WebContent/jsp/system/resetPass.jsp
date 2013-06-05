@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>重置密码</title>
+	<title>${LANG['bizconf.jsp.admin.index.res7']}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -28,15 +28,15 @@
 		$('#resetPassForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		var ruleString = {
 				required: {
-					"oldPass": "请输入原始密码",
-					"newPass": "请输入新密码",
-					"passConfrim": "请输入确认密码"
+					"oldPass": "${LANG['bizconf.jsp.admin.resetPass.res1']}",
+					"newPass": "${LANG['bizconf.jsp.admin.resetPass.res2']}",
+					"passConfrim": "${LANG['bizconf.jsp.admin.password_reset.res2']}"
 				},
 				rangelength: {
-					"pass": "字符长度为6~16位"
+					"pass": "${LANG['bizconf.jsp.admin.login.res4']}6~16${LANG['bizconf.jsp.admin.login.res5']}"
 				},
 				custom: {
-					"equalTo": "确认密码和新密码不一致"
+					"equalTo": "${LANG['bizconf.jsp.admin.resetPass.res3']}"
 				}
 		};
 		var v = $("#resetPassForm").validate({
@@ -83,26 +83,26 @@
 <form name="resetPassForm" id="resetPassForm" action="" method="post">
 <div class="First_Steps_quick_a" style=" background:#FFF;">
           <div style="height: 30px">
-          	<p class="tit_b">为了您密码的安全，建议您立即进行密码修改。</p>
+          	<p class="tit_b">${LANG['bizconf.jsp.admin.resetPass.res4']}</p>
           </div>
           <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
           <div class="First_Steps_top" style=" background:#FFF"> </div>
           <div class="First_Steps_main_quick">
             <table class="box_a_quick02">
               <tr class="box01">
-                <td align="right" class="left_text_a">原密码</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.admin.resetPass.res5']}</td>
                 <td align="left">
                   <input class="right_text_a" id="orgPass" name="orgPass" type="password" value="" />
                 </td>
               </tr>
               <tr class="box01">
-                <td align="right" class="left_text_a">新密码</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.admin.resetPass.res6']}</td>
                 <td align="left">
                   <input class="right_text_a" id="loginPass" name="loginPass" type="password" />
                 </td>
               </tr>
               <tr class="box01">
-                <td align="right" class="left_text_a">确认密码</td>
+                <td align="right" class="left_text_a">${LANG['bizconf.jsp.admin.resetPass.res7']}</td>
                 <td align="left">
                   <input class="right_text_a" id="loginPassConfirm" name="loginPassConfirm" type="password" value="" />
                 </td>
@@ -110,7 +110,7 @@
               <tr align="left">
             <td align="left" colspan="3">  
             <div class="but150" style=" margin-bottom:70px;">
-            	<input class="form-button" value="提交" type="submit">
+            	<input class="form-button" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" type="submit">
             </div>
             </td>
             </tr>
@@ -134,7 +134,7 @@ function resetPass(){
 				closeDialog(result);
 			}
 		}
-	}, {message:"正在保存...", ui:parent});	
+	}, {message:"${LANG['bizconf.jsp.admin.resetPass.res8']}...", ui:parent});	
 }
 
 function closeDialog(result){

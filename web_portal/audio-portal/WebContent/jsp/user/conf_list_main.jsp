@@ -4,57 +4,57 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>我的会议（正在开始的、即将开始的、错过的、加入过的）</title>
+<title>${LANG['bizconf.jsp.conf_list_main.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></SCRIPT>
 <script type="text/javascript">
 	/*
-	 * 加入会议
+	 * ${LANG['bizconf.jsp.conf_list_index.res48']}
 	 */
 	function joinMeeting(joinType,cId){//cId,cPass,code){
 		parent.joinMeeting(joinType,cId);
 	} 
 	/*
-	 * 查看会议详情
+	 * ${LANG['bizconf.jsp.conf_list_index.res3']}
 	 */
 	function viewConf(id){
 		parent.viewConf(id);
 	}
 	/*
-	 * 邀请参会人
+	 * ${LANG['bizconf.jsp.conf_list_main.res2']}
 	 */
 	function inventContact(confId){
 		parent.inventContact(confId);
 	}
 	
 	/*
-	 * 修改普通单次预约会议
+	 * ${LANG['bizconf.jsp.conf_list_main.res3']}
 	 */
 	function updateBookMeeting(id) {
 		parent.createReservationConf(id);
 	}
 	/*
-	 * 修改周期会议中的某一天会议
+	 * ${LANG['bizconf.jsp.conf_list_main.res4']}
 	 */
 	function updateAllBookMeeting(id) {
 		parent.updateReservationConf(id);
 	}
 	/*
-	 * 修改周期会议中所有会议的信息
+	 * ${LANG['bizconf.jsp.conf_list_index.res5']}
 	 * updateCycleBookMeetingInfo()
 	 */
 	function updateCycleBookMeetingInfo(id) {
 		parent.updateCycleMeetingInfo(id);
 	}
 	/*
-	 * 重新创建会议
+	 * ${LANG['bizconf.jsp.attended_conf_list.res2']}
 	 */
 	function reCreateReservationConf(id) {
 		parent.reCreateReservationConf(id);
 	}
 	function delConf(confId){
-		parent.confirmDialog("确认取消会议？",function(){
+		parent.confirmDialog("${LANG['bizconf.jsp.attended_conf_list.res3']}",function(){
 			$.ajax({
 		      	type: "POST",
 		      	url:"/user/conf/delete/"+confId,
@@ -63,7 +63,7 @@
 					if(data){
 						 window.location.reload(true);
 					}else{
-						parent.errorDialog('取消会议出现异常！');
+						parent.errorDialog('${LANG['bizconf.jsp.attended_conf_list.res4']}');
 					}
 		      	},
 		        error:function(XMLHttpRequest, textStatus, errorThrown) {
@@ -98,13 +98,13 @@
 	<div class="meeting_top">
 		<ul>
 		<li class="meau_01 switchConf">
-			<span class="meau_btn"><a href="javascript:;" class="activeMeau-left activeMeau-right"><img src="/static/images/icon_a.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />进行中的会议</a></span></li>
+			<span class="meau_btn"><a href="javascript:;" class="activeMeau-left activeMeau-right"><img src="/static/images/icon_a.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />${LANG['bizconf.jsp.conf_list_main.res5']}</a></span></li>
 	    <li class="meau_02 switchConf">
-	    	<span class="meau_btn"><a href="javascript:;"><img src="/static/images/icon_b.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />即将召开的会议</a></span></li>
+	    	<span class="meau_btn"><a href="javascript:;"><img src="/static/images/icon_b.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />${LANG['bizconf.jsp.conf_list_main.res6']}</a></span></li>
 	    <li class="meau_03 switchConf">
-	    	<span class="meau_btn"><a href="javascript:;"><img src="/static/images/icon_c.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />未参加的会议</a></span></li>
+	    	<span class="meau_btn"><a href="javascript:;"><img src="/static/images/icon_c.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />${LANG['bizconf.jsp.conf_list_main.res7']}</a></span></li>
 	    <li class="meau_04 switchConf">
-	    	<span class="meau_btn"><a href="javascript:;"><img src="/static/images/icon_d.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />已参加的会议</a></span></li>
+	    	<span class="meau_btn"><a href="javascript:;"><img src="/static/images/icon_d.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:20px;"  />${LANG['bizconf.jsp.conf_list_main.res8']}</a></span></li>
 	    </ul>
 	</div>
 	<div style="clear: both;"></div>

@@ -9,7 +9,7 @@ package com.bizconf.audio.soap.conf;
 
 public class ESpaceMeetingAsSoapUserStatus  implements java.io.Serializable {
     private java.lang.String userId;
-    
+
     private java.lang.String enterpriseId;
 
     private java.lang.String uri;
@@ -567,19 +567,5 @@ public class ESpaceMeetingAsSoapUserStatus  implements java.io.Serializable {
           new  org.apache.axis.encoding.ser.BeanDeserializer(
             _javaType, _xmlType, typeDesc);
     }
-
-	@Override
-	public String toString() {
-		return "ESpaceMeetingAsSoapUserStatus [userId=" + userId
-				+ ", enterpriseId=" + enterpriseId + ", uri=" + uri
-				+ ", userName=" + userName + ", userType=" + userType
-				+ ", userMuteStatus=" + userMuteStatus + ", userOnlineStatus="
-				+ userOnlineStatus + ", role=" + role + ", termType="
-				+ termType + ", mediaType=" + mediaType + ", joinType="
-				+ joinType + ", leaveType=" + leaveType + ", joinDatetime="
-				+ joinDatetime + ", leaveDatetime=" + leaveDatetime
-				+ ", __equalsCalc=" + __equalsCalc + ", __hashCodeCalc="
-				+ __hashCodeCalc + "]";
-	}
 
 }

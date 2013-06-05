@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>添加企业管理员</title>
+<title>${LANG['bizconf.jsp.admin.add_site_user.res1']}</title>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/popupbox.css"/>
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
@@ -59,9 +59,9 @@
 	 	}, "");
 		$.validator.addMethod("noSpace", function(value, element) {
 			return value=="" || (value != ""&&value.indexOf(" ") < 0 );
-	 	}, "密码中不能含有空格");
+	 	}, "${LANG['bizconf.jsp.admin.add_site_user.res2']}");
 		$.validator.addMethod("checkLoginName", function(value, element) {       
-	    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+	    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
 	 	}, ruleString.custom.checkLoginName);
 		$.validator.addMethod("checkUserName", function(value, element) {       
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&\s\u4e00-\u9fa5]{1,32}$/.test(value);
@@ -70,10 +70,7 @@
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&\s]{1,32}$/.test(value);
 	 	}, ruleString.custom.checkEnName);
 		/**
-			手机号码  以 1 开头，第二位是 3、5 或者 8
-			13211111111, 015111111111, +8615811111111, +86015811111111, (+86)13111111111
-			固定电话 区号-市话号码-分机
-			1334567890, 031-3145678-123, 010-11111111, (+86)010-13901691-123
+			
 		*/
 		$.validator.addMethod("checkMobile", function(value, element) {       
 	    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);

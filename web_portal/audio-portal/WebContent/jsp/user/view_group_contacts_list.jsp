@@ -9,7 +9,7 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js?ver=${version}"></script>
-<title>联系人列表</title>
+<title>${LANG['bizconf.jsp.group_contacts_list.res1']}</title>
 <style>
 
 </style>
@@ -27,13 +27,13 @@
     <div class="add06_center_center">
 <div class="First_Steps_invite" style=" background:#FFF; border-radius:3px;">
   <div class="First_Steps_title_invite"> <a href="javascript:closeDialog();"></a>
-    <h3 class="tit_a_invite">群组成员</h3>
+    <h3 class="tit_a_invite">${LANG['bizconf.jsp.group_contacts_list.res4']}</h3>
     <p class="tit_b_invite"></p>
   </div>
   <div style=" background:#fff"><img class="toa_quick_invite" src="/static/images/min.jpg" width="730" height="1" /></div>
   <div class="jianju"></div>
  
-  <!--联系人开始-->
+  <!--${LANG['bizconf.jsp.attendConfloglist.res2']}-->
   <div class="First_Steps_main_invite" style=" background:#FFF;">
   <form id="query" name="query" action="/user/group/showContacts" method="post">
   	<input type="hidden" name="viewOnly" value="1"/>
@@ -44,11 +44,11 @@
           <input class="meeting_but" type="button" onclick="query.submit();" /></td>
       </tr>
       <tr align="center" height="35" class="tr_center" bgcolor="#000066">
-        <td width="15%" class="tr_center">用户名</td>
-        <td width="15%" class="tr_center">英文名</td>
-        <td width="30%" class="tr_center">邮箱</td>
-        <td width="20%" class="tr_center">联系电话</td>
-        <td width="20%" class="tr_center" style=" border-right:#D2D8DB 1px solid">手机号码</td>
+        <td width="15%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res7']}</td>
+        <td width="15%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res8']}</td>
+        <td width="30%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res9']}</td>
+        <td width="20%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res10']}</td>
+        <td width="20%" class="tr_center" style=" border-right:#D2D8DB 1px solid">${LANG['bizconf.jsp.add_contacts.res11']}</td>
       </tr>
       <c:if test="${fn:length(pageModel.datas)<=0}">
 				<tr class="table001" height="32"  >
@@ -73,9 +73,9 @@
     </table>
     </form>
   </div>
-  <!--联系人结束--> 
+  <!--${LANG['bizconf.jsp.group_contacts_list.res9']}--> 
   <div class="First_Steps_bottom_b">
-    <div class="but99"><span class="button_common"><a  href="javascript:closeDialog();"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:8px;"/>返回</a></span></div>
+    <div class="but99"><span class="button_common"><a  href="javascript:closeDialog();"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:8px;"/>${LANG['bizconf.jsp.enContacts_list.res8']}</a></span></div>
   </div>
 </div>
 </div>
@@ -91,7 +91,7 @@
 </html>
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".group_search").watermark('用户名、英文名、邮箱、联系电话');
+	$(".group_search").watermark('${LANG['bizconf.jsp.view_group_contacts_list.res1']}');
 });
 function loaded() {
 	var frame = parent.parent.$("#viewContact");

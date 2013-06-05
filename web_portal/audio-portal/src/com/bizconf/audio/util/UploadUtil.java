@@ -10,6 +10,7 @@ public class UploadUtil {
 	static final String STORAGE_BASE = LiberContainer.getContainer().
 	getServletContext().getRealPath("/uploadfiles");
 	
+	
 	static final String SITE_LOG_PATH = STORAGE_BASE + "/site_logo/";
 	
 	static {

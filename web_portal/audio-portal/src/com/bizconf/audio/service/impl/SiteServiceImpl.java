@@ -812,6 +812,8 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 			enterpiseAreaMap.setAreaId(getAreaMap(site.getSiteSign()).getAreaId());
 			enterpiseAreaMap.setEnterpriseId(site.getSiteSign());
 			areaRequest.setEnterpiseAreaMap(enterpiseAreaMap);
+			
+			
 			if(flag){
 				//先修改站点license
 				ESpaceMeetingAsSoapResult result = stub.updateEnterprise(request);// 
@@ -841,6 +843,44 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 					}
 				}
 			}
+//			ESpaceMeetingAsEnterpriseAreaMap area = getAreaMap(site.getSiteSign());
+//			
+//			ESpaceMeetingAsSoapRequestRemoveEnterpriseAreaMapRequest rmAreaRequest = new ESpaceMeetingAsSoapRequestRemoveEnterpriseAreaMapRequest();
+//			rmAreaRequest.setAreaId(area.getAreaId());
+//			rmAreaRequest.setEnterpriseId(site.getSiteSign());
+//			rmAreaRequest.setToken(genToken());
+//			
+//			ESpaceMeetingAsSoapRequestAddEnterpriseAreaMapRequest addAreaRequest = new ESpaceMeetingAsSoapRequestAddEnterpriseAreaMapRequest();
+//			ESpaceMeetingAsEnterpriseAreaMap areaMap = new ESpaceMeetingAsEnterpriseAreaMap();
+//			areaMap.setAreaId(area.getAreaId());
+//			areaMap.setEnterpriseId(site.getSiteSign());
+//			areaMap.setIsDefault(1);
+//			areaMap.setParentAreaId(area.getParentAreaId());
+//			areaMap.setAudioPort(site.getLicense());
+//			areaMap.setDataPort(site.getLicense());
+//			areaMap.setVideoPort(site.getLicense());
+//			addAreaRequest.setEnterpiseAreaMap(areaMap);
+//			addAreaRequest.setToken(genToken());
+//			
+//			
+//			ESpaceMeetingAsSoapResult result = stub.updateEnterprise(request);// 
+//			if(result.getErrCode()!=ConstantUtil.AS_COMMON_SUCCESS_CODE){
+//				retInfo = ""+result.getErrCode();
+//				logger.info("调用华为接口soap修改站点区域设置ErrCode：" + retInfo);
+//			}else{
+//				//若修改站点license成功再修改（站点区域）
+//				result = stub.removeEnterpriseAreaMap(rmAreaRequest);
+//				if(result.getErrCode()!=ConstantUtil.AS_COMMON_SUCCESS_CODE){
+//					retInfo = ""+result.getErrCode();
+//					logger.info("调用华为接口soap删除区域站点配置返回ErrCode：" + retInfo);
+//				}else{
+//					result = stub.addEnterpriseAreaMap(addAreaRequest);
+//					if(result.getErrCode()!=ConstantUtil.AS_COMMON_SUCCESS_CODE){
+//						retInfo = ""+result.getErrCode();
+//						logger.info("调用华为接口soap添加站点区域返回ErrCode：" + retInfo);
+//					}
+//				}
+//			}
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -1001,7 +1041,7 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 			for (int i = 0; i < sites.length; i++) {
 				System.out.println(sites[i].getEnterpriseId()); 
 				//站点标识
-			///	testDelEnterprise(sites[i].getEnterpriseId());
+				//testDelEnterprise(sites[i].getEnterpriseId());
 //				System.out.println(sites[i].getName());
 //				System.out.println(sites[i].getAudioPort());    //license个数
 //				System.out.println(sites[i].getDataPort());
@@ -1051,14 +1091,14 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		//testDelEnterprise("1");     //测试通过站点标识删除as的站点
 		
 		//testupdateEnterprise();
-//		SiteService ss = AppContextFactory.getAppContext().getBean(SiteService.class);
-//		SiteBase siteBase = ss.queryASSiteInfo("meeting");
+		SiteService ss = AppContextFactory.getAppContext().getBean(SiteService.class);
+//		SiteBase siteBase = ss.queryASAllSites(10, );
 //		System.out.println(siteBase.getSiteName());
 //		System.out.println(siteBase.getLicense());
 		
-		
-		SiteServiceImpl ss = new SiteServiceImpl();
-		System.out.println(ss.getAreaMap("meeting").getAreaId());
+		//querySites();
+//		SiteServiceImpl ss = new SiteServiceImpl();
+//		System.out.println(ss.getAreaMap("meeting").getAreaId());
 	}
 
 	@Override

@@ -144,9 +144,9 @@ public class JsonUtil {
 	 */
 	public static Object parseObjectWithJsonString(String str,Class clazz){  
 		JSONObject jsonObj = JSONObject.fromObject(str);   
-		JsonConfig jsonConfig = new JsonConfig();    
+		JsonConfig jsonConfig = new JsonConfig();   
 		jsonConfig.setRootClass(clazz);
-		JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[] {"yyyy-MM-dd", "yyyy-MM-dd"})); 
+		JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[] {"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"})); 
 		Object object = (Object) JSONObject.toBean(jsonObj,jsonConfig);  
 		return object;
 	}
