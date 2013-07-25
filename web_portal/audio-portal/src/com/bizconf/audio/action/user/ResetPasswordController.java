@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.dao.DAOProxy;
 import com.bizconf.audio.entity.SiteBase;
@@ -61,13 +62,13 @@ public class ResetPasswordController   extends BaseController {
 //			request.setAttribute("msgcode", "1");//验证码错误
 //			return new ActionForward.Forward("/jsp/user/password_forget.jsp");
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "验证码错误");
+			results.put("message", ResourceHolder.getInstance().getResource("system.login.error.4"));
 			return JsonUtil.parseMapToJsonStr(results);
 		}
 		String userEmail=String.valueOf(request.getParameter("userEmail"));
 		if(StringUtils.isEmpty(userEmail)){
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "邮箱为空或者不正确");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.inviteFirst.res8"));
 			return JsonUtil.parseMapToJsonStr(results);
 //			request.setAttribute("msgcode", "2");//邮箱为空或者不正确
 //			return new ActionForward.Forward("/jsp/user/password_forget.jsp");
@@ -82,7 +83,7 @@ public class ResetPasswordController   extends BaseController {
 //			return new ActionForward.Forward("/jsp/user/password_forget.jsp");
 
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "站点不正确");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.site.error"));
 			return JsonUtil.parseMapToJsonStr(results);
 		}
 		Integer siteId=0;
@@ -96,7 +97,7 @@ public class ResetPasswordController   extends BaseController {
 //			return new ActionForward.Forward("/jsp/user/password_forget.jsp");
 
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "邮箱为空或者不正确");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.inviteFirst.res8"));
 			return JsonUtil.parseMapToJsonStr(results);
 		}
 		String domain=SiteIdentifyUtil.getCurrentDomine();
@@ -111,7 +112,7 @@ public class ResetPasswordController   extends BaseController {
 //		return new ActionForward.Forward("/jsp/user/password_forget.jsp");
 
 		results.put("status", ConstantUtil.EMAIL_FLAG_SECCEED);
-		results.put("message", "邮件发送成功, 请即时查收");
+		results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.email.send.success"));
 		return JsonUtil.parseMapToJsonStr(results);
 	}
 	
@@ -182,14 +183,15 @@ public class ResetPasswordController   extends BaseController {
 		if(sid==null || "".equals(sid.trim()) || "null".equals(sid.trim().toLowerCase())){
 			//页面中传递来的SID是空
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "找回密码失败,请重新找回密码");
+//			results.put("message", "找回密码失败,请重新找回密码");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.email.find.pass.error"));
 			return JsonUtil.parseMapToJsonStr(results);	
 		}
 		Integer userId=IntegerUtil.parseInteger(sid);
 		if(userId==null || userId.intValue() <= 0){
 			//页面中传递来的SID的值小于0或者是空
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "找回密码失败,请重新找回密码");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.email.find.pass.error"));
 			return JsonUtil.parseMapToJsonStr(results);	
 		}
 		
@@ -198,29 +200,34 @@ public class ResetPasswordController   extends BaseController {
 		if(userBase==null){//根据用户ID号获取不到用户对象
 			//找回密码失败,请重新找回密码
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "找回密码失败,用户不存在");
+//			results.put("message", "找回密码失败,用户不存在");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.email.find.pass.error.1"));
 			return JsonUtil.parseMapToJsonStr(results);	
 		}
 		
 		if(lp==null || lp.length()<=0 ){//
 			//新密码为空
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "找回密码失败,请输入新密码");
+//			results.put("message", "找回密码失败,请输入新密码");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.email.find.pass.error.2"));
 			return JsonUtil.parseMapToJsonStr(results);	
 		}
 		
 		if(!clp.equals(lp)){//密码不相等
 			results.put("status", ConstantUtil.EMAIL_FLAG_FAIL);
-			results.put("message", "找回密码失败,两次密码不相等");
+//			results.put("message", "找回密码失败,两次密码不相等");
+			results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.email.find.pass.error.3"));
 			return JsonUtil.parseMapToJsonStr(results);	
 		}
 		
 		userBase.setLoginPass(MD5.encodePassword(lp, "MD5"));
 		userBase.setPassEditor(userId);
+//		userBase.setErrorCount(0);
 		userService.updateAdminPassWord(userBase);//.updateSystemUser(systemUser);
 		
 		results.put("status", ConstantUtil.EMAIL_FLAG_SECCEED);
-		results.put("message", "密码修改成功");
+//		results.put("message", "密码修改成功");
+		results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.admin.password_reset.res6"));
 		return JsonUtil.parseMapToJsonStr(results);
 	}
 	
@@ -238,14 +245,16 @@ public class ResetPasswordController   extends BaseController {
 		String newPass = request.getParameter("loginPass");
 		if(!StringUtil.isNotBlank(orgPass) || !StringUtil.isNotBlank(newPass)){
 			results.put("status", ConstantUtil.RESET_PASS_FAILED);
-			results.put("message", "请输入密码！");
+//			results.put("message", "请输入密码！");
+			results.put("message", ResourceHolder.getInstance().getResource("system.sysUser.loginPass.input"));
 			return JsonUtil.parseMapToJsonStr(results);	
 		}
 		if(StringUtil.isNotBlank(orgPass)){
 			String inputOrgPass = MD5.encodePassword(orgPass, "MD5");
 			if(!currentUser.getLoginPass().equals(inputOrgPass)){
 				results.put("status", ConstantUtil.RESET_PASS_FAILED);
-				results.put("message", "原密码错误，请重新输入！");
+//				results.put("message", "原密码错误，请重新输入！");
+				results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.pass.error"));
 				return JsonUtil.parseMapToJsonStr(results);	
 			}
 		}
@@ -257,12 +266,14 @@ public class ResetPasswordController   extends BaseController {
 			} catch (Exception e) {
 				logger.error("重置密码失败！"+e);
 				results.put("status", ConstantUtil.RESET_PASS_FAILED);
-				results.put("message", "重置密码失败！");
+//				results.put("message", "重置密码失败！");
+				results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.reset.pass.error"));
 				return JsonUtil.parseMapToJsonStr(results);	
 			}
 		}
 		results.put("status", ConstantUtil.RESET_PASS_SUCCEED);
-		results.put("message", "重置密码成功！");
+//		results.put("message", "重置密码成功！");
+		results.put("message", ResourceHolder.getInstance().getResource("bizconf.jsp.reset.pass.success"));
 		return JsonUtil.parseMapToJsonStr(results);
 	}
 	

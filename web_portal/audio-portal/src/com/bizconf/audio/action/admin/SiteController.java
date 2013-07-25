@@ -99,7 +99,9 @@ public class SiteController extends BaseController {
 			siteBase = (SiteBase)ObjectUtil.parseHtml(siteBase, "siteName", "enName");	//字符转义
 			try {
 				Integer timeZone=SiteConstant.TIMEZONE_WITH_CITY_MAP.get(siteBase.getTimeZoneId()).getOffset();
-				site = siteService.updateSiteBaseForSiteAdmin(siteBase.getId(), siteBase.getSiteName(), siteBase.getEnName(), siteBase.getSiteLogo(),siteBase.getTimeZoneId(),timeZone);
+				site = siteService.updateSiteBaseForSiteAdmin(siteBase.getId(), siteBase.getSiteName(), 
+						siteBase.getEnName(), siteBase.getSiteLogo(),siteBase.getSiteBanner(), 
+						siteBase.getTimeZoneId(),timeZone);
 			}catch (Exception e){
 				logger.error("修改站点信息失败");
 			}
@@ -125,6 +127,6 @@ public class SiteController extends BaseController {
 		currentSite.setLicense(licService.getSiteLicenseNum(currentSite.getId()) + currentSite.getLicense().intValue());
 		request.setAttribute("siteBase", currentSite);
 		request.setAttribute("siteAdmin", currentSiteAdmin);
-		return new ActionForward.Forward("/jsp/admin/siteBase_info.jsp");
+		return new ActionForward.Forward("/admin/site/info");
 	}
 }

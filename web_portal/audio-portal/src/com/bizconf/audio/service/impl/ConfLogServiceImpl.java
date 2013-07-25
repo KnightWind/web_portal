@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.constant.ConstantUtil;
+import com.bizconf.audio.constant.SortConstant;
 import com.bizconf.audio.dao.DAOProxy;
 import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.ConfLog;
@@ -282,14 +283,23 @@ public class ConfLogServiceImpl extends BaseService implements ConfLogService{
 	}
 
 	@Override
-	public PageBean<ConfLog> getLogsByConf(Integer confId,Integer pageNo) {
+	public PageBean<ConfLog> getLogsByConf(Integer confId, int pageSize, Integer pageNo,String sortField,String sortRule) {
 		
 		PageBean<ConfLog> page = null;
-		String sql = "select * from t_conf_log where conf_id = ? order by exit_time desc ";
+		String sql = "select * from t_conf_log where conf_id = ? order by ";
 		List<Object> values = new ArrayList<Object>();
 		values.add(confId);
+		String field = SortConstant.CONFLOG_FIELDS.get(sortField);
+		String rule = " desc ";
+		if(field==null || field.equals("")){
+			field = " exit_time ";
+		}
+		if(sortRule!=null && sortRule.equals("1")){
+			rule = " asc ";
+		}
+		sql = sql+field+rule;
 		try{
-			page =  getPageBeans(ConfLog.class, sql, pageNo,values.toArray());
+			page =  getPageBeans(ConfLog.class, sql, pageNo, pageSize, values.toArray());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -297,11 +307,22 @@ public class ConfLogServiceImpl extends BaseService implements ConfLogService{
 	}
 
 	@Override
-	public List<ConfLog> getAllLogsByConf(Integer confId) {
+	public List<ConfLog> getAllLogsByConf(Integer confId,String sortField,String sortRule) {
 		
-		String sql = "select * from t_conf_log where conf_id = ? order by exit_time desc ";
+		String sql = "select * from t_conf_log where conf_id = ? order by  ";
 		List<Object> values = new ArrayList<Object>();
 		values.add(confId);
+		
+		String field = SortConstant.CONFLOG_FIELDS.get(sortField);
+		String rule = " desc ";
+		if(field==null || field.equals("")){
+			field = " exit_time ";
+		}
+		if(sortRule!=null && sortRule.equals("1")){
+			rule = " asc ";
+		}
+		
+		sql = sql+field+rule;
 		List<ConfLog> logs = null;
 		try{
 			 logs = libernate.getEntityListBase(ConfLog.class, sql, values.toArray());
@@ -309,5 +330,25 @@ public class ConfLogServiceImpl extends BaseService implements ConfLogService{
 			e.printStackTrace();
 		}
 		return logs;
+	}
+	
+	
+	@Override
+	public int countConfLogsByConfs(List<ConfBase> confs) {
+		StringBuilder sqlbuiler = new StringBuilder("select count(*) from t_conf_log where conf_id in (0 ");
+		if(confs!=null && !confs.isEmpty()){
+			for (Iterator it = confs.iterator(); it.hasNext();) {
+				ConfBase confBase = (ConfBase) it.next();
+				sqlbuiler.append(",");
+				sqlbuiler.append(confBase.getId());
+			}
+		}
+		sqlbuiler.append(")");
+		try{
+			return libernate.countEntityListWithSql(sqlbuiler.toString(),new Object[]{});
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

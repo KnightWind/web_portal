@@ -76,7 +76,15 @@
 	height:30px;
 	margin-top:15px;
 	width:100%;
-	position:relative; _margin-left:-10px;
+	position:relative; 
+	_margin-left:-10px;
+}
+.m_top1 {
+	color:#305872;
+	height:30px;
+	margin-top:15px;
+	width:100%;
+	position:relative; 
 }
 .make_new {
 	float:right;
@@ -421,6 +429,7 @@
 	margin-left:5px;
 	font-family:Arial, Helvetica, sans-serif;
 	display:block;
+	overflow: hidden;
 }
 .page_shuzi a:link {
 	border:#A8BFCE 1px solid;
@@ -931,7 +940,17 @@ background-position:
 	border-right:none;
 	height:35px;
 }
-
+.button_a_wasd {
+	width:72px;
+	height:24px;
+	background: url(/static/images/button01.jpg) no-repeat;
+	cursor:pointer;
+	line-height:24px;
+	text-align:center;
+	cursor:pointer;
+	margin-left:140px;
+	margin-top:30px;
+}
 .button_a, .Btn_a {
 	width:72px;
 	height:24px;

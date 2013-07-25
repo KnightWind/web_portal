@@ -9,8 +9,14 @@ import com.bizconf.audio.util.SiteIdentifyUtil;
 
 public class ConfConstant {
 	
+	public static boolean SYS_ENABLE_PHONE;
 	//服务器混音
-	public static final boolean AUDIO_SERVER_MIX = false;
+	public static boolean AUDIO_SERVER_MIX;
+	
+	public static boolean HUGE_MEETING_ENABLE;
+	
+	public static boolean CHECK_CONCURRENT_CONF_SCHEDULE;
+	
 	//会议状态
 	public static final Integer[] CONF_STATUS=new Integer[]{
 		-1,//全部         
@@ -149,7 +155,7 @@ public class ConfConstant {
 	public static final Integer WEEK_SATURDAY=7;
 	
 	//创建即时会议默认会议时间长度，分钟 为单位
-	public static final Integer CONF_DEFAULT_DURATION = 120;
+	public static final Integer CONF_DEFAULT_DURATION = 60;
 	
 	//参会人员：主持人
 	public static final Integer CONF_USER_HOST = 1;
@@ -200,13 +206,16 @@ public class ConfConstant {
 	public static final Integer CONF_PUBLIC_FLAG_TRUE = 1;
 	//不公开会议
 	public static final Integer CONF_PUBLIC_FLAG_FALSE = 2;
+	//对所有同站点下注册公开
+	public static final Integer CONF_PUBLIC_FLAG_USER = 3;
 	
 	//未隐藏的错过会议
 	public static final Integer CONF_HIDE_FLAG_FALSE = 0;
 	//隐藏的错过会议
 	public static final Integer CONF_HIDE_FLAG_TRUE = 1;
 	
-	
+	//默认的最大并发会场数
+	public static final int EMPOWER_CONF_SYNC_DEFALT_NUM = 1;
 	
 	
 	/*
@@ -216,6 +225,8 @@ public class ConfConstant {
 	
 	//参会人数大于站点当前所剩参会人数值
 	public static final Integer CONF_CREATE_ERROR_LICENCE = -1;
+	//创建会议时站点同一时间内超过了最大并发会议数
+	public static final Integer CONF_CREATE_ERROR_SYNC_LICENCE = -2;
 	
 	
 	
@@ -318,8 +329,12 @@ public class ConfConstant {
 	public static final Integer CLIENT_CONFIG_FILE_TRANS = 11;  //文件传输
 	public static final Integer CLIENT_CONFIG_RECORD = 12;  //录制
 	public static final Integer CLIENT_CONFIG_ASSISTANT = 14;//会议助理
+	public static final Integer CLIENT_CONFIG_CONF_LOCK = 13;//锁定会议
 	public static final Integer CLIENT_CONFIG_PRIVATE_CHAT = 15;  //私聊
 	public static final Integer CLIENT_CONFIG_GROUP_CHAT = 16;  //组聊
+	
+	public static final Integer CLIENT_CONFIG_RECONNECT_MENU = 17;  //重连菜单
+	
 	public static final Integer CLIENT_CONFIG_SHARE_MEDIA = 21;//媒体共享
 	
 	/**
@@ -376,20 +391,26 @@ public class ConfConstant {
 	
 	/**
 	 * 视频设置类型
-	 * 45.优先保证视频流畅(默认分辨率是4，最大分辨率是5)
-	 * 48.优先保证画质清晰(默认分辨率是4，最大分辨率是8)
-	 * 02.优先保证网络带宽(默认分辨率是0，最大分辨率是3)
+	 * 01.优先保证网络带宽(默认分辨率是0，最大分辨率是1)
+	 * 23.优先保证视频流畅(默认分辨率是2，最大分辨率是3)
+	 * 44.优先保证画质清晰(默认分辨率是4，最大分辨率是4)
 	 * */
-	public static final String CONF_VIDEO_TYPE_FLUENCY = "45";     //优先保证视频流畅
-	public static final String CONF_VIDEO_TYPE_DISTINCT = "48";  	 //优先保证画质清晰
-	public static final String CONF_VIDEO_TYPE_WEBBAND = "03";     //优先保证网络带宽
+	public static final String CONF_VIDEO_TYPE_WEBBAND = "01";     //优先保证网络带宽
+	public static final String CONF_VIDEO_TYPE_FLUENCY = "23";     //优先保证视频流畅
+	public static final String CONF_VIDEO_TYPE_DISTINCT = "44";  	 //优先保证画质清晰
+	public static final String CONF_VIDEO_TYPE_BEST = "47";  	 //2013.7.8 新增 （最高）
+	
+	public static final int CONF_VIDEO_TYPE_WEBBAND_CODE = 1;     //优先保证网络带宽(低)
+	public static final int CONF_VIDEO_TYPE_FLUENCY_CODE = 2;     //优先保证视频流畅(中)
+	public static final int CONF_VIDEO_TYPE_DISTINCT_CODE = 3;  	 //优先保证画质清晰(高)
+	public static final int CONF_VIDEO_TYPE_BEST_CODE = 4;  	 //2013.7.8 新增 （最高）
 	/**
 	 * 会议默认设置
-	 * 1.视频流畅（最大分辨率704*576，默认为：640*480）
-	 * 2.画质清晰（最大分辨率为：1280*720，默认为：640*480）
-	 * 3.网络带宽（最大分辨率：352*288，默认为：160*120）
+	 * 1.网络带宽（最大分辨率：176*144，默认为：160*120）
+	 * 2.视频流畅（最大分辨率352*288，默认为：320*240）
+	 * 3.画质清晰（最大分辨率为：640*480，默认为：640*480）
 	 * 值在0-8之间，0：160*120；1：176*144；2：320*240；3：352*288；4：640*480；5：704*576；6：960*720；7：1280*720；8：1920*1080
-	 * 目前默认值设置为54，代表视频流畅（最大分辨率704*576（5），默认为：640*480（4））
+	 * 目前默认值设置为23，代表视频流畅（最大分辨率176*144（1），默认为：160*120（0））
 	 */
 	public static final String CONF_CONFIG_VIDEO_TYPE = CONF_VIDEO_TYPE_FLUENCY;
 	public static final Map<String,String> CONF_CONFIG_VIDEO_RESOLUTION_MAP = new HashMap<String,String>();
@@ -435,7 +456,7 @@ public class ConfConstant {
 			"00000000000000000000000000000000");
 	
 	//电话会议接入号
-	public static final String ACCESSCODE = "15652292572";
+	public static final String ACCESSCODE = "01058214900";
 	
 	
 	/*
@@ -494,6 +515,15 @@ public class ConfConstant {
 			SERVER_IP = rb.getString("server_ip");
 			CLUSTER_ID = rb.getString("cluster_id");
 			CLIENT_DOWNLOAD_URL=CLIENT_DOWNLOAD_URL_DEFAULT;
+			SYS_ENABLE_PHONE = "TRUE".equalsIgnoreCase(rb.getString("sys_phone_enabled"));
+			HUGE_MEETING_ENABLE = "TRUE".equalsIgnoreCase(rb.getString("huge_meeting_enabled"));
+			CHECK_CONCURRENT_CONF_SCHEDULE = "TRUE".equalsIgnoreCase(rb.getString("check_concurrent_conf_schedule"));
+			if (SYS_ENABLE_PHONE) {
+				AUDIO_SERVER_MIX = true;
+			}
+			else {
+				AUDIO_SERVER_MIX = "TRUE".equalsIgnoreCase(rb.getString("audio_server_mix"));
+			}
 //			DOWNLOAD_DEFAULT = rb.getString("download_servers_default");
 //			DOWNLOAD_SERVERS = rb.getString("download_servers");
 		}

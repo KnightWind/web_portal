@@ -471,22 +471,30 @@ public class UserServiceImpl extends BaseService implements UserService {
 		if(user==null){
 			return false;
 		}
+		//修改
 		if(user.getId()!=null && user.getId()>0){
-			UserBase orgUser = getUserBaseById(user.getId());
-			if(user.getLoginName().equals(orgUser.getLoginName())){
-				return true;
+			//判断用户名
+			UserBase  libUser  = getSiteUserByLoginName(user.getSiteId(),user.getLoginName());
+			if(null!=libUser && !libUser.getId().equals(user.getId()) && libUser.getUserType().equals(user.getUserType())){
+					return false;
 			}
-//			if(user.getUserEmail().equals(orgUser.getUserEmail())){
-//				return true;
-//			}
+			//判断邮箱
+			libUser = getSiteUserByEmail(user.getSiteId(),user.getUserEmail());
+			if(null!=libUser && !libUser.getId().equals(user.getId()) && libUser.getUserType().equals(user.getUserType())){
+					return false;
+			}
+		//创建
+		}else{
+			UserBase  libUser  = getSiteUserByLoginName(user.getSiteId(),user.getLoginName());
+			if(null!=libUser && libUser.getUserType().equals(user.getUserType())){
+					return false;
+			}
+			
+			libUser = getSiteUserByEmail(user.getSiteId(),user.getUserEmail());
+			if(null!=libUser && libUser.getUserType().equals(user.getUserType())){
+					return false;
+			}
 		}
-		UserBase  libUser  = getSiteUserByLoginName(user.getSiteId(),user.getLoginName());
-		if(null!=libUser && libUser.getUserType().equals(user.getUserType())){
-				return false;
-		}
-//		if(null!=getSiteUserByEmail(user.getSiteId(),user.getUserEmail())){
-//				return false;
-//		}
 		return true;
 	}
 	
@@ -650,7 +658,9 @@ public class UserServiceImpl extends BaseService implements UserService {
 		boolean saveStatus=false;
 		if(StringUtil.isNotBlank(userBase.getLoginPass())){
 			try {
-				userBase = DAOProxy.getLibernate().updateEntity(userBase, "id","loginPass");
+				userBase.setErrorCount(0);
+				userBase.setUserStatus(ConstantUtil.USER_STATU_UNLOCK);
+				userBase = DAOProxy.getLibernate().updateEntity(userBase, "id","loginPass","errorCount","userStatus");
 				saveStatus = true;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

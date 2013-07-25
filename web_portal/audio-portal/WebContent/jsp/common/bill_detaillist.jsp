@@ -46,9 +46,15 @@
 			  	 	</c:otherwise>
 			  	 </c:choose>
                 </td>
-                <td align="right"><strong style=" color:#F00">${LANG['bizconf.jsp.admin.mybilling_list.res8']}${fee}${LANG['bizconf.jsp.admin.mybilling_list.res9']}</strong></td>
+                <td align="right"><strong style=" color:#F00">${LANG['bizconf.jsp.admin.mybilling_list.res8']}<fmt:formatNumber value="${fee}" pattern="#.00" type="number"/>${LANG['bizconf.jsp.admin.mybilling_list.res9']}</strong></td>
               </tr>
             </table>
+            
+            <form action="/common/billing/showTelDetail" method="post">
+			<input type="hidden" name="userId" value="${userId}" />
+			<input type="hidden" name="id" value="${id}" />
+			<input type="hidden" name="year" value="${year}" />
+			<input type="hidden" name="month" value="${month}" />
             <div class="div_overflow">
             <c:if test="${fn:length(pageModel.datas)<=0}">
 			           <div align="center" style="height: 35px;width: 100%;"> ${LANG['website.common.msg.list.nodata']}</div>
@@ -81,16 +87,20 @@
 	                  <td>${bill.callNumber }</td>
 	                  <td><fmt:formatDate value="${bill.startDate}" type="date" pattern="yyyy-MM-dd HH:mm"/></td>
 	                  <td>${bill.showDuration}</td>
-	                  <td>${bill.totalFee} ${LANG['bizconf.jsp.admin.mybilling_list.res9']}</td>
+	                  <td><fmt:formatNumber value=" ${bill.totalFee}" pattern="#.00" type="number"/>${LANG['bizconf.jsp.admin.mybilling_list.res9']}</td>
 	                </tr>
 				</c:forEach>
 				</c:if>
                 <tr class="cx04">
-                  <td colspan="6" align="right" style=" padding-right:10px; color:#F00">${LANG['bizconf.jsp.common.bill_detaillist.res9']}${confBill.sum}</td>
+                  <td colspan="6" align="right" style="padding-right:10px; color:#F00">${LANG['bizconf.jsp.common.bill_detaillist.res9']}<fmt:formatNumber value=" ${confBill.sum}" pattern="#.00" type="number"/></td>
                 </tr>
               </table>
 		    </c:forEach>
+		    <div style="margin-top: 20px;">
+		    	 <jsp:include page="page_info.jsp" />
+		    </div>
             </div>
+            </form>
             <div class="but160" style=" margin-bottom:70px;"><span class="button_common"><a href="javascript:closeDialog();"><img src="${baseUrlStatic}/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>${LANG['bizconf.jsp.common.bill_detaillist.res10']}</a></span></div>
           </div>
         </div>

@@ -20,8 +20,8 @@
         <td width="170" align="center">${LANG['bizconf.jsp.admin.site_org_list.res6']}</td>  
     </tr>
 </table>
-    <div class="h_main">
-<table border="0" cellpadding="0" cellspacing="0" class="host_center">
+ <div class="h_main" style="overflow-y: auto;height: 185px">
+<table border="0" cellpadding="0" cellspacing="0" class="host_center" style="overflow:auto;">
 	 <c:if test="${fn:length(pageModel.datas)<=0 }">
          <tr  height="36" class="host02">
            <td colspan="4" width="540" align="center">
@@ -30,14 +30,14 @@
          </tr>
       </c:if>
     <c:forEach var="host" items = "${pageModel.datas}"  varStatus="status">
-	    <tr height="36" class="host02">
+	    <tr height="26" class="host02">
 	    	<td width="100" align="center" >${host.loginName}</td>
 	        <td width="150" align="center">${host.userEmail}</td>
 	        <td width="80" align="center" cla>${licnums[host.id]}</td>
 	        <td width="230" align="center">
 		        <a href="#" onclick="toLicenseManage(${host.id},${siteId})">${LANG['bizconf.jsp.system.hostlist.res3']}</a>
 		        <a href="#" onclick="popUpHost(${siteId},${host.id})">${LANG['bizconf.jsp.system.email_template_list.res7']}</a>
-		        <a href="#" onclick="del(${host.id})">${LANG['bizconf.jsp.system.email_template_list.res8']}</a>
+		        <a href="#" onclick="del(${host.id});">${LANG['bizconf.jsp.system.email_template_list.res8']}</a>
 	        </td>  
 	    </tr>
     </c:forEach>

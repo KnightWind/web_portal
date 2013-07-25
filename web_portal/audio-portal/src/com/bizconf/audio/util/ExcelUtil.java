@@ -81,19 +81,23 @@ public class ExcelUtil {
 								if (endRow > 0 && rowsCount > endRow) {
 									stopRow = endRow;
 								}
+								StringBuffer eachRowDataBuffer=null;
 								for (int ii = beginRow - 1; ii < stopRow; ii++) {
 									row = sheet.getRow(ii);
 									if (row != null) {
+										eachRowDataBuffer=new StringBuffer();
 										cellCount = row.getLastCellNum();
 										rowArr = new Object[cellCount];
 										for (int jj = 0; jj < cellCount; jj++) {
 											cell = row.getCell(jj);
 											if (cell != null) {
 												rowArr[jj] = getHssCellData(cell);
+												eachRowDataBuffer.append(rowArr[jj]);
 											}
 											cell = null;
 										}
 										list.add(rowArr);
+										logger.info("row:"+ii+";  data: "+eachRowDataBuffer.toString());
 										rowArr = null;
 									}
 									row = null;
@@ -123,20 +127,24 @@ public class ExcelUtil {
 							if (endRow > 0 && rowsCount > endRow) {
 								stopRow = endRow;
 							}
+							StringBuffer eachRowDataBuffer=null;
 							for (int ii = beginRow - 1; ii < stopRow; ii++) {
 //							System.out.println("      "+ ii);
 								row = sheet.getRow(ii);
 								if (row != null) {
+									eachRowDataBuffer=new StringBuffer();
 									cellCount = row.getLastCellNum();
 									rowArr = new Object[cellCount];
 									for (int jj = 0; jj < cellCount; jj++) {
 										cell = row.getCell(jj);
 										if (cell != null) {
 											rowArr[jj] = getXssCellData(cell);
+											eachRowDataBuffer.append(rowArr[jj]);
 										}
 										cell = null;
 									}
 									list.add(rowArr);
+									logger.info("row:"+ii+";  data: "+eachRowDataBuffer.toString());
 									rowArr = null;
 								}
 								row = null;
@@ -198,19 +206,23 @@ public class ExcelUtil {
 								if (endRow > 0 && rowsCount > endRow) {
 									stopRow = endRow;
 								}
+								StringBuffer eachRowDataBuffer=null;
 								for (int ii = beginRow - 1; ii < stopRow; ii++) {
 									row = sheet.getRow(ii);
 									if (row != null) {
+										eachRowDataBuffer=new StringBuffer();
 										cellCount = row.getLastCellNum();
 										rowArr = new Object[cellCount];
 										for (int jj = 0; jj < cellCount; jj++) {
 											cell = row.getCell(jj);
 											if (cell != null) {
 												rowArr[jj] = getHssCellData(cell);
+												eachRowDataBuffer.append(rowArr[jj]+"   ");
 											}
 											cell = null;
 										}
 										list.add(rowArr);
+										logger.info("row:"+ii+";  data: "+eachRowDataBuffer.toString());
 										rowArr = null;
 									}
 									row = null;
@@ -238,19 +250,24 @@ public class ExcelUtil {
 							if (endRow > 0 && rowsCount > endRow) {
 								stopRow = endRow;
 							}
+							StringBuffer eachRowDataBuffer=null;
 							for (int ii = beginRow - 1; ii < stopRow; ii++) {
 								row = sheet.getRow(ii);
 								if (row != null) {
+									eachRowDataBuffer=new StringBuffer();
 									cellCount = row.getLastCellNum();
 									rowArr = new Object[cellCount];
 									for (int jj = 0; jj < cellCount; jj++) {
 										cell = row.getCell(jj);
 										if (cell != null) {
 											rowArr[jj] = getXssCellData(cell);
+											eachRowDataBuffer.append(rowArr[jj]+"   ");
 										}
 										cell = null;
 									}
 									list.add(rowArr);
+
+									logger.info("row:"+ii+";  data: "+eachRowDataBuffer.toString());
 									rowArr = null;
 								}
 								row = null;
@@ -275,7 +292,6 @@ public class ExcelUtil {
 	/**
 	 * 取Excel2003中单元格数据
 	 * */
-
 	public static Object getHssCellData(Object cell){
 		Object cellData=null;
 		if(cell!=null){

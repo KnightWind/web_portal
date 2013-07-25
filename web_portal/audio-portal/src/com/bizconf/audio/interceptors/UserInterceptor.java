@@ -13,7 +13,6 @@ import com.bizconf.audio.service.LoginService;
 import com.bizconf.audio.service.UserService;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.interceptor.SysInterceptorExt;
-
 /**
  * 
  * @author wangyong
@@ -38,7 +37,6 @@ public class UserInterceptor implements SysInterceptorExt {
 	@Override
 	public Object doBefore(HttpServletRequest request, HttpServletResponse arg1)
 			throws IOException {
-		System.out.println(System.currentTimeMillis()+"-before");
 		if (!loginService.isLogined(request)) {
 			request.setAttribute("userSessionFlag", true);
 			return new ActionForward.Forward("/user/login");
@@ -46,7 +44,7 @@ public class UserInterceptor implements SysInterceptorExt {
 		UserBase currentUser = userService.getCurrentUser(request);
 		request.setAttribute("currentUser", currentUser);
 		if(currentUser.isExpried()){
-			return new ActionForward.Forward("/user/login");
+			return new ActionForward.Redirect("/user/logout");
 		}
 		return null;
 	}

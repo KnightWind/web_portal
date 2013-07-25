@@ -1,8 +1,16 @@
 package com.bizconf.audio.constant;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class ConstantUtil {
 
+	
+	//2013.6.24 因客户需求新加常量，部分每页展示50条
+	public static final Integer PAGESIZE_DEFAULT_CUST = 50;//获取部分列表每页默认记录数
+	//2013.6.24 
+	
 	
 	public static final Integer PAGESIZE_DEFAULT = 10;//获取列表时每页默认记录数
 	
@@ -136,6 +144,16 @@ public class ConstantUtil {
 	public static final String AS_FAILED_LICENSE_CODE = "29610";    //AS接口返回码license不足
 	public static final String AS_FAILED_LICENSE_CODE_1 = "24404";    //达到数据license最大值
 	public static final String AS_MORE_THAN_MAXNUM = "29616";    //超过设置的最大人数
+	
+	public static final Set<String> AS_FAILED_LICENSE_SET = new HashSet<String>();
+	static{
+		AS_FAILED_LICENSE_SET.add("29610");	  // license不足
+		AS_FAILED_LICENSE_SET.add("24404");  //达到数据license最大值
+		AS_FAILED_LICENSE_SET.add("24403");  //达到视频license最大值
+		AS_FAILED_LICENSE_SET.add("24402");  //达到音频license最大值
+	};
+	
+	
 	
 	public static final String AS_BEGIN_TIME_INVALID = "29507";//会议开始开始时间不对
 	
@@ -279,5 +297,20 @@ en-us,lang_en.xml
 //			0
 //		}
 //	};
+	
+	//站点名称正则表达式验证
+//	验证长度为3的字符：^.{3}$
+	public static final String SITE_NAME_REG = "^.{1,32}$";
+	//站点英文名称正则表达式验证
+	public static final String SITE_ENNAME_REG = "^.{1,64}$";
+	//站点标识正则表达式验证
+	public static final String SITE_SIGN_REG = "^[a-zA-Z0-9_\\-&]{1,16}$";
+	//站点管理员用户名正则表达式验证
+	public static final String SITE_ADMIN_USERNAME_REG = "^[a-zA-Z0-9_\\-&\\u4e00-\\u9fa5]{1,32}$";
+	//站点管理员登录名正则表达式验证
+	public static final String SITE_ADMIN_LOGINNAME_REG = "^[a-zA-Z0-9]{4,16}$";
+	
+	//seats、time模式下创建站点时的第一条license记录标志位为1
+	public static final int FIRST_LICENSE_FLAG = 1;
 	
 }

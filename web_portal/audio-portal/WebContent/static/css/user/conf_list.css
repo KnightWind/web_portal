@@ -32,7 +32,7 @@
 .extras-tr {
 	clear: both;
 	border-left: 1px solid #D2D8DB;
-	border-bottom: 1px solid #D2D8DB;
+/* 	border-bottom: 1px solid #D2D8DB; */
 	border-right: 1px solid #D2D8DB;
 	height: 50px;
 	position: relative;
@@ -43,6 +43,13 @@
 	height: 50px;
 	width: 46px;
 	position: relative;	
+}
+.extras-desc {
+	border-left: 1px solid #D2D8DB;
+	border-bottom: 1px solid #D2D8DB;
+	border-right: 1px solid #D2D8DB;
+	color: #666666;	
+	padding: 5px 15px;
 }
 .extras-default {
 	border-left: 1px solid #FFFFFF;

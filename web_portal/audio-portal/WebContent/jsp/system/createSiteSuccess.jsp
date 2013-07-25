@@ -35,6 +35,13 @@ body{ margin:0; border:0; padding:0; }
 span.jqTransformCheckboxWrapper {
 margin: 0px;
 }
+.right-td {
+	padding-left: 5px;
+	width:50%;
+}
+.left-td {
+	width:50%;
+}
 </style>
 <!-- Javascript -->
 <SCRIPT type="text/javascript" src="/static/js/jquery-1.8.3.js"></SCRIPT>
@@ -47,40 +54,84 @@ margin: 0px;
 					height="52" />
 				<h1>${LANG['system.site.create.success']}</h1>
 			</div>
-			<ul class="xinxi">
-				<li class="zdxinxi">${LANG['system.menu.site.list']}:</li>
-				<li>${LANG['system.site.list.CompanyName']}:${siteBase.siteName}</li>
-				<li class="xx">${LANG['system.site.list.EnglishName']}: ${siteBase.enName}</li>
-				<li class="xx">${LANG['system.site.list.SiteSign']}: ${siteBase.siteSign}</li>
+			<table style="clear: both;font-size: 12px;margin: 0 auto;width: 380px;height:230px;">
+				<tr>
+					<td align="right" valign="top" class="left-td">${LANG['system.menu.site.list']}: ${LANG['system.site.list.CompanyName']}:</td>
+					<td align="left" class="right-td">${siteBase.siteName}</td>
+				</tr>
+				<tr>
+					<td align="right" valign="top" class="left-td">${LANG['system.site.list.EnglishName']}:</td>
+					<td align="left" class="right-td">${siteBase.enName}</td>
+				</tr>
+				<tr>
+					<td align="right" class="left-td">${LANG['system.site.list.SiteSign']}:</td>
+					<td align="left" class="right-td">${siteBase.siteSign}</td>
+				</tr>
 				<c:if test="${siteBase.siteFlag == 1 }">
-					<li class="xx">${LANG['system.site.list.SiteFlag']}: ${LANG['system.site.list.SiteFlag.official']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.SiteFlag']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.SiteFlag.official']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.siteFlag == 2 }">
-					<li class="xx">${LANG['system.site.list.SiteFlag']}: ${LANG['system.site.list.SiteFlag.trial']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.SiteFlag']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.SiteFlag.trial']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.hireMode == 1 }">
-					<li class="xx">${LANG['system.site.list.hireMode']}: ${LANG['system.site.list.hireMode.month']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.hireMode']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.hireMode.month']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.hireMode == 2 }">
-					<li class="xx">${LANG['system.site.list.hireMode']}: ${LANG['system.site.list.hireMode.minutes']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.hireMode']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.hireMode.minutes']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.chargeMode == 1 }">
-					<li class="xx">${LANG['system.site.list.chargeMode']}: ${LANG['system.site.list.chargeMode.Name Host']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.chargeMode']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.chargeMode.Name Host']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.chargeMode == 2 }">
-					<li class="xx">${LANG['system.site.list.chargeMode']}: ${LANG['system.site.list.chargeMode.Active User']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.chargeMode']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.chargeMode.Active User']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.chargeMode == 3 }">
-					<li class="xx">${LANG['system.site.list.chargeMode']}: ${LANG['system.site.list.chargeMode.Seats']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.chargeMode']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.chargeMode.Seats']}</td>
+					</tr>
 				</c:if>
 				<c:if test="${siteBase.chargeMode == 4 }">
-					<li class="xx">${LANG['system.site.list.chargeMode']}: ${LANG['system.site.list.chargeMode.time']}</li>
+					<tr>
+						<td align="right" class="left-td">${LANG['system.site.list.chargeMode']}:</td>
+						<td align="left" class="right-td">${LANG['system.site.list.chargeMode.time']}</td>
+					</tr>
 				</c:if>
-<%-- 				<li class="xx">${LANG['system.site.list.chargeMode']}: seats</li> --%>
-				<li class="xx">${LANG['system.site.list.effedate']}: <fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></li>
-				<li class="xx">${LANG['system.site.list.ExpireDate']}: <fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></li>
-				<li class="xx">${LANG['company.menu.admin.user']}: ${siteAdmin.trueName}</li>
-			</ul>
+				<tr>
+					<td align="right" class="left-td">${LANG['system.site.list.effedate']}:</td>
+					<td align="left" class="right-td"><fmt:formatDate  value="${siteBase.effeDate}" type="date" pattern="yyyy-MM-dd"/></td>
+				</tr>
+				<tr>
+					<td align="right" class="left-td">${LANG['system.site.list.ExpireDate']}:</td>
+					<td align="left" class="right-td"><fmt:formatDate  value="${siteBase.expireDate}" type="date" pattern="yyyy-MM-dd"/></td>
+				</tr>
+				<tr>
+					<td align="right" class="left-td">${LANG['company.menu.admin.user']}:</td>
+					<td align="left" class="right-td">${siteAdmin.trueName}</td>
+				</tr>
+				<tr>
+					<td align="right" class="left-td"><input type="checkbox" id="sendEmail"/>&nbsp;${LANG['system.site.update.sendemail']}:</td>
+					<td align="left" class="right-td">${siteAdmin.trueName}</td>
+				</tr>
+			</table>
 		</div>
 		<div style="text-align: center">
 			<input  class="button-small closeButton" type="button" value="${LANG['system.ok']}">

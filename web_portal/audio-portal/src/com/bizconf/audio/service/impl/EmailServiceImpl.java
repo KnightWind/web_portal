@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bizconf.audio.component.BaseConfig;
 import com.bizconf.audio.component.email.EmailContentGenerator;
 import com.bizconf.audio.component.email.EmailUtil;
 import com.bizconf.audio.component.email.model.SendMail;
@@ -32,6 +33,7 @@ import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.logic.ConfUserLogic;
 import com.bizconf.audio.logic.EmailLogic;
 import com.bizconf.audio.service.EmailService;
+import com.bizconf.audio.service.UserService;
 import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.SiteIdentifyUtil;
 import com.bizconf.encrypt.Base64;
@@ -44,14 +46,20 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 	
 	@Autowired
 	private ConfUserLogic confUserLogic;
+	@Autowired
+	UserService userService;
 	
 	@Override
 	public boolean createSiteEmail(SiteBase site,UserBase admin) {
 		boolean createStatus=false;
 		if(site!=null && admin!=null){
 			try{
+				
 				EmailConfig sysConfig = emailLogic.getSysEmailConfig(admin.getSiteId());
 				EmailInfo emailInfo =new EmailInfo();
+				if(site!=null && !site.getChargeMode().equals(2)){
+					site.setLicense(emailLogic.getSiteLicenseNum(site.getId()));
+				}
 				//获取邮件内容
 				Map<String, Object> datas = new HashMap<String,Object>();
 				datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine()); //域名的获取
@@ -87,6 +95,9 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 		if(site!=null && admin!=null){
 			try{
 				EmailConfig sysConfig = emailLogic.getSysEmailConfig(admin.getSiteId());
+				if(site!=null && !site.getChargeMode().equals(2)){
+					site.setLicense(emailLogic.getSiteLicenseNum(site.getId()));
+				}
 				EmailInfo emailInfo =new EmailInfo();
 				//获取邮件内容
 				Map<String, Object> datas = new HashMap<String,Object>();
@@ -582,10 +593,22 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 				String templateContent = getTemplateContentByType(confInfo.getSiteId(),EmailConstant.TEMPLATE_INVITE);
 				//获取邮件内容
 				Map<String, Object> datas = new HashMap<String,Object>();
-				datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine());//域名的获取
-			//	datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine());//域名的获取
+				
+				//域名的获取在任务中是获取不到的故需要根据站点标识获取
+				SiteBase confsite = libernate.getEntity(SiteBase.class, confInfo.getSiteId());
+				String siteaddress = SiteIdentifyUtil.getCurrentDomine();
+				if(confsite!=null){siteaddress = confsite.getSiteSign()+".confcloud.cn";}
+				
+				datas.put("siteaddress", siteaddress);
 				datas.put("EnterNumber", ConfConstant.ACCESSCODE);
 				datas.put("timezone", getTimezoneName(confInfo.getSiteId()));
+				datas.put("ispublicconf", ConfConstant.CONF_PUBLIC_FLAG_TRUE.equals(confInfo.getPublicFlag())?"":"style='display:none;'");
+				datas.put("istelconf", ConfConstant.CONF_TYPE_PHONE_FUNC.equals(confInfo.getConfType())||ConfConstant.CONF_TYPE_PHONE_VIDEO_FUNC.equals(confInfo.getConfType())?"":"style='display:none;'");
+				//接入号
+				datas.put("accessNumber1", BaseConfig.getInstance().getString("access_num1", ""));
+				datas.put("accessNumber2", BaseConfig.getInstance().getString("access_num2", ""));
+				datas.put("accessNumber3", BaseConfig.getInstance().getString("access_num3", ""));
+				
 				transferConfDate(confInfo);
 				datas.put("conf", confInfo);
 				for(ConfUser user:users){
@@ -613,7 +636,17 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 					emailInfo.setEmailSubject(confInfo.getConfName()+"－会议通知/"+confInfo.getConfName()+"－Conference Notice");
 					emailInfo.setEmailContent(emailContent);//设置邮件内容
 					emailInfo.setEmailAccepter(user.getUserEmail());
-					saveEmailInfo(emailInfo);
+					
+					emailInfo.setWarnFlag(2);
+					emailInfo.setWarnSubject(emailInfo.getEmailSubject());
+					emailInfo.setWarnCount(3);
+					emailInfo.setBeforeMinute(30);
+					emailInfo.setGapMinute(5);
+					emailInfo.setStratTime(new Date(confInfo.getStartTime().getTime()-1800000l));
+					emailInfo.setEndTime(confInfo.getStartTime());
+					emailInfo.setTimeZone("Asia/Shanghai");
+					send(emailInfo);
+//					saveEmailInfo(emailInfo);
 				}
 				flag = true;
 			}catch(Exception e){
@@ -680,17 +713,27 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 		if(currentUser!=null && conf!=null){
 			UserBase user = emailLogic.getUserBaseById(conf.getCompereUser());
 			try{
+				//域名的获取在任务中是获取不到的故需要根据站点标识获取
+				SiteBase confsite = libernate.getEntity(SiteBase.class, conf.getSiteId());
+				String siteaddress = SiteIdentifyUtil.getCurrentDomine();
+				if(confsite!=null){siteaddress = confsite.getSiteSign()+".confcloud.cn";}
+				
 				EmailConfig sysConfig = emailLogic.getSysEmailConfig(currentUser.getSiteId());
 				EmailInfo emailInfo =new EmailInfo();
 				//String templateContent = getTemplateContentByType(confInfo.getSiteId(),EmailConstant.TEMPLATE_INVITE);
 				//获取邮件内容
 				transferConfDate(conf);
 				Map<String, Object> datas = new HashMap<String,Object>();
-				datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine()); //域名的获取
+				
+				datas.put("siteaddress", siteaddress); //域名的获取
 				datas.put("EnterNumber", ConfConstant.ACCESSCODE);
 				datas.put("user", user);
 				datas.put("conf", conf);
 				datas.put("timezone", getTimezoneName(conf.getSiteId()));
+				datas.put("accessNumber1", BaseConfig.getInstance().getString("access_num1", ""));
+				datas.put("accessNumber2", BaseConfig.getInstance().getString("access_num2", ""));
+				datas.put("accessNumber3", BaseConfig.getInstance().getString("access_num3", ""));
+				
 				
 				String joinUrl = "join/joinpage?joinType=3&cId="+conf.getId()+"&scode="+conf.getCompereSecure()+"&uId="+user.getId();
 				datas.put("joinUrl", Base64.encode(joinUrl, "UTF-8").replaceAll("/", "_"));
@@ -772,6 +815,15 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 				datas.put("conf", conf);
 				datas.put("timezone", getTimezoneName(conf.getSiteId()));
 				
+				datas.put("accessNumber1", BaseConfig.getInstance().getString("access_num1", ""));
+				datas.put("accessNumber2", BaseConfig.getInstance().getString("access_num2", ""));
+				datas.put("accessNumber3", BaseConfig.getInstance().getString("access_num3", ""));
+				//控制公开会议密码显示
+				datas.put("ispublicconf", ConfConstant.CONF_PUBLIC_FLAG_TRUE.equals(conf.getPublicFlag())?"":"style='display:none;'");
+				//控制接入号的显示
+				datas.put("istelconf", ConfConstant.CONF_TYPE_PHONE_FUNC.equals(conf.getConfType())||ConfConstant.CONF_TYPE_PHONE_VIDEO_FUNC.equals(conf.getConfType())?"":"style='display:none;'");
+				
+				
 				datas.put("securityCode", conf.getUserSecure());
 				if(confUser.getHostFlag()!=null && confUser.getHostFlag().intValue() == ConfConstant.CONF_USER_HOST.intValue()){
 					datas.put("securityCode", conf.getCompereSecure());
@@ -843,6 +895,14 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 				datas.put("timezone", getTimezoneName(orgConf.getSiteId()));
 				transferConfDate(orgConf);
 				datas.put("conf", orgConf);
+				
+				datas.put("accessNumber1", BaseConfig.getInstance().getString("access_num1", ""));
+				datas.put("accessNumber2", BaseConfig.getInstance().getString("access_num2", ""));
+				datas.put("accessNumber3", BaseConfig.getInstance().getString("access_num3", ""));
+				//控制公开会议密码显示
+				datas.put("ispublicconf", ConfConstant.CONF_PUBLIC_FLAG_TRUE.equals(conf.getPublicFlag())?"":"style='display:none;'");
+				//控制接入号的显示
+				datas.put("istelconf", ConfConstant.CONF_TYPE_PHONE_FUNC.equals(conf.getConfType())||ConfConstant.CONF_TYPE_PHONE_VIDEO_FUNC.equals(conf.getConfType())?"":"style='display:none;'");
 				for(ConfUser user:confUsers){
 					datas.put("user", user);
 					datas.put("securityCode", orgConf.getUserSecure());
@@ -886,6 +946,13 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 				datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine()); //域名的获取
 				datas.put("EnterNumber", ConfConstant.ACCESSCODE);
 				datas.put("timezone", getTimezoneName(orgConf.getSiteId()));
+				datas.put("accessNumber1", BaseConfig.getInstance().getString("access_num1", ""));
+				datas.put("accessNumber2", BaseConfig.getInstance().getString("access_num2", ""));
+				datas.put("accessNumber3", BaseConfig.getInstance().getString("access_num3", ""));
+				//控制公开会议密码显示
+				datas.put("ispublicconf", ConfConstant.CONF_PUBLIC_FLAG_TRUE.equals(conf.getPublicFlag())?"":"style='display:none;'");
+				//控制接入号的显示
+				datas.put("istelconf", ConfConstant.CONF_TYPE_PHONE_FUNC.equals(conf.getConfType())||ConfConstant.CONF_TYPE_PHONE_VIDEO_FUNC.equals(conf.getConfType())?"":"style='display:none;'");
 				
 				String emailSubject = orgConf.getConfName()+"－会议修改通知/"+orgConf.getConfName()+"－Conference Modify Notice";
 				//获取数据库中会议信息传入的会议信息不可用
@@ -976,8 +1043,20 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 				EmailConfig sysConfig = emailLogic.getSysEmailConfig(host.getSiteId());
 				EmailInfo emailInfo =new EmailInfo();
 				//获取邮件内容
+				SiteBase site = libernate.getEntity(SiteBase.class, host.getSiteId());
+				if(licenses!=null && !licenses.isEmpty()){
+					for (Iterator it = licenses.iterator(); it
+							.hasNext();) {
+						License lic = (License) it.next();
+						if(site!=null && site.getTimeZone()!=null){
+							lic.transforLocalDate(site.getTimeZone());
+						}else{
+							lic.transforLocalDate(28800000);
+						}
+					}
+				}
 				Map<String, Object> datas = new HashMap<String,Object>();
-				datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine()); //域名的获取
+				datas.put("siteaddress", site.getSiteSign()+".confcloud.cn"); //域名的获取
 				datas.put("user", host);
 				datas.put("lics", licenses);
 				//datas.put("siteBase",site);
@@ -1008,8 +1087,20 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 				EmailConfig sysConfig = emailLogic.getSysEmailConfig(host.getSiteId());
 				EmailInfo emailInfo =new EmailInfo();
 				//获取邮件内容
+				SiteBase site = libernate.getEntity(SiteBase.class, host.getSiteId());
+				if(licenses!=null && !licenses.isEmpty()){
+					for (Iterator it = licenses.iterator(); it
+							.hasNext();) {
+						License lic = (License) it.next();
+						if(site!=null && site.getTimeZone()!=null){
+							lic.transforLocalDate(site.getTimeZone());
+						}else{
+							lic.transforLocalDate(28800000);
+						}
+					}
+				}
 				Map<String, Object> datas = new HashMap<String,Object>();
-				datas.put("siteaddress", SiteIdentifyUtil.getCurrentDomine()); //域名的获取
+				datas.put("siteaddress", site.getSiteSign()+".confcloud.cn"); //域名的获取
 				datas.put("user", host);
 				datas.put("lics", licenses);
 				//datas.put("siteBase",site);
@@ -1048,7 +1139,7 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 		String scode = conf.getCompereSecure();
 //		String uid = user.getUserId()==null?"0":user.getUserId().toString();
 		String domain=SiteIdentifyUtil.getCurrentDomine();
-		String joinUrl = "join/joinpage?joinType=3&cId="+conf.getId()+"&scode="+scode+"&uId=0";
+		String joinUrl = "join/joinpage?joinType="+ConfConstant.JOIN_TYPE_EMAIL+"&cId="+conf.getId()+"&scode="+scode+"&uId=0";
 		String ecodeUrl = Base64.encode(joinUrl, "UTF-8").replaceAll("/", "_");
 		//http://${siteaddress}/?joinUrl=${joinUrl}
 		ecodeUrl="http://"+domain+"/?joinUrl="+ecodeUrl;
@@ -1061,21 +1152,58 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 		String scode = conf.getUserSecure();
 //		String uid = user.getUserId()==null?"0":user.getUserId().toString();
 		String domain=SiteIdentifyUtil.getCurrentDomine();
-		String joinUrl = "join/joinpage?joinType=3&cId="+conf.getId()+"&scode="+scode+"&uId=0";
+		String joinUrl = "join/joinpage?joinType="+ConfConstant.JOIN_TYPE_EMAIL+"&cId="+conf.getId()+"&scode="+scode+"&uId=0";
 		String ecodeUrl = Base64.encode(joinUrl, "UTF-8").replaceAll("/", "_");
 		ecodeUrl="http://"+domain+"/?joinUrl="+ecodeUrl;
 		return ecodeUrl;
 	}
 
-	
+//	
+//	@Override
+//	public List<SiteBase> getExpireRemindSites() {
+//		String sql = "select * from t_site_base where del_flag = ? and expire_date < ? and send_remind_flag < ? ";
+//		List<SiteBase> sites = null;
+//		try {
+//			Date expDate = DateUtil.getGmtDate(new Date(new Date().getTime() + SiteConstant.BEFORE_SITE_EXP_REMIND_DATES*3600*24*1000l));
+//			sites = libernate.getEntityListBase(SiteBase.class, sql, new Object[]{
+//				ConstantUtil.DELFLAG_UNDELETE, expDate, SiteConstant.SEND_SITE_EXP_REMIND});
+//			 
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return sites;
+//	}
+
+
 	@Override
 	public List<SiteBase> getExpireRemindSites() {
-		String sql = "select * from t_site_base where del_flag = ? and expire_date < ? and send_remind_flag < ? ";
+		StringBuffer sqlBuffer = new StringBuffer();//"select * from t_site_base where del_flag = ? and send_remind_flag < ?  ";// and expire_date < ?
 		List<SiteBase> sites = null;
 		try {
-			Date expDate = DateUtil.getGmtDate(new Date(new Date().getTime() - SiteConstant.BEFORE_SITE_EXP_REMIND_DATES*3600*24*1000l));
-			sites = libernate.getEntityListBase(SiteBase.class, sql, new Object[]{
-				ConstantUtil.DELFLAG_UNDELETE, expDate, SiteConstant.SEND_SITE_EXP_REMIND});
+			List<Object> valueList=new ArrayList<Object>(); 
+			Date nowGmtDate = DateUtil.getGmtDate(null);//new Date(new Date().getTime() - SiteConstant.BEFORE_SITE_EXP_REMIND_DATES*3600*24*1000l));
+			sqlBuffer.append(" select * from t_site_base where del_flag = ? and send_remind_flag < ?  ");
+			valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+			valueList.add(SiteConstant.SEND_SITE_EXP_REMIND);
+			Date eachExpStartDate=null;
+			Date eachExpEndDate=null;
+//			sqlBuffer.append(" and (");
+//			int ii=0;
+//			for(Integer[] eachRemindDays:SiteConstant.SITE_EXPIRE_DAYS){
+//				if(ii > 0){
+//					sqlBuffer.append(" or ");
+//				}
+//				eachExpStartDate=DateUtil.addDateMinutes(nowGmtDate, eachRemindDays[1]* 24 * 60);
+//				eachExpEndDate=DateUtil.addDateMinutes(nowGmtDate, eachRemindDays[0]* 24 * 60);
+//				sqlBuffer.append(" (");
+//				sqlBuffer.append(" expire_date >? and expire_date<=?");
+//				valueList.add(eachExpStartDate);
+//				valueList.add(eachExpEndDate);
+//				sqlBuffer.append(")");
+//				ii++;
+//			}
+//			sqlBuffer.append(" )");
+			sites = libernate.getEntityListBase(SiteBase.class, sqlBuffer.toString(), valueList.toArray());
 			 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1126,8 +1254,96 @@ public class EmailServiceImpl extends BaseService implements EmailService{
 			flag = false;
 		}
 		return flag;
+		
 	}
 
+	
+	public boolean sendEmailForSiteRemind(SiteBase siteBase) throws Exception{
+		if(siteBase!=null){
+			Date expireDate=siteBase.getExpireDate();
+			if(expireDate==null){
+				expireDate=DateUtil.getGmtDate(null);
+			}
+			Integer sendFlag=siteBase.getSendRemindFlag();
+			Date nowGmtDate=DateUtil.getGmtDate(null);
+			Date localDate=DateUtil.getOffsetDateByGmtDate(nowGmtDate, (long)siteBase.getTimeZone());
+			Date localExpireDate=DateUtil.getOffsetDateByGmtDate(expireDate, (long)siteBase.getTimeZone());
+			int diffDays=DateUtil.getDateDiff(localDate,localExpireDate);
+			
+//			System.out.println("site task for : siteId=" + siteBase.getId() + " , siteName=" + siteBase.getSiteName()+ ",diffDays= "+diffDays);
+			int ii=0;
+			int thisFlag=0;
+			for(Integer reminDay:SiteConstant.SITE_REMIND_DAYS){
+				ii++;
+				thisFlag=Integer.valueOf(Math.round(Math.pow(2d,(ii-1)*1d))+"");
+				System.out.println("site task for : siteId=" + siteBase.getId() + " , siteName=" + siteBase.getSiteName()+ ",thisFlag= "+thisFlag+";sendFlag="+sendFlag+ ",diffDays= "+diffDays + ";(thisFlag&sendFlag)="+(thisFlag&sendFlag));
+				if(reminDay.intValue()==diffDays && sendFlag < thisFlag && (thisFlag&sendFlag) == 0 ){//?????????
+					EmailConfig sysConfig = emailLogic.getSysEmailConfig(siteBase.getId());
+					UserBase admin = emailLogic.getSiteSupperMasterBySiteId(siteBase.getId());
+					Map<String, Object> datas = new HashMap<String,Object>();
+					siteBase.setEffeDate(DateUtil.getOffsetDateByGmtDate(siteBase.getEffeDate(),(long)siteBase.getTimeZone()));
+					
+					datas.put("user",admin);
+					datas.put("siteBase",siteBase);
+					datas.put("timezone",siteBase.getTimeZoneDesc());
+					
+//					datas.put("exp_date", SiteConstant.BEFORE_SITE_EXP_REMIND_DATES);
+					datas.put("exp_date", siteBase.getExpireDateNumber());
+					String emailContent  = EmailContentGenerator.getInstance().genContent(EmailConstant.SITE_EXPIRED_REMIND, datas);
+					logger.info("the email content:"+emailContent);
+					EmailInfo emailInfo=new EmailInfo();
+					emailInfo.setSiteId(siteBase.getId());
+					emailInfo.setServerHost(sysConfig.getEmailHost());
+					emailInfo.setServerPort("25");
+					emailInfo.setFromEmail(sysConfig.getEmailSender());
+					emailInfo.setFromName(sysConfig.getEmailName());
+					emailInfo.setUserName(sysConfig.getEmailSender());
+					emailInfo.setUserPass(sysConfig.getEmailPassword());
+					emailInfo.setEmailSubject("企业站点即将过期/Enterprise will expired");
+					emailInfo.setContentType("html");
+					emailInfo.setValidate(true);
+					emailInfo.setEmailContent(emailContent);
+					emailInfo.setEmailAccepter(admin.getUserEmail());
+					//libernate.saveEntity(emailInfo);
+					
+					//发送给站点创建者
+					SystemUser systemUser=userService.getSystemUserById(siteBase.getCreateUser());
+					systemUser.setEmail("frank_song@bizconf.cn");
+					emailInfo.setEmailAccepter(systemUser.getEmail());
+					libernate.saveEntity(emailInfo);
+					
+//					SendMail mailInfo=new SendMail();
+//					mailInfo.setFromEmail(sysConfig.getEmailSender());
+//					mailInfo.setFromName(sysConfig.getEmailName());
+//					mailInfo.setServerHost(sysConfig.getEmailHost());
+//					mailInfo.setServerPort("25");
+//					mailInfo.setUserName(sysConfig.getEmailSender());
+//					mailInfo.setUserPass(sysConfig.getEmailPassword());
+//					mailInfo.setSubject("企业站点即将过期/Enterprise will expired");
+//					mailInfo.setContentType("html");
+//					mailInfo.setContent(emailContent);
+//					mailInfo.setValidate(true);
+//					mailInfo.setToEmail(admin.getUserEmail());
+//					EmailUtil.send(mailInfo);
+		
+					
+					siteBase.setSendRemindFlag(Integer.valueOf(Math.round(Math.pow(2d,ii*1d)-1)+""));
+					libernate.updateEntity(siteBase, "sendRemindFlag");
+					return true;
+				}
+			}
+		
+			
+		//	siteBase.setSendRemindFlag(siteBase.getSendRemindFlag()+SiteConstant.SEND_SITE_EXP_REMIND);
+		//	libernate.updateEntity(siteBase, "sendRemindFlag");
+			
+			return false;
+			
+			
+			
+		}
+		return false;
+	}
 
 	@Override
 	public List<SiteBase> getExpiredSites() {

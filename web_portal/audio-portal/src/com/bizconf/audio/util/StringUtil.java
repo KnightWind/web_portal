@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -348,6 +350,15 @@ public class StringUtil {
 	        return sb.toString();  
 	    }  
 
-
+		public static String string2Unicodes(String str) {
+			StringBuilder unicodes = new StringBuilder();
+			if (StringUtils.isEmpty(str)) {
+				return "";
+			}
+			for (char c : str.toCharArray()) {
+				unicodes.append((int) c + ",");
+			}
+			return unicodes.deleteCharAt(unicodes.length() - 1).toString();
+		}
 
 }

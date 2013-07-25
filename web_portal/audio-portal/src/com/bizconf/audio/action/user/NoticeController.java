@@ -72,6 +72,7 @@ public class NoticeController extends BaseController {
 			logger.error("获取企业用户公告页数出错!"+e);
 		}
 		pageModel.setRowsCount(rows);
+		pageModel.setPageSize(currentLoginUser.getPageSize());     //// 2013.6.24 因客户需求新加常量，部分每页展示用户偏好设置每页显示条数
 		noticeList = noticeService.getUserNoticeList(currentLoginUser.getSiteId(), pageModel, new Integer[]{currentLoginUser.getCreateUser(), superAdmin.getId()});
 		Integer[] createIds = null;
 		if(noticeList != null){

@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css"/>
+<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/style.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/huiyixinxi.css"/>
 
@@ -59,6 +60,12 @@ $(function() {
 	});
 	
 	$("#advanceSearch").click(function(){
+		var dateStart = $("#effeDateStart").val();
+		var dateEnd =  $("#effeDateEnd").val();
+		if(dateStart && dateEnd && !compareDate(dateStart, dateEnd)){
+			parent.errorDialog("会议开始时间应该小于结束时间");
+			return;
+		}
 		resetPageNo();
     	confForm.action="/system/conf/listWithCondition";
     	confForm.submit();	
@@ -90,7 +97,9 @@ function enterSumbit(url){
 
 
 $(document).ready(function(){
-	$("#titleOrSiteSign").watermark('${LANG['bizconf.jsp.system.conf_list.res1']}');
+	if (!$.browser.msie || $.browser.version>7) {
+		$("#titleOrSiteSign").watermark("${LANG['bizconf.jsp.system.conf_list.res1']}");
+	}
 	$("#search-condition").find("input[type=text]").each(function(){
 		if($(this).val()){
 			$("#search-condition").show();
@@ -157,7 +166,7 @@ $(document).ready(function(){
 	    		<input type="text" name="effeDateEnd" id="effeDateEnd" value="${effeDateEnd}" style="width:100px;" class="expireDate"/>
     		</div>
     		<div style="height:30px;clear: left">
-    			<input type="button" id="advanceSearch" class='button-small' value="${LANG['system.search']}"/>
+    			<input type="button" id="advanceSearch" class='button-small skipThese' value="${LANG['system.search']}"/>
     		</div>
     	</div>
 <table width="98.5%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" style="  margin-left:10px; margin-right:10px; border:#D6D6D6 1px solid; border-top:none; border-bottom:none;">
@@ -166,34 +175,34 @@ $(document).ready(function(){
     <td>
     <table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list">
      <tr class="table003" height="38" >
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.CompanyName']}</span></div></td>
-        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.SiteSign']}</span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.site.list.CompanyName']}</b></span></div></td>
+        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.site.list.SiteSign']}</b></span></div></td>
         <cc:sort var="SORT_ASC"/><cc:sort var="SORT_DESC"/><cc:sort var="CONFBASE_SORT_ENDTIME"/><cc:sort var="CONFBASE_SORT_CONFTYPE"/><cc:sort var="CONFBASE_SORT_STATUS"/><cc:sort var="CONFBASE_SORT_STARTTIME"/>
-        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.list.meeting.title']}</span>
+        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.list.meeting.title']}</b></span>
 		</div></td>
-        <td width="12%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_CONFTYPE}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.type']}&nbsp;</span>
+        <td width="12%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_CONFTYPE}');" style="cursor: pointer;"><div align="center"><span style="text-decoration: underline;"><b>${LANG['system.list.meeting.type']}</b></span>
 	        <c:if test="${CONFBASE_SORT_CONFTYPE!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	        <c:if test="${CONFBASE_SORT_CONFTYPE==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
 	        <c:if test="${CONFBASE_SORT_CONFTYPE==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
         </div></td>
-        <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_STATUS}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.status']}&nbsp;</span>
+        <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_STATUS}');" style="cursor: pointer;"><div align="center"><span style="text-decoration: underline;"><b>${LANG['system.list.meeting.status']}</b></span>
            <c:if test="${CONFBASE_SORT_STATUS!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	       <c:if test="${CONFBASE_SORT_STATUS==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
 	       <c:if test="${CONFBASE_SORT_STATUS==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
         </div></td>
-        <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_STARTTIME}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.start.time']}&nbsp;</span>
+        <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_STARTTIME}');" style="cursor: pointer;"><div align="center"><span style="text-decoration: underline;"><b>${LANG['system.list.meeting.start.time']}</b></span>
          	<c:if test="${CONFBASE_SORT_STARTTIME!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	        <c:if test="${CONFBASE_SORT_STARTTIME==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
 	        <c:if test="${CONFBASE_SORT_STARTTIME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
        </div></td>
        <!--   <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.list.meeting.stop.time']}&nbsp;</span></div></td>-->
-       	<td width="14%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_ENDTIME}');" style="cursor: pointer;"><div align="center"><span>${LANG['system.list.meeting.stop.time']}&nbsp;</span>
+       	<td width="14%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="javascript:sort('${CONFBASE_SORT_ENDTIME}');" style="cursor: pointer;"><div align="center"><span style="text-decoration: underline;"><b>${LANG['system.list.meeting.stop.time']}</b></span>
 		 	<c:if test="${CONFBASE_SORT_ENDTIME!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	        <c:if test="${CONFBASE_SORT_ENDTIME==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
 	        <c:if test="${CONFBASE_SORT_ENDTIME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
        
 		</div></td>
-        <td width="7%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none"><div class="STYLE_none" style="border-right:none"><div align="center"><span>${LANG['system.list.meeting.license']}</span></div></td>
+        <td width="7%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none"><div class="STYLE_none" style="border-right:none"><div align="center"><span><b>${LANG['system.list.meeting.license']}</b></span></div></td>
       </tr>
       <c:if test="${fn:length(confList)<=0 }">
          <tr>
@@ -205,9 +214,9 @@ $(document).ready(function(){
       <c:if test="${fn:length(confList)>0 }">
       <c:forEach var="confInfo" items="${confList}" varStatus="status">
       <tr class="table001" height="32" >
-        <td height="32"  class="STYLE19"><div align="center"  class="siteNameDiv_${confInfo.siteId }">--</div></td> 
+        <td height="32"  class="STYLE19"><div style="cursor: pointer;text-decoration: underline;" align="center" onclick="parent.viewSite(${confInfo.siteId });"  class="siteNameDiv_${confInfo.siteId }">--</div></td> 
         <td height="32" class="STYLE19"><div align="center" class="siteSignDiv_${confInfo.siteId }">-- </div></td>
-        <td height="32" class="STYLE19"><div align="center">${confInfo.confName }
+        <td height="32" class="STYLE19"><div style="cursor: pointer;text-decoration: underline;" align="center" onclick="parent.viewConf(${confInfo.id});">${confInfo.confName }
         <c:if test="${confInfo.cycleId!=null && confInfo.cycleId>0 }"><span id="cycleId_${confInfo.cycleId}">${LANG['bizconf.jsp.admin.conf_list.res7']}</span></c:if>
         </div></td>
          <c:set var="typeLang" value="conf.type.list.${confInfo.confType}"/>
@@ -225,15 +234,15 @@ $(document).ready(function(){
          <c:choose>
          <c:when test="${CONF_STATUS_OPENING == confInfo.confStatus}">
 			<td height="32"><div align="center" class="STYLE21">--</div></td>
-	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');"  name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${confInfo.pcNum}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${confInfo.phoneNum}" >${confInfo.pcNum+confInfo.phoneNum}</div></td>
+	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');"  name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${confInfo.pcNum}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${confInfo.phoneNum}" ><a style="text-decoration: underline;" href="javascript:void(0);">${confInfo.pcNum+confInfo.phoneNum} ${LANG['system.conflist.confdetail.online']}</a></div></td>
       	 </c:when>
       	 <c:when test="${CONF_STATUS_FINISHED == confInfo.confStatus}">
             <td height="32"><div align="center" class="STYLE21"><fmt:formatDate value="${confInfo.endTime}" pattern="yyyy-MM-dd HH:mm"/></div></td>
-	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');" name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${terminalPcs[confInfo.id]}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${terminalPhones[confInfo.id]}" >${allTerminals[confInfo.id]}</div></td>
+	       	<td height="32" class="STYLE21" ><div style="cursor: pointer;" onclick="parent.showConflogs('${confInfo.id}');" name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${terminalPcs[confInfo.id]}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${terminalPhones[confInfo.id]}" ><a style="text-decoration: underline;" href="javascript:void(0);">${allTerminals[confInfo.id]} ${LANG['system.conflist.confdetail.members']}</a></div></td>
       	 </c:when>
        	 <c:otherwise>
             <td height="32"><div align="center" class="STYLE21"><fmt:formatDate value="${confInfo.endTime}" pattern="yyyy-MM-dd HH:mm"/></div></td>
-	       	<td height="32" class="STYLE21" ><div  name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${terminalPcs[confInfo.id]}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${terminalPhones[confInfo.id]}" >${allTerminals[confInfo.id]}</div></td>
+	       	<td height="32" class="STYLE21" ><div  name="attend_user" align="center"  title="${LANG['bizconf.jsp.admin.conf_list.res8']}:${terminalPcs[confInfo.id]}<br/>${LANG['bizconf.jsp.admin.conf_list.res9']}:${terminalPhones[confInfo.id]}" ><a style="text-decoration: underline;" href="javascript:void(0);">${allTerminals[confInfo.id]} ${LANG['system.conflist.confdetail.members']}</a></div></td>
        	 </c:otherwise>
 		</c:choose>
 <%--     martin modify here  <td height="32" class="STYLE21" ><div  name="attend_user" align="center"  ${divIdStr} title="PC:${terminalPcs[confInfo.id]}<br/>phonecall:${terminalPhones[confInfo.id]}" >0</div></td>--%>

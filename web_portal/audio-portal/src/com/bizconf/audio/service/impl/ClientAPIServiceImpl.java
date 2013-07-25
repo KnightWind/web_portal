@@ -19,7 +19,9 @@ import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.ConfLog;
 import com.bizconf.audio.entity.JoinRandom;
+import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.service.ClientAPIService;
 import com.bizconf.audio.service.ConfLogService;
 import com.bizconf.audio.service.ConfService;
@@ -65,6 +67,8 @@ public class ClientAPIServiceImpl extends BaseService implements
 
 	@Autowired
 	ConfService confService;
+	@Autowired
+	SiteLogic siteLogic;
 
 	@Autowired
 	ConfLogService confLogService;
@@ -131,6 +135,8 @@ public class ClientAPIServiceImpl extends BaseService implements
 			return null;
 		}
 		
+		
+		
 		StringBuilder params = new StringBuilder();
 		params.append("<ConfParam>");
 		params.append("<conf_id>" + confBase.getConfHwid() + "</conf_id>");
@@ -159,7 +165,7 @@ public class ClientAPIServiceImpl extends BaseService implements
 		//params.append("<server_ip>"+ string2Unicodes(ConfConstant.SERVER_IP) + "</server_ip>");
 		params.append("<server_ip>"+ string2Unicodes(ipLocatorService.getMsServers(joinRandom.getClientIp())) + "</server_ip>");
 		params.append("<site_id>"+ConfConstant.CLUSTER_ID+"</site_id>");
-		params.append("<access_code></access_code>");
+		params.append("<access_code>"+ (ConfConstant.SYS_ENABLE_PHONE ? "01058214900" : "") +"</access_code>");  /////////////////电话接入 号
 		params.append("<conf_desp>" + confBase.getConfDesc() + "</conf_desp>");
 		params.append("<conf_key>" + confBase.getConfHwid() + "</conf_key>");
 		
@@ -173,16 +179,16 @@ public class ClientAPIServiceImpl extends BaseService implements
 		params.append("<layout_model>02</layout_model>");
 		params.append("<video_maxnum>" + confBase.getMaxVideo() + "</video_maxnum>");
 		params.append("<audio_maxnum>" + confBase.getMaxAudio() + "</audio_maxnum>");
-		params.append("<video_width>"+confBase.getDefaultDpi()+"</video_width>");//TODO:
-		params.append("<video_max_width>"+confBase.getMaxDpi()+"</video_max_width>");//TODO:
+		params.append("<video_width>"+(IntegerUtil.parseInteger(confBase.getDefaultDpi())+1)+"</video_width>");//TODO:
+		params.append("<video_max_width>"+(IntegerUtil.parseInteger(confBase.getMaxDpi())+1)+"</video_max_width>");//TODO:
 		params.append("<mcu_mode>0</mcu_mode>");
 		params.append("<ipad_video_enable>0</ipad_video_enable>");
 		params.append("<conf_status>" + confBase.getConfStatus() + "</conf_status>");
 		params.append("<max_time>" + confBase.getDuration() + "</max_time>");// 会议最大时长，分钟为单位
 		// ?
 		params.append("<crypt_key>"+ confBase.getCryptKey() +"</crypt_key>");
-		//
-		params.append("<mix_method>" + (ConfConstant.AUDIO_SERVER_MIX ? 2 : 1) + "</mix_method>");
+		//兼容老会议 - Chris Gao 2013/07/09
+		params.append("<mix_method>" + ((ConfConstant.AUDIO_SERVER_MIX && confBase.isAudioServerMixed()) ? 2 : 1) + "</mix_method>");///////////混音方式
 		//
 		params.append("<frame_len>" + 30 + "</frame_len>");
 		//
@@ -194,15 +200,16 @@ public class ClientAPIServiceImpl extends BaseService implements
 		params.append("<web_config>" + this.makeWebConfig(confBase) + "</web_config>");
 		// params.append("<roll_call>0</roll_call>");
 		// params.append("<h323_enable>0</h323_enable>");
-		params.append("<invite_type>01</invite_type>");//01邮件邀请，10电话邀请，11表示邮件和电话邀请都支持，00都不支持
+		params.append("<invite_type>"+ (ConfConstant.SYS_ENABLE_PHONE ? "11" : "01") +"</invite_type>");//01邮件邀请，10电话邀请，11表示邮件和电话邀请都支持，00都不支持
 		params.append("<phone_conf>");
 		/**
 		 * 0表示纯数据会议，1表示MRS混音下无电话的会议，2表示MRS混音下的有电话的会议，3表示智真会议
 		 */
-		params.append("<conf_type>"+ (ConfConstant.AUDIO_SERVER_MIX ? (confBase.hasPhoneFunc() ? 2 : 1) : 0) +"</conf_type>");
+//		params.append("<conf_type>"+ (ConfConstant.AUDIO_SERVER_MIX ? (confBase.hasPhoneFunc() ? 2 : 1) : 0) +"</conf_type>");  ////////////
+		params.append("<conf_type>"+ (confBase.hasPhoneFunc() ? 2 : 0) +"</conf_type>");
 		params.append("<max_phone_count>"+ confBase.getMaxUser() +"</max_phone_count>");
 		params.append("<pin>" + confBase.getConfHwid() + "</pin>");
-		params.append("<phone_conf_id></phone_conf_id>");
+		params.append("<phone_conf_id>"+ (ConfConstant.SYS_ENABLE_PHONE ? confBase.getConfHwid() : "") +"</phone_conf_id>");////////////与会议ID号相同
 		params.append("</phone_conf>");
 		params.append("<support_info></support_info>");
 		params.append("<other_param></other_param>");
@@ -211,27 +218,42 @@ public class ClientAPIServiceImpl extends BaseService implements
 		params.append("<chairman_secure_conf_num>" + Base64.encode(confBase.getCompereSecure(),"utf8") + "</chairman_secure_conf_num>");
 		params.append("<participant_secure_conf_num>" + confBase.getUserSecure() + "</participant_secure_conf_num>");
 		params.append("<microphoneStatus>"+getConfigByBitIndex(confBase.getFuncBits(),11)+"</microphoneStatus>");
-		//hardcode 1 for 29xx
-		params.append("<audio_mrs>null</audio_mrs>");//19:1 2; 29
+		//hardcode 1 for 29xx  
+		params.append("<audio_mrs>"+ (ConfConstant.SYS_ENABLE_PHONE ? 1 : "null") +"</audio_mrs>");//19:1 2; 29//////////////0:表示19系列，1：表示29系列
+		String siteSign=SiteIdentifyUtil.getCurrentBrand();
+		SiteBase childSiteBase=siteLogic.getVirtualSubSite(confBase.getCreateUser());
+		if(childSiteBase!=null){
+			siteSign=childSiteBase.getSiteSign();
+		}
+		childSiteBase=null;
 		// ?
-		params.append("<enterpriseId>"+ SiteIdentifyUtil.getCurrentBrand() +"</enterpriseId>");
+		params.append("<enterpriseId>"+ siteSign +"</enterpriseId>");
 		params.append("<audio_dscp>46</audio_dscp>");
 		params.append("<video_dscp>34</video_dscp>");
 		params.append("<data_dscp>34</data_dscp>");
-		params.append("<email>"+(joinRandom.getUserEmail() != null ? joinRandom.getUserEmail() : System.currentTimeMillis())+"</email>");
+		params.append("<email>"+(joinRandom.getUserEmail() != null ? joinRandom.getUserEmail() : "")+"</email>");
 		params.append("<host_open_video>1</host_open_video>");
-		params.append("<large_venue>0</large_venue>");
+		params.append("<large_venue>" + (ConfConstant.HUGE_MEETING_ENABLE ? 1 : 0) + "</large_venue>");
 		params.append("<mirage_driver>0</mirage_driver>");//屏幕共享方式:0、GDI方式 ；1、mirage_driver方式
 		params.append("<svn_password>123456</svn_password>");
-		params.append("<as_default_bitrate>102400</as_default_bitrate>");
-		params.append("<as_default_frame_time_interval>1000</as_default_frame_time_interval>");
+		params.append("<as_default_bitrate>16000</as_default_bitrate>");
+		
+		SiteBase siteBase=siteLogic.getSiteBaseById(confBase.getSiteId());
+		int timeInterval= (siteBase!=null)? siteBase.getFrameTimeInterval() : 1000;
+		params.append("<as_default_frame_time_interval>"+ timeInterval +"</as_default_frame_time_interval>");//
 		params.append("<as_default_jpeg_quality>25</as_default_jpeg_quality>");
+		params.append(" <conf_flowcontrol_enable>1</conf_flowcontrol_enable>");        // 是否启用平滑发送 
+		params.append(" <conf_flowcontrol_screen>256</conf_flowcontrol_screen>");    // 屏幕共享，单位 B，如果要提升屏幕共享观看者看到的速度，可以提升这个值的大小
+		params.append("  <conf_flowcontrol_cache>768</conf_flowcontrol_cache>");           // 文件传输，单位 B 
+		params.append("  <conf_flowcontrol_doc>768</conf_flowcontrol_doc>");               // 文档共享，单位 B 
+		params.append("  <as_default_key_frame_delay>5000</as_default_key_frame_delay>");  // 关键帧发送的间隔，单位ms，如果要提升屏幕共享观看者看到的速度，可以减小这个值的大小，这个值默认5000，暂时不可修改，后续更新版本后可以设置
+		params.append("  <media_share_max_birate>256</media_share_max_birate>"); //媒体共享的码流，单位kbps：
+		params.append("  <hostingMode>1</hostingMode>"); //服务器混音下,音频路数是否受限   ：0不受限制，1、受限制
+		
 		params.append("</ConfParam>");
 //
 //		boolean logStatus=confLogService.saveConfLog(getConfLogForStart(confBase,joinRandom));
 //		System.out.println("Strart conf  confLog Status="+logStatus);
-
-		
 		
 		return params.toString();
 	}
@@ -332,7 +354,18 @@ public class ClientAPIServiceImpl extends BaseService implements
 	private String makeWebConfig(ConfBase confBase) {
 		if (true) {
 			//return "1111110111111111111001101011110001";
-			return confBase.getClientConfig();
+			String webConfig = confBase.getClientConfig();
+			
+			char [] webConfigChars = webConfig.toCharArray();
+			webConfigChars[ConfConstant.CLIENT_CONFIG_RECONNECT_MENU] = '1';
+			webConfigChars[ConfConstant.CLIENT_CONFIG_CONF_LOCK] = '1';
+			
+			StringBuilder configs = new StringBuilder();
+			for (char c : webConfigChars) {
+				configs.append(c);
+			}
+			
+			return configs.toString();
 		}
 		char[] webConfigs = "0000000000000000000000000000000000".toCharArray();
 		webConfigs[1] = this.getConfigByBitIndex(confBase.getClientConfig(), 1)
@@ -616,4 +649,5 @@ public class ClientAPIServiceImpl extends BaseService implements
 		return retInfo;
 	}
 
+	
 }

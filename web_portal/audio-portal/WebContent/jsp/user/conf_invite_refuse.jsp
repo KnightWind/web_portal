@@ -7,12 +7,12 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/index.css?ver=${version}"/>
-<title>index</title>
+<title>${LANG['bizconf.jsp.conf_invite_recv.res4']}</title>
 
 </head>
 
-<body>
-<!--${LANG['bizconf.jsp.conf_invite_recv.res4']}-->
+<body style="overflow-y: hidden;">
+<!---->
 <div id="head">
   <div class="header_left"> <img class="yh_logo" src="${baseUrlStatic}/images/yh_logo.png" width="233" height="62" /></div>
 <form name="form" id="form">
@@ -53,14 +53,16 @@
             	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res10']}</td>
             	<td>${confBase.userSecure}</td>
             </tr>
+             <c:if test="${!empty confBase.publicConfPass}">
              <tr>
             	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res11']}</td>
             	<td>${confBase.publicConfPass}</td>
             </tr>
-             <tr>
-            	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res12']}</td>
-            	<td>010-00001111</td>
-            </tr>
+            </c:if>
+<!--             <tr>-->
+<!--            	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res12']}</td>-->
+<!--            	<td>010-00001111</td>-->
+<!--            </tr>-->
         </table>
     </div>
     <img class="jion_li" src="${baseUrlStatic}/images/jion_li.png" width="5" height="417" />

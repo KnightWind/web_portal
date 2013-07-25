@@ -11,6 +11,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
+<style type="text/css">
+*html table {
+	border-collapse: collapse;
+}
+
+*+html table {
+	border-collapse: collapse;
+}
+</style>
 <title>${LANG['bizconf.jsp.contacts_import_main.res1']}</title>
 <style></style>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
@@ -66,19 +75,18 @@ $(document).ready(function(){
 	          <p class="tit_b_invite">${LANG['bizconf.jsp.contacts_import_main.res4']}</p>
 	        </div>
 	        <div style=" background:#fff"><img class="toa_quick_invite" src="/static/images/min.jpg" width="730" height="1" /></div>
-	        <div class="First_Steps_top_invite" style=" background:#FFF;">
+	        <div class="First_Steps_top_invite" style=" background:#FFF;clear: both;height: 35px;">
 	          <div class="cluster"><a class="cluster_link cluster_active" href="javascript:;" style="margin-left:10px;" onclick="importByEnContacts();"><img src="/static/images/tongxl.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.contacts_import_main.res5']}&nbsp;&nbsp;</a></div>
 	          <div class="cluster"><a class="cluster_link" href="javascript:;" style="margin-left:10px;" onclick="importByTemplate();"><img src="/static/images/lianxiren.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.contacts_import_main.res6']}&nbsp;&nbsp;</a></div>
 	        </div>
-	        <div class="jianju"></div>
 	        <!--${LANG['bizconf.jsp.contacts_import_main.res7']}-->
-	        <div class="First_Steps_main_invite">
-	        	<iframe frameborder="0" width="100%" height="500px;" id="contactFrame" name="contactFrame" scrolling="no" src="/user/contact/showEnterpriseContacts"></iframe>
-	        </div>
-	        <!--${LANG['bizconf.jsp.contacts_import_main.res8']}-->
-	        <div align="center" class="First_Steps_bottom_s">
-	          <div class="but44"><span class="button_common"><a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a></span></div>
-	          <div class="but09"><span class="button_common"><a href="javascript:;" onclick="doImportContacts()"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />${LANG['bizconf.jsp.add_contacts.res15']}</a></span></div>
+	        <div class="First_Steps_main_invite" style="width: 100%;height: 495px;">
+	        	<iframe frameborder="0" width="100%" style="height: 440px;overflow-x: hidden;overflow-y: auto;" id="contactFrame" name="contactFrame" scrolling="yes" src="/user/contact/showEnterpriseContacts"></iframe>
+	        	<!--${LANG['bizconf.jsp.contacts_import_main.res8']}-->
+		        <div align="center" class="First_Steps_bottom_s">
+		          <div class="but44"><span class="button_common"><a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a></span></div>
+		          <div class="but09"><span class="button_common"><a href="javascript:;" onclick="doImportContacts()"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />${LANG['bizconf.jsp.add_contacts.res15']}</a></span></div>
+		        </div>
 	        </div>
       	</div>		
       <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->      

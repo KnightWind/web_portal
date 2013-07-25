@@ -190,4 +190,10 @@
 		<order-by></order-by>
 	</table>
 	
+	<table>
+		<entity>com.bizconf.audio.entity.UserSiteMap</entity>
+		<name>t_user_site_map</name>
+		<primary-key>id</primary-key>
+		<order-by></order-by>
+	</table>
 </tables>

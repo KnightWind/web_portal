@@ -38,7 +38,7 @@ public class MyfnTag {
 		long gapTime = expireTime-nowTime;
 		//System.out.println("expiredate"+date+"expireTime: =="+expireTime+"nowTime"+nowTime+"gapTime =="+gapTime);
 		//gapTime<0 说明已过期
-		if(gapTime<(7*24*3600000l) && gapTime>0){
+		if(gapTime<(7*24*3600000l) && gapTime>-24*3600000l){
 			return true;
 		}
 		return false;

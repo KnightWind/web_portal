@@ -263,5 +263,8 @@ public interface EmailService {
 	public boolean sendSiteRmindEmail(SiteBase site);
 	
 	
+	public boolean sendEmailForSiteRemind(SiteBase siteBase) throws Exception;
+	
+	
 	public boolean sendSiteExpiredEmail(SiteBase site);
 }

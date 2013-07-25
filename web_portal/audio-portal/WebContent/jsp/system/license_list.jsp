@@ -77,7 +77,7 @@
 	        	<fmt:formatDate var="licExpireDate"  value="${lic.expireDate}" pattern="yyyy-MM-dd"/>
 	        	<input readonly="readonly" class="text_03" id="expireDate${lic.id}" type="text" value="${licExpireDate }" bak="${licExpireDate}"/>
 	        </td>
-	        <td width="210" align="center">
+        <td width="210" align="center"><%--	生效标志：${lic.effeFlag} 失效标志：${lic.expireFlag}--%>
 	         <c:choose>
 					<c:when  test="${lic.effeFlag eq '0' and lic.expireFlag eq '0'}">
 						<a id="modify${lic.id}" href="javascript:;" class="change_btn" onclick="toUpdate(${lic.id});" >${LANG['bizconf.jsp.system.email_template_list.res7']}</a> 
@@ -103,19 +103,22 @@
     </c:forEach>
    </c:if>
 </table> </div>
-	<a href="javascript:closeDialog();" style="margin:15px;display:inline-block;" class="Public_button" onclick="closeDialog();">${LANG['bizconf.jsp.admin.viewNotice.res4']}</a>
+	<a href="javascript:closeDialog();" style="margin:15px;display:inline-block;" class="Public_button" onclick="closeDialog();">${LANG['bizconf.jsp.admin.createOrg.ok']}</a>
 	<c:if test="${userId != '' && userId > 0}">
 		<input class="b_c" name="sendEmail" type="checkbox" value=""/><span class="b_p">${LANG['bizconf.jsp.system.license_list.res6']}</span>
 	</c:if>	 
+	<div style="width: 40%; float: right;">
+		<span>当前可使用最大方数：${licNum}</span>
+	</div>
 </div>
 </body>
 </html>
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	$("input[name=effeDate]" ).datepicker({
+	$("#effeDate" ).datepicker({
 		minDate: +0,
-		maxDate:new Date(${site.expireDate.time}),
+		maxDate:new Date("${site.expireDate.time}"),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -124,9 +127,9 @@ $(document).ready(function(){
 		buttonImageOnly: true
 	});
 	
-	$("input[name=expireDate]" ).datepicker({
+	$("#expireDate" ).datepicker({
 		minDate: +0,
-		maxDate:new Date(${site.expireDate.time}),
+		maxDate:new Date("${site.expireDate.time}"),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -161,7 +164,7 @@ function toUpdate(licId){
 	$("#licNum"+licId).addClass("showborder").attr("readonly",false);
 	$("#effeDate"+licId).addClass("showborder").datepicker({
 		minDate: +0,
-		maxDate:new Date(${site.expireDate.time}),
+		maxDate:new Date("${site.expireDate.time}"),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -172,7 +175,7 @@ function toUpdate(licId){
 	
 	$("#expireDate"+licId).addClass("showborder").datepicker({
 		minDate: +0,
-		maxDate:new Date(${site.expireDate.time}),
+		maxDate:new Date("${site.expireDate.time}"),
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
@@ -187,11 +190,13 @@ function checkForm(licid){
 	if(licid){
 		count = $("#licNum"+licid).val();
 	}
+	var licNum = 0 + ${licNum}+count;
 	if(!count){
 		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res7']}");
 		return false;
 	}
-	if(count && (count==0 || count<-5000 || count>5000) ){
+	
+	if(count && (count==0 || count<-5000 || count>5000) || licNum<2){
 		parent.errorDialog("${LANG['bizconf.jsp.system.license_list.res8']}");
 		return false;
 	}
@@ -228,7 +233,7 @@ function stroeData(licid){
 	if(checkForm(licid)){
 		$("#h_id").val(licid);
 		$("#h_licNum").val($("#licNum"+licid).val());
-		$("#h_effeDate").val($("#effeDate"+licid).val()+" 00:00:00");
+		$("#h_effeDate").val($("#effeDate"+licid).val()+" 00:00:10");
 		$("#h_expireDate").val($("#expireDate"+licid).val()+" 23:59:59");
 	 	hidsave.submit();	
 	}
@@ -236,7 +241,7 @@ function stroeData(licid){
 
 function addLic(){
 	if(checkForm()){
-		$("input[name=effeDate]").val($("input[name=effeDate]").val()+" 00:00:00");
+		$("input[name=effeDate]").val($("input[name=effeDate]").val()+" 00:00:10");
 		$("input[name=expireDate]").val($("input[name=expireDate]").val()+" 23:59:59");
 		save.submit();	
 	}

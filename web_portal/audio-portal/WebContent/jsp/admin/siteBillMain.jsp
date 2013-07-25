@@ -1,9 +1,5 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -55,7 +51,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <div class="meeting_top">
     <ul>
       <li class="meau_01 switchList"><span class="meau_btn"><a href="javascript:;" class="activeMeau-left activeMeau-right"><img src="${baseUrlStatic}/images/icon_a.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:15px;"  />${LANG['bizconf.jsp.admin.siteBillMain.res1']}</a></span></li>
-      <li class="meau_02 switchList"><span class="meau_btn"><a href="javascript:;"><img src="${baseUrlStatic}/images/icon_b.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:15px;"  />${LANG['bizconf.jsp.admin.siteBillMain.res2']}</a></span></li>
+<%--       <li class="meau_02 switchList"><span class="meau_btn"><a href="javascript:;"><img src="${baseUrlStatic}/images/icon_b.png" width="25" height="23" align="absmiddle" style=" margin-right:10px; margin-left:15px;"  />${LANG['bizconf.jsp.admin.siteBillMain.res2']}</a></span></li> --%>
     </ul>
   </div>
   <div class="meeting_main" >

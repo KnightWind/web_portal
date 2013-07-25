@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.bizconf.audio.entity.EmpowerConfig;
 import com.bizconf.audio.entity.TimeZoneEntity;
 import com.bizconf.audio.util.IntegerUtil;
 
@@ -181,7 +180,9 @@ public class SiteConstant {
 //		{"12","fileFlag","0"},
 //		{"13","questionFlag","0"},
 		{"14","videoNumber","0","0"},
-		{"15","audioNumber","0","0"}
+		{"15","audioNumber","0","0"},
+		{"16","dpiFlag","0","0"},
+		{"17","dpiNumber","0","0"}
 	};
 	
 	public static final List<String[]> EMPOWER_CODE_FIELD_LIST =Arrays.asList(EMPOWER_CODE_FIELD_ARRAY);
@@ -212,6 +213,8 @@ public class SiteConstant {
 	public static final Integer EMPOWER_CODE_QUESTIONFLAG= 13;//问卷调查
 	public static final Integer EMPOWER_CODE_VIDEONUMBER= 14;//视频路数
 	public static final Integer EMPOWER_CODE_AUDIONUMBER= 15;//音频路数
+	public static final Integer EMPOWER_CODE_DPI= 16;//分辨率最大数
+	public static final Integer EMPOWER_CODE_DPINUMBER= 17;//分辨率最大数
 	
 	//public static final EmpowerConfig EMPOWER_CONFIG_DEFAULT=new EmpowerConfig();
 	
@@ -242,14 +245,50 @@ public class SiteConstant {
 	public static final Integer SEND_SITE_EXP_REMIND = 1; 
 	
 	//发送站点过期邮件值
-	public static final Integer SEND_SITE_EXP = 1; 
+	public static final Integer SEND_SITE_EXP = 2; 
 	
 	//提前提醒日期
 	public static final Integer BEFORE_SITE_EXP_REMIND_DATES = 30; 
+	
+
+	public static final Integer[] SITE_REMIND_DAYS=new Integer[]{30,15,7,3,1};
 	
 	//创建站点时license最小值
 	public static final int SITE_CREATE_MIN_LICENSE = 2;
 	//创建站点时license最大值
 	public static final int SITE_CREATE_MAX_LICENSE = 5000;
+	
+	//创建站点时最大并发会场数最小值
+	public static final int SITE_CREATE_MIN_SYNCNUM = 0;
+	//创建站点时最大并发会场数最大值
+	public static final int SITE_CREATE_MAX_SYNCNUM = 50;
+	
+	
+	
+	//系统保留站点标识
+	public static final String[] SYSTEM_SITE_SIGN = new String[]{
+		"www", 
+		"admin", 
+		"administrator"
+	};
+	
+	//用户偏好设置中的每页显示条数
+	public static final Integer [] USER_FAVOR_PAGE_SIZE_ARRAY = new Integer[]{
+		10,
+		15,
+		30,
+		50,
+		100
+	};
+	
+	public static final List<Integer> USER_FAVOR_PAGE_SIZE = Arrays.asList(USER_FAVOR_PAGE_SIZE_ARRAY);
+	
+	
+	//用户偏好设置中的语言版本
+	public static final String[] USER_FAVOR_LANGUAGE_ARRAY = new String []{
+		"zh-cn",
+		"en-us"
+	};
+	public static final List<String> USER_FAVOR_LANGUAGE = Arrays.asList(USER_FAVOR_LANGUAGE_ARRAY);
 	
 }

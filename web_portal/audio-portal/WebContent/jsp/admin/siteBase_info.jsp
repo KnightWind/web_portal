@@ -29,6 +29,7 @@ $(function() {
 		},
 		custom: {
 			"checkSiteName": "${LANG['system.site.list.checkSiteName.custom']}",
+			"checkChName": "${LANG['system.site.list.checkChName.custom']}",
 			"checkEnName": "${LANG['system.site.list.checkEnName.custom']}"
 		}
 	};		
@@ -40,16 +41,20 @@ $(function() {
     	return this.optional(element) || /^[a-zA-Z0-9_\s\-&,.]{1,64}$/.test(value);
  	}, ruleString.custom.checkEnName);
 	
+	$.validator.addMethod("notChName", function(value, element) {       
+    	return this.optional(element) || /^[^\u4e00-\u9fa5]+$/.test(value);
+ 	}, ruleString.custom.checkChName);
+	
 	var v = $("#profileForm").validate({
 		onkeyup: false,
 		errorClass: "warning",
 		rules: {
-            'siteName' : {required:true, rangelength: [4, 32], checkSiteName:true},
-            'enName' : {required:true, rangelength: [1, 64], checkEnName:true}
+            'siteName' : {required:true, rangelength: [1, 32]},
+            'enName' : {required:true, rangelength: [1, 64], notChName:true}
         },
         messages: {
-            'siteName' : {required:ruleString.required.siteName, rangelength: ruleString.rangelength.siteName, checkSiteName:ruleString.custom.checkSiteName},
-            'enName' : {required:ruleString.required.siteName, rangelength: ruleString.rangelength.enName, checkEnName:ruleString.custom.checkEnName}
+            'siteName' : {required:ruleString.required.siteName, rangelength: ruleString.rangelength.siteName},
+            'enName' : {required:ruleString.required.siteName, rangelength: ruleString.rangelength.enName}
         },
         success: function (label) {
             $(label).each(function () {
@@ -71,16 +76,50 @@ $(function() {
 	        	}
         	}
         }
-	});	
+	});
+	
+	$("input[name='backBanner']").change(function() {
+		var value = $(this).val();
+		var checked = $(this).attr("checked");
+		if(checked=="checked"){
+			$("#siteBanner").val("");
+		} else {
+			$("#siteBanner").val(value);
+		}
+		$.uniform.update();
+	});
+	
+	$("input[name='backLogo']").change(function() {
+		var value = $(this).val();
+		var checked = $(this).attr("checked");
+		if(checked=="checked"){
+			$("#siteLogo").val("");
+		} else {
+			$("#siteLogo").val(value);
+		}
+		$.uniform.update();
+	});
 });
 </script>
 <script type="text/javascript">
 function uploadCallback(url){
 	$("#previewLoadImg").hide();
-	$("#previewImg").attr("src", "/uploadfiles/site_logo/" + url);
 	$("#frameImg").attr("src", "/jsp/common/upload_common.jsp");
-	$("#siteLogo").val("/uploadfiles/site_logo/" + url);
-	
+	if(url && url.length>0){
+		$("#previewImg").attr("src", "/uploadfiles/site_logo/" + url);
+		$("#siteLogo").val("/uploadfiles/site_logo/" + url);
+		$("#backLogo").val("/uploadfiles/site_logo/" + url);
+	}
+}
+
+function uploadCallbackBanner(url) {
+	$("#loadImgBanner").hide();
+	$("#frameImgBanner").attr("src", "/jsp/common/upload_common.jsp?type=Banner");
+	if(url && url.length>0){
+		$("#bannerImg").attr("src", "/uploadfiles/site_logo/" + url);
+		$("#siteBanner").val("/uploadfiles/site_logo/" + url);
+		$("#backBanner").val("/uploadfiles/site_logo/" + url);
+	}
 }
 </script>
 </head>
@@ -90,7 +129,7 @@ function uploadCallback(url){
    	<div class="y_emile_01_top"><span>${LANG['system.site.list.CompanyInfo']}：</span></div>
    	<cc:siteList var="TIMEZONE_WITH_CITY_LIST"/>
    	<form name="profileForm" id="profileForm" action="/admin/site/update" method="post">
-		<table class="form-table" style="margin-left:108px">
+		<table class="form-table" style="margin-left:60px">
 		  <tr>
 		    <td align="right">
 		    	${LANG['system.site.list.CompanyName']}
@@ -123,36 +162,71 @@ function uploadCallback(url){
         		</select>
 		    </td>
 		  </tr>
-		  <tr>
+		  <tr style="display:${(!empty siteBase.siteDiy && siteBase.siteDiy==1) ? '':'none'}">
 		    <td align="right">
 		    	${LANG['system.site.list.CompanyLogo']}
 		    </td>
 		    <td class="form-table-td">
 		    	<div style="position: relative;">
 		    		<iframe style="float: left;" id="frameImg" src="/jsp/common/upload_common.jsp" width="230" height="25" frameborder="0" scrolling="no"></iframe>
-			    	<img id="previewLoadImg" src="/static/images/loading.gif">
 	            	<div style="color: red; float: left; height: 25px; line-height: 25px;">${LANG['system.site.list.imageLimit']}</div>
 	            	<div style="clear: both;"></div>
 		    	</div>
 		    </td>
 		  </tr>
-		  <tr>
+		  <tr style="display:${(!empty siteBase.siteDiy && siteBase.siteDiy==1) ? '':'none'}">
 		    <td align="right">
 		    	
 		    </td>
-		    <td style="height: 60px;">
-		    	<c:choose>
-				   <c:when test="${!empty siteBase.siteLogo}">
-				   <img id="previewImg" src="${siteBase.siteLogo}" style="height:48px;margin-left:10px;"  alt="${siteBase.siteLogo}"/>
-				   </c:when>
-				   <c:otherwise>
-					<img id="previewImg" src="/static/images/logo.png" style="height:48px;margin-left:10px;"  alt=""/>		
-				   </c:otherwise>
-				</c:choose>      
-				<img id="fileLoading" src="/static/images/loading.gif" style="width:32px;height:32px;position: absolute; left: 210px;top:0px;display: none;">
-				<input id="siteLogo" name="siteLogo" type="hidden" value="${siteBase.siteLogo}"/> 
+		    <td class="form-table-td">
+		    	<div style="height: 60px;position: relative;">
+		    		<c:choose>
+					   <c:when test="${!empty siteBase.siteLogo}">
+					   <img id="previewImg" src="${siteBase.siteLogo}" style="height:48px;"  alt="${siteBase.siteLogo}"/>
+					   </c:when>
+					   <c:otherwise>
+						<img id="previewImg" src="/static/images/logo.png" style="height:48px;"  alt=""/>		
+					   </c:otherwise>
+					</c:choose>      
+					<img id="previewLoadImg" src="/static/images/loading.gif" style="display: none;">
+					<input id="siteLogo" name="siteLogo" type="hidden" value="${siteBase.siteLogo}"/>
+		    	</div>
+		    	<div style="height: 25px; line-height: 25px;"><input id="backLogo" name="backLogo" type="checkbox" value=""/>${LANG['bizconf.jsp.system.logo.reset']}</div>
 		    </td>
-		  </tr>		  		  
+		  </tr>
+		  
+		  <tr style="display:${(!empty siteBase.siteDiy && siteBase.siteDiy==1) ? '':'none'}">
+		    <td align="right">
+		    	${LANG['bizconf.jsp.system.banner.image']}
+		    </td>
+		    <td class="form-table-td">
+		    	<div style="position: relative;">
+		    		<iframe style="float: left;" id="frameImgBanner" src="/jsp/common/upload_common.jsp?type=Banner" width="230" height="25" frameborder="0" scrolling="no"></iframe>
+	            	<div style="color:red;float: left; height: 25px; line-height: 25px;">${LANG['bizconf.jsp.system.banner.support']}</div>
+	            	<div style="clear: both;"></div>
+		    	</div>
+		    </td>
+		  </tr>
+		  <tr style="display:${(!empty siteBase.siteDiy && siteBase.siteDiy==1) ? '':'none'}">
+		    <td align="right">
+		    	
+		    </td>
+		    <td class="form-table-td">
+		    	<div style="height: 60px;position: relative;width: 590px;overflow: hidden;">
+		    		<c:choose>
+					   <c:when test="${!empty siteBase.siteBanner}">
+					   <img id="bannerImg" src="${siteBase.siteBanner}" style="height:48px;"  alt="${siteBase.siteBanner}"/>
+					   </c:when>
+					   <c:otherwise>
+						<img id="bannerImg" src="/static/images/logo_d_s.png" style="height:48px;"  alt=""/>		
+					   </c:otherwise>
+					</c:choose>
+					<img id="loadImgBanner" src="/static/images/loading.gif" style="display: none;height: 32px;left: 20px;position: absolute;top: 5px;width: 32px;">      
+					<input id="siteBanner" name="siteBanner" type="hidden" value="${siteBase.siteBanner}"/>
+		    	</div>
+		    	<div style="height: 25px; line-height: 25px;"><input id="backBanner" name="backBanner" type="checkbox" value=""/>${LANG['bizconf.jsp.system.banner.reset']}</div>
+		    </td>
+		  </tr>
 		</table>    	
    		<div>
    			<input  class="skipThese" name="emile_button" id="y_emile_button" type="submit"  value="${LANG['system.submit']}" />
@@ -192,6 +266,7 @@ function uploadCallback(url){
         	<cc:siteList var="SITE_CHARGEMODE_NAMEHOST"/>
         	<cc:siteList var="SITE_CHARGEMODE_ACTIVEUSER"/>
         	<cc:siteList var="SITE_CHARGEMODE_SEATES"/>
+        	<cc:siteList var="SITE_CHARGEMODE_TIME"/>
 			<c:choose>
 			 <c:when test="${SITE_CHARGEMODE_NAMEHOST == siteBase.chargeMode }">
                 <li><span>${LANG['system.site.list.chargeMode']}：</span>${LANG['system.site.list.chargeMode.Name Host']}</li>
@@ -201,6 +276,9 @@ function uploadCallback(url){
 			 </c:when>
 			 <c:when test="${SITE_CHARGEMODE_SEATES == siteBase.chargeMode }">
                 <li><span>${LANG['system.site.list.chargeMode']}：</span>${LANG['system.site.list.chargeMode.Seats']}</li>
+			 </c:when>
+			 <c:when test="${SITE_CHARGEMODE_TIME == siteBase.chargeMode }">
+                <li><span>${LANG['system.site.list.chargeMode']}：</span>${LANG['system.site.list.chargeMode.time']}</li>
 			 </c:when>
  	       	 <c:otherwise>
 	            <li><span>${LANG['system.site.list.chargeMode']}：</span>--</li>

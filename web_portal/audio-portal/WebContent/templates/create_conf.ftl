@@ -92,19 +92,44 @@
       </td>
     </tr>
     </#if>
-    <!--<tr>
-      <td>
-        <h2 style="margin:0; padding:0; border:0; color:#333; font-size:12px; margin-left:65px; margin-top:18px; ">电话会议接入号：</h2>
-      </td>
-    </tr>
+    <#if conf.confType==1 || conf.confType==3>
+    <tr>
+					<td>
+									<h2 style="margin:0;padding:0;border:0;color:#333;font-size:12px;margin-left:65px;margin-top:18px;">
+										此会议提供电话功能，您可以拨打如下电话号码，加入会议：
+									</h2>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table cellspacing=0 style="margin:18px 0 0 65px;font-size:12px;border:1px solid #C1C1C1;">
+										<tr bgcolor="#004d9e">
+											<td align="center" style="width:120px;color:#FFFFFF;padding:5px 0px;border-right:1px solid #C1C1C1;">国家</td>
+											<td align="center" style="width:150px;color:#FFFFFF;padding:5px 0px;border-right:1px solid #C1C1C1;">号码类型</td>
+											<td align="center" style="width:150px;color:#FFFFFF;padding:5px 0px;">号码</td>
+										</tr>
+										<tr>
+											<td align="center" style="padding:5px 0px;border-right:1px solid #C1C1C1;border-bottom:1px solid #C1C1C1;">全球</td>
+											<td align="center" style="padding:5px 0px;border-right:1px solid #C1C1C1;border-bottom:1px solid #C1C1C1;">直拨号</td>
+											<td align="center" style="padding:5px 0px;border-bottom:1px solid #C1C1C1;">${accessNumber1!'8621 6026 4000'}</td>
+										</tr>
+										<tr>
+											<td align="center" style="padding:5px 0px;border-right:1px solid #C1C1C1;border-bottom:1px solid #C1C1C1;">中国</td>
+											<td align="center" style="padding:5px 0px;border-right:1px solid #C1C1C1;border-bottom:1px solid #C1C1C1;">国内免费</td>
+											<td align="center" style="padding:5px 0px;border-bottom:1px solid #C1C1C1;">${accessNumber2!'800 870 1125'}</td>
+										</tr>
+										<tr>
+											<td align="center" style="padding:5px 0px;border-right:1px solid #C1C1C1;">中国</td>
+											<td align="center" style="padding:5px 0px;border-right:1px solid #C1C1C1;">本地付费</td>
+											<td align="center" style="padding:5px 0px;">${accessNumber3!'400 658 1125'}</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+    </#if>
     <tr>
       <td>
-        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-bottom:25px;  ">华为项目会议</p>
-      </td>
-    </tr>-->
-    <tr>
-      <td>
-        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-bottom:20px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'http://www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服。</p>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-bottom:20px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服:400 082 6161</p>
       </td>
     </tr>
   </table>

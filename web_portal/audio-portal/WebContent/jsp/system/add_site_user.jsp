@@ -21,16 +21,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js"></SCRIPT>
 	<script type="text/javascript">
 	$(document).ready(function(){
-		
+		var autoFlag = "${siteConfig.autoFlag}";
 		$("input[name='autoFlag']").attr("disabled", "disabled");
 		var checked = $("input[name='phoneFlag']").attr("checked");
-		if(checked=="checked"){
+		if(checked=="checked" && autoFlag != 0){
 			$("input[name='autoFlag']").removeAttr("disabled");
 		}
 		$("input[name='phoneFlag']").change(function() {
 			var value = $(this).val();
 			var checked = $(this).attr("checked");
-			if(checked=="checked"){
+			if(checked=="checked" && autoFlag != 0){
 				$("input[name='autoFlag']").removeAttr("disabled");
 			} else {
 				$("input[name='autoFlag']").attr("disabled", "disabled");
@@ -38,6 +38,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			}
 			$.uniform.update();
 		});
+		
 		
 		
 		$('#saveUserForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
@@ -80,7 +81,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			return value=="" || (value != ""&&value.indexOf(" ") < 0 );
 	 	}, "${LANG['bizconf.jsp.admin.add_site_user.res2']}");
 		$.validator.addMethod("checkLoginName", function(value, element) {       
-	    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+	    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
 	 	}, ruleString.custom.checkLoginName);
 		$.validator.addMethod("checkUserName", function(value, element) {       
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&]{1,32}$/.test(value);
@@ -95,7 +96,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			1334567890, 031-3145678-123, 010-11111111, (+86)010-13901691-123
 		*/
 		$.validator.addMethod("checkMobile", function(value, element) {       
-	    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
+	    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
 	 	}, ruleString.custom.checkMobile);
 		var v = $("#saveUserForm").validate({
 			onkeyup: false,
@@ -195,10 +196,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body onload="loaded()">
 <form id="saveUserForm" action="" method="post">
         		<input type="hidden" name="id" value="${user.id}"/>
-<table border="0" cellpadding="0" cellspacing="0" class="host_main" style="margin-top: 6px;">
+<table border="0" cellpadding="0" cellspacing="0" class="host_main" style="margin-top: 25px;">
 	<tr>
     	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</td>
-        <td class="host_right"><input id="loginName" type="text" name="loginName" value="${user.loginName}"/></td>
+        <td class="host_right"><input <c:if test="${not empty user}">readonly="readonly" style='border:0px;'</c:if> id="loginName" type="text" name="loginName" value="${user.loginName}"/></td>
     </tr>
     <tr>
     	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.user_info.res3']}</td>
@@ -227,7 +228,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	<td class="host_left" align="right"><font color="red">*</font>${LANG['bizconf.jsp.admin.edit_userbase.res6']}</td>
         <td class="host_checkbox">
         	<input name="phoneFlag" type="checkbox" value="1" <c:if test="${config.phoneFlag eq 1 and siteConfig.phoneFlag eq 1}">checked</c:if> value="1" name="phoneFlag"  <c:if test="${siteConfig.phoneFlag eq 0}">disabled="disabled"</c:if> />${LANG['bizconf.jsp.admin.conf_list.res9']}
-        	<input type="checkbox" value="1" name="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if>   <c:if test="${siteConfig.autoFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res7']}
+        	<input type="checkbox" value="1" name="autoFlag" id="autoFlag" <c:if test="${config.autoFlag eq 1 and siteConfig.autoFlag eq 1}">checked</c:if>   <c:if test="${siteConfig.autoFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res7']}
         	<input type="checkbox" value="1" name="shareMediaFlag" <c:if test="${config.shareMediaFlag eq 1 and siteConfig.shareMediaFlag eq 1}">checked</c:if>  <c:if test="${siteConfig.shareMediaFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res8']}
         	<input type="checkbox" value="1" name="recordFlag" <c:if test="${config.recordFlag eq 1 and siteConfig.recordFlag eq 1}">checked</c:if>  <c:if test="${siteConfig.recordFlag eq 0}">disabled="disabled"</c:if>/>${LANG['bizconf.jsp.admin.edit_userbase.res9']}
         </td>
@@ -242,7 +243,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     </tr>
     <tr>
     	<td class="host_left" align="right" valign="top" colspan="1" rowspan="3" ><span style=" padding-top:5px; display:block">${LANG['bizconf.jsp.admin.createOrg.res3']}</span></td>
-        <td class="host_right"><textarea id="remark" name="remark"  cols="1" rows="3"  style=" width:330px; height:60px; margin-top:5px; ">${user.remark }</textarea></td>
+        <td class="host_right"><textarea id="remark" name="remark"  cols="1" rows="3"  style=" width:330px; height:60px; margin-top:5px;border: 1px solid #CCCCCC ">${user.remark }</textarea></td>
     </tr>
 </table>
 <input type="submit" class="summit_btn Public_button" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}"><a class="close_btn Public_button" href="#" onclick="closeDiaglog();">${LANG['bizconf.jsp.admin.createOrg.res4']}</a>

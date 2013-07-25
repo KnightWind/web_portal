@@ -874,18 +874,24 @@ position:relative;
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_top_left.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_left.png', sizingMethod='scale');
 	float:left;
 }
 .add20_top_center {
 	width:660px;
 	height:12px;
 	background:url(/static/images/add_top_center.png) left top repeat-x;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_center.png', sizingMethod='scale');
 	float:left;
 }
 .add20_top_right {
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_top_right.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_right.png', sizingMethod='scale');
 	float:right;
 }
 /*中部*/
@@ -893,6 +899,8 @@ position:relative;
 	width:12px;
 	height:220px;
 	background:url(/static/images/add_center_left.png) left top repeat-y;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_center_left.png', sizingMethod='scale');
 	float:left;
 }
 .add20_center_center {
@@ -905,6 +913,8 @@ position:relative;
 	width:12px;
 	height:220px;
 	background:url(/static/images/add_center_right.png) left top repeat-y;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_center_right.png', sizingMethod='scale');
 	float:right;
 }
 /*下部*/
@@ -912,18 +922,24 @@ position:relative;
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_bottom_left.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_left.png', sizingMethod='scale');
 	float:left;
 }
 .add20_bottom_center {
 	width:660px;
 	height:12px;
 	background:url(/static/images/add_bottom_center.png) left top repeat-x;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_center.png', sizingMethod='scale');
 	float:left;
 }
 .add20_bottom_right {
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_bottom_right.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_right.png', sizingMethod='scale');
 	float:right;
 }
 /*邀请人列表*/
@@ -937,18 +953,24 @@ position:relative;
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_top_left.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_left.png', sizingMethod='scale');	
 	float:left;
 }
 .add21_top_center {
 	width:600px;
 	height:12px;
 	background:url(/static/images/add_top_center.png) left top repeat-x;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_center.png', sizingMethod='scale');	
 	float:left;
 }
 .add21_top_right {
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_top_right.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_right.png', sizingMethod='scale');	
 	float:right;
 }
 /*中部*/
@@ -956,6 +978,8 @@ position:relative;
 	width:12px;
 	height:480px;
 	background:url(/static/images/add_center_left.png) left top repeat-y;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_center_left.png', sizingMethod='scale');	
 	float:left;
 }
 .add21_center_center {
@@ -968,6 +992,8 @@ position:relative;
 	width:12px;
 	height:480px;
 	background:url(/static/images/add_center_right.png) left top repeat-y;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_center_right.png', sizingMethod='scale');	
 	float:right;
 }
 /*下部*/
@@ -975,18 +1001,24 @@ position:relative;
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_bottom_left.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_left.png', sizingMethod='scale');	
 	float:left;
 }
 .add21_bottom_center {
 	width:600px;
 	height:12px;
 	background:url(/static/images/add_bottom_center.png) left top repeat-x;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_center.png', sizingMethod='scale');	
 	float:left;
 }
 .add21_bottom_right {
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_bottom_right.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_right.png', sizingMethod='scale');	
 	float:right;
 }
 /*光效*/
@@ -1071,18 +1103,24 @@ position:relative;
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_top_left.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_left.png', sizingMethod='scale');	
 	float:left;
 }
 .add06_top_center {
 	width:780px;
 	height:12px;
 	background:url(/static/images/add_top_center.png) left top repeat-x;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_center.png', sizingMethod='scale');	
 	float:left;
 }
 .add06_top_right {
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_top_right.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_top_right.png', sizingMethod='scale');	
 	float:right;
 }
 /*中部*/
@@ -1090,6 +1128,8 @@ position:relative;
 	width:12px;
 	height:560px;
 	background:url(/static/images/add_center_left.png) left top repeat-y;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_center_left.png', sizingMethod='scale');	
 	float:left;
 }
 .add06_center_center {
@@ -1102,6 +1142,8 @@ position:relative;
 	width:12px;
 	height:560px;
 	background:url(/static/images/add_center_right.png) left top repeat-y;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_center_right.png', sizingMethod='scale');	
 	float:right;
 }
 /*下部*/
@@ -1109,17 +1151,23 @@ position:relative;
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_bottom_left.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_left.png', sizingMethod='scale');	
 	float:left;
 }
 .add06_bottom_center {
 	width:780px;
 	height:12px;
 	background:url(/static/images/add_bottom_center.png) left top repeat-x;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_center.png', sizingMethod='scale');	
 	float:left;
 }
 .add06_bottom_right {
 	width:12px;
 	height:12px;
 	background:url(/static/images/add_bottom_right.png) left top no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/add_bottom_right.png', sizingMethod='scale');	
 	float:right;
 }

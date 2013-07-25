@@ -57,7 +57,7 @@ public class BillingController extends BaseController {
 	@AsController(path = "sysBillList")
 	public Object sysBillList(@CParam("keyword") String keyword, 
 			@CParam("pageNo")Integer pageNo,@CParam("year")String year,
-			@CParam("month")String month, HttpServletRequest request){
+		@CParam("month")String month, HttpServletRequest request){
 		
 		Date startDate = DateUtil.getMonthStratDate(year, month, 0);
 		Date endDate = new Date(DateUtil.getMonthEndDate(startDate).getTime()-1000l);
@@ -75,6 +75,7 @@ public class BillingController extends BaseController {
 			request.setAttribute("siteMap", siteMap);
 		}
 		request.setAttribute("pageModel", page);
+		request.setAttribute("curryear", new Date().getYear()+1900);
 		return new ActionForward.Forward("/jsp/system/mybilling_list.jsp");
 	}
 	
@@ -98,13 +99,15 @@ public class BillingController extends BaseController {
 			
 			request.setAttribute("startDate", startDate);
 			request.setAttribute("endDate", endDate);
-			//billingService.genMonthyTotalFee(startDate,endDate);
 			UserBase user = userService.getCurrentSiteAdmin(request);
-			SiteBase site = siteService.getSiteBaseById(user.getSiteId());
-			
-			request.setAttribute("site", site);
-			PageBean<BizBilling> page = billingService.getSiteBillingPage(pageNo, ConstantUtil.PAGESIZE_DEFAULT, site, startDate, endDate, null);
-			request.setAttribute("pageModel", page);
+			if(user!=null){
+				SiteBase site = siteService.getSiteBaseById(user.getSiteId());
+				
+				request.setAttribute("site", site);
+				PageBean<BizBilling> page = billingService.getSiteBillingPage(pageNo, ConstantUtil.PAGESIZE_DEFAULT, site, startDate, endDate, null);
+				request.setAttribute("pageModel", page);
+			}
+			request.setAttribute("curryear", new Date().getYear()+1900);
 			return new ActionForward.Forward("/jsp/admin/mybilling_list.jsp");
 	}
 	
@@ -127,6 +130,7 @@ public class BillingController extends BaseController {
 			UserBase user = userService.getCurrentUser(request);
 			SiteBase site = siteService.getSiteBaseById(user.getSiteId());
 			
+			int curryear = new Date().getYear();
 //			billingService.genMonthyTotalFee(startDate,endDate);	
 			//显示站点当月账单
 			
@@ -141,6 +145,7 @@ public class BillingController extends BaseController {
 			request.setAttribute("site", site);
 			request.setAttribute("year", c.get(Calendar.YEAR));
 			request.setAttribute("month", c.get(Calendar.MONTH)+1);
+			request.setAttribute("curryear", curryear+1900);
 			return new ActionForward.Forward("/jsp/user/mybilling_list.jsp");
 	}
 	
@@ -187,6 +192,49 @@ public class BillingController extends BaseController {
 			return new ActionForward.Forward("/jsp/common/dataFee_list.jsp");
 	}
 	
+	//企业管理员，系统管理员查看数据费用详细 （企业  系统）
+	@AsController(path = "sysShowDataDetail")
+	public Object sysShowDataDetail(@CParam("id") int id,@CParam("userId") int userId,
+			@CParam("pageNo")Integer pageNo,@CParam("year")String year,
+			@CParam("month")String month, HttpServletRequest request){
+		Date startDate = DateUtil.getMonthStratDate(year, month, null);
+		Date endDate = DateUtil.getMonthEndDate(startDate);
+		SiteBase site = null;
+		UserBase user = null;
+		List<BizBilling> billings = null;
+		if(id>0){
+			BizBilling bill = billingService.getBillingById(id);
+			request.setAttribute("bill", bill);
+			site = siteService.getSiteBaseBySiteSign(bill.getSiteSign());
+		}else if(userId>0){
+			user= userService.getUserBaseById(userId);
+			site = siteService.getSiteBaseById(user.getSiteId());
+		}
+		billings = billingService.getDataBillings(site, user, startDate, endDate);
+		
+		Map<String, Integer> licMap = licService.getHostsLienseDatasMap(billings, site);
+		request.setAttribute("licMap", licMap);
+		
+		request.setAttribute("sitelic", site.getLicense()+licService.getSiteLicenseNum(site.getId()));
+		request.setAttribute("total", getTotalFee(billings));
+		request.setAttribute("billings", billings);
+		request.setAttribute("site", site);
+		
+//			if(site.getChargeMode().intValue()==1){
+//				PageBean<BizBilling> page = billingService.getNamehostDataSubBillingPage(pageNo, 10, startDate, endDate, site);
+//				if(page!=null&&page.getDatas()!=null){
+//					Map<String, Integer> licMap = licService.getHostsLienseDatasMap(page.getDatas(), site);
+//					request.setAttribute("licMap", licMap);
+//				}
+//				request.setAttribute("page", page);
+//			}else if(site.getChargeMode().intValue()==2|| site.getChargeMode().intValue()==3){
+//				//active user  seat
+//				int usernum = billingService.getSiteUserNum(site.getId(), false);
+//				request.setAttribute("usernum", usernum);
+//			}
+		return new ActionForward.Forward("/jsp/common/sys_dataFee_list.jsp");
+	}
+	
 	
 	private float getTotalFee(List<BizBilling> billings){
 		float totalFee = 0f;
@@ -212,6 +260,7 @@ public class BillingController extends BaseController {
 				BizBilling bill = billingService.getBillingById(id);
 				site = siteService.getSiteBaseBySiteSign(bill.getSiteSign());
 				request.setAttribute("bill", bill);
+				request.setAttribute("fee", bill.getTelFee());
 			}else{
 				site = siteService.getCurrentSiteBaseByUserLogin(request);
 			}
@@ -227,7 +276,47 @@ public class BillingController extends BaseController {
 			request.setAttribute("site", site);
 			request.setAttribute("startDate", startDate);
 			request.setAttribute("endDate", endDate);
+			request.setAttribute("userId", userId);
+			request.setAttribute("id", id);
+			request.setAttribute("year", year);
+			request.setAttribute("month", month);
 			return new ActionForward.Forward("/jsp/common/bill_detaillist.jsp");
+	}
+	
+	//站点系统管理员查看通信费用详情
+	@AsController(path = "sysShowTelDetail")
+	public Object siteShowTelDetail(@CParam("id") int id,@CParam("userId") Integer userId, 
+			@CParam("pageNo")Integer pageNo,@CParam("year")String year,
+			@CParam("month")String month, HttpServletRequest request){
+		
+		Date startDate = DateUtil.getMonthStratDate(year, month, null);
+		Date endDate = DateUtil.getMonthEndDate(startDate);
+		SiteBase site = null;
+		if(id>0){
+			BizBilling bill = billingService.getBillingById(id);
+			site = siteService.getSiteBaseBySiteSign(bill.getSiteSign());
+			request.setAttribute("bill", bill);
+			request.setAttribute("fee", bill.getTelFee());
+		}else{
+			site = siteService.getCurrentSiteBaseByUserLogin(request);
+		}
+		
+		if(userId!=null && userId.intValue()>0){
+			UserBase user = userService.getUserBaseById(userId);
+			float fee = billingService.getUserTotalFee(user, startDate, endDate);
+			request.setAttribute("fee", fee);
+		}
+		PageBean<ConfBilling> page = billingService.getConfTelBillingPage(pageNo, ConstantUtil.PAGESIZE_DEFAULT, startDate, endDate, site, userId);
+		
+		request.setAttribute("pageModel", page);
+		request.setAttribute("site", site);
+		request.setAttribute("startDate", startDate);
+		request.setAttribute("endDate", endDate);
+		request.setAttribute("userId", userId);
+		request.setAttribute("id", id);
+		request.setAttribute("year", year);
+		request.setAttribute("month", month);
+		return new ActionForward.Forward("/jsp/common/sys_bill_detaillist.jsp");
 	}
 	
 	

@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.entity.SiteBase;
-import com.bizconf.audio.service.EmailService;
+import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.task.AppContextFactory;
 import com.bizconf.audio.task.support.TaskExecutorFactory;
 
@@ -25,7 +25,7 @@ public class SiteRemindExecutor {
 
 	private static final int THREAD_POOL_SIZE = 2;
 
-	private static final long REST_INTERVAL = 6*3600 * 1000L;
+	private static final long REST_INTERVAL = 10 * 1000L;
 
 
 	private static final Executor executor = TaskExecutorFactory
@@ -33,36 +33,20 @@ public class SiteRemindExecutor {
 
 	public static void main(String[] args) throws IOException {
 		long border = 0;
-		
-		EmailService emailService = AppContextFactory.getAppContext().getBean(EmailService.class);
+
+	//	EmailService emailService = AppContextFactory.getAppContext().getBean(EmailService.class);
+		SiteService siteService = AppContextFactory.getAppContext().getBean(SiteService.class);
 		
 		while (true) {
 			try {
 				//需要提醒的站点
-				List<SiteBase> sites = emailService.getExpireRemindSites();
+				List<SiteBase> siteList = siteService.getSiteListForRemind();
+				if(siteList!=null && siteList.size() > 0){
+					Runnable task = new SiteRemindTask(siteList);
+					executor.execute(task);
+				}
+				siteList=null;
 				
-				//过期未提醒站点
-				List<SiteBase> expsites = emailService.getExpiredSites();
-				// 运行索引任务
-				if (sites != null && !sites.isEmpty()) {
-					for (SiteBase site : sites) {
-						Runnable task = new SiteRemindTask(site, SiteConstant.SEND_SITE_EXP_REMIND);
-						System.out.println("Now to do site expried remind email task for id:" + site.getId());
-						executor.execute(task);
-						border = site.getId();
-					}
-				}
-				if (expsites != null && !expsites.isEmpty()) {
-					for (SiteBase site : sites) {
-						Runnable task = new SiteRemindTask(site, SiteConstant.SEND_SITE_EXP);
-						System.out.println("Now to do site expried email task for id:" + site.getId());
-						executor.execute(task);
-						border = site.getId();
-					}
-				}
-				if((expsites != null && !expsites.isEmpty()) || (sites != null && !sites.isEmpty())){
-					continue;
-				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("System run exception:" + e.getLocalizedMessage());

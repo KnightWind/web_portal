@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/common.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/index.css?ver=${version}"/>
-<title>index</title>
+<title>${LANG['bizconf.jsp.conf_invite_recv.res0']}</title>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-ui-1.9.2.custom.min.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/widgets.js?ver=${version}"></script>
@@ -72,8 +72,8 @@ function sendNoticeEmail() {
 </script>
 </head>
 
-<body>
-<!--${LANG['bizconf.jsp.conf_invite_recv.res4']}-->
+<body style="overflow-y: hidden;">
+<!---->
 <jsp:include page="header.jsp" />
 
 <div id="head_bar">
@@ -106,14 +106,16 @@ function sendNoticeEmail() {
             	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res10']}</td>
             	<td>${confBase.userSecure}</td>
             </tr>
+            <c:if test="${!empty confBase.publicConfPass}">
              <tr>
             	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res11']}</td>
             	<td>${confBase.publicConfPass}</td>
             </tr>
-             <tr>
-            	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res12']}</td>
-            	<td>010-00001111</td>
-            </tr>
+            </c:if>
+<!--             <tr>-->
+<!--            	<td align="right" class="join_m01">${LANG['bizconf.jsp.conf_invite_recv.res12']}</td>-->
+<!--            	<td>010-00001111</td>-->
+<!--            </tr>-->
         </table>
     </div>
     <img class="jion_li" src="${baseUrlStatic}/images/jion_li.png" width="5" height="417" />

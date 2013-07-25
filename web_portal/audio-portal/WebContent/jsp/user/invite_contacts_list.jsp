@@ -8,6 +8,15 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
+<style type="text/css">
+*html table {
+	border-collapse: collapse;
+}
+
+*+html table {
+	border-collapse: collapse;
+}
+</style>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js?ver=${version}"></script>	
 <script type="text/javascript" src="${baseUrlStatic}/js/common.js?ver=${version}"></script>	
@@ -33,7 +42,9 @@
 	}
 	
 	$(document).ready(function(){
-		$(".contact_search").watermark('${LANG['bizconf.jsp.bill_detaillist.res3']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".contact_search").watermark('${LANG['bizconf.jsp.bill_detaillist.res3']}');
+		}
 		//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 		$("#checkAll").click(function(){
 			if($(this).attr("checked")){
@@ -68,7 +79,7 @@
 	}
 </script>
 </head>
-<body style="height: 550px;">
+<body>
 <form id="query" name="query" action="/user/contact/invitelist" method="post">
 	 <div class="First_Steps_main_invite" style=" background:#FFF;">
           <table width="730" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >

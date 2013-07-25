@@ -11,26 +11,51 @@
 </head>
 
 <body onload="loaded()">
-<div class="add21_main">
-  <div class="add21_top">
-    <div class="add21_top_left"></div>
-    <div class="add21_top_center"></div>
-    <div class="add21_top_right"></div>
-  </div>
-  <div class="add21_center">
-    <div class="add21_center_left"></div>
-    <div class="add21_center_center">
-      <div class="First_Steps_invite_first01" >
+
+<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" >
+    <tbody>
+      <tr class="no-header">
+        <td class="overlay-hdL"></td>
+        <td class="overlay-hdC"></td>
+        <td class="overlay-hdR"></td>
+      </tr>
+      <tr>
+        <td class="overlay-bdL"></td>
+        <td class="overlay-content"> 
+        <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
+      	<div class="First_Steps_invite_first01" >
         <div class="First_Steps_title_invite01"> <a href="javascript:closeDialog();"></a>
           <h3 class="tit_a_invite">${LANG['bizconf.jsp.conf_invite_user_list.res2']}</h3>
           <p class="tit_b_invite">${LANG['bizconf.jsp.conf_invite_user_list.res3']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick_invite" src="${baseUrlStatic}/images/min.jpg" width="550" height="1" /></div>
+        <table style="width: 100%;">
+        	<tr>
+        		<td align="left"><a class="invent_user_default" href="#">${LANG['bizconf.jsp.inviteContactsSelect.before']}
+        		<c:set var="inviteCount" value="${fn:length(confUserList)}" />
+        		<c:if test="${inviteCount>1}">
+        		<c:out value="${inviteCount}"/> ${LANG['bizconf.jsp.inviteContactsSelect.after']}
+        		</c:if>
+        		<c:if test="${inviteCount<2}">
+        		<c:out value="${inviteCount}"/>${LANG['bizconf.jsp.inviteContactsSelect.after2']}
+        		</c:if>
+        		</a></td>
+        		<td align="right">
+        			<c:if test="${user.id eq conf.createUser and conf.confStatus lt 3}">
+	        			<span class="button_common" style="float: right;margin-right: 20px;margin-top: 5px;">
+		              		<a href="javascript:parent.inventContact('${conf.id}');">
+		              			<img width="16" height="16" align="absmiddle" src="/static/images/add_16.png" style=" margin-left:5px; margin-right:5px;">${LANG['bizconf.jsp.inviteFirst.res14']}
+		              		</a>
+	              		</span>
+              		</c:if>
+        		</td>
+        	</tr>
+        </table>
         <div class="join_list">
         	<ul class="boc">
             	<li class="boc01">${LANG['bizconf.jsp.add_contacts.res7']}</li>
             	<li class="boc02">${LANG['bizconf.jsp.add_contacts.res9']}</li>
-                <li class="boc03">${LANG['bizconf.jsp.conflogs.res4']}</li>
+                <li class="boc03"><!--  ${LANG['bizconf.jsp.conflogs.res4']}-->&nbsp;</li>
                 <li class="boc04">${LANG['bizconf.jsp.conf_invite_user_list.res4']}</li>
             </ul>
             <div class="boc_main">
@@ -38,7 +63,7 @@
              <ul class="boc_a">
             	<li class="boc01">${confUser.userName}&nbsp;</li>
             	<li class="boc02">${confUser.userEmail}&nbsp;</li>
-                <li class="boc03">${confUser.telephone}&nbsp;</li>
+                <li class="boc03"><!-- ${confUser.telephone}-->&nbsp; </li>
                 <li class="boc04">
                 	<c:choose>
                 		<c:when test="${confUser.acceptFlag eq 1}">
@@ -62,22 +87,24 @@
        
        
        
-        <div class="First_Steps_bottom_b">
+        <div class="First_Steps_bottom_b" style="padding-bottom: 0px;height: 40px;">
           <div class="but101">
-          <span class="button_common"><a href="javascript:closeDialog();"><img src="${baseUrlStatic}/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.conf_invite_user_list.res8']}&nbsp;&nbsp;${LANG['bizconf.jsp.conf_invite_user_list.res9']}</a>
+          <span class="button_common"><a href="javascript:closeDialog();"><img src="${baseUrlStatic}/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.conf_invite_user_list.res8000']}</a>
           </span></div>
           <div class="but111"></div>
         </div>
       </div>
-    </div>
-    <div class="add21_center_right"></div>
-  </div>
-  <div class="add21_bottom">
-    <div class="add21_bottom_left"></div>
-    <div class="add21_bottom_center"></div>
-    <div class="add21_bottom_right"></div>
-  </div>
-</div>
+        <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
+   		</td>
+        <td class="overlay-bdR"></td>
+      </tr>
+      <tr>
+        <td class="overlay-ftL"></td>
+        <td class="overlay-ftC"></td>
+        <td class="overlay-ftR"></td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>
 <script type="text/javascript">

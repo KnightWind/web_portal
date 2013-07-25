@@ -31,7 +31,9 @@
 	
 	$(document).ready(function(){
 		$(".search_user").uniform();
-		$(".search_user").watermark('${LANG['bizconf.jsp.admin.site_org_user.res1']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".search_user").watermark('${LANG['bizconf.jsp.admin.site_org_user.res1']}');
+		}
 		$("#btn_search").click(function(){
 			$("#pageNo").val("");
 			$("#query").attr("action","/admin/entUser/listAll");
@@ -90,7 +92,7 @@
 				if(result){
 					if(result.status=="1"){
 						parent.parent.successDialog(result.message);
-						parent.parent.$("#mainFrame")[0].contentWindow.$("#orgListForm").attr("src", "/admin/org/orgList");
+						parent.parent.$("#mainFrame")[0].contentWindow.refreshIframe();
 					} else {
 						parent.parent.errorDialog(result.message);
 					}
@@ -119,18 +121,12 @@
 </script>
 </head>
 <body onload="loaded()">
-<form id="query" name="query" action="/admin/org/getOrgSubUserList/${orgId }" method="post">
+<form id="query" name="query" action="/admin/org/getOrgSubUserList/${orgId }" method="post" style="position: relative;">
 	<input type="hidden" value="${sortField}" id="sortField" name="sortField" />
 	<input type="hidden" value="${sortRule}" id="sortRule" name="sortRule" />
-	<div class="main_content">
-<!--		<div class="m_top">-->
-<!--		    <input class="search_user" name="keyword" type="text" maxlenght="32" value="${keyword}" />-->
-<!--		    <input name="" class="searchs_button" type="button" id="btn_search" />-->
-<!--	 	 </div>-->
-		<table width="100%" border="0" align="center" cellpadding="0"
-			cellspacing="0" id="table_box">
+	<div class="main_content" style="overflow-y:auto;overflow-x:hidden;width:760px;height: 400px; position: absolute ;top: 5px;left:15px;">
+		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box">
 			<tr class="table003" height="38">
-<!--				 <td width="5%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><input type="checkbox" id="checkAll"/></div></td>-->
             <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.login.name']}</span></div></td>
             <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
             <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['site.admin.edituser.userrole']}</span></div></td>
@@ -139,15 +135,6 @@
             <td width="7%" height="38" bgcolor="d3eaef" class="STYLE10">
             <div align="center">
 	            <span>${LANG['site.admin.userlist.userstatu']}</span>
-<%-- 	             <c:if test="${1!=sortField}"> --%>
-<!-- 	            	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="/static/images/paixu_button.png" width="6" height="13" /></a> -->
-<%-- 	       		 </c:if> --%>
-<%-- 	       		 <c:if test="${1==sortField && 0==sortRule}"> --%>
-<%-- 	        		<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a> --%>
-<%-- 	        	</c:if> --%>
-<%-- 		        <c:if test="${1==sortField  && 1==sortRule}"> --%>
-<%-- 		        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a> --%>
-<%-- 		        </c:if> --%>
             </div>
             </td>
 			<td width="18%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span>${LANG['system.sysUser.list.operate']}</span></div></td>
@@ -181,9 +168,7 @@
 			            </td>
 			            <td height="32">
 			            <div align="center" class="STYLE21">
-<!--			            	<a href="#" onclick="toEditUser('${user.id }');">${LANG['system.change']}</a>&nbsp;-->
 			            	<a href="#" onclick="delUserFromOrg('${user.id }');">${LANG['bizconf.jsp.admin.site_org_user.res6']}</a>&nbsp;
-<!--			            	<a href="#" onclick="parent.showAttendConfs('${user.id }');">${LANG['bizconf.jsp.admin.index.res16']}</a>-->
 			            </div></td>
 			         </tr>
 				</c:forEach>

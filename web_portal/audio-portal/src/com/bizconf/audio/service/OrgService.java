@@ -50,7 +50,7 @@ public interface OrgService {
 	 * @param 
 	 */
 	public PageBean<UserBase> getNoOrgUserList(String orgName, String sortField,
-			String sortord, Integer siteId,Integer creator, String pageNo, List<SiteOrg> orgList);
+			String sortord, Integer siteId,Integer creator, String pageNo, int pageSize, List<SiteOrg> orgList);
 	
 	/**
 	 * 获取选定组织机构及下属组织机构的用户列表
@@ -58,7 +58,7 @@ public interface OrgService {
 	 * @param 
 	 */
 	public PageBean<UserBase> getOrgSubUserList(String orgName, String sortField,
-			String sortord, Integer siteId, String pageNo, List<SiteOrg> orgList);
+			String sortord, Integer siteId, String pageNo, int pageSize, List<SiteOrg> orgList);
 	
 	/**
 	 * 获取选定组织机构及下属组织机构的用户列表(所有用户，无分页)

@@ -70,18 +70,18 @@ function del(id){
 <%--     <div class="make_new"><a href="javascript:;" target="mainFrame" id="createNotice">${LANG['system.notice.list.Create']}</a></div> --%>
  
 <!--   </div> -->
- <div class="m_top"> 
+ <div class="m_top1"> 
 	<input name="button_b" class="button_b" type="button" id="createNotice" value="${LANG['system.notice.list.Create']}" onmouseover="this.className='Btn_Hover_b'" onmouseout="this.className='Btn_b'"/>
   </div>
  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" style=" margin-right:10px; border:#A3C5DE 1px solid; border-top:none; border-bottom:none;">
     <tr class="table002" height="32" >
     <td><table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list">
       <tr class="table003" height="38" >
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.Title']}</span></div></td>
-        <td width="30%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.Contents']}</span></div></td>
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.StartTime']}</span></div></td>
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.creator']}</span></div></td>
-        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;"><div align="center" ><span>${LANG['system.Operate']}</span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.Title']}</b></span></div></td>
+        <td width="25%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.Contents']}</b></span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.StartTime']}</b></span></div></td>
+        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.creator']}</b></span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;"><div align="center" ><span><b>${LANG['system.Operate']}</b></span></div></td>
       </tr>
        <c:if test="${fn:length(noticeList)<=0 }">
          <tr>

@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.bizconf.audio.component.BaseConfig;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.entity.BizBilling;
 import com.bizconf.audio.entity.ConfBilling;
@@ -40,11 +42,14 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 	public static Map<String,Integer> EVENT_MAP = new HashMap<String, Integer>();
 	
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	public static SimpleDateFormat rentsdf = new SimpleDateFormat("yyyyMMdd");
 	static{
 		EVENT_MAP.put("Shrine_BC_Dail Out", 1);
 		EVENT_MAP.put("Shrine_BC_Toll Free dail in", 2);
-		EVENT_MAP.put("Shrine_BC_Local conect Dail  In", 3);
+		EVENT_MAP.put("Shrine_BC_Local conect Dail In", 3);
 		EVENT_MAP.put("Shrine_BC_Playback", 4);
+		EVENT_MAP.put("Web Connection", 5);
 	}
 	
 	@Override
@@ -262,14 +267,15 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 			values.add((pageNo-1)*pageSize);
 			values.add(pageSize);
 			List<Object> hwIds = libernate.getObjectList(sql,values.toArray());
-			
-			for (Iterator<Object> iterator = hwIds.iterator(); iterator.hasNext();) {
-				Object object = iterator.next();
-				List<BizBilling> bills = getCdrBillByConfHwid(object.toString());
-				ConfBilling cb = new ConfBilling();
-				cb.setConfHwid(object.toString());
-				cb.setBillings(bills);
-				confBillings.add(cb);
+			if(hwIds!=null && !hwIds.isEmpty()){
+				for (Iterator<Object> iterator = hwIds.iterator(); iterator.hasNext();) {
+					Object object = iterator.next();
+					List<BizBilling> bills = getCdrBillByConfHwid(object.toString());
+					ConfBilling cb = new ConfBilling();
+					cb.setConfHwid(object.toString());
+					cb.setBillings(bills);
+					confBillings.add(cb);
+				}
 			}
 			page.setDatas(confBillings);
 		}catch(Exception e){
@@ -301,18 +307,26 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 		boolean flag = true;
 		BufferedReader reader = null;
 		BufferedWriter errorWriter = null;
+		SimpleDateFormat nsdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		try {
-			String errorFilePath = sdf.format(new Date())+"_CDR_exception.log";
+			String logDir = BaseConfig.getInstance().getString("exceptionlog", "");
+			File logDirFile = new File(logDir);
+			if(!logDirFile.exists() || !logDirFile.isDirectory()){
+				logDirFile.mkdir();
+			}
+			String errorFilePath = logDir+File.separator+nsdf.format(new Date())+"_CDR_exception.log";
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile),"utf-8"));
-			errorWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(errorFilePath)),"UTF-8"));
 			String temp = null;
 			while((temp=reader.readLine())!=null){
 				logger.info("got CDR billing massge: "+temp);
-				String[] values = temp.split("|");
+				String[] values = temp.split("\\|");
 				BizBilling billing = new BizBilling();
 				try{
 					billing.setBillType(0);
 					billing.setSiteSign(values[0]);
+					if(values[0]!=null && values[0].indexOf("[")>-1){
+						billing.setSiteSign(getParentSiteSign(values[0]));
+					}
 					billing.setConfHwid(values[1]);
 					billing.setUserName(values[2]);
 					if(values[3].equals("PC")){
@@ -322,11 +336,14 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 					}
 					billing.setEnterNumber(values[4]);
 					billing.setCallNumber(values[5]);
-					billing.setEventType(EVENT_MAP.get(values[6]));
+					billing.setEventType(getCallType(values[6]));
 					
 					billing.setStartDate(sdf.parse(values[7]));
 					//账单日期
 					billing.setBillDate(sdf.parse(values[7]));
+					if(values[7]!=null && values[7].endsWith("00")){
+						billing.setBillDate(new Date(sdf.parse(values[7]).getTime()+1000l));
+					}
 					//账单生成日期
 					billing.setCreateDate(DateUtil.getGmtDate(new Date())); 
 					billing.setDuration(getDurationSecByFormatStr(values[8]));
@@ -336,6 +353,9 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 				}catch(Exception e){
 					//TODO  这里要记录发生异常的信息
 					flag = false;
+					if(errorWriter==null){
+						errorWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(errorFilePath)),"UTF-8"));
+					}
 					errorWriter.write(temp);//记录错误行数内容
 					errorWriter.newLine(); 
 					e.printStackTrace();
@@ -382,31 +402,47 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 		boolean flag = true;
 		BufferedReader reader = null;
 		BufferedWriter errorWriter = null;
+		SimpleDateFormat nsdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		try {
-			String errorFilePath = sdf.format(new Date())+"_RENT_exception.log";
+			String logDir = BaseConfig.getInstance().getString("exceptionlog", "");
+			File logDirFile = new File(logDir);
+			if(!logDirFile.exists() || !logDirFile.isDirectory()){
+				logDirFile.mkdir();
+			}
+			String errorFilePath = logDir+File.separator+nsdf.format(new Date())+"_RENT_exception.log";
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(rentFile),"utf-8"));
-			errorWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(errorFilePath)),"UTF-8"));
 			String temp = null;
 			while((temp=reader.readLine())!=null){
 				logger.info("got RENT billing massge: "+temp);
-				String[] values = temp.split("|");
+				String[] values = temp.split("\\|");
 				BizBilling billing = new BizBilling();
 				try{
 					billing.setBillType(1);
 					billing.setSiteSign(values[0]);
-					 
+					if(values[0]!=null && values[0].indexOf("[")>-1){
+						billing.setSiteSign(getParentSiteSign(values[0]));
+					}
 					billing.setDataFee(Float.parseFloat(values[1]));
 					//账单日期
-					billing.setBillDate(sdf.parse(values[2]));
-					billing.setStartDate(sdf.parse(values[2]));
+					billing.setBillDate(rentsdf.parse(values[2]));
+					billing.setStartDate(rentsdf.parse(values[2]));
 					if(values.length>3){
 						billing.setUserId(values[3]);
+						if(values[3]!=null && values[3].indexOf("[")>-1 && values[3].indexOf("]")>-1){
+							billing.setUserId(getUserSign(values[3]));
+							billing.setSiteSign(getParentSiteSign(values[3]));
+						}
+					}else{
+						billing.setUserId(getUserSign(values[0]));
 					}
 					billing.setCreateDate(DateUtil.getGmtDate(new Date()));
 					libernate.saveEntity(billing);
 				}catch(Exception e){
 					//TODO  这里要记录发生异常的信息
 					flag = false;
+					if(errorWriter==null){
+						errorWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(errorFilePath)),"UTF-8"));
+					}
 					errorWriter.write("exception RENT billing line is: "+temp);//记录错误行数内容
 					errorWriter.newLine(); 
 					e.printStackTrace();
@@ -436,23 +472,46 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 	@Override
 	public boolean genMonthyTotalFee(Date startDate, Date endDate){
 		boolean flag = true;
-		String sql = "SELECT tb.site_sign, SUM(tb.tel_fee) AS tel_fee, SUM(tb.data_fee) AS data_fee FROM t_biz_billing tb WHERE tb.bill_date "
+		String sql = "SELECT tb.site_sign, SUM(tb.tel_fee) AS tel_fee, SUM(tb.data_fee) AS data_fee FROM t_biz_billing tb WHERE tb.bill_type !=? and tb.bill_date "
 					+" BETWEEN ? AND ? GROUP BY tb.site_sign";
 		try{
-			List<BizBilling> billings = libernate.getEntityListBase(BizBilling.class, sql, new Object[]{startDate,endDate});
-			for (Iterator ite = billings.iterator(); ite.hasNext();) {
-				BizBilling bizBilling = (BizBilling) ite.next();
-				bizBilling.setBillType(2);
-				bizBilling.setBillDate(new Date(startDate.getTime()+2*36000000l));
-				bizBilling.setCreateDate(new Date());
-				bizBilling.setStartDate(new Date(startDate.getTime()+1000l));
-				libernate.saveEntity(bizBilling);
+			List<BizBilling> billings = libernate.getEntityListBase(BizBilling.class, sql, new Object[]{2,startDate,endDate});
+			if(billings!=null && !billings.isEmpty()){
+				for (Iterator ite = billings.iterator(); ite.hasNext();) {
+					BizBilling bizBilling = (BizBilling) ite.next();
+					bizBilling.setBillType(2);
+					bizBilling.setBillDate(new Date(startDate.getTime()+2*36000000l));
+					bizBilling.setCreateDate(new Date());
+					bizBilling.setStartDate(new Date(startDate.getTime()+1000l));
+					BizBilling oldBill =  getMonthlyBill(bizBilling.getSiteSign(), startDate, endDate);
+					if(oldBill!=null){
+						oldBill.setDataFee(bizBilling.getDataFee());
+						oldBill.setTelFee(bizBilling.getTelFee());
+						libernate.updateEntity(oldBill);
+					}else{
+						libernate.saveEntity(bizBilling);
+					}
+				}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 			flag = false;
 		}
 		return flag;
+	}
+	
+	// 获取月总账单
+	public BizBilling getMonthlyBill(String site_sign,Date startDate, Date endDate){
+		String sql = "select * from t_biz_billing where site_sign = ? and bill_type = ? and bill_date "
+					+" BETWEEN ? AND ? ";
+		BizBilling bill = null;
+		try {
+			bill = libernate.getEntityCustomized(BizBilling.class,sql, new Object[]{site_sign,2,startDate,endDate});
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return bill;
 	}
 	
 	/**
@@ -542,7 +601,7 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 		}
 		return total;
 	}
-
+ 
 	@Override
 	public Map<String, SiteBase> getBillBelongSite(List<BizBilling> billings) {
 		// TODO Auto-generated method stub
@@ -576,5 +635,34 @@ public class BillingServiceImpl extends BaseService implements BillingService{
 			e.printStackTrace();
 		}
 		return null;
+	}
+	//获取父站点标识
+	public String getParentSiteSign(String value){
+		if(value!=null && !value.equals("") && value.indexOf("[")>-1){
+			return value.substring(0,value.indexOf("["));
+		}
+		return "";
+	}
+	
+	//获取用户ID
+	public String getUserSign(String value){
+		if(value!=null && !value.equals("") && value.indexOf("[")>-1 && value.indexOf("]")>-1){
+			return value.substring(value.lastIndexOf("[")+1, value.lastIndexOf("]"));
+		}
+		return "";
+	}
+	
+	
+	public int getCallType(String type){
+		if(type==null) return 0;
+		
+		Set<String> keys = EVENT_MAP.keySet();
+		for (Iterator it = keys.iterator(); it.hasNext();) {
+			String str = (String) it.next();
+			if (type.equalsIgnoreCase(str)) {
+				return EVENT_MAP.get(str);
+			}
+		}
+		return 0;
 	}
 }

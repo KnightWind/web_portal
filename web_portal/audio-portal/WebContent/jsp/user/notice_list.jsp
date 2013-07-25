@@ -32,7 +32,7 @@
       </tr>
       <tr align="left" bgcolor="#FFFFFF" height="32">
         <td class="notice_message" style="border:#D2D8DB 1px solid;border-top:none;padding: 10px 45px;">
-        <div>
+        <div style="word-break:break-all;word-wrap:break-word;">
  			${notice.content}
 		</div>
         </td>

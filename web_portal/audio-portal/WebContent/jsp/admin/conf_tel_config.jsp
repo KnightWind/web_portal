@@ -20,12 +20,20 @@
 <cc:siteList var="EMPOWER_DISABLED"/>
 <cc:siteList var="EMPOWER_ENABLED"/>
 <cc:siteList var="EMPOWER_CODE_FIELD_ARRAY"/>
-	<script type="text/javascript">
-		$(function() {
 
+	<script type="text/javascript">
+		var autoFlag = "${sitePower.autoFlag}";
+		$(document).ready(function(){
+			$("input[name='autoFlag']").attr("disabled", "disabled");
+			var checked = $("input[name='phoneFlag']").attr("checked");
+			if(checked=="checked" && autoFlag != 0){
+				$("input[name='autoFlag']").removeAttr("disabled");
+			}
+		});
+		$(function() {
 			$("input:radio[name=phoneFlag]").change(function() {
 				var value = $(this).val();
-				if(value==1){
+				if(value==1  && autoFlag != 0){
 					$("input:radio[name=autoFlag]").removeAttr("disabled");
 				} else {
 					$("input:radio[name=autoFlag]").attr("disabled",'disabled');
@@ -82,49 +90,35 @@
 <div class="s_emile">
 <div class="s_emile_01">
   <div class="s_emile_01_top"><span>${LANG['site.admin.conf.config.phone.title'] }</span></div>
-<%--   <c:if test="${config.id==null ||  config.id<=0 }"> --%>
-<!--   <form name="configForm" id="configForm" action="/admin/config/telconfig/save" method="post"> -->
-<%--   </c:if> --%>
-<%--   <c:if test="${config.id>0}"> --%>
-<!--   <form name="configForm" id="configForm" action="/admin/config/telconfig/update" method="post"> -->
-<%--   </c:if> --%>
   <form name="configForm" id="configForm" action="/admin/config/telconfig/update" method="post">
-<%--   <input name="id" id="id" type="hidden" value="${config.id }" checked="checked"/> --%>
-<%--   <input name="siteId" id="siteId" type="hidden" value="${config.siteId }"/> --%>
-
   <c:set var="flagCount" value="0"/>
   <c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
    <c:if test="${fn:indexOf(eachField[1],'Flag') > -1 && eachField[2]==1}"><c:set var="flagCount" value="${flagCount+1 }"/></c:if>
      </c:forEach>
 <c:if test="${powerCount > 0}">
-  <table class="all_install" width="auto" border="0" cellpadding="0" cellspacing="0">  
-  	<tr>
-  		<td>${LANG['bizconf.jsp.admin.conf_tel_config.res5']}</td>
+	<table cellpadding="0" cellspacing="0" border="0" class="site_01">
+  	<tr height="36">
+  		<td colspan="4" align="left" class="operate_big" style=" border-bottom:#ADADAD 1px solid;"><span>${LANG['bizconf.jsp.admin.conf_tel_config.res5']}</span></td>
   	</tr>
-  	<tr>
-    	<td width="120px" height="38px"><div align="center"></div></td>
-    	<td width="120px" height="38px"><div align="center">${LANG['site.admin.conf.config.option.enable']}</div></td>
-        <td width="120px" height="38px"><div align="center">${LANG['site.admin.conf.config.option.disable']}</div></td>
-        <td width="auto" height="38px" style="border:0px;background:#FFFFFF"></td>
-        <%-- <td width="120px" height="38px" style="border-right:#CFE2EF 1px solid;"><div align="center">${LANG['bizconf.jsp.admin.conf_tel_config.res6']}</div></td>
-         --%>
-    </tr>
     <c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
     <c:set var="eachFieldName" value="${eachField[1]}"/>
    
     <c:if test="${sitePower[eachFieldName]==EMPOWER_ENABLED  && eachField[2]==1}">
     
-     <tr>
-	    	<td><div align="center"><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</div></td>
-	        <td><div align="center">
-	        	<input type="radio" class="allowTelFlag" name="${eachFieldName}"  value="${EMPOWER_ENABLED}" 
-	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_ENABLED }">checked</c:if>/>
-	        	</div>
+     <tr height="30" align="center">
+     		<td class="operate" width="200"><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</td>
+<!--	        <td><div align="center">-->
+<!--	        	<input type="radio" class="allowTelFlag" name="${eachFieldName}"  value="${EMPOWER_ENABLED}" -->
+<!--	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_ENABLED }">checked</c:if>/>-->
+<!--	        	</div>-->
+<!--	       	</td>-->
+	       	<td class="operate" width="200">
+	       		<input type="radio" class="allowTelFlag" name="${eachFieldName}"  value="${EMPOWER_ENABLED}" 
+	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_ENABLED }">checked</c:if>/>${LANG['bizconf.jsp.radio.status.opened']}
 	       	</td>
-	        <td><div align="center">
-	        	<input type="radio" class="allowTelFlag" name="${eachFieldName }" value="${EMPOWER_DISABLED}" 
-	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_DISABLED }">checked</c:if>/>
-	        	</div>
+	       	<td class="operate" width="200">
+	       		<input type="radio" class="allowTelFlag" name="${eachFieldName}"  value="${EMPOWER_DISABLED}" 
+	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_DISABLED }">checked</c:if>/>${LANG['bizconf.jsp.radio.status.closed']}
 	       	</td>
 	        <td width="auto" height="38px" class="error-container" style="border:0px;background:#FFFFFF;color:red;padding-left:10px;"></td>
 	    </tr>
@@ -136,42 +130,34 @@
   </c:if>
   
   <c:if test="${flagCount > powerCount}">
-  <table class="all_install" width="auto" border="0" cellpadding="0" cellspacing="0">  
-  	<tr>
-  		<td>${LANG['bizconf.jsp.admin.conf_tel_config.res7']}</td>
+  <table cellpadding="0" cellspacing="0" border="0" class="site_02">
+  	<tr height="36">
+  		<td colspan="4" align="left" class="operate_big" style=" border-bottom:#ADADAD 1px solid;"><span>${LANG['bizconf.jsp.admin.conf_tel_config.res7']}</span></td>
   	</tr>
-  	<tr>
-    	<td width="120px" height="38px"><div align="center"></div></td>
-    	<td width="120px" height="38px"><div align="center">${LANG['site.admin.conf.config.option.enable']}</div></td>
-        <td width="120px" height="38px"><div align="center">${LANG['site.admin.conf.config.option.disable']}</div></td>
-        <td width="auto" height="38px" style="border:0px;background:#FFFFFF"></td>
-    </tr>
-     <c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
+    <c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
     <c:set var="eachFieldName" value="${eachField[1]}"/>
     <c:if test="${sitePower[eachFieldName]==EMPOWER_DISABLED && eachField[2]==1}">
-     <tr>
-	    	<td><div align="center"><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</div></td>
-	        <td><div align="center">
-	        	<input type="radio" class="allowTelFlag" name="${eachFieldName}"  value="${EMPOWER_ENABLED}" 
-	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_ENABLED }">checked</c:if> disabled/>
-	        	</div>
-	       	</td>
-	        <td><div align="center">
-	        	<input type="radio" class="allowTelFlag" name="${eachFieldName }" value="${EMPOWER_DISABLED}" 
-	        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_DISABLED }">checked</c:if> disabled/>
-	        	</div>
-	       	</td>
-	        <td width="auto" height="38px" class="error-container" style="border:0px;background:#FFFFFF;color:red;padding-left:10px;"></td>
-	    </tr>
-	    </c:if>
+    <tr height="30" align="center">
+    	<td class="operate" width="150"><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</td>
+        <td class="operate">
+        	<input type="radio" class="allowTelFlag" name="${eachFieldName}"  value="${EMPOWER_ENABLED}" 
+        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_ENABLED }">checked</c:if> disabled/>${LANG['bizconf.jsp.radio.status.opened']}
+        </td>
+        <td class="operate">
+        	<input type="radio" class="allowTelFlag" name="${eachFieldName }" value="${EMPOWER_DISABLED}" 
+        	<c:if test="${globalConfig[eachFieldName]==EMPOWER_DISABLED }">checked</c:if> disabled/>${LANG['bizconf.jsp.radio.status.closed']}
+        </td>
+        <td width="auto" height="38px" class="error-container" style="border:0px;background:#FFFFFF;color:red;padding-left:10px;"></td>
+    </tr>
+    </c:if>
     </c:forEach>
     
    
     
   </table>
   </c:if>
-  <div style="width:450px;text-align: center;margin-top: 15px;">
-  	<input name="button_a" class="button_a skipThese" type="submit" value="${LANG['system.submit']}"/>
+  <div>
+  	<input name="button_a" class="button_a_wasd skipThese" type="submit" value="${LANG['system.submit']}"/>
   	<c:if test="${!empty infoMessage}">
 		<img src="${baseUrlStatic}/images/ys_r_bg.jpg" width="16" height="14" style="margin-left:15px;margin-top:5px;margin-right: 5px"/><label style='color:#258021'>${infoMessage}</label>
 	</c:if>

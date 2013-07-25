@@ -92,7 +92,7 @@ html, body {
           <div class="First_Steps_main_quick">
           <img class="top_ico" src="/static/images/top_ico.png" width="146" height="143" />
           <p class="qidong_top">${LANG['bizconf.jsp.common.join_page.res16']}</p>
-            <p class="tishi01">1.${LANG['bizconf.jsp.common.join_plug.res2']}...${LANG['bizconf.jsp.common.join_plug.res3']}...</p>
+            <p class="tishi01">1.${LANG['bizconf.jsp.common.join_plug.res2fix']}</p>
 			<p class="tishi02">2.${LANG['bizconf.jsp.common.join_plug.res4']}
 			</p>
           </div>
@@ -141,7 +141,7 @@ html, body {
           <div class="First_Steps_main_quick">
           <img class="down_ico" src="/static/images/down_ico.png" width="146" height="142" />
           <p class="qidong_top_down">${LANG['bizconf.jsp.common.join_page.res16']}</p>
-            <p class="tishi01_down">1.${LANG['bizconf.jsp.common.join_plug.res2']}...${LANG['bizconf.jsp.common.join_plug.res3']}...</p>
+            <p class="tishi01_down">1.${LANG['bizconf.jsp.common.join_plug.res2fix']}</p>
 			<p class="tishi02_down">2.${LANG['bizconf.jsp.common.join_plug.res4']}</p>
           </div>
           <!-- <div class="First_Steps_bottom01">
@@ -484,7 +484,7 @@ html, body {
         function download(){
         	if(downCount>0){
         		 $("#downLoadLink").attr("clickCount",1);
-                 alert("${LANG['bizconf.jsp.common.join_plug.res14']},${LANG['bizconf.jsp.common.join_plug.res15']}");
+                 alert("${LANG['bizconf.jsp.common.join_plug.res14fix']}");
                  return false;
         	}
         	clearReload();

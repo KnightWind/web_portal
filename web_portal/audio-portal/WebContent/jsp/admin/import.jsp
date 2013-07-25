@@ -39,6 +39,9 @@ $(document).ready(function(){
 				 return false;
 			 }
 		 }
+		 
+		 $("#btn_submit").hide();
+		 $("#emile_button_load").show();
 		 doc.forms[0].submit();
 	});
 });
@@ -156,6 +159,15 @@ ul, li {
 	margin-left:30px;
 	margin-bottom:15px;
 }
+#emile_button_load {
+	height:24px;
+	border:none;
+	position:absolute;
+	margin-top:20px;
+	margin-left:30px;
+	margin-bottom:15px;
+	display: none;
+}
 .emile_button_d:hover {
 	background:url(/static/images/emile_button_change.jpg) no-repeat;
 }
@@ -218,6 +230,7 @@ ul, li {
     <iframe id="frameipt" src="/jsp/admin/import_user.jsp" width="65%" height="23px;" frameborder="0" scrolling="no"></iframe>
 	<a href="/admin/entUser/downTemp">${LANG['site.admin.import.downloadtemp']}</a>
      <div class="button_submit">
+     		<div id="emile_button_load">数据导入中, 请稍后...</div>
           <input name="emile_button_d" class="emile_button_d" type="button" id="btn_submit" value="${LANG['system.submit']}" />
           <input name="emile_button_f" class="emile_button_f" type="button" id="btn_cancel" value="${LANG['system.cancel']}" />
       </div>

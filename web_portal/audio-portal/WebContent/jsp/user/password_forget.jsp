@@ -95,16 +95,16 @@
 	<input type="hidden" name="type" id="type" value="forgetpass"/>
   <p>*  ${LANG['bizconf.jsp.password_forget.res2']}</p>
 	<ul>
-    	<li><span>${LANG['bizconf.jsp.password_forget.res3']}</span><input id="userEmail" name="userEmail" class="text01" type="text" /></li>
-    	<li><span>${LANG['bizconf.jsp.password_forget.res4']}</span> 
+    	<li><span style="width: 100px;">${LANG['bizconf.jsp.password_forget.res3']}：</span><input id="userEmail" name="userEmail" class="text01" type="text" /></li>
+    	<li><span style="width: 100px;">${LANG['bizconf.jsp.password_forget.res4']}</span> 
     	<input id="authCode" name="authCode" type="text" class="text04"/>
                     <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
                     &nbsp;&nbsp;&nbsp;
                     <a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.password_forget.res5']}</a></li>
 	</ul>
 	<div style="clear: both;"></div>
-	<a href="Javascript:" class="bt01"  onclick="javascript:checkForm()">${LANG['bizconf.jsp.add_group.res5']}</a>
-    <a href="Javascript:" class="bt02"  onclick="javascript:back();">${LANG['bizconf.jsp.add_contacts.res13']}</a>
+	<a href="Javascript:" class="bt01"  onclick="javascript:checkForm()" style="margin-left: 0px;position: relative;left:220px;">${LANG['bizconf.jsp.add_group.res5']}</a>
+    <a href="Javascript:" class="bt02"  onclick="javascript:back();" style="margin-left: 0px;position: relative;left:280px;">${LANG['bizconf.jsp.add_contacts.res13']}</a>
 </div>
 </form>
 <!--${LANG['bizconf.jsp.conf_invite_recv.res15']}-->

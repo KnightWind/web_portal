@@ -15,7 +15,9 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js"></script>
 <script type="text/javascript"> 
 $(function() {
-	$("#operator").watermark('${LANG['bizconf.jsp.admin.site_eventlog_list.res1']}');
+	if (!$.browser.msie || $.browser.version>7) {
+		$("#operator").watermark("${LANG['bizconf.jsp.admin.site_eventlog_list.res1']}");
+	}
 	$("#logsForm").find("input, select").not(".skipThese").uniform();
 	$('#site-list tr').hover(function() {
 			$(this).addClass('tr-hover');
@@ -43,7 +45,7 @@ function enterSumbit(url){
 <body>
 <div class="main_content">
 <form id="logsForm" name="logsForm" action="/admin/siteUserLogs/list" method="post">
- <div class="m_top"> 
+ <div class="m_top1"> 
 	<input class="skipThese" type="hidden" name="sortField" id="sortField" value="${sortField}"/>
 	<input class="skipThese" type="hidden" name="sortord" id="sortord" value="${sortord}"/>
 	<div style="float: left;">
@@ -65,25 +67,25 @@ function enterSumbit(url){
    <cc:sort var="EVENTLOG_SORT_DEFAULT"/><cc:sort var="EVENTLOG_SORT_STATUS"/><cc:sort var="EVENTLOG_SORT_CREATETIME"/> 
    <tr class="table003" height="38"  >
    	  <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"  style="cursor: pointer;" onclick="javascript:sort('${EVENTLOG_SORT_STATUS}');">
-   	  <div align="center"><span>${LANG["system.eventlog.title.status"]}</span>
+   	  <div align="center"><span style="text-decoration: underline;"><b>${LANG["system.eventlog.title.status"]}</b></span>
    	  	  <c:if test="${EVENTLOG_SORT_STATUS!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	      <c:if test="${EVENTLOG_SORT_STATUS==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
 	      <c:if test="${EVENTLOG_SORT_STATUS==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
    	  </div>
    	  </td>
 	  <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"  style="cursor: pointer;" onclick="javascript:sort('${EVENTLOG_SORT_CREATETIME}');">
-	  <div align="center"><span>${LANG["system.eventlog.title.logtime"]}</span>
+	  <div align="center"><span style="text-decoration: underline;"><b>${LANG["system.eventlog.title.logtime"]}</b></span>
 	  	  <c:if test="${EVENTLOG_SORT_CREATETIME!=sortField}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a></c:if>
 	      <c:if test="${EVENTLOG_SORT_CREATETIME==sortField && SORT_ASC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a></c:if>
 	      <c:if test="${EVENTLOG_SORT_CREATETIME==sortField  && SORT_DESC==sortord}"><a class="paixu01" href="#"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a></c:if>
 	  </div>
 	  </td>
-      <td width="15%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.module"]}&nbsp;</span></div></td>
-      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.list.meeting.title"]}</span></div></td>
-      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.list.meeting.type"]}</span></div></td>
-      <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.user"]}</span></div></td>
-      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG["system.eventlog.title.option.object"]}&nbsp;</span></div></td>
-      <td width="10%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span>${LANG["system.eventlog.title.option.ip"]}</span></div></td>
+      <td width="15%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG["system.eventlog.title.option.module"]}&nbsp;</b></span></div></td>
+      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG["system.list.meeting.title"]}</b></span></div></td>
+      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG["system.list.meeting.type"]}</b></span></div></td>
+      <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG["system.eventlog.title.option.user"]}</b></span></div></td>
+      <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG["system.eventlog.title.option.object"]}&nbsp;</b></span></div></td>
+      <td width="10%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span><b>${LANG["system.eventlog.title.option.ip"]}</b></span></div></td>
   </tr>
       <cc:logs var="EVENTLOG_SECCEED"></cc:logs>
       	<cc:logs var="EVENTLOG_FAIL"></cc:logs>

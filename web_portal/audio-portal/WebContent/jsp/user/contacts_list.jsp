@@ -40,7 +40,9 @@
 	}
 	
 	$(document).ready(function(){
-		$(".meeting_search").watermark('${LANG['bizconf.jsp.bill_detaillist.res3']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".meeting_search").watermark('${LANG['bizconf.jsp.bill_detaillist.res3']}');
+		}
 	});
 	
 	function submitForm(){
@@ -49,7 +51,7 @@
 	}
 	
 	$(document).ready(function(){
-		
+		parent.refreshIHeight();
 		//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 		$("#checkAll").click(function(){
 			if($(this).attr("checked")){
@@ -65,7 +67,14 @@
 				$("#checkAll").attr("checked",false);
 			}
 		});
-			
+		
+		$("input[name=keyword]").keyup(function(event){
+			if(event.keyCode=='13'){
+				$("#pageNo").val("");
+				$("#query").attr("action","/user/contact/list");
+				$("#query").submit();
+			}
+		});
 	});
 </script>
 </head>
@@ -94,7 +103,7 @@
       </tr>
      <c:if test="${fn:length(pageModel.datas)<=0}">
 				<tr class="table001" height="32"  >
-			            <td class="STYLE19"  height="32" colspan="11" align="center"> ${LANG['website.common.msg.list.nodata']} </td>
+			            <td class="STYLE19"  height="32" colspan="6" align="center"> ${LANG['website.common.msg.list.nodata']} </td>
 			     </tr>
 			</c:if>
 	<c:forEach var="contact" items="${pageModel.datas}" varStatus="status">

@@ -155,14 +155,14 @@ public class OrgServiceImpl extends BaseService implements OrgService {
 	
 	@Override
 	public PageBean<UserBase> getOrgSubUserList(String orgName, String sortField,
-			String sortord, Integer siteId, String pageNo, List<SiteOrg> orgList){
-		return getOrgUserList(orgName, sortField, sortord, siteId, 0, pageNo, orgList, true);
+			String sortord, Integer siteId, String pageNo, int pageSize, List<SiteOrg> orgList){
+		return getOrgUserList(orgName, sortField, sortord, siteId, 0, pageNo, pageSize, orgList, true);
 	}
 	
 	@Override
 	public PageBean<UserBase> getNoOrgUserList(String orgName, String sortField,
-			String sortord, Integer siteId,Integer creator, String pageNo, List<SiteOrg> orgList) {
-		return getOrgUserList(orgName, sortField, sortord, siteId, creator, pageNo, orgList, false);
+			String sortord, Integer siteId,Integer creator, String pageNo, int pageSize, List<SiteOrg> orgList) {
+		return getOrgUserList(orgName, sortField, sortord, siteId, creator, pageNo, pageSize, orgList, false);
 	}
 	
 	/**
@@ -171,7 +171,7 @@ public class OrgServiceImpl extends BaseService implements OrgService {
 	 * 2013-5-20
 	 */
 	private PageBean<UserBase> getOrgUserList(String orgName, String sortField,
-			String sortord, Integer siteId,Integer creator, String pageNo, List<SiteOrg> orgList, boolean assignFlag) {
+			String sortord, Integer siteId,Integer creator, String pageNo, int pageSize, List<SiteOrg> orgList, boolean assignFlag) {
 		if(pageNo==null || pageNo.equals("")){
 			pageNo = "1";
 		}
@@ -219,7 +219,7 @@ public class OrgServiceImpl extends BaseService implements OrgService {
 		}else{
 			sqlBuilder.append(" order by id desc ");
 		}
-		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sqlBuilder.toString(), Integer.parseInt(pageNo), values.toArray(new Object[values.size()]));
+		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sqlBuilder.toString(), Integer.parseInt(pageNo), pageSize, values.toArray(new Object[values.size()]));
 		return pageModel;
 	}
 	

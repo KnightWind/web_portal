@@ -26,11 +26,11 @@
 					"authCode": "${LANG['bizconf.jsp.admin.password_forget.res2']}"
 				},
 				rangelength: {
-					"email": "${LANG['bizconf.jsp.admin.login.res4']}6~32${LANG['bizconf.jsp.admin.login.res5']}",
-					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"
+					"email": "${LANG['bizconf.jsp.admin.login.res4fix1']}",
+					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}"
 				},
 				custom: {
-					"email": "${LANG['bizconf.jsp.admin.password_forget.res3']}email${LANG['bizconf.jsp.admin.password_forget.res4']}"
+					"email": "${LANG['bizconf.jsp.admin.password_forget.res3']}"
 				}
 		};
 		var v = $("#passwordForgetForm").validate({
@@ -81,19 +81,19 @@
 <form action="/system/password/sendEmail" name="passwordForgetForm" id="passwordForgetForm" method="post">
 <div class="main">
   <h3>${LANG['bizconf.jsp.admin.login.res12']}</h3>
-  <p>*  ${LANG['bizconf.jsp.admin.password_forget.res8']}eCon${LANG['bizconf.jsp.admin.password_forget.res9']}</p>
+  <p>*  ${LANG['bizconf.jsp.admin.password_forget.res8fix']}</p>
 	<input type="hidden" name="random" id="random" value=""/>
 	<input type="hidden" name="type" id="type" value="forgetpass"/>
 	<ul>
-    	<li><span>${LANG['bizconf.jsp.admin.password_forget.res10']}</span><input id="systemEmail" name="systemEmail" class="text01" type="text" /></li>
-    	<li><span>${LANG['bizconf.jsp.admin.password_forget.res11']}</span><input id="authCode" name="authCode" type="text" id="authCode" maxlength="4" class="text02"/>
+    	<li><span style="width: 100px;">${LANG['bizconf.jsp.admin.password_forget.res10']}</span><input id="systemEmail" name="systemEmail" class="text01" type="text" /></li>
+    	<li><span style="width: 100px;">${LANG['bizconf.jsp.admin.password_forget.res11']}</span><input id="authCode" name="authCode" type="text" id="authCode" maxlength="4" class="text02"/>
                     <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
                     &nbsp;&nbsp;&nbsp;
                     <a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.admin.password_forget.res12']}</a>
    	    </li>
 	</ul>
 	<div style="clear: both;"></div>
-	<input name="button01" class="button01" type="submit" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" />
+	<input name="button01" class="button01" type="submit" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" style="margin-left: 220px;" />
     <input name="button02" class="button02" type="button" value="${LANG['bizconf.jsp.admin.arrange_org_user.res11']}" onclick="javascript:back();" />
 </div>        
     </form>   

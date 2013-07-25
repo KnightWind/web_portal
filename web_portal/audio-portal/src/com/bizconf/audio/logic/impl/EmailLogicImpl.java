@@ -1,11 +1,14 @@
 package com.bizconf.audio.logic.impl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.bizconf.audio.constant.ConstantUtil;
+import com.bizconf.audio.constant.LicenseConstant;
 import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.entity.EmailConfig;
 import com.bizconf.audio.entity.SiteBase;
@@ -104,6 +107,25 @@ public class EmailLogicImpl extends BaseService implements EmailLogic{
 		Date localDate = DateUtil.getOffsetDateByGmtDate(date, (long)offset);
 		//System.out.println("localDate: "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(localDate));
 		return localDate;
+	}
+	
+	
+	@Override
+	public int getSiteLicenseNum(Integer siteId) {
+		if(siteId==null) siteId =0;
+		List<Object> values = new ArrayList<Object>();
+		StringBuilder sqlBuilder = new StringBuilder("select sum(lic_num) from t_license where del_flag = ? and site_id=? and effe_flag=? and expire_flag = ?");
+		values.add(ConstantUtil.DELFLAG_UNDELETE);
+		values.add(siteId);
+		values.add(LicenseConstant.HAS_EFFED);
+		values.add(LicenseConstant.HAS_NOT_EFFED);
+		int num = 0;
+		try {
+			num = libernate.countEntityListWithSql(sqlBuilder.toString(), values.toArray());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return num;
 	}
 	
 }

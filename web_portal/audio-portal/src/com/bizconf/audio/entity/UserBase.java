@@ -169,14 +169,26 @@ public class UserBase implements java.io.Serializable {
 	private Integer passEditor;
 	
 	/**
-	 * 站点时区
+	 * 用户偏好设置时区
 	 */
 	private Integer timeZone = 28800000;
 	
 	/**
-	 * 站点时区ID
+	 * 用户偏好设置时区ID
 	 */
 	private Integer timeZoneId = 44;
+	
+	/**
+	 * 用户偏好设置每页显示条数
+	 */
+	private int pageSize = 15;
+	
+	/**
+	 * 用户偏好设置语言版本
+	 */
+	private String favorLanguage = "zh-cn";
+	
+	
 	
 	// Constructors
 	private Date exprieDate = new Date(180, 0, 1, 0, 0, 0);//用户过期时间
@@ -186,7 +198,6 @@ public class UserBase implements java.io.Serializable {
 		
 	}
 
-	/** full constructor */
 	public UserBase(Integer id, Integer siteId, Integer orgId, String orgCode,
 			Integer userSort, Integer userType, Integer userRole,
 			String loginName, String loginPass, String clientName,
@@ -195,7 +206,8 @@ public class UserBase implements java.io.Serializable {
 			Date lastErrorTime, Integer userStatus, Integer createUser,
 			Date createTime, Integer delFlag, Date delTime, Integer delUser,
 			String remark, Integer loginCount, Integer passEditor,
-			Integer timeZone, Integer timeZoneId) {
+			Integer timeZone, Integer timeZoneId, int pageSize,
+			String favorLanguage, Date exprieDate) {
 		super();
 		this.id = id;
 		this.siteId = siteId;
@@ -226,13 +238,18 @@ public class UserBase implements java.io.Serializable {
 		this.passEditor = passEditor;
 		this.timeZone = timeZone;
 		this.timeZoneId = timeZoneId;
+		this.pageSize = pageSize;
+		this.favorLanguage = favorLanguage;
+		this.exprieDate = exprieDate;
 	}
 
+	
 	// Property accessors
 
 	public Integer getId() {
 		return this.id;
 	}
+
 
 	public void setId(Integer id) {
 		this.id = id;
@@ -461,6 +478,25 @@ public class UserBase implements java.io.Serializable {
 	public void setTimeZoneId(Integer timeZoneId) {
 		this.timeZoneId = timeZoneId;
 	}
+	
+	public int getPageSize() {
+		if(pageSize < 10 || pageSize > 100){
+			return 15;
+		}
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	
+	public String getFavorLanguage() {
+		return favorLanguage;
+	}
+
+	public void setFavorLanguage(String favorLanguage) {
+		this.favorLanguage = favorLanguage;
+	}
 
 	@Override
 	public int hashCode() {
@@ -530,7 +566,7 @@ public class UserBase implements java.io.Serializable {
 		}
 		return this.getUserRole().intValue() == UserConstant.USER_ROLE_HOST.intValue();
 	}
-
+	
 	@Override
 	public String toString() {
 		return "UserBase [id=" + id + ", siteId=" + siteId + ", orgId=" + orgId
@@ -546,13 +582,15 @@ public class UserBase implements java.io.Serializable {
 				+ ", delFlag=" + delFlag + ", delTime=" + delTime
 				+ ", delUser=" + delUser + ", remark=" + remark
 				+ ", loginCount=" + loginCount + ", passEditor=" + passEditor
-				+ ", timeZone=" + timeZone + ", timeZoneId=" + timeZoneId + "]";
+				+ ", timeZone=" + timeZone + ", timeZoneId=" + timeZoneId
+				+ ", pageSize=" + pageSize + ", favorLanguage=" + favorLanguage
+				+ ", exprieDate=" + exprieDate + "]";
 	}
-	
-	
+
 	public Date getExprieDate() {
 		return exprieDate;
 	}
+
 
 	public void setExprieDate(Date exprieDate) {
 		this.exprieDate = exprieDate;

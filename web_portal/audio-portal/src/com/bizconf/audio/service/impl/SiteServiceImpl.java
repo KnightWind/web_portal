@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +29,10 @@ import com.bizconf.audio.entity.PageModel;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SystemUser;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.entity.UserSiteMap;
 import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.service.EmpowerConfigService;
+import com.bizconf.audio.service.EnterpriseAdminService;
 import com.bizconf.audio.service.LoginService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.soap.conf.ESpaceMeetingAsEnterprise;
@@ -59,6 +62,7 @@ import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.IntegerUtil;
 import com.bizconf.audio.util.SiteIdentifyUtil;
 import com.bizconf.audio.util.StringUtil;
+import com.bizconf.encrypt.MD5;
 @Service
 public class SiteServiceImpl extends BaseSoapService implements SiteService{
 	private final Logger logger=Logger.getLogger(SiteServiceImpl.class);
@@ -70,6 +74,8 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 	LoginService loginService;
 	@Autowired
 	EmpowerConfigService empowerConfigService;
+	@Autowired
+	EnterpriseAdminService enterpriseAdminService;
 	
 	/**
 	 * 创建新站点（系统管理员）
@@ -91,7 +97,15 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 				return null;
 			}
 			try {
-				retCode =soapAddSite(siteBase);
+				if(siteBase.getChargeMode().equals(1)|| siteBase.getChargeMode().equals(2)){
+					retCode = ConstantUtil.AS_SUCCESS_CODE;
+				}else{
+					retCode =soapAddSite(siteBase);
+				}
+				if(!siteBase.getChargeMode().equals(2)){
+					
+					siteBase.setLicense(0);      //2013.6.19新建站点时，站点表不保存license数
+				}
 				if(retCode.equals(ConstantUtil.AS_SUCCESS_CODE)){
 					site = DAOProxy.getLibernate().saveEntity(siteBase);    //首先保存站点的基本信息
 					if(site!=null && site.getId().intValue() > 0){
@@ -154,9 +168,16 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 				return site;
 			}
 			try {
-				retCode = soapUpdateSite(siteBase,true);
+				if(!siteBase.getChargeMode().equals(1)&&!siteBase.equals(2)){
+					//2013.6.17加逻辑：确保修改站点时，不会修改掉站点当前生效的license
+					siteBase.setLicense(queryASSiteInfo(siteBase.getSiteSign()).getLicense());
+					//修改结束
+					retCode = soapUpdateSite(siteBase,true);
+				}else{
+					retCode = ConstantUtil.AS_SUCCESS_CODE;
+				}
 				if(retCode.equals(ConstantUtil.AS_SUCCESS_CODE)){
-					site = DAOProxy.getLibernate().updateEntity(siteBase, "id", "enName", "siteName", "siteLogo", "siteSign", "siteFlag","timeZone","timeZoneId", "mtgType", "expireDate", "effeDate", "hireMode", "chargeMode");  //先更新站点信息
+					site = DAOProxy.getLibernate().updateEntity(siteBase, "id", "enName", "siteName", "siteLogo", "siteSign", "siteFlag","timeZone","timeZoneId", "mtgType", "expireDate", "effeDate", "hireMode", "chargeMode", "sendRemindFlag", "siteDiy", "syncConfNum");  //先更新站点信息
 					if(site!=null && site.getId().intValue() > 0){
 						empowerConfig.setSiteId(site.getId());
 						boolean empowerFlag = empowerConfigService.updateEmpowerConfig(empowerConfig);
@@ -165,10 +186,13 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 						}
 						//系统管理员关闭站点功能权限后，要强制修改站点的全局变量设置
 						updateSiteEmpowerGlobal(empowerConfig, siteBase);
+						siteAdmin.setErrorCount(0);
+						siteAdmin.setUserStatus(ConstantUtil.USER_STATU_UNLOCK);
 						if(StringUtil.isNotBlank(siteAdmin.getLoginPass())){     //页面未修改用户密码
-							user = DAOProxy.getLibernate().updateEntity(siteAdmin, "id", "trueName", "loginName", "loginPass", "userEmail", "mobile", "remark", "enName");     //再更新站点管理员的基本信息
+							user = DAOProxy.getLibernate().updateEntity(siteAdmin, "id", "trueName", "loginName", "loginPass", "userEmail", "mobile", "remark", "enName","errorCount","userStatus");     //再更新站点管理员的基本信息
 						}else{
-							user = DAOProxy.getLibernate().updateEntity(siteAdmin, "id", "trueName", "loginName", "userEmail", "mobile", "remark", "enName");     //再更新站点管理员的基本信息
+							
+							user = DAOProxy.getLibernate().updateEntity(siteAdmin, "id", "trueName", "loginName", "userEmail", "mobile", "remark", "enName","errorCount","userStatus");     //再更新站点管理员的基本信息
 						}
 					}
 					if(user == null){
@@ -271,7 +295,7 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 	 * 
 	 */
 	@Override
-	public SiteBase updateSiteBaseForSiteAdmin(Integer siteId, String siteName, String enName, String logoPath,Integer timeZoneId,Integer timeZone){
+	public SiteBase updateSiteBaseForSiteAdmin(Integer siteId, String siteName, String enName, String logoPath, String siteBanner, Integer timeZoneId,Integer timeZone){
 		SiteBase siteBase = new SiteBase();
 		siteBase.setId(siteId);
 		siteBase.setSiteName(siteName);
@@ -279,10 +303,11 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		siteBase.setSiteLogo(logoPath);
 		siteBase.setTimeZoneId(timeZoneId);
 		siteBase.setTimeZone(timeZone);
+		siteBase.setSiteBanner(siteBanner);
 		SiteBase site = null;
 		if(siteId != null && siteId.intValue() > 0){
 			try {
-				site = DAOProxy.getLibernate().updateEntity(siteBase, "id", "enName", "siteName", "siteLogo","timeZone","timeZoneId");  //更新站点信息
+				site = DAOProxy.getLibernate().updateEntity(siteBase, "id", "enName", "siteName", "siteLogo", "siteBanner", "timeZone","timeZoneId");  //更新站点信息
 			} catch (Exception e) {
 				logger.error("修改站点失败", e);
 			}
@@ -301,7 +326,11 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		SiteBase site = getSiteBaseById(id);
 		String soapCode="";
 		if(site != null && id != null && id.intValue()>0 && sysUser != null){
-			soapCode = soapDelSite(site.getSiteSign());
+			if(site.getChargeMode().equals(1)||site.getChargeMode().equals(2)){
+				if(delSubVritualSite(site)) soapCode = ConstantUtil.AS_SUCCESS_CODE;
+			}else{
+				soapCode = soapDelSite(site.getSiteSign());
+			}
 			if(soapCode.equals(ConstantUtil.AS_SUCCESS_CODE)){
 				String updateSql = "update t_site_base set del_flag = ?,del_time = ?,del_user = ? where id = ? ";
 				Object[] values = new Object[4];
@@ -379,8 +408,9 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 			String sortField, String sortord, PageModel pageModel) {
 		List<SiteBase> siteBaseList = null;
 		List<Object> valueList = new ArrayList<Object>();
-		StringBuffer strSql = new StringBuffer(" select * from t_site_base where del_flag = ? ");
+		StringBuffer strSql = new StringBuffer(" select * from t_site_base where del_flag = ? and is_virtual_site = ? ");
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+		valueList.add(0);
 		if(StringUtil.isNotBlank(siteNameOrSign)){
 			strSql.append(" and (site_name like ? or site_sign like ? ) ");
 			valueList.add("%"+ siteNameOrSign +"%");
@@ -423,9 +453,10 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 			String sortField, String sortord, PageModel pageModel, int sysUserId){
 		List<SiteBase> siteBaseList = null;
 		List<Object> valueList = new ArrayList<Object>();
-		StringBuffer strSql = new StringBuffer(" select * from t_site_base where del_flag = ? and create_user = ?");
+		StringBuffer strSql = new StringBuffer(" select * from t_site_base where del_flag = ? and create_user = ? and is_virtual_site=? ");
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
 		valueList.add(sysUserId);
+		valueList.add(0);
 		if(StringUtil.isNotBlank(siteNameOrSign)){
 			strSql.append(" and (site_name like ? or site_sign like ? ) ");
 			valueList.add("%"+ siteNameOrSign +"%");
@@ -434,7 +465,8 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		if(StringUtil.isNotBlank(sortField)){
 			strSql.append(" order by ").append(sortField);
 		}else{ 
-			strSql.append(" order by id DESC ");   //查出列表无排序条件则为默认逆序
+//			strSql.append(" order by id DESC ");   //查出列表无排序条件则为默认逆序
+			strSql.append(" order by expire_date ASC ");   //查出列表无排序条件则为默认逆序
 		}
 		if(StringUtil.isNotBlank(sortField) && StringUtil.isNotBlank(sortord) && "desc".equals(sortord.trim().toLowerCase())){
 			strSql.append(" DESC");
@@ -463,8 +495,9 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 	public Integer countSiteListBySiteNameOrSign(String siteNameOrSign) {
 		int rows = 0;
 		List<Object> valueList = new ArrayList<Object>();
-		StringBuffer strSql = new StringBuffer(" select count(1) from t_site_base where del_flag = ? ");
+		StringBuffer strSql = new StringBuffer(" select count(1) from t_site_base where del_flag = ? and is_virtual_site = ? ");
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
+		valueList.add(0);
 		if(StringUtil.isNotBlank(siteNameOrSign)){
 			strSql.append(" and (site_name like ? or site_sign like ? ) ");
 			valueList.add("%"+ siteNameOrSign +"%");
@@ -490,9 +523,10 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 	public Integer countSiteListBySiteNameOrSign(String siteNameOrSign, int sysUserId){
 		int rows = 0;
 		List<Object> valueList = new ArrayList<Object>();
-		StringBuffer strSql = new StringBuffer(" select count(1) from t_site_base where del_flag = ? and create_user = ?");
+		StringBuffer strSql = new StringBuffer(" select count(1) from t_site_base where del_flag = ? and create_user = ? and is_virtual_site = ? ");
 		valueList.add(ConstantUtil.DELFLAG_UNDELETE);
 		valueList.add(sysUserId);
+		valueList.add(0);
 		if(siteNameOrSign != null){
 			strSql.append(" and (site_name like ? or site_sign like ? ) ");
 			valueList.add("%"+ siteNameOrSign +"%");
@@ -526,7 +560,7 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		if(StringUtil.isNotBlank(sortField)){
 			strSql.append(" order by ").append(sortField);
 		}else{ 
-			strSql.append(" order by id DESC ");   //查出列表无排序条件则为默认逆序
+			strSql.append(" order by expire_date ASC ");   //查出列表无排序条件则为默认逆序
 		}
 		if(StringUtil.isNotBlank(sortField) && StringUtil.isNotBlank(sortord) && "desc".equals(sortord.trim().toLowerCase())){
 			strSql.append(" DESC");
@@ -776,7 +810,10 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		}
 		return retInfo;
 	}
-
+	
+	/**
+	 * boolean flag  是否为添加  true 增加  false 减少
+	 */
 	@Override
 	public String soapUpdateSite(SiteBase site,boolean flag) {
 		String retInfo = ConstantUtil.AS_SUCCESS_CODE;
@@ -1092,7 +1129,10 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		
 		//testupdateEnterprise();
 		SiteService ss = AppContextFactory.getAppContext().getBean(SiteService.class);
-//		SiteBase siteBase = ss.queryASAllSites(10, );
+		SiteBase siteBase = ss.queryASSiteInfo("myhost2[mh2_user1]");
+		
+		System.out.println("企业标志："+siteBase.getSiteSign());
+		System.out.println("license端口："+siteBase.getLicense());
 //		System.out.println(siteBase.getSiteName());
 //		System.out.println(siteBase.getLicense());
 		
@@ -1235,4 +1275,192 @@ public class SiteServiceImpl extends BaseSoapService implements SiteService{
 		}
 		return page;
 	}
+ 
+	public List<SiteBase> getSiteListForRemind(){
+		List<SiteBase>  siteList=null;
+		StringBuffer sqlBuffer=new StringBuffer();
+		Date nowGmtDate=DateUtil.getGmtDate(null);
+		Date condDate=DateUtil.addDateMinutes(nowGmtDate, (SiteConstant.SITE_REMIND_DAYS[0]+2)*24*60);
+		
+		sqlBuffer.append("select tsb.* from t_site_base tsb where tsb.del_flag=? and is_virtual_site =? and tsb.effe_date<=? and tsb.expire_date>? and tsb.expire_date<=?");
+		
+		Object[] values = new Object[5];
+		values[0] = ConstantUtil.DELFLAG_UNDELETE;
+		values[1] = 0;
+		values[2] = nowGmtDate;
+		values[3] = nowGmtDate;
+		values[4] = condDate;
+		logger.info("sqlBuffer=----"+sqlBuffer.toString());
+		try {
+			siteList=libernate.getEntityListBase(SiteBase.class, sqlBuffer.toString(), values);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			sqlBuffer=null;
+			values=null;
+		}
+		return siteList;
+		
+	} 
+ 
+
+	@Override
+	public SiteBase saveSiteBase(SiteBase site) {
+		try {
+			return libernate.saveEntity(site);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean saveUserSiteMap(UserSiteMap userSite) {
+		try {
+			 libernate.saveEntity(userSite);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	
+	public boolean updateSubVritualSite(SiteBase parentSite){
+		String sql = "select t_user_base t where t.site_id=? and t.user_role=? and t.del_flag=?";
+		try {
+			List<UserBase> hosts = libernate.getEntityListBase(UserBase.class, sql, new Object[]{parentSite.getId(),ConstantUtil.USERROLE_HOST,ConstantUtil.DELFLAG_UNDELETE});
+			if(hosts==null || hosts.isEmpty()) return true;
+			for (Iterator it = hosts.iterator(); it.hasNext();) {
+				UserBase host = (UserBase) it.next();
+				SiteBase subSite = siteLogic.getVirtualSubSite(host.getId());
+				if(subSite!=null){
+					subSite.setClientName(parentSite.getClientName());
+					subSite.setEnName(parentSite.getEnName());
+					subSite.setExpireDate(parentSite.getExpireDate());
+					if(parentSite.getChargeMode().equals(2)){
+						boolean flag = true;
+						if(parentSite.getLicense().intValue()<subSite.getLicense().intValue()){
+							flag = false;
+						}
+						subSite.setLicense(parentSite.getLicense());
+						soapUpdateSite(subSite, flag);
+					}
+					libernate.updateEntity(subSite);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * 删除虚拟子站点
+	 */
+	@Override
+	public boolean delSubVritualSite(Integer siteid) {
+		String updateSql = "update t_site_base set del_flag = ?,del_time = ?,del_user = ? where id = ? ";
+		Object[] values = new Object[4];
+		values[0] = ConstantUtil.DELFLAG_DELETED;
+		values[1] = DateUtil.getDateStrCompact(DateUtil.getGmtDate(null), "yyyy-MM-dd HH:mm:ss");
+		values[2] = 0;
+		values[3] = siteid;
+		try{
+			return DAOProxy.getLibernate().executeSql(updateSql, values);
+		}catch (Exception e){
+			logger.error("根据站点ID号删除站点出错！" + e);
+		}
+		return false;
+	}
+
+	
+	@Override
+	public boolean delSubVritualSite(SiteBase parentSite) {
+		String sql = "select * from t_user_base t where t.site_id=? and t.user_role=? and t.del_flag=?";
+		try {
+			List<UserBase> hosts = libernate.getEntityListBase(UserBase.class, sql, new Object[]{parentSite.getId(),ConstantUtil.USERROLE_HOST,ConstantUtil.DELFLAG_UNDELETE});
+			if(hosts==null || hosts.isEmpty()) return true;
+			for (Iterator it = hosts.iterator(); it.hasNext();) {
+				UserBase host = (UserBase) it.next();
+				SiteBase subSite = siteLogic.getVirtualSubSite(host.getId());
+				if(subSite!=null){
+					soapDelSite(subSite.getSiteSign());
+					subSite.setDelFlag(ConstantUtil.DELFLAG_DELETED);
+					subSite.setDelTime(DateUtil.getGmtDate(null));
+					libernate.updateEntity(subSite);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	/**
+	 * 删除该用户和虚拟站点的关联关系
+	 */
+	@Override
+	public boolean delSubVritualSiteByUser(Integer userId) {
+		SiteBase subSite = siteLogic.getVirtualSubSite(userId);
+		if(!subSite.getDelFlag().equals(ConstantUtil.DELFLAG_DELETED)){
+			String retCode = soapDelSite(subSite.getSiteSign());
+			if(retCode.equals(ConstantUtil.AS_SUCCESS_CODE) && delSubVritualSite(subSite.getId()) && siteLogic.delHostLicenses(userId)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	@Override
+	public UserBase buildingVritualSite(SiteBase parentSite, UserBase host) {
+		String subSign = parentSite.getSiteSign()+"["+host.getLoginName()+"]";
+		SiteBase newSite = parentSite.Copy();
+		newSite.setSiteSign(subSign);
+		newSite.setId(null);
+		newSite.setIsVirtualSite(1);
+		UserBase userBase =  null;
+		try{
+			String  retCode = soapAddSite(newSite);
+			//创建站点成功
+			if(retCode.equals(ConstantUtil.AS_SUCCESS_CODE)){
+				//这种情况可能是角色的切换
+				if(host.getId()!=null && host.getId().intValue()>0){
+					userBase = host;
+				}else{
+					if(host.getLoginPass()!=null){
+						host.setLoginPass(MD5.encodePassword(host.getLoginPass(), "MD5"));
+					}
+					userBase = libernate.saveEntity(host);
+				}
+				//保存用户信息失败
+				if(userBase == null || userBase.getId() < 1){
+					soapDelSite(subSign);
+					return null;
+				}
+				SiteBase subSite = saveSiteBase(newSite);//siteService.
+				//保存站点失败
+				if(subSite == null || subSite.getId() < 1){
+					soapDelSite(subSign);
+					return  null;
+				}
+				//保存用户-子站点关系
+				UserSiteMap userSiteMap = new UserSiteMap();
+				userSiteMap.setSiteId(subSite.getId());
+				userSiteMap.setUserId(userBase.getId());
+				saveUserSiteMap(userSiteMap);
+				
+				return userBase;
+			}
+		}catch (Exception e) {
+			
+		}
+		return null;
+	}
+
+	
 }

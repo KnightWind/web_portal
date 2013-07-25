@@ -48,4 +48,31 @@ public interface SiteLogic {
 	 * 2013-2-4
 	 */
 	public boolean saveSiteLogo(String siteLogoPath);
+	
+	
+	/**
+	 * 获取host activeUser主持人用户的对应子站点
+	 * @param userId
+	 * @return
+	 */
+	public SiteBase getVirtualSubSite(Integer userId);
+	
+	
+	/**
+	 * 获取父站点的信息 如果本身为顶级站点则返回本身
+	 * @param site
+	 * @return
+	 */
+	public SiteBase getParentSite(SiteBase site);
+	
+	
+	/**
+	 * 删除namehost 主持人用户时删除主持人license
+	 * @param userId
+	 * @return
+	 */
+	public boolean delHostLicenses(Integer userId);
+	
+	
+	public SiteBase getSiteBaseById(Integer siteId);
 }

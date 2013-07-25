@@ -1,21 +1,14 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="/jsp/common/taglibs.jsp"%>
-<%
-	String path = request.getContextPath();
-	String basePath = request.getScheme() + "://"
-			+ request.getServerName() + ":" + request.getServerPort()
-			+ path + "/";
-%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>${LANG['bizconf.jsp.admin.CopyOfadminIndex.res10']}</title>
-<link rel="stylesheet" type="text/css"
-	href="${baseUrlStatic}/css/enterprise/reset.css" />
-<link rel="stylesheet" type="text/css"
-	href="${baseUrlStatic}/css/enterprise/rightbox.css" />
-<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></script>	
+<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/reset.css?ver=${version}" />
+<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/rightbox.css?ver=${version}" />
+<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></script>	
 <script type="text/javascript">
 	function delUser(id){
 		parent.confirmDialog("${LANG['system.siteadmin.delete']}", function() {
@@ -37,7 +30,7 @@
 			<input type="hidden"  name="keyword" value=""/>
 			<input type="hidden"  name="id" value=""/>
 			
-		<div class="m_top">
+		<div class="m_top1">
 			<input name="button_01" class="button_01" onclick="toEditUser();" type="button" value="${LANG['system.sysUser.list.addUser']}"
 				onmouseover="this.className='Btn_Hover_01'"
 				onmouseout="this.className='Btn_01'" />
@@ -47,32 +40,32 @@
 			<tr class="table003" height="38">
 				<td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>${LANG['system.login.name']}</span>
+						<span><b>${LANG['system.login.name']}</b></span>
 					</div>
 				</td>
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>${LANG['system.sysUser.list.userName']}</span>
+						<span><b>${LANG['system.sysUser.list.userName']}</b></span>
 					</div>
 				</td>
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>${LANG['system.sysUser.list.enName']}</span>
+						<span><b>${LANG['system.sysUser.list.enName']}</b></span>
 					</div>
 				</td>
 				<td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>${LANG['system.sysUser.list.email']}</span>
+						<span><b>${LANG['system.sysUser.list.email']}</b></span>
 					</div>
 				</td>
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div
 						align="center">
-						<span>${LANG['system.sysUser.list.telephone']}</span>
+						<span><b>${LANG['system.sysUser.list.telephone']}</b></span>
 					</div>
 				</td>
 				<td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"
 					style=" border-right:none;"><div align="center">
-						<span>${LANG['system.sysUser.list.operate']}</span>
+						<span><b>${LANG['system.sysUser.list.operate']}</b></span>
 					</div>
 				</td>
 			</tr>

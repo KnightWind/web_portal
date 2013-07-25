@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.LanguageComponent;
 import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.LoginConstants;
 import com.bizconf.audio.entity.SiteBase;
@@ -43,6 +44,8 @@ public class LoginController extends BaseController {
 	SiteService siteService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	LanguageComponent languageComponent;
 
 	@AsController(path = "")
 	public Object login(HttpServletRequest request, HttpServletResponse response)
@@ -69,18 +72,18 @@ public class LoginController extends BaseController {
 			HttpServletResponse response) {
 		if (loginService.isLogined(request)) {
 //			return new ActionForward.Redirect("/user/");
-			return returnJsonStr(LoginConstants.USER_LOGIN_SUCCESS, "用户登录成功");
+			return returnJsonStr(LoginConstants.USER_LOGIN_SUCCESS, ResourceHolder.getInstance().getResource("bizconf.jsp.user.login.success"));
 		}
 
 		int loginStatus = LoginConstants.LOGIN_ERROR_SUCCESS;
-		if (!validCodeService.checkValidCode(random, type, authCode)) {
+/*		if (!validCodeService.checkValidCode(random, type, authCode)) {
 			loginStatus = LoginConstants.LOGIN_ERROR_AUTHCODE;
 //			setErrMessage(request, ResourceHolder.getInstance().getResource(
 //					"system.login.error." + loginStatus));
 //			return new ActionForward.Forward("/user/login");
 			String errorMessage = ResourceHolder.getInstance().getResource("system.login.error." + loginStatus);
 			return returnJsonStr(LoginConstants.USER_LOGIN_FAILED, errorMessage);
-		}
+		}  */
 		if (userBase != null) {
 			String loginName = userBase.getLoginName();
 			String loginPass = userBase.getLoginPass();
@@ -102,8 +105,16 @@ public class LoginController extends BaseController {
 				return returnJsonStr(LoginConstants.USER_LOGIN_FAILED, errorMessage);
 			}
 		}
+		
+		//2013.7.4 登录成功后，用户缺省设置的语言设置到cookie中
+		SiteBase site = siteService.getSiteBaseBySiteSign(SiteIdentifyUtil.getCurrentBrand());
+		UserBase user = userService.getSiteUserByLoginName(site.getId(), userBase.getLoginName());
+		if(user != null && user.getId() != null && user.getId().intValue() > 0){
+			languageComponent.setDefaultLanguage(request, response, user.getFavorLanguage());
+		}
+		//2013.7.4   ----结束
 //		return new ActionForward.Redirect("/user/");
-		return returnJsonStr(LoginConstants.USER_LOGIN_SUCCESS, "用户登录成功");
+		return returnJsonStr(LoginConstants.USER_LOGIN_SUCCESS, ResourceHolder.getInstance().getResource("bizconf.jsp.user.login.success"));
 	}
 	
 	private String returnJsonStr(int status, Object object){

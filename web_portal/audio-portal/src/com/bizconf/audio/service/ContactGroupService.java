@@ -49,7 +49,7 @@ public interface ContactGroupService {
 	 * @param siteId
 	 * @return
 	 */
-	PageBean<Contacts> getImorpContectsList(Integer siteId,Integer userId,Integer group_id,String keyword,Integer pageNo);
+	PageBean<Contacts> getImorpContectsList(Integer siteId, UserBase currUser, Integer group_id,String keyword,Integer pageNo);
 	
 	/**
 	 * 查询某群组下的联系人
@@ -60,7 +60,7 @@ public interface ContactGroupService {
 	 * @param pageNo
 	 * @return
 	 */
-	PageBean<Contacts> getContactsByGroup(Integer siteId,Integer userId,Integer groupId,String keyword,Integer pageNo);
+	PageBean<Contacts> getContactsByGroup(Integer siteId, UserBase currUser, Integer groupId,String keyword,Integer pageNo);
 	
 	/**
 	 * 添加联系人到某一群组

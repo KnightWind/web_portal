@@ -8,11 +8,28 @@
 <link href="${baseUrlStatic}/css/user/common.css?ver=1368412705788" type="text/css" rel="stylesheet">
 <link href="${baseUrlStatic}/css/user/page.css?ver=1368412705788" type="text/css" rel="stylesheet">
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
+<script type="text/javascript">
+function sortQuery(sortField,sortord){
+	if(!sortord){
+		if($("#sortRule").val()=='0'){
+			sortord = "1";
+		}else{
+			sortord = "0";
+		}
+	}
+	$("#sortField").val(sortField);
+	$("#sortRule").val(sortord);
+	$("#query").attr("action","/user/conflog/loglist");
+	$("#query").submit();
+}
+</script>
 <title>${LANG['bizconf.jsp.attendConfloglist.res1']}</title>
 </head>
 
 <body onload="loaded();">
 <form id="query" name="query" action="/user/conflog/loglist" method="post">
+	<input type="hidden" value="${sortField}" id="sortField" name="sortField" />
+	<input type="hidden" value="${sortRule}" id="sortRule" name="sortRule" />
 <input type="hidden" value="${confId}" name="confId" />
 <input type="hidden" value="true" name="userPage" />
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" >
@@ -42,11 +59,32 @@
           <div class="jianju"></div>
           
           <!--${LANG['bizconf.jsp.attendConfloglist.res2']}-->
-          <div class="First_Steps_main_invite" style=" background:#FFF;">
-            <table width="730" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >
+          <div class="First_Steps_main_invite" style=" background:#FFF;height: 381px;overflow-y: auto;overflow-x:hidden;width:730px;margin: 0 auto;position: relative;">
+            <table width="100%" align="center" cellpadding="0" cellspacing="0" border="0">
               <tr align="center" height="35" class="tr_center" bgcolor="#000066">
-                <td width="25%" class="tr_center">${LANG['bizconf.jsp.add_contacts.res7']}</td>
-                <td width="25%" class="tr_center">${LANG['bizconf.jsp.conflogs.res2']}</td>
+                <td width="25%" onclick="sortQuery('1');" style="cursor: pointer;" class="tr_center"><span style="text-decoration: underline;">${LANG['bizconf.jsp.add_contacts.res7']}</span>
+	                	<c:if test="${1!=sortField}">
+			            	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="/static/images/paixu_button.png" width="6" height="13"  style="position:relative;top:4px"/></a>
+			       		 </c:if>
+			       		 <c:if test="${1==sortField && 0==sortRule}">
+			        		<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13"   style="position:relative;top:4px"/></a>
+			        	</c:if>
+				        <c:if test="${1==sortField  && 1==sortRule}">
+				        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13"  style="position:relative;top:4px" /></a>
+				     	</c:if>
+                </td>
+                <td width="25%" onclick="sortQuery('2')" style="cursor: pointer;" class="tr_center">
+                	<span style="text-decoration: underline;">${LANG['bizconf.jsp.conflogs.res2']}</span>
+                	<c:if test="${2!=sortField}">
+			            	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','1');"><img src="/static/images/paixu_button.png" width="6" height="13"   style="position:relative;top:4px"/></a>
+			       		 </c:if>
+			       		 <c:if test="${2==sortField && 0==sortRule}">
+			        		<a class="paixu01" href="javascript:;" onclick="sortQuery('2','0');"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13"  style="position:relative;top:4px" /></a>
+			        	</c:if>
+				        <c:if test="${2==sortField  && 1==sortRule}">
+				        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','1');"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13"  style="position:relative;top:4px" /></a>
+				     	</c:if>
+                </td>
                 <td width="25%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res8']}</td>
                 <td width="25%" class="tr_center" style=" border-right:#D2D8DB 1px solid">${LANG['bizconf.jsp.attendConfloglist.res9']}</td>
               </tr>
@@ -85,7 +123,7 @@
               </tr>
         </c:forEach>
               <tr>
-                <td height="35" colspan="6" class="tr_bottom">
+                <td height="35" colspan="4" class="tr_bottom">
                     <jsp:include page="/jsp/common/page_info.jsp" />
                 </td>
               </tr>
@@ -132,6 +170,6 @@ function closeDialog(result) {
 }
 
 function exports(confId){
-	window.location = "<%=request.getContextPath()%>/user/conflog/exportLogs?confId="+confId;
+	window.location = "<%=request.getContextPath()%>/user/conflog/exportLogs?sortField=${sortField}&sortRule=${sortRule}&confId="+confId;
 }
 </script>

@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.EventLogConstants;
 import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.entity.EmpowerConfig;
@@ -163,9 +164,9 @@ public class ConfTelConfigController extends BaseController {
 
 		boolean savedConfig = empowerConfigService.updateSiteEmpowerGlobal(empowerConfig);
 		if(savedConfig){
-			setInfoMessage(request,"修改会议功能全局设置成功！");
+			setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.config.update.success"));
 		}else{
-			setErrMessage(request, "修改会议功能全局设置失败！");
+			setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.config.update.failed"));
 		}
 		sysHelpAdminEventLog(savedConfig, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
 				EventLogConstants.SYSTEM_ADMIN_CONFAUTHORITY_SETUP, EventLogConstants.SITE_ADMIN_CONFAUTHORITY_SETUP, 

@@ -202,36 +202,36 @@ function enterSumbit(){
         <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.CompanyName']}</span></div></td>
         <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center">
 	        <c:if test="${1!=sortField}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><span>${LANG['system.site.list.SiteSign']}&nbsp;</span><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><span style="text-decoration: underline;">${LANG['system.site.list.SiteSign']}&nbsp;</span><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a>
 	        </c:if>
 	        <c:if test="${1==sortField && 0==sortord}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><span>${LANG['system.site.list.SiteSign']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><span style="text-decoration: underline;">${LANG['system.site.list.SiteSign']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
 	        </c:if>
 	        <c:if test="${1==sortField  && 1==sortord}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><span>${LANG['system.site.list.SiteSign']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><span style="text-decoration: underline;">${LANG['system.site.list.SiteSign']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
 	        </c:if>
         </div></td>
        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center">
         	<c:if test="${2!=sortField}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','0')"><span>${LANG['system.site.list.SiteFlag']}&nbsp;</span><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','0')"><span style="text-decoration: underline;">${LANG['system.site.list.SiteFlag']}&nbsp;</span><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a>
 	        </c:if>
 	        <c:if test="${2==sortField && 0==sortord}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','1')"><span>${LANG['system.site.list.SiteFlag']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','1')"><span style="text-decoration: underline;">${LANG['system.site.list.SiteFlag']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
 	        </c:if>
 	        <c:if test="${2==sortField  && 1==sortord}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','0')"><span>${LANG['system.site.list.SiteFlag']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','0')"><span style="text-decoration: underline;">${LANG['system.site.list.SiteFlag']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
 	        </c:if>
         </div></td>
         <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.License']}</span></div></td>
         <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center">
         	<c:if test="${3!=sortField}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','0')"><span>${LANG['system.site.list.ExpireDate']}&nbsp;</span><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','0')"><span style="text-decoration: underline;">${LANG['system.site.list.ExpireDate']}&nbsp;</span><img src="${baseUrlStatic}/images/paixuzong.png" width="6" height="13" /></a>
 	        </c:if>
 	        <c:if test="${3==sortField && 0==sortord}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','1')"><span>${LANG['system.site.list.ExpireDate']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','1')"><span style="text-decoration: underline;">${LANG['system.site.list.ExpireDate']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
 	        </c:if>
 	        <c:if test="${3==sortField  && 1==sortord}">
-	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','0')"><span>${LANG['system.site.list.ExpireDate']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
+	        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','0')"><span style="text-decoration: underline;">${LANG['system.site.list.ExpireDate']}&nbsp;</span><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
 	        </c:if>
         </div></td>
         <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.site.list.UserName']}</span></div></td>

@@ -1,5 +1,8 @@
 package com.bizconf.audio.constant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class SortConstant {
 	
@@ -49,8 +52,18 @@ public class SortConstant {
 	
 	//企业管理员排序
 	public static final String[][] USERBASE_FIELDS = new String[][]{
-		{"1","userStatus"}
+		{"1","userStatus"},
+		{"2","trueName"},
+		{"3","loginName"}
 	};
+	//入会详情
+	public static final Map<String, String> CONFLOG_FIELDS = new HashMap<String, String>(2);
+	static{
+		CONFLOG_FIELDS.put("1", "user_name");
+		CONFLOG_FIELDS.put("2", "term_type");
+	}
+	
+	
 	public static final String SITEBASE_SORT_DEFAULT="0";
 	public static final String SITEBASE_SORT_SIGN="1";
 	

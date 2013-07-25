@@ -24,9 +24,9 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="emile" style="height: 650px;">
+<div class="emile" style="height: 520px;">
  <div class="emile_03">     
-     <div class="emile_03_top" ><span>${LANG['system.menu.config.template']}</span></div>
+     <div class="emile_03_top" style="margin-top: 15px;"><span>${LANG['system.menu.config.template']}</span></div>
        		<input type="hidden" id="eTempId" />
        		<div style="margin-top: 8px;margin-bottom: 5px;height: 30px;">
        			<form id="tempTypeForm" action="">

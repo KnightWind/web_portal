@@ -12,25 +12,44 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js"></script>
 <script type="text/javascript">
-	function delUser(id){
+	function delUser(id,role){
+		var chargeModel = '${site.chargeMode}';
 		if(!id){
 			if($("input[name=id]:checked").length<=0){
 				parent.warningDialog("${LANG['site.admin.userlist.info1']}");
-				return false;
+				return;
+			}
+			
+			if(chargeModel=='1' && $("input[role=1]:checked").length>0){
+				parent.warningDialog("${LANG['admin.site.userlist.namehostundelete']}");
+				$("input[role=1]:checked").each(function(){
+					$(this).attr("checked",false);
+				});
+				$("#checkAll").attr("checked",false);
+				return;
 			}
 			parent.confirmDialog("${LANG['site.admin.userlist.info2']}", function() {
+					parent.successDialog("${LANG['bizconf.jsp.admin.action.delete.success']}");
 					$("#query").attr("action","/admin/entUser/delSiteUsers");
 					$("#query").submit();
 			});
 		}else{
+
+			if(chargeModel=='1' && role =='1'){
+				parent.warningDialog("${LANG['admin.site.userlist.namehostundelete']}");	
+				return;
+			}
 			parent.confirmDialog("${LANG['site.admin.userlist.info2']}", function() {
+				parent.successDialog("${LANG['bizconf.jsp.admin.action.delete.success']}");
 				$("input[name=id]").each(function(){
+
 					if($(this).val()==id){
 						$(this).attr("checked",true);
 					}else{
 						$(this).attr("checked",false);
 					}
 				});
+
 				$("#query").attr("action","/admin/entUser/delSiteUsers");
 				$("#query").submit();
 			});
@@ -39,7 +58,7 @@
 	function lockUser(){
 		if($("input[name=id]:checked").length<=0){
 			parent.warningDialog("${LANG['site.admin.userlist.info3']}");
-			return false;
+			return;
 		}
 		parent.confirmDialog("${LANG['site.admin.userlist.info4']}", function(){
 				$("#query").attr("action","/admin/entUser/lockSiteUsers");
@@ -51,7 +70,7 @@
 	function unlockUser(){
 		if($("input[name=id]:checked").length<=0){
 			parent.warningDialog("${LANG['site.admin.userlist.info5']}");
-			return false;
+			return;
 		}
 		parent.confirmDialog("${LANG['site.admin.userlist.info6']}", function() {
 				$("#query").attr("action","/admin/entUser/unlockSiteUsers");
@@ -67,6 +86,7 @@
 		//var keyword = $("input[name=keyword]").val();
 		$("#query").attr("action","/admin/entUser/exportUser");
 		$("#query").submit();
+		$("#query").attr("action","/admin/entUser/listAll");
 		//window.location = "/admin/entUser/exportUser?keyword="+keyword;
 	}
 	
@@ -94,7 +114,9 @@
 	
 	$(document).ready(function(){
 		$(".search_user").uniform();
-		$(".search_user").watermark('${LANG['bizconf.jsp.admin.site_org_user.res1']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".search_user").watermark('${LANG['bizconf.jsp.admin.site_org_user.res1']}');
+		}
 		$("#btn_search").click(function(){
 			$("#pageNo").val("");
 			$("#query").attr("action","/admin/entUser/listAll");
@@ -169,45 +191,70 @@
 	<input type="hidden" value="${sortField}" id="sortField" name="sortField" />
 	<input type="hidden" value="${sortRule}" id="sortRule" name="sortRule" />
 	<div class="main_content">
-		<div class="m_top">
+		<div class="m_top1">
 		    <input class="search_user" name="keyword" type="text" maxlenght="32" value="${keyword}" />
 		    <input name="" class="searchs_button" type="button" id="btn_search" />
 	 	 </div>
 		 <div class="batch">
 		  	<ul>
-		    	<li><a href="#" onclick="toEditUser();" class="zengjia">${LANG['site.admin.userlist.add']} </a></li>
-		        <li><a href="#" onclick="delUser();" class="shanchu">${LANG['system.delete']}</a></li>
-		        <li><a href="#" onclick="unlockUser();" class="jihuo">${LANG['site.admin.userlist.active']}</a></li>
-		        <li><a href="#" onclick="lockUser();" class="suoding">${LANG['system.site.list.Status.lock']}</a></li>
-		        <li><a href="#" onclick="doImport();" class="daoru">${LANG['site.admin.userlist.batchimport']}</a></li>
-		        <li><a href="#" onclick="exportExcel();" class="daochu">${LANG['site.admin.userlist.batchexport']}</a></li>
+		    	<li><a href="javascript:toEditUser();" class="zengjia"><b>${LANG['site.admin.userlist.add']}</b></a></li>
+		        <li><a href="javascript:delUser();" class="shanchu"><b>${LANG['system.delete']}</b></a></li>
+		        <li><a href="javascript:unlockUser();" class="jihuo"><b>${LANG['site.admin.userlist.active']}</b></a></li>
+		        <li><a href="javascript:lockUser();" class="suoding"><b>${LANG['system.site.list.Status.lock']}</b></a></li>
+		        <li><a href="javascript:doImport();" class="daoru"><b>${LANG['site.admin.userlist.batchimport']}</b></a></li>
+		        <li><a href="javascript:exportExcel();" class="daochu"><b>${LANG['site.admin.userlist.batchexport']}</b></a></li>
 		    </ul>
 		</div>
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" id="table_box">
 			<tr class="table003" height="38">
 			<td width="5%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><input type="checkbox" id="checkAll"/></div></td>
-            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.login.name']}</span></div></td>
-            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
-            <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['site.admin.edituser.userrole']}</span></div></td>
-            <td width="20%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.email']}</span></div></td>
-            <td width="16%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.telephone']}</span></div></td>
+            <td width="10%" height="38" bgcolor="d3eaef" onclick="sortQuery('3');" class="STYLE10" style="cursor: pointer;">
+	            <div align="center">
+	            <span style="text-decoration: underline;"><b>${LANG['system.login.name']}</b></span>
+		            <c:if test="${3!=sortField}">
+		            	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','1')"><img src="/static/images/paixu_button.png" width="6" height="13" /></a>
+		       		 </c:if>
+		       		 <c:if test="${3==sortField && 0==sortRule}">
+		        		<a class="paixu01" href="javascript:;" onclick="sortQuery('3','0')"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
+		        	</c:if>
+			        <c:if test="${3==sortField  && 1==sortRule}">
+			        	<a class="paixu01" href="javascript:;" onclick="sortQuery('3','1')"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
+			        </c:if>
+	            </div>
+            </td>
+            <td width="10%" height="38" bgcolor="d3eaef" onclick="sortQuery('2');" class="STYLE10" style="cursor: pointer;">
+	            <div align="center"><span style="text-decoration: underline;" ><b>${LANG['system.sysUser.list.userName']}</b></span>
+	            		<c:if test="${2!=sortField}">
+			            	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','1')"><img src="/static/images/paixu_button.png" width="6" height="13" /></a>
+			       		 </c:if>
+			       		 <c:if test="${2==sortField && 0==sortRule}">
+			        		<a class="paixu01" href="javascript:;" onclick="sortQuery('2','0')"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
+			        	</c:if>
+				        <c:if test="${2==sortField  && 1==sortRule}">
+				        	<a class="paixu01" href="javascript:;" onclick="sortQuery('2','1')"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
+				        </c:if>
+	            </div>
+            </td>
+            <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['site.admin.edituser.userrole']}</b></span></div></td>
+            <td width="20%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.email']}</b></span></div></td>
+            <td width="16%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.telephone']}</b></span></div></td>
             <td width="7%" height="38" bgcolor="d3eaef" class="STYLE10" onclick="sortQuery('1');" style="cursor: pointer;">
             <div align="center">
-	            <span>${LANG['site.admin.userlist.userstatu']}</span>
+	            <span style="text-decoration: underline;"><b>${LANG['site.admin.userlist.userstatu']}</b></span>
 	             <c:if test="${1!=sortField}">
 	            	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="/static/images/paixu_button.png" width="6" height="13" /></a>
 	       		 </c:if>
 	       		 <c:if test="${1==sortField && 0==sortRule}">
-	        		<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
+	        		<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><img src="${baseUrlStatic}/images/paixu02.png" width="6" height="13" /></a>
 	        	</c:if>
 		        <c:if test="${1==sortField  && 1==sortRule}">
-		        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','0')"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
+		        	<a class="paixu01" href="javascript:;" onclick="sortQuery('1','1')"><img src="${baseUrlStatic}/images/paixu01.png" width="6" height="13" /></a>
 		        </c:if>
             </div>
             </td>
-            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.org']}</span></div></td>
-			<td width="18%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span>${LANG['system.sysUser.list.operate']}</span></div></td>
+            <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.org']}</span></div></td>
+			<td width="18%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" ><span><b>${LANG['system.sysUser.list.operate']}</b></span></div></td>
 			</tr>
 			<c:if test="${fn:length(pageModel.datas)<=0}">
 				<tr class="table001" height="32"  >
@@ -216,8 +263,10 @@
 			</c:if>
 				<c:forEach var="user" items="${pageModel.datas}" varStatus="status">
 					<tr class="table001" height="32" >
-			            <td height="32"><div align="center"><input name="id" type="checkbox" value="${user.id }" /></div></td>
-			            <td height="32"><div align="center"><a href="#" onclick="toViewUser('${user.id }');"><span>${user.loginName }</span></a></div></td>
+			            <td height="32"><div align="center"><input name="id" type="checkbox" role="${user.userRole}" value="${user.id }" /></div></td>
+			            <td height="32"><div align="center"><a href="javascript:toViewUser('${user.id }');">
+			            	<c:if test="${user.userStatus eq '0'}"><img src="/static/images/p_03_r1_c3.jpg" width="12" height="13" /></c:if><span>&nbsp;${user.loginName }</span></a></div>
+			            </td>
 			            <td height="32"><div align="center"><span>${user.trueName }</span></div></td>
 			            <td height="32">
 			            <div align="center">
@@ -228,8 +277,9 @@
 					            ${LANG['site.admin.edituser.role2']}
 				            </c:if>
 			            </div></td>
-			            <td height="32"><div align="center">${user.userEmail }</div></td>
-			            <td height="32"><div align="center">${user.mobile }</div></td>
+			            <td height="32"><div align="center">&nbsp;${user.userEmail }</div></td>
+			            <td height="32"><div align="center">&nbsp;${user.mobile }</div></td>
+			            
 			            <td height="32">
 				            <div align="center">
 				            	<c:if test="${user.userStatus eq '0'}">${LANG['system.site.list.Status.lock']}</c:if>
@@ -239,9 +289,9 @@
 			            <td height="32"><div align="center">${orgNamesMap[user.id]}</div></td>
 			            <td height="32">
 			            <div align="center" class="STYLE21">
-			            	<a href="#" onclick="toEditUser('${user.id }');">${LANG['system.change']}</a>&nbsp;
-			            	<a href="#" onclick="delUser('${user.id }');">${LANG['system.delete']}</a>&nbsp;
-			            	<a href="#" onclick="parent.showAttendConfs('${user.id }');">${LANG['bizconf.jsp.admin.index.res16']}</a>
+			            	<a href="javascript:toEditUser('${user.id }');">${LANG['system.change']}</a>&nbsp;
+			            	<a href="javascript:delUser('${user.id }','${user.userRole}');">${LANG['system.delete']}</a>&nbsp;
+			            	<a href="javascript:parent.showAttendConfs('${user.id }');">${LANG['bizconf.jsp.admin.index.res16']}</a>
 			            </div></td>
 			         </tr>
 				</c:forEach>

@@ -71,6 +71,15 @@
 		}
 
 		$(document).ready(function(){
+			if ($.browser.msie && $.browser.version<7) {//for ie6 png
+				$(".png").each(function() {
+					$(this).attr('width',$(this).width());
+					$(this).attr('height',$(this).height());
+					var imgSrc = $(this).attr('src');
+					$(this).get(0).runtimeStyle.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader' + '(src=\'' + imgSrc + '\', sizingMethod=\'scale\');';
+					$(this).attr('src', '/static/images/blank.gif');
+				});		
+			}
 			$("#mainFrame").load(function(){
 				resizeHeight();  
 		    });
@@ -78,10 +87,11 @@
 		});
 		
 		function resizeHeight() {
-			var height = $(window).height()-156;
-			if(height<550){
-				height = 550;
+			var height = $(window).height()-140;
+			if(height<300){
+				height = 300;
 			}
+			$(".main_right").height(height);
 			$("#mainFrame").height(height);
 			$(".help_left").height(height);
 		}
@@ -108,12 +118,12 @@
 <!--${LANG['bizconf.jsp.conf_invite_recv.res4']}-->
 <jsp:include page="header.jsp" />
 <div id="head_bar">
-  <div class="help_subnav"><img src="/static/images/help_ico07.png" width="18" height="19" align="absmiddle" /><span style="position: relative;top: 8px;left: 10px;">${LANG['bizconf.jsp.help.res33']}</span></div>
+  <div class="help_subnav"><img class="png" src="/static/images/help_ico07.png" width="18" height="19" align="absmiddle" /><span style="position: relative;top: 8px;left: 10px;">${LANG['bizconf.jsp.help.res33']}</span></div>
 </div>
 <div class="help_left" style="min-height: 550px;overflow-y: auto;padding-top: 10px;">
 	<ul id="treeDemo" class="ztree"></ul>
 </div>
-<div class="main_right">
+<div class="main_right" style="height: 500px;">
 	<iframe width="100%" height="500" frameborder="0" id="mainFrame" name="mainFrame" scrolling="auto" src="/static/html/help/help1.html"></iframe>
 </div>
 <!--${LANG['bizconf.jsp.conf_invite_recv.res15']}-->

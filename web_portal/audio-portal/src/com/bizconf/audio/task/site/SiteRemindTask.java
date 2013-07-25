@@ -1,5 +1,7 @@
 package com.bizconf.audio.task.site;
 
+import java.util.List;
+
 import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.service.EmailService;
@@ -13,32 +15,34 @@ import com.bizconf.audio.task.AppContextFactory;
  */
 public class SiteRemindTask extends Thread implements Runnable {
 	
-	SiteBase site;
-	
-	Integer email_type;
+	List<SiteBase> siteList;
+	 
 	
 	static final EmailService emailService = AppContextFactory.getAppContext().getBean(EmailService.class);
 	
-	public SiteRemindTask (SiteBase site,Integer email_type) {
-		this.site = site;
-		this.email_type = email_type;
+	public SiteRemindTask (List<SiteBase> siteList) {
+		this.siteList = siteList; 
 	}
 	
 	public void run() {
 		try {
 			boolean result = false;
-			if (email_type.equals(SiteConstant.SEND_SITE_EXP_REMIND)) {
-				result = emailService.sendSiteRmindEmail(site);
-			}else if(email_type.equals(SiteConstant.SEND_SITE_EXP)){
-				result = emailService.sendSiteExpiredEmail(site);
+			if(siteList!=null && siteList.size()>0){
+				for(SiteBase siteBase:siteList){
+					result = false;
+					if(siteBase!=null){
+						result = emailService.sendEmailForSiteRemind(siteBase);
+					}
+//					if (result) {
+//						System.out.println("site task for :" + siteBase + " success.");
+//					}
+//					else{
+//						System.out.println("site task for :" + siteBase + " failed, waiting for retry.");
+//					}
+				}
 			}
+
 			
-			if (result) {
-				System.out.println("site task for :" + site.getId() + " success.");
-			}
-			else{
-				System.out.println("site task for :" + site.getId() + " failed, waiting for retry.");
-			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -86,18 +86,25 @@ public interface ConfLogService {
 	 * @param confId
 	 * @return
 	 */
-	PageBean<ConfLog> getLogsByConf(Integer confId,Integer pageNo);
+	PageBean<ConfLog> getLogsByConf(Integer confId, int pageSize, Integer pageNo,String sortField,String sortValue);
 	
 	/**
 	 * 通过会议ID获取会议日志
 	 * @param confId
 	 * @return
 	 */
-	List<ConfLog> getAllLogsByConf(Integer confId);
+	List<ConfLog> getAllLogsByConf(Integer confId,String sortField,String sortRule);
 	/**
 	 * 获取会议-参会人次map
 	 * @param confs
 	 * @return
 	 */
 	Map<Integer, Integer> getConflogNumByConf(List<ConfBase> confs);
+	
+	/**
+	 * 按会议统计会议人次
+	 * @param confs
+	 * @return
+	 */
+	int countConfLogsByConfs(List<ConfBase> confs);
 }

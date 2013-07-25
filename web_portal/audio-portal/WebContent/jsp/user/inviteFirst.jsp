@@ -47,7 +47,12 @@ function saveContact() {
 	app.inventContact(data, function(result) {
 		if(result) {
 			if(result.status==1){
-				closeDialog(result);		
+				var url = parent.$("#eidtInventContact").find("iframe").attr("src");
+				if(url){
+					url = addUrlParam(url, "t", Math.random());
+					parent.$("#eidtInventContact").find("iframe").attr("src", url);	
+				}
+				closeDialog(result);
 			} else {
 				parent.errorDialog(result.message);
 			}
@@ -72,6 +77,9 @@ function unRegsit(email){
 }	
 
 function isRepeatedEmail(email){
+	if(!email){
+		return false;
+	}
 	//alert($("input[name=cemail]").filter("[value='"+email+"']").length);
 	if($("input[name=cemail]").filter("[value='"+email+"']").length >0){
 		return true;
@@ -84,6 +92,9 @@ function hasRepeatEmail(){
 	var regsiter = new Object();
 	for(var i=0; i<$("input[name=cemail]").length;i++){
 		var ipt = $("input[name=cemail]").get(i);
+		if(!($(ipt).val())){
+			continue;
+		}
 		if(regsiter[$(ipt).val()]){
 			$(ipt).focus();
 			parent.errorDialog("${LANG['bizconf.jsp.inviteFirst.res6']}");
@@ -135,10 +146,10 @@ function appendRow(data){
 	//regsiterEmail(data.email);
 	var userId = data.userId || "";
 	var len = $("#contactsTab tr").length-1;
-	var html = "<tr class=\"yq_ta\"><td width=\"20\" name=\"contactItem\">"+len+"</td><td align=\"center\" >"
+	var html = "<tr class=\"yq_ta\"><td width=\"20\" name=\"contactItem\">"+len+"</td><td align=\"center\" width=\"160\">"
 				+"<input name=\"userId\" value=\""+userId+"\" type=\"hidden\"><input class=\"yq_t01 username\" name=\"cname\" type=\"text\" value=\""+data.name+"\" /></td>"
-				+" <td align=\"center\" ><input class=\"yq_t02 email\" name=\"cemail\" type=\"text\" value=\""+data.email+"\" /></td>"
-				+" <td align=\"center\" ><input class=\"yq_t03 phone\" name=\"cphone\" type=\"text\" value=\""+data.phone+"\" /></td>"
+				+" <td align=\"center\"  width=\"185\"><input class=\"yq_t02 email\" name=\"cemail\" type=\"text\" value=\""+data.email+"\" /></td>"
+				//+" <td align=\"center\" ><input class=\"yq_t03 phone\" name=\"cphone\" type=\"text\" value=\""+data.phone+"\" /></td>" //电话
 				+"  <td align=\"center\" ><a href=\"#\" onclick=\"removeItem(this,'"+data.email+"');\" >${LANG['bizconf.jsp.attended_conf_list.res12']}</a></td>"
 				+" <td align=\"center\" ></td></tr>";
 	$("#contactsTab").append(html);
@@ -184,27 +195,29 @@ function addByExtral(datas){
       <td class="overlay-bdL"></td>
       <td class="overlay-content">
       <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->  
-<div class="First_Steps_invite_first" style="height: 450px;">
-        <div class="First_Steps_title_invite"> <a href="javascript:;" onclick="closeDialog()"></a>
+<div class="First_Steps_invite_first" style="height: 450px;width:730px">
+        <div class="First_Steps_title_invite" style="width: 730px;"> 
+        	<a href="javascript:;" onclick="closeDialog()"></a>
           <h3 class="tit_a_invite">${LANG['bizconf.jsp.inviteFirst.res14']}</h3>
           <p class="tit_b_invite">${LANG['bizconf.jsp.inviteFirst.res15']}</p>
         </div>
-        <div style=" background:#fff"><img class="toa_quick_invite" src="/static/images/min.jpg" width="730" height="1" /></div>
-        <div class="First_Steps_main_invite" style="height:320px; overflow-y:auto;">
-          <table id="contactsTab" width="730" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box_01" style="line-height:32px; margin-top:5px;">
+        <div style=" background:#fff;font-size: 1px;"><img class="toa_quick_invite" src="/static/images/min.jpg" width="650" height="1" /></div>
+        <div class="First_Steps_main_invite" style="height:300px; overflow-y:auto;overflow-x:hidden;width:730px;position: relative;">
+        	<div style="position: absolute;top: 0px;">
+        		<table id="contactsTab" width="100%" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box_01" style="margin-top:5px;">
             <tr>
               <td width="20" height="24"></td>
               <td align="center" width="160">${LANG['bizconf.jsp.add_contacts.res7']}</td>
-              <td align="center" width="160">${LANG['bizconf.jsp.add_contacts.res9']}</td>
-              <td align="center" width="160">${LANG['bizconf.jsp.conflogs.res4']}</td>
+              <td align="center" width="185">${LANG['bizconf.jsp.add_contacts.res9']}</td>
+<%--              <td align="center" width="160">${LANG['bizconf.jsp.conflogs.res4']}</td>--%>
               <td align="center" width="90"></td>
               <td align="center" width="160"></td>
             </tr>
             <tr>
               <td width="20"></td>
-              <td align="center" width="160" height="36""><input class="yq_t01" id="itemName" type="text" /></td>
-              <td align="center" width="160"><input class="yq_t02" id="itemEmail" type="text" /></td>
-              <td align="center" width="160"><input class="yq_t03" id="itemPhone" type="text" /></td>
+              <td align="center" width="160" height="36"><input class="yq_t01" id="itemName" type="text" /></td>
+              <td align="center" width="185"><input class="yq_t02" id="itemEmail" type="text" /></td>
+<%--              <td align="center" width="160"><input class="yq_t03" id="itemPhone" type="text" /></td>--%>
               <td align="center" width="90">
               	<span class="button_common">
               		<a href="javascript:;" onclick="addItem()">
@@ -220,19 +233,13 @@ function addByExtral(datas){
               	</span>
               </td>
             </tr>
-            <%--<tr>
-              <td width="20">
-               <table id="userListTbl" width="100%" align="center" cellpadding="0" cellspacing="0" border="0" >
-               </table>
-              </td>
-            </tr>
-          --%>
           </table>
+        	</div>
         </div>
         <div class="First_Steps_bottom_a" style="margin-top: 0px;">
           <div class="but10">
           	<span class="button_common">
-          	<a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res64']}&nbsp;&nbsp;${LANG['bizconf.jsp.create_Reservation_Conf.res65']}</a>
+          	<a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res6400']}</a>
           	</span></div>
           <div class="but11">
           	<span class="button_common">

@@ -126,7 +126,7 @@ var resetPassForm = null;
                 </td>
               </tr>
               <tr align="left">
-            <td align="left" colspan="3">  
+            <td align="left" colspan="3" style="height: 50px;">  
             <div class="but150" style=" margin-bottom:70px;"><span class="button_common">
             	<a href="javascript:;" onclick="javascript:checkForm();" ><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:5px; margin-left:5px"/>${LANG['bizconf.jsp.add_group.res5']}</a> </span>
             </div>

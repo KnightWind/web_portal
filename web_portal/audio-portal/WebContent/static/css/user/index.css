@@ -10,9 +10,9 @@
 	padding: 6px;
 }
 body {
-	overflow:hidden;
+	overflow-x:auto;
 	min-width:1002px;
- 	_width:expression(document.body.clientWidth<1002?"1002px":"auto");
+ 	_width:expression(documentElement.clientWidth<1002?"1002px":"auto");
 }
 .ui-dialog-titlebar {
 	display: none;
@@ -22,7 +22,7 @@ body {
 	height:80px;
 	background:url(/static/images/head_bg.jpg) no-repeat right center;
 	min-width:1002px;
-	_width:expression(document.body.clientWidth<1002?"1002px":"auto");
+	_width:expression(documentElement.clientWidth<1002?"1002px":"auto");
 	overflow:hidden;
 }
 .header_left {
@@ -139,7 +139,7 @@ body {
 .main_left {
 	overflow:hidden;
 	width:190px;
-	min-height:300px;
+	min-height:600px;
 	margin-top:0px;
 	float:left;
 	background:url(/static/images/yh_nav_bg.png) repeat-y;
@@ -533,6 +533,7 @@ _width:expression((document.documentElement.clientWidth||document.body.clientWid
        position: relative;
        color: #000000;
        outline: none;
+       background: url("/static/images/blank.gif");
    }
    
    .nav-ul-on .icon-arrow {
@@ -627,8 +628,14 @@ _width:expression((document.documentElement.clientWidth||document.body.clientWid
 }
 .icon82-span {display: inline-block;position: relative;left: 65px;} 
 
+.icon9-img {
+    width:25px;height:24px;display: inline-block;background: url("/static/images/icon9.png") no-repeat scroll 0 0 transparent;
+    position:relative;top:6px;left:30px;
+}
+.icon9-span {display: inline-block;position: relative;left: 35px;}
+
 .active .ico0, .active .ico11, .active .ico12, .active .ico2, .active .ico3, 
 .active .ico41, .active .ico42, .active .ico5, .active .ico6, 
-.active .ico7, .active .ico81, .active .ico82 {
+.active .ico7, .active .ico81, .active .ico82, .active .ico9{
     background: url("/static/images/menu_change.jpg") no-repeat scroll 0 0 transparent;
 }

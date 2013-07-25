@@ -292,6 +292,65 @@ $.widget("ui.confirmDialog",{
 		self.destroy();   	
     }
 });
+
+$.widget("ui.excelDialog",{
+    options: {
+    	title: "",
+    	dialogClass: "",
+        message: null,
+        actions: [],
+        width: null,
+        height: null,
+        callback: null
+    },
+    _create: function() {
+    	var self = this;
+    	this.element.attr("title", self.options.title);
+    	this.messageContainer = $("<div style='text-align:center;margin: 20px auto;'></div>").appendTo(this.element);
+    	$("<img src='/static/images/success_bg.jpg' style='margin-right:15px;width:27px;height:26px;'/>").appendTo(this.messageContainer);
+    	this.message = $("<span></span>").appendTo(this.messageContainer);
+    	this.message.html(this.options.message);
+    	var btnContainer = $("<div style='text-align:center'></div>").appendTo(this.element);
+    	var OkBtn = $("<input class='form-button' type='button' value='"+self.options.actions[0]+"' />").appendTo(btnContainer);
+    	OkBtn.click(function() {
+    		self.closeDialog();
+    		if(self.options.callback) {
+    			self.options.callback();
+    		}        		
+    	});
+    },
+    _init: function() {
+    	var self = this;
+    	var width = 320;
+    	if(self.options.width){
+    		width = self.options.width;
+    	}
+    	var height = 160;
+    	if(self.options.height) {
+    		height = self.options.height;
+    	}
+    	this.dialog = this.element.dialog({
+    		dialogClass: self.options.dialogClass,
+			autoOpen: true,
+			resizable: false,
+			modal: true,
+			width: width,
+			height: height,
+			close: function() {
+				self.closeDialog();
+			}
+		});
+    	
+    },
+    destroy: function() {
+        $.Widget.prototype.destroy.apply(this, arguments);
+        this.element.empty().remove();
+    },
+    closeDialog: function() {
+    	var self = this;
+		self.destroy(); 	
+    }
+});
 $.widget("ui.alertDialog",{
     options: {
     	title: "",
@@ -318,7 +377,8 @@ $.widget("ui.alertDialog",{
     	closeLink.click(function() {
     		self.closeDialog();
     	});
-    	$('<h3>提示</h3>').appendTo(msgTop);
+    	var tips = $('<h3></h3>').appendTo(msgTop);
+    	tips.text(self.options.title);
     	$('<img class="toa" width="410" height="1" src="/static/images/min.jpg">').appendTo(centerTD);
     	var msgMain = $('<div class="prompt_message_main" style="background-color:#FFFFFF;"></div>').appendTo(centerTD);
     	var dl = $('<dl></dl>').appendTo(msgMain);
@@ -392,6 +452,70 @@ $.widget("ui.alertDialog",{
     }
 });
 
+
+$.widget("ui.callOnline",{
+    options: {
+    	position:"left"  //right
+    },
+    _create: function() {
+    	var self = this;
+    	this.miniPanel = $("<div class='miniPanel' style='cursor: pointer;position:absolute;width:30px;height:110px;background: url(/static/images/spa_left.png) no-repeat scroll 0 0 transparent;display:none'></div>").appendTo(this.element);
+    	$("<div style='background: url(/static/images/openIcon.gif) no-repeat scroll 0 0 transparent;height: 26px;width: 26px;margin:0px auto;'></div>").appendTo(this.miniPanel);
+    	$("<div style='font-size:14px;word-wrap:break-word;word-break:nomal;width: 14px;margin:5px auto;color:#fff'>在线客服</div>").appendTo(this.miniPanel);
+    	this.miniPanel.bind("click", function() {
+    		self.element.width(170).height(280);
+    		if(self.options.position=="left"){
+        		self.mainPanel.animate({left: 0}, "fast");	
+    		} else if(self.options.position=="right"){
+    			self.mainPanel.animate({right: 0}, "fast");
+    		}
+    		self.miniPanel.hide();
+    	});
+    	this.mainPanel = $("<div class='mainPanel' style='width:170px;position:absolute;background: #fff;border:2px solid #0770C3;'></div>").appendTo(this.element);
+    	var closeButton = $("<div style='background: url(/static/images/closeIcon.gif) no-repeat scroll 0 0 transparent;cursor: pointer;display: block;height: 25px;position: absolute;right: 5px;top: 5px;width: 25px;z-index: 2;'></div>").appendTo(this.mainPanel);
+    	closeButton.bind("click", function() {
+    		self.element.width(30).height(110);
+    		self.miniPanel.show();
+    		if(self.options.position=="left"){
+        		self.mainPanel.animate({left: -175}, "fast");	
+    		} else if(self.options.position=="right"){
+        		self.mainPanel.animate({right: -175}, "fast");	
+    		}
+    	});
+    	var titlePanel = $("<div class='titlePanel' style='width:100%;height:35px;line-height:35px;background: url(/static/images/spa_top.png) no-repeat scroll 0 0 transparent;'></div>").appendTo(this.mainPanel);
+    	$("<span style='color:#ffffff;font-family:微软雅黑;font-size:14px;margin-left:10px;'>客服中心</span>").appendTo(titlePanel);
+    	var contentPanel = $("<div class='contentPanel' style='width:170px;height:auto;margin:10px auto;'></div>").appendTo(this.mainPanel);
+    	var qqLink1 = $("<div class='qqLink' style='position:relative;display:inline-block;width:100%;margin: 2px 0px;'></div>").appendTo(contentPanel);
+    	$("<div style='color:#444444;font-family:微软雅黑;font-size:14px;float:left;width:46%;height:25px;line-height:25px;text-align:right;'>售前咨询: </div>").appendTo(qqLink1);
+    	$('<a style="float:left;margin-left:3px;" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=398831118&site=qq&menu=yes"><img border="0" src="/static/images/spa.jpg" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>').appendTo(qqLink1);
+    	var qqLink2 = $("<div class='qqLink' style='position:relative;display:inline-block;width:100%;margin: 2px 0px;'></div>").appendTo(contentPanel);
+    	$("<div style='color:#444444;font-family:微软雅黑;font-size:14px;float:left;width:46%;height:25px;line-height:25px;text-align:right;'>售前咨询: </div>").appendTo(qqLink2);
+    	$('<a style="float:left;margin-left:3px;" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=398831118&site=qq&menu=yes"><img border="0" src="/static/images/spa.jpg" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>').appendTo(qqLink2);
+    	var qqLink3 = $("<div class='qqLink' style='position:relative;display:inline-block;width:100%;margin: 2px 0px;'></div>").appendTo(contentPanel);
+    	$("<div style='color:#444444;font-family:微软雅黑;font-size:14px;float:left;width:46%;height:25px;line-height:25px;text-align:right;'>售后咨询: </div>").appendTo(qqLink3);
+    	$('<a style="float:left;margin-left:3px;" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=398831118&site=qq&menu=yes"><img border="0" src="/static/images/spa.jpg" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>').appendTo(qqLink3);
+    	var qqLink4 = $("<div class='qqLink' style='position:relative;display:inline-block;width:100%;margin: 2px 0px;'></div>").appendTo(contentPanel);
+    	$("<div style='color:#444444;font-family:微软雅黑;font-size:14px;float:left;width:46%;height:25px;line-height:25px;text-align:right;'>技术支持: </div>").appendTo(qqLink4);
+    	$('<a style="float:left;margin-left:3px;" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=398831118&site=qq&menu=yes"><img border="0" src="/static/images/spa.jpg" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>').appendTo(qqLink4);
+    	var qqLink5 = $("<div class='qqLink' style='position:relative;display:inline-block;width:100%;margin: 2px 0px;'></div>").appendTo(contentPanel);
+    	$("<div style='color:#444444;font-family:微软雅黑;font-size:14px;float:left;width:46%;height:25px;line-height:25px;text-align:right;'>建议/投诉: </div>").appendTo(qqLink5);
+    	$('<a style="float:left;margin-left:3px;" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=398831118&site=qq&menu=yes"><img border="0" src="/static/images/spa.jpg" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>').appendTo(qqLink5);
+    	var telPanel = $("<div class='telPanel' style='clear:both;width:90%;margin:8px auto;text-align:center;background:#fff;border-top: 1px dotted #CCCCCC;'></div>").appendTo(this.mainPanel);
+    	$("<span style='color: #555555;display: block;font-family: 微软雅黑;font-size: 16px;line-height: 35px;'>服务热线</span>").appendTo(telPanel);
+    	$("<span style='color: #555555;display: block;font-family: 微软雅黑;font-size: 20px;font-weight: bold;line-height: 25px;'>100-100-100</span>").appendTo(telPanel);
+    	$(window).scroll(function(){
+    		var top =$(window).scrollTop()+200;
+    		self.element.stop(true,false).delay(250).animate({top:top},"slow");
+    	});
+    },
+    _init: function() {
+    	var self = this;    	
+    },
+    destroy: function() {
+        $.Widget.prototype.destroy.apply(this, arguments);
+        this.element.empty().remove();
+    }
+});
 
 /**
  *jquery tabs

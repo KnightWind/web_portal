@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,6 +52,8 @@ public class JoinController extends BaseController {
 	
 	@Autowired
 	ConfManagementService confManagementService;
+	
+	static Object lock = new Object();
 	
 	/**
 	 * 
@@ -144,6 +147,9 @@ public class JoinController extends BaseController {
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 			}
 			String scode=request.getParameter("scode");
+			if (confBase.isPublic() && !StringUtils.isEmpty(confBase.getPublicConfPass())) {
+				request.setAttribute("passCheck", 1);
+			}
 			if(scode==null || "".equals(scode.trim())){
 				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_6);
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
@@ -306,6 +312,7 @@ public class JoinController extends BaseController {
 			if(rId>0){
 				JoinRandom joinRandom=clientAPIService.getJoinRandomById(rId);
 				if(joinRandom==null || joinRandom.getId()<= 0){
+					logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_8 +", rId="+rId );
 					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 				}
@@ -321,6 +328,7 @@ public class JoinController extends BaseController {
 		if (StringUtil.isEmpty(cId) && StringUtil.isEmpty(code)) {
 //			request.setAttribute("msgFlag", ConfConstant.JOIN_ERROR_CODE_1);
 //			return "会议方式 错误 ";
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_1 +", cId="+cId +", code="+code );
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_1);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
@@ -335,6 +343,7 @@ public class JoinController extends BaseController {
 		siteBase=siteService.getSiteBaseBySiteSign(siteSign);
 		
 		if(siteBase==null){
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_9 +", siteBase="+siteBase );
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_9);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
@@ -350,6 +359,7 @@ public class JoinController extends BaseController {
 				}
 			}
 			if(confBase == null ){
+				logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_2 +", cId="+cId );
 				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_2);
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 			}
@@ -363,6 +373,7 @@ public class JoinController extends BaseController {
 					childConf=confService.createChildConf(confBase);
 				}
 				if(childConf==null){
+					logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_10 +", perConf="+perConf );
 					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
 					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 				}
@@ -385,6 +396,7 @@ public class JoinController extends BaseController {
 						return new ActionForward.Forward("/jsp/common/join_page.jsp");
 					}
 					if(!cPass.equals(publicPass)){
+						logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_5 +", publicPass="+publicPass +",cPass="+cPass);
 						request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_5);
 						return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 					}
@@ -409,6 +421,9 @@ public class JoinController extends BaseController {
 			}
 			
 			if(confBase==null || (siteBase.getId()!=null && !siteBase.getId().equals(confBase.getSiteId())) ){
+
+				logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_3 +", confBase="+confBase );
+				logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_3 +", siteBase="+siteBase );
 				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_3);
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 			}
@@ -422,6 +437,7 @@ public class JoinController extends BaseController {
 					childConf=confService.createChildConf(confBase);
 				}
 				if(childConf==null){
+					logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_10 +", perConf="+perConf );
 					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
 					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 				}
@@ -442,6 +458,7 @@ public class JoinController extends BaseController {
 			}
 			code=request.getParameter("scode");
 			if(StringUtil.isEmpty(code)){
+				logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_8 +", code="+code );
 				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 			}
@@ -453,8 +470,19 @@ public class JoinController extends BaseController {
 			}
 
 			if(confBase==null){
+				logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_6 +", confBase="+confBase );
 				request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_6);
 				return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+			}
+			
+			//验证公开会议密码，通过链接加入
+			String publicPass=confBase.getPublicConfPass();
+			if(confBase.isPublic() && !StringUtil.isEmpty(publicPass)){
+				if(!publicPass.equals(cPass)){
+					logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_5 +", publicPass="+publicPass +",cPass="+cPass);
+					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_5);
+					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
+				}
 			}
 			
 			perConf=confBase;
@@ -467,6 +495,7 @@ public class JoinController extends BaseController {
 					childConf=confService.createChildConf(confBase);
 				}
 				if(childConf==null){
+					logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_10 +", perConf="+perConf );
 					request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_10);
 					return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 				}
@@ -503,10 +532,12 @@ public class JoinController extends BaseController {
 			currentUser.setClientName(userName);
 		}
 		if(confBase==null){
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_8 +", confBase="+confBase );
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
 		if(!(ConfConstant.CONF_STATUS_SUCCESS.equals(confBase.getConfStatus()) || ConfConstant.CONF_STATUS_OPENING.equals(confBase.getConfStatus()))){
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_4 +", confBase="+confBase );
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_4);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
@@ -522,6 +553,7 @@ public class JoinController extends BaseController {
 //		}
 		
 		if(checkTooEarly(confBase)){
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_7 +", confBase="+confBase );
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_7);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
@@ -534,13 +566,23 @@ public class JoinController extends BaseController {
 		}
 		
 		boolean startStatus=true;
-		if(confBase.getStartTime().after(DateUtil.getGmtDate(null)) && ConfConstant.CONF_STATUS_SUCCESS.equals(confBase.getConfStatus())){
-				startStatus=confManagementService.startConf(confBase, null, currentUser);
-				if(startStatus){
-					confService.updateStartTime(confBase, DateUtil.getGmtDate(null));
-					confService.updateConfStatus(confBase,ConfConstant.CONF_STATUS_OPENING);
-					
+		// 到此步，如果会议处于未开始状态，则必须启动
+		//if(confBase.getStartTime().after(DateUtil.getGmtDate(null)) && ConfConstant.CONF_STATUS_SUCCESS.equals(confBase.getConfStatus())){
+		if(ConfConstant.CONF_STATUS_SUCCESS.equals(confBase.getConfStatus())){
+			//会议启动，同步锁控制
+			synchronized (lock) {
+				ConfBase confFromAS = confManagementService.queryConfInfo(confBase.getConfHwid(), siteBase, currentUser);
+				if (logger.isInfoEnabled()) {
+					logger.info("when start conf, confFromAS:" + confFromAS + ", confId:" + confBase.getId());
 				}
+				if (confFromAS != null && ConfConstant.CONF_STATUS_SUCCESS.equals(confFromAS.getConfStatus())) {
+					startStatus=confManagementService.startConf(confBase, null, currentUser);
+					if(startStatus){
+						confService.updateStartTime(confBase, DateUtil.getGmtDate(null));
+						confService.updateConfStatus(confBase,ConfConstant.CONF_STATUS_OPENING);
+					}
+				}
+			}
 		}
 		if(perConf!=null && perConf.getId().equals(confBase.getBelongConfId()) 
 				&& ConfConstant.CONF_STATUS_SUCCESS.equals(perConf.getConfStatus())){
@@ -548,6 +590,7 @@ public class JoinController extends BaseController {
 		}
 		logger.info("Join Conf startStatus="+startStatus);
 		if(!startStatus){
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_8 +", confBase="+confBase +";startStatus="+startStatus);
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
@@ -570,6 +613,8 @@ public class JoinController extends BaseController {
 			joinRandom=clientAPIService.saveRandom(joinRandom);
 		}
 		if(joinRandom==null || joinRandom.getId()<= 0){
+
+			logger.info("join conf  fail : errorCode" +ConfConstant.JOIN_ERROR_CODE_8 +", joinRandom="+joinRandom  );
 			request.setAttribute("errorCode", ConfConstant.JOIN_ERROR_CODE_8);
 			return new ActionForward.Forward("/jsp/common/join_msg.jsp");
 		}
@@ -854,7 +899,9 @@ public class JoinController extends BaseController {
 			Integer aheadMinute=confBase.getAheadTime();
 			long startTimeStamp=startTime.getTime();
 			long nowTimeStamp=nowGmtDate.getTime();
+			
 			timeStatus=(nowTimeStamp+aheadMinute*60000) <= startTimeStamp;
+			logger.info("验证会议是否到开始时间  timeStatus="+timeStatus+",confBase.getId()="+confBase.getId()+ ",nowTimeStamp=="+nowTimeStamp+",aheadMinute="+aheadMinute+",startTime="+startTime);
 //		if((nowTimeStamp+aheadMinute*60000) <= startTimeStamp){
 //			request.setAttribute("msgFlag", ConfConstant.JOIN_ERROR_CODE_7);
 //			return new ActionForward.Forward("/jsp/common/join_early.jsp");

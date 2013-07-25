@@ -107,16 +107,17 @@
 	<input type="hidden" name="ts" id="ts" value="${ts}"/>
 	<input type="hidden" name="ln" id="ln" value="${ln}"/>
 <ul>
-    	<li><span>${LANG['bizconf.jsp.password_reset.res4']}</span><input id="lp" name="lp" class="text01" type="password" /></li>
-    	<li><span>${LANG['bizconf.jsp.password_reset.res5']}</span><input id="clp" name="clp" class="text01" type="password" /></li>
-    	<li><span>${LANG['bizconf.jsp.password_forget.res4']}</span><input id="authCode" name="authCode" type="text" class="text04"/>
-                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
+    	<li><span style="width: 120px;">${LANG['bizconf.jsp.password_reset.res4']}</span><input id="lp" name="lp" class="text01" type="password" /></li>
+    	<li><span style="width: 120px;">${LANG['bizconf.jsp.password_reset.res5']}</span><input id="clp" name="clp" class="text01" type="password" /></li>
+    	<li><span style="width: 120px;">${LANG['bizconf.jsp.password_forget.res4']}</span><input id="authCode" name="authCode" type="text" class="text04"  style="margin-right: 15px;"/>
+                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;margin-left: 0px;" onclick="randomImg()"/>
                     &nbsp;&nbsp;<a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.password_forget.res5']}</a>
    	    </li>
 	</ul>
+	<div style="clear: both;"></div>
 	<div class="btnn">
-    	<a href="javascript:" class="bt01" onclick="javascript:checkForm();">${LANG['bizconf.jsp.add_group.res5']}</a>
-        <a href="javascript:" class="bt02">${LANG['bizconf.jsp.add_contacts.res13']}</a>
+    	<a href="javascript:" class="bt01" onclick="javascript:checkForm();" style="margin-left: 0px;position: relative;left:240px;">${LANG['bizconf.jsp.add_group.res5']}</a>
+        <a href="javascript:" class="bt02" style="margin-left: 0px;position: relative;left:300px;">${LANG['bizconf.jsp.add_contacts.res13']}</a>
     </div>
 <%--
 	<input name="button01" class="button01" type="button" value="${LANG['bizconf.jsp.add_group.res5']}"  onclick="javascript:resetPass();" onmouseover="this.className='Btn_Hover02'" onmouseout="this.className='Btn02'"/>

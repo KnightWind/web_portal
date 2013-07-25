@@ -1,5 +1,9 @@
 package com.bizconf.audio.logic.impl;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.bizconf.audio.constant.ConstantUtil;
@@ -7,6 +11,7 @@ import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.dao.DAOProxy;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.entity.UserSiteMap;
 import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.util.ObjectUtil;
 import com.bizconf.audio.util.RegexUtil;
@@ -102,7 +107,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 			}
 		}
 		if(StringUtil.isNotBlank(siteName)){
-			if(!RegexUtil.accordStringByPattern(siteName,"^[a-zA-Z0-9_\\-&\\u4e00-\\u9fa5]{4,32}$")){
+			if(!RegexUtil.accordStringByPattern(siteName, ConstantUtil.SITE_NAME_REG)){
 				logger.error("站点名称错误");
 				return false;
 			}
@@ -110,7 +115,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 			return false;
 		}
 		if(StringUtil.isNotBlank(enName)){
-			if(!RegexUtil.accordStringByPattern(enName,"^[a-zA-Z0-9_\\s\\-&]{4,64}$")){
+			if(!RegexUtil.accordStringByPattern(enName, ConstantUtil.SITE_ENNAME_REG)){
 				logger.error("站点英文名称错误");
 				return false;
 			}
@@ -118,7 +123,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 			return false;
 		}
 		if(StringUtil.isNotBlank(siteSign)){
-			if(!RegexUtil.accordStringByPattern(siteSign,"^[a-zA-Z0-9\\-]{1,32}$")){
+			if(!RegexUtil.accordStringByPattern(siteSign, ConstantUtil.SITE_SIGN_REG)){
 				logger.error("站点标识错误");
 				return false;
 			}
@@ -145,7 +150,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 		String trueName = siteAdmin.getTrueName();
 		String loginName = siteAdmin.getLoginName();
 		if(StringUtil.isNotBlank(trueName)){
-			if(!RegexUtil.accordStringByPattern(trueName,"^[a-zA-Z0-9_\\-&\\u4e00-\\u9fa5]{1,32}$")){
+			if(!RegexUtil.accordStringByPattern(trueName, ConstantUtil.SITE_ADMIN_USERNAME_REG)){
 				logger.error("站点管理员用户名错误");
 				return false;
 			}
@@ -153,7 +158,7 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 			return false;
 		}
 		if(StringUtil.isNotBlank(loginName)){
-			if(!RegexUtil.accordStringByPattern(loginName,"^[a-zA-Z0-9]{4,16}$")){
+			if(!RegexUtil.accordStringByPattern(loginName, ConstantUtil.SITE_ADMIN_LOGINNAME_REG)){
 				logger.error("站点管理员登录名错误");
 				return false;
 			}
@@ -204,5 +209,71 @@ public class SiteLogicImpl extends BaseLogic implements SiteLogic {
 		}
 		return delFlag;
 	}
-
+	
+	@Override
+	public SiteBase getVirtualSubSite(Integer userId) {
+		if(userId==null){
+			return null;
+		}
+		SiteBase siteBase = null;
+		String sql = "select * from  t_user_site_map where user_id = ?";
+		try {
+			UserSiteMap userSiteMap = libernate.getEntityCustomized(UserSiteMap.class, sql, new Object[]{userId});
+			if(userSiteMap==null){
+				return null;
+			}
+			siteBase = libernate.getEntity(SiteBase.class, userSiteMap.getSiteId());
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return siteBase;
+	}
+	
+	
+	@Override
+	public SiteBase getParentSite(SiteBase site) {
+		if(site.getIsVirtualSite().intValue()!=1) return site;
+		String sql = "select * from t_user_site_map where site_id = ?";
+		try {
+			UserSiteMap userSiteMap = libernate.getEntityCustomized(UserSiteMap.class, sql, new Object[]{site.getId()});
+			if(userSiteMap==null){
+				return null;
+			}
+			UserBase ub  = libernate.getEntity(UserBase.class, userSiteMap.getUserId());
+			if(ub==null) return null;
+			return libernate.getEntity(SiteBase.class, ub.getSiteId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	@Override
+	public boolean delHostLicenses(Integer userId) {
+		boolean flag = true;
+		StringBuilder sqlBuilder = new StringBuilder("update t_license  set del_flag = ? where user_id =?");
+		List<Object> values = new ArrayList<Object>();
+		values.add(ConstantUtil.DELFLAG_DELETED);
+		values.add(userId);
+		try{
+			libernate.executeSql(sqlBuilder.toString(), values.toArray());
+		}catch(Exception e){
+			flag = false;
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
+	@Override
+	public SiteBase getSiteBaseById(Integer siteId){
+		SiteBase siteBase=null;
+		try{
+			siteBase=libernate.getEntity(SiteBase.class, siteId);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return siteBase;
+	}
 }

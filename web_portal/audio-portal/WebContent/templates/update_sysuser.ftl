@@ -57,7 +57,7 @@
   <table cellpadding="0" cellspacing="0" border="0" style=" background:#fff;">
     <tr height="20">
       <td>
-        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-top:10px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服。</p>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:65px;line-height:22px; margin-top:10px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服:400 082 6161</p>
       </td>
     </tr>
     <tr height="20"><td>&nbsp;</td></tr>

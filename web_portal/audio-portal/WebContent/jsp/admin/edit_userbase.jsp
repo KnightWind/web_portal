@@ -132,7 +132,7 @@
 	    	return this.optional(element) || /^[a-zA-Z0-9_\-&\s]{1,32}$/.test(value);
 	 	}, ruleString.custom.checkEnName);
 		$.validator.addMethod("checkMobile", function(value, element) {       
-	    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
+	    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
 	 	}, ruleString.custom.checkMobile);
 		var v = $("#saveUserForm").validate({
 			onkeyup: false,
@@ -328,7 +328,25 @@
 			}
 			$.uniform.update();
 		});
+		
 	});	
+	
+	$(document).keydown(function(e){ 
+		var doPrevent; 
+		if (e.keyCode == 8) { 
+			var d = e.srcElement || e.target; 
+			if (d.tagName.toUpperCase() == 'INPUT' || d.tagName.toUpperCase() == 'TEXTAREA') { 
+				doPrevent = d.readOnly || d.disabled; 
+			}else{
+				doPrevent = true; 
+			}
+		}else{
+			doPrevent = false; 
+		}
+		if (doPrevent){
+			e.preventDefault(); 
+		} 
+	}); 
 	
 	function saveSysUser() {
 		var userId = "${userBase.id}";
@@ -340,7 +358,11 @@
 		user.userEmail = $("#userEmail").val();
 		user.mobile = $("#mobile").val();
 		user.remark = $("#remark").val();
-		user.userRole = $("select[name=userRole]").val();
+		if($("select[name=userRole]").length>0){
+			user.userRole = $("select[name=userRole]").val();
+		}else if($("#hid_userRole").length>0){
+			user.userRole = $("#hid_userRole").val();
+		}
 // 		user.orgId = $("#orgId").val();
 		var orgListTR = $(".orgListTR");
 		if(orgListTR && orgListTR.length>0){
@@ -515,7 +537,7 @@
 				      <label class='red_star'>*</label>${LANG['system.sysUser.list.loginName']}
 				    </td>
 				    <td class="table-td">
-				      <input id="loginName" name="loginName" class="create_system_user_input" type="text" value="${userBase.loginName}"/>
+				      <input id="loginName" name="loginName" <c:if test="${(userBase.userRole eq 1) and (siteBase.chargeMode==1 || siteBase.chargeMode==2)}">readonly style='border:0px; background:none;'</c:if> class="create_system_user_input" type="text" value="${userBase.loginName}"/>
 				    </td>
 				  </tr>
 				  <tr>
@@ -603,8 +625,11 @@
  				  </tr> 
 				  </c:if>
 				  <c:choose>
-					<c:when test="${site.chargeMode eq 1}">
-						<input type="hidden" name="userRole" value="2"/>
+					<c:when test="${siteBase.chargeMode eq 1 and empty userBase}">
+							<input type="hidden" id="hid_userRole" name="userRole" value="2"/>
+					</c:when>
+					<c:when test="${siteBase.chargeMode eq 1 and not empty userBase}">
+							<input type="hidden" id="hid_userRole" name="userRole" value="${userBase.userRole }"/>
 					</c:when>
 					<c:otherwise>
 						<tr>
@@ -685,12 +710,12 @@
 				  </c:choose>
 				  <tr>
 				    <td align="right">
-				      <label class='red_star'>*</label>用户有效期限 
+				      <label class='red_star'>*</label> ${LANG['admin.user.edituser.effinfo1']}
 				    </td> 
 				    <td class="table-td">
-				      <input name="userDateRadio" class="" type="radio" value="1" checked="checked" />一直有效 : 
-				      <input name="userDateRadio" class="" type="radio" value="2" />截止到
-				      <input id="userDateText" class="" value="" type="text" style="width:90px;" readonly="readonly"/><span style="margin-left: 10px;">有效</span>
+				      <input name="userDateRadio" class="" type="radio" value="1" checked="checked" />${LANG['admin.user.edituser.effinfo2']}
+				      <input name="userDateRadio" class="" type="radio" value="2" />${LANG['admin.user.edituser.effinfo3']}
+				      <input id="userDateText" class="" value="" type="text" style="width:90px;" readonly="readonly"/><span style="margin-left: 10px;">${LANG['admin.user.edituser.effinfo4']}</span>
 				    </td>
 				  </tr>
 				  <tr>

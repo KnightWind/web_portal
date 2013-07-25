@@ -18,6 +18,7 @@ import com.bizconf.audio.entity.License;
 import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.logic.UserLogic;
 import com.bizconf.audio.service.LicService;
 import com.bizconf.audio.service.SiteService;
@@ -35,6 +36,8 @@ public class LicServiceImpl extends BaseService implements LicService{
 	SiteService siteService;
 	@Autowired
 	UserLogic userLogic;
+	@Autowired
+	SiteLogic siteLogic;
 	
 	/**
 	 * 获取License列表  
@@ -53,7 +56,7 @@ public class LicServiceImpl extends BaseService implements LicService{
 			values.add(userId);
 		}
 		sqlBuilder.append(" order by create_time desc ");
-		PageBean<License> pageModel = getPageBeans(License.class, sqlBuilder.toString(), pageNo, values.toArray(new Object[values.size()]));
+		PageBean<License> pageModel = getPageBeans(License.class, sqlBuilder.toString(), pageNo,300,values.toArray(new Object[values.size()]));
 		return pageModel;
 	}
 	
@@ -235,7 +238,7 @@ public class LicServiceImpl extends BaseService implements LicService{
 			}else{
 				return null;
 			}
-			sqlBuilder.append(" order by create_time desc ");
+			sqlBuilder.append(" order by id desc ");
 			licenses = libernate.getEntityListBase(License.class, sqlBuilder.toString(), values.toArray());
 		}catch(Exception e){
 			
@@ -249,6 +252,10 @@ public class LicServiceImpl extends BaseService implements LicService{
 		boolean flag = false;
 		try{
 			SiteBase site = siteService.getSiteBaseById(lic.getSiteId());
+			//判断是否为namehost主持人license
+			if(lic.getUserId()!=null && lic.getUserId()>0){
+				site = siteLogic.getVirtualSubSite(lic.getUserId());
+			}
 			SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
 			int licNum = asSite.getLicense() + lic.getLicNum();
 			site.setLicense(licNum);
@@ -277,6 +284,10 @@ public class LicServiceImpl extends BaseService implements LicService{
 		boolean flag = false;
 		try{
 			SiteBase site = siteService.getSiteBaseById(lic.getSiteId());
+			//判断是否为namehost主持人license
+			if(lic.getUserId()!=null && lic.getUserId()>0){
+				site = siteLogic.getVirtualSubSite(lic.getUserId());
+			}
 			SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
 			int licNum = 0;
 			if(asSite.getLicense()>lic.getLicNum()){
@@ -290,7 +301,7 @@ public class LicServiceImpl extends BaseService implements LicService{
 			}
 			String updateInfo = siteService.soapUpdateSite(site,addflag);
 			if(updateInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
-				lic.setEffeFlag(LicenseConstant.HAS_EFFED);
+				lic.setExpireFlag(LicenseConstant.HAS_EFFED);
 			}else{
 				logger.error("add license fialed errorcode:"+updateInfo);
 				throw new RuntimeException("add license fialed errorcode:"+updateInfo);
@@ -339,5 +350,40 @@ public class LicServiceImpl extends BaseService implements LicService{
 			e.printStackTrace();
 		}
 		return flag;
+	}
+	
+	/**
+	 * 查询seats、time模式下创建站点时的第一条license记录
+	 * wangyong
+	 * 2013-6-27
+	 */
+	@Override
+	public License getFirstLic(int siteId){
+		List<Object> values = new ArrayList<Object>();
+		StringBuilder sqlBuilder = new StringBuilder("select * from t_license where del_flag = ? and first_lic_flag = ? ");
+		values.add(ConstantUtil.DELFLAG_UNDELETE);
+		values.add(ConstantUtil.FIRST_LICENSE_FLAG);
+		if (siteId>0) {
+			sqlBuilder.append(" and site_id =? ");
+			values.add(siteId);
+		}
+		sqlBuilder.append(" order by create_time desc ");
+		PageBean<License> pageModel = getPageBeans(License.class, sqlBuilder.toString(), 1, values.toArray(new Object[values.size()]));
+		if(pageModel.getDatas() != null){
+			return pageModel.getDatas().get(0);
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean updateInitLicExpireDate(Integer siteId, Date expiredDate) {
+		try{
+			String sql = "update t_license set expire_date = ? where del_flag = ? and first_lic_flag = ? and site_id = ?";
+			libernate.executeSql(sql, new Object[]{expiredDate,ConstantUtil.DELFLAG_UNDELETE,1,siteId});
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }

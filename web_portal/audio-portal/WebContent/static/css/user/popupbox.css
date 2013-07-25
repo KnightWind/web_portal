@@ -29,9 +29,7 @@ textarea {
 	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/xxx.png', sizingMethod='scale');	
 	float:right;
 	margin-top:6px;
-	_margin-top:3px;
 	margin-right:8px;
-	_margin-right:4px;
 }
 .First_Steps_title a:hover {
 	background:url(/static/images/xxx_change.png) no-repeat;
@@ -95,7 +93,7 @@ textarea {
 	margin-top:6px;
 }
 .left_text {
-	width:110px;
+	width:140px;
 	margin-left:43px;
 	color:#000000;
 	line-height:35px;
@@ -135,10 +133,20 @@ textarea {
 	background:url(/static/images/yh_button01.png) no-repeat;
 	line-height:27px;
 	float:left;
-	margin-left:124px;
+	margin-left:154px;
 	text-align:left;
 	color:#666666;
 	font-weight:bold;
+}
+
+*html .but01 a {
+	padding-top: 8px;
+}
+*html .prev {
+	padding-top: 8px;
+}
+*html .next {
+	padding-top: 8px;
 }
 .but01 a:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;
@@ -500,12 +508,16 @@ textarea {
 	height:24px;
 	width:24px;
 	background:url(/static/images/xxx.png) no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/xxx.png', sizingMethod='scale');
 	float:right;
 	margin-top:6px;
 	margin-right:8px;
 }
 .First_Steps_title_invite a:hover {
 	background:url(/static/images/xxx_change.png) no-repeat;
+	_background: transparent;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='/static/images/xxx_change.png', sizingMethod='scale');
 }
 .tit_a_invite {
 	font-size:14px;
@@ -685,7 +697,7 @@ textarea {
 	clear:both;
 	height:0px;
 	width:780px;
-	background:#036;
+	background:#fff;
 }
 .cluster {
 	width:auto;
@@ -704,6 +716,9 @@ textarea {
 	line-height:34px;
 	display:block;
 	float:left;
+}
+*html .cluster a {
+	padding-top: 8px;
 }
 .cluster:active {
 	width:auto;
@@ -784,7 +799,7 @@ textarea {
     display:block; width:13em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
-.btn_message01{  margin-left:130px; _margin-left:65px; margin-top:20px; text-align:center; float:left;}
+.btn_message01{  margin-left:228px; _margin-left:115px; margin-top:20px; text-align:center; float:left;}
 .btn_message02{  margin-left:30px; float:left;margin-top:20px;}
 .bb{ height:26px; float:left; padding-bottom:40px;  _padding-bottom:15px;}
 
@@ -1550,13 +1565,13 @@ textarea {
 	width:128px;
 }
 .boc02 {
-	width:177px;
+	width:160px;
 }
 .boc03 {
 	width:160px;
 }
 .boc04 {
-	width:67px;
+	width:80px;
 }
 .boc_a {
 	margin-left:25px;
@@ -1692,6 +1707,24 @@ textarea {
 	color:#666666;
 	margin-top:20px;
 }
+.email_outlook {
+	width:80px;
+	height:27px;
+	display:block;
+	background:url(/static/images/yh_button01.png) no-repeat;
+	text-align:center;
+	line-height:27px;
+	color:#666666;
+	margin-top:20px;
+	margin-left: 180px;
+}
+.email_outlook:active {
+	background:url(/static/images/yh_button01_change.png) no-repeat;
+}
+*html .email_outlook {
+	margin-left: 175px;
+	padding-top: 8px;
+}
 .overlay_email01:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;
 }
@@ -1757,6 +1790,24 @@ textarea {
 }
 .overlay_email04:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;
+}
+.meet_ok {
+	width:80px;
+	height:27px;
+	display:block;
+	background:url(/static/images/yh_button01.png) no-repeat;
+	text-align:center;
+	line-height:27px;
+	color:#666666;
+	position:absolute;
+	bottom:0px;
+	left:0px;
+}
+.meet_ok:active {
+	background:url(/static/images/yh_button01_change.png) no-repeat;
+}
+*html .meet_ok {
+	padding-top: 8px;
 }
 .overlay_email05 {
 	width:80px;
@@ -1844,6 +1895,11 @@ textarea {
 	line-height:27px;
 	margin-top:20px;
 	clear:both;
+}
+
+*html .prompt_message_btn02 {
+	margin-left:100px;
+	padding-top: 8px;
 }
 .prompt_message_btn08 {
 	width:72px;
@@ -1942,6 +1998,7 @@ table.overlay-panel td.overlay-ftR {
 	padding-right:-10px;
 	display:block;
 }
+
 .button_common a {
 	width:auto;
 	height:28px;
@@ -1950,6 +2007,9 @@ table.overlay-panel td.overlay-ftR {
 	line-height:28px;
 	display:block;
 	float:left;
+}
+*html .button_common a {
+	padding-top: 8px;
 }
 .button_common a img {
 	padding-left:10px;
@@ -2284,4 +2344,24 @@ _height:expression(this.scrollHeight < 164 ? "164px" : "auto");
 	_height:expression_r(this.scrollHeight > 400 ? "400px" : "auto");
 	height: expression( this.scrollHeight > 400 ? "400px" : "auto" );
 	text-align: center;
+}
+.create_system_user_button{ width:72px; height:24px; background:url(/static/images/emile_button01.jpg) no-repeat; border:none;cursor: pointer;}
+.create_system_user_button:hover{ background:url(/static/images/emile_button_change.jpg) no-repeat;}
+.invent_user_default {
+	margin-left: 30px;
+	color:#F26D00;
+	cursor: default;
+}
+.invent_user_default:HOVER {
+	color:#F26D00;
+/* 	text-decoration: underline; */
+}
+
+.k_nv_06 {
+	height: 28px;
+    line-height: 28px;
+	text-align: center;
+	cursor: default;
+	color: #999;
+	font-weight: bold;
 }

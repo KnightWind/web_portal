@@ -13,6 +13,9 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/style.css"/>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
+<!--[if lte IE 6]>  
+<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/development-bundle/external/jquery.bgiframe-2.1.2.js"></SCRIPT>  
+<![endif]-->
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/widgets.js"></script>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js"></SCRIPT>
@@ -27,6 +30,15 @@
 	});
 
 	$(document).ready(function() {
+		if ($.browser.msie && $.browser.version<7) {//for ie6 png
+			$(".png").each(function() {
+				$(this).attr('width',$(this).width());
+				$(this).attr('height',$(this).height());
+				var imgSrc = $(this).attr('src');
+				$(this).get(0).runtimeStyle.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader' + '(src=\'' + imgSrc + '\', sizingMethod=\'scale\');';
+				$(this).attr('src', '/static/images/blank.gif');
+			});		
+		}
 		$("#langForm").find("select").not(".skipThese").uniform();
 		$("#langForm select").change(function () {
 			var lang = $(this).val();
@@ -334,6 +346,18 @@
 			"actions": ["${LANG['system.close']}"]
 		});
 	}
+	
+	function excelDialog(message, options) {
+		$("<div/>").excelDialog({
+			"title": "${LANG['system.tip']}",
+			"dialogClass" : "ui-dialog-smile",
+			"message" : message,
+			"width": options.width,
+			"height": options.height,
+			"actions": ["${LANG['system.close']}"]
+		});
+	}
+	
 	function successDialog(message) {
 		$("<div/>").successDialog({
 			"title": "${LANG['system.tip']}",
@@ -371,13 +395,20 @@
 	}
 	//resize index body height when search div Collapsing 
 	function resizeHeight() {
-		$("#mainFrame").height($("#mainFrame").contents().find("html").height()+50);  
+		var height = $("#mainFrame").contents().find("body").height()+50;
+		if(height<725){
+			height = 725;
+		}
+		$("#mainFrame").height(height);
+		$(".main_right").height(height);
+		$(".main_left").height(height);	
 	}	
-	
+	window.setInterval(resizeHeight, 1000);
 	function showImportInfo(info,statu){
 		showURL("/admin/entUser/listAll");
 		if(statu==1){
-			successDialog(info);
+			var html = "<div style='width:100%;height:200px;overflow-y:auto;'>"+info+"</div>";
+			excelDialog(html, {"width":"600", "height": "350"});
 		}else{
 			errorDialog(info);
 		}
@@ -395,11 +426,11 @@
 		});
 	}
 	
-	function showTelDetail(id) {
+	function showTelDetail(id,year,month) {
 		$("<div id=\"billingView\"/>").showDialog({
 			"title" : "${LANG['bizconf.jsp.index.res8']}",
-			"dialogClass" : "ui-dialog-user",
-			"url" : "/common/billing/showTelDetail?id="+id,
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/common/billing/sysShowTelDetail?id="+id+"&year="+year+"&month="+month,
 			"type" : VIEW_TYPE.billing,
 			"action" : ACTION.create,
 			"width" : 624,
@@ -407,11 +438,11 @@
 		});
 	}
 	
-	function showDataFeeDetail(id) {
+	function showDataFeeDetail(id,year,month) {
 		$("<div id=\"dataFeeView\"/>").showDialog({
 			"title" : "${LANG['bizconf.jsp.index.res8']}",
-			"dialogClass" : "ui-dialog-user",
-			"url" : "/common/billing/showDataDetail?id="+id,
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/common/billing/sysShowDataDetail?id="+id+"&year="+year+"&month="+month,
 			"type" : VIEW_TYPE.billing,
 			"action" : ACTION.create,
 			"width" : 624,
@@ -442,6 +473,32 @@
 			"height" : 420
 		});
 	}
+	
+	
+	//查看会议详情
+	function viewConf(id) {
+		$("<div id=\"viewMeeting\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.index.res14']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/user/conf/view4sys/" + id,
+			"type" : VIEW_TYPE.bookMeeting,
+			"action" : ACTION.view,
+			"width" : 684,
+			"height" : 310
+		});
+	}
+	//查看邀请人
+	function editInventContact(confId) {
+		$("<div id=\"eidtInventContact\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.conf_list_main.res2']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/user/inviteUser/sysview?confId="+confId,
+			"type" : VIEW_TYPE.attendee,
+			"action" : ACTION.create,
+			"width" : 624,
+			"height" : 413
+		});	
+	}
 </script>
 </HEAD>
 
@@ -452,54 +509,58 @@
 <!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res8']}-->
 <div class="main_left" >
  <ul class="nav">
- 		<li><span class="nav_top05"><a href="#">${LANG['system.menu.config.user']}</a></span>
+ 		<li><span class="nav_top05"><a href="#"><b>${LANG['system.menu.config.user']}</b></a></span>
           <ul class="sub_nav">
           <c:if test="${isSuperSiteAdmin}">
             <li class="b_line"><a class="li_alink" href="/admin/entUser/list" target="mainFrame">${LANG['company.menu.admin.manage']}</a></li>
           </c:if>
             <li class="b_line"><a class="li_alink li_actived" href="/admin/entUser/listAll" target="mainFrame">${LANG['company.menu.user.manage']}</a></li>
+          <c:if test="${isSuperSiteAdmin}">
           	<li><a class="li_alink" href="/admin/org/orgListIndex" target="mainFrame">${LANG['bizconf.jsp.admin.index.res19']}</a></li>
+          </c:if>
           </ul>
         </li>
         <c:if test="${isSuperSiteAdmin}">
-        <li><span class="nav_top01"><a href="#">${LANG['system.menu.config']}</a></span>
+        <li><span class="nav_top01"><a href="#"><b>${LANG['system.menu.config']}</b></a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" href="/admin/email/showhost" target="mainFrame">${LANG['system.menu.config.host']}</a></li>
             <li class="b_line"><a class="li_alink" href="/admin/email/goTemplateEdit" target="mainFrame">${LANG['system.menu.config.template']}</a></li>
             <li><a class="li_alink" href="/admin/config/configinfo" target="mainFrame">${LANG['company.menu.meeting.permissions']}</a></li>
           </ul>
         </li>
-        <li><span class="nav_top02"><a  href="#">${LANG['system.menu.site.infoManage']}</a></span>
+        <li><span class="nav_top02"><a  href="#"><b>${LANG['system.menu.site.infoManage']}</b></a></span>
           <ul class="sub_nav">
             <li><a class="li_alink" href="/admin/site/info" target="mainFrame">${LANG['system.menu.site.infoManage']}</a></li>
           </ul>
         </li>
-        <li><span class="nav_top03"><a href="#">${LANG['system.menu.notice.manage']}</a></span>
+        <li><span class="nav_top03"><a href="#"><b>${LANG['system.menu.notice.manage']}</b></a></span>
           <ul class="sub_nav">
             <li><a class="li_alink" href="/admin/notice/list" target="mainFrame">${LANG['system.menu.notice.list']}</a></li>
           </ul>
         </li>
        </c:if>
-        <li><span class="nav_top04"><a href="#">${LANG['system.menu.info.list']}</a></span>
+        <li><span class="nav_top04"><a href="#"><b>${LANG['system.menu.info.list']}</b></a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" href="/admin/conf/list" target="mainFrame">${LANG['system.menu.info.meeting']}</a></li>
             <li class="b_line"><a class="li_alink" href="/admin/siteAdminLogs/list" target="mainFrame">${LANG['system.menu.info.log.userManager']}</a></li>
             <li><a class="li_alink" href="/admin/siteUserLogs/list" target="mainFrame">${LANG['system.menu.info.log.userOperator']}</a></li>
           </ul>
         </li>
-<%--        <li><span class="nav_top04"><a href="#">${LANG['bizconf.jsp.admin.index.res20']}</a></span>--%>
-<%--          <ul class="sub_nav">--%>
-<%--            <li class="b_line"><a class="li_alink" href="/common/billing/goSiteBilling" target="mainFrame">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>--%>
-<%--          </ul>--%>
-<%--        </li>--%>
-        <li><span class="nav_top06"><a href="#">${LANG['system.menu.info.user.manage']}</a></span>
+        <c:if test="${siteBase.siteFlag eq 1}">
+        <li><span class="nav_top04"><a href="#">${LANG['bizconf.jsp.admin.index.res20']}</a></span>
+          <ul class="sub_nav">
+            <li class="b_line"><a class="li_alink" href="/common/billing/goSiteBilling" target="mainFrame">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>
+          </ul>
+        </li>
+        </c:if>
+        <li><span class="nav_top06"><a href="#"><b>${LANG['system.menu.info.user.manage']}</b></a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" class="li_alink" href="/admin/profile" target="mainFrame">${LANG['system.menu.info.user.manage']}</a></li>
           </ul>
         </li>
        </ul>    
 </div> 
-<div class="main_right">
+<div class="main_right" style="margin-left: 225px;">
 	<iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/admin/entUser/listAll"></iframe>
 </div>
 <!--${LANG['bizconf.jsp.admin.CopyOfadminIndex.res24']}-->

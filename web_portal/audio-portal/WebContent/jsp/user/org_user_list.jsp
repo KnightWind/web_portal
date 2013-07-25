@@ -57,7 +57,9 @@
 				$("#checkAll").attr("checked",false);
 			}
 		});
-		$(".contact_search").watermark('${LANG['bizconf.jsp.group_contacts_list.res3']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".contact_search").watermark('${LANG['bizconf.jsp.group_contacts_list.res3']}');
+		}
 		
 		$("#orgLevel2").change(function() {
 			$("#orgLevel4").empty().hide();

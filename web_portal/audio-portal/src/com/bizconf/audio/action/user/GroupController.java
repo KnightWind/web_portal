@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.EventLogConstants;
 import com.bizconf.audio.entity.ContactGroup;
@@ -65,7 +66,8 @@ public class GroupController extends BaseController{
 	public Object groupsList(@CParam("keyword") String keyword, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
 		
-		PageBean<ContactGroup> page = groupService.getGroupPageModel(keyword,currUser.getSiteId(),currUser.getId(),pageNo,0);
+		PageBean<ContactGroup> page = groupService.getGroupPageModel(keyword,currUser.getSiteId(),
+				currUser.getId(),pageNo, currUser.getPageSize()); // 2013.6.24 因客户需求新加常量，部分每页展示偏好设置显示条数
 		request.setAttribute("pageModel", page);
 		request.setAttribute("keyword", keyword);
 		if(page!=null && page.getDatas()!=null){
@@ -82,7 +84,8 @@ public class GroupController extends BaseController{
 	public Object groupsInviteList(@CParam("keyword") String keyword, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
 		
-		PageBean<ContactGroup> page = groupService.getGroupPageModel(keyword,currUser.getSiteId(),currUser.getId(),pageNo,0);
+		PageBean<ContactGroup> page = groupService.getGroupPageModel(keyword,currUser.getSiteId(),
+				currUser.getId(),pageNo, currUser.getPageSize());  //2013.6.24 因客户需求新加常量，部分每页展示偏好设置显示条数
 		request.setAttribute("pageModel", page);
 		request.setAttribute("keyword", keyword);
 		//return new ActionForward.Forward("/jsp/user/group_list.jsp");
@@ -102,11 +105,11 @@ public class GroupController extends BaseController{
 		String successInfo = "";
 		String errorInfo = "";
 		if(id>0){//修改
-			successInfo = "修改群组信息成功！";
-			errorInfo = "修改群组信息失败！";
+			successInfo = ResourceHolder.getInstance().getResource("bizconf.jsp.user.group.update.success");
+			errorInfo = ResourceHolder.getInstance().getResource("bizconf.jsp.user.group.update.failed");
 		}else{//添加
-			successInfo = "创建群组成功！";
-			errorInfo = "创建群组失败！";
+			successInfo = ResourceHolder.getInstance().getResource("bizconf.jsp.user.group.create.success");
+			errorInfo = ResourceHolder.getInstance().getResource("bizconf.jsp.user.group.create.failed");
 			
 			group.setSiteId(currUser.getSiteId());
 			group.setCreateUser(currUser.getId());
@@ -170,7 +173,7 @@ public class GroupController extends BaseController{
 	@AsController(path = "showContacts")
 	public Object showMyContacts(@CParam("viewOnly")String viewOnly,@CParam("group_id") Integer group_id,@CParam("pageNo") Integer pageNo, @CParam("keyword")String keyword, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
-		PageBean<Contacts> page = groupService.getContactsByGroup(currUser.getSiteId(), currUser.getId(), group_id, keyword, pageNo);
+		PageBean<Contacts> page = groupService.getContactsByGroup(currUser.getSiteId(), currUser, group_id, keyword, pageNo);
 		
 		ContactGroup group = groupService.getGroupById(group_id);
 		request.setAttribute("group", group);
@@ -219,7 +222,7 @@ public class GroupController extends BaseController{
 	@AsController(path = "importContacts")
 	public Object importContacts(@CParam("group_id") Integer group_id,@CParam("pageNo") Integer pageNo, @CParam("keyword")String keyword, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
-		PageBean<Contacts> page = groupService.getImorpContectsList(currUser.getSiteId(), currUser.getId(), group_id, keyword, pageNo);
+		PageBean<Contacts> page = groupService.getImorpContectsList(currUser.getSiteId(), currUser, group_id, keyword, pageNo);
 		ContactGroup group = groupService.getGroupById(group_id);
 		request.setAttribute("group", group);
 		request.setAttribute("pageModel", page);
@@ -250,12 +253,12 @@ public class GroupController extends BaseController{
 	@AsController(path = "doImportSyn")
 	public Object importToGroupByAjax(@CParam("group_id") Integer group_id, HttpServletRequest request){
 		String[] conIds = request.getParameterValues("id");
-		String info = "导入联系人到群组失败！";
+		String info = ResourceHolder.getInstance().getResource("bizconf.jsp.user.group.import.failed");
 		Integer status = ConstantUtil.GLOBAL_FAIL_FLAG;
 		boolean flag = groupService.addContactsToGroup(conIds, group_id);
 		if(flag){
 			status = ConstantUtil.GLOBAL_SUCCEED_FLAG;
-			info = "已成功导入联系人到群组 ";
+			info = ResourceHolder.getInstance().getResource("bizconf.jsp.user.group.import.success");
 		}
 		return StringUtil.returnJsonStr(status, info);
 	}

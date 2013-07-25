@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -130,6 +131,22 @@ public class BeanUtil {
 			}
 		}
 		return map;
+	}
+	
+	//去除所有元素为空的数组
+	public static void trimObjs(List<Object[]> datas){
+		for (Iterator it = datas.iterator(); it.hasNext();) {
+			Object[] objects = (Object[]) it.next();
+			boolean flag = false;
+			for (int i = 0; i < objects.length; i++) {
+				if(objects[i]!=null && !objects[i].toString().equals("")){
+					flag = true;
+					break;
+				}
+			}
+			if(flag) continue;
+			it.remove();
+		}
 	}
 	
 }

@@ -10,8 +10,10 @@ img {
 }
 .toa {
 	height:1px;
+	line-height:1px;
 	background:#E1E1E1;
 	margin-left:20px;
+	font-size: 1px;
 }
 /*Buttons*/
 .form-button {
@@ -194,6 +196,29 @@ div.selector span {
 	margin-bottom: -5px;
 	margin-left: -18px;
 }
+
+*+html .ui-datepicker-trigger {
+	margin-bottom: 0px;
+}
+
+*html .ui-datepicker-trigger {
+	margin-bottom: 0px;
+}
+
+*+html .public_date_icn .ui-datepicker-trigger {
+	vertical-align: middle;
+}
+
+*html .public_date_icn .ui-datepicker-trigger {
+	vertical-align: middle;
+}
+*+html .dateScopeFlag .ui-datepicker-trigger {
+	vertical-align: middle;
+}
+
+*html .dateScopeFlag .ui-datepicker-trigger {
+	vertical-align: middle;
+}
 .ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
 	width: 44%;
 }
@@ -366,6 +391,10 @@ div.selector span {
 	margin-top:20px;
 	clear:both
 }
+*html .prompt_message_btn01 {
+	margin-left:55px;
+	padding-top: 8px;
+}
 .prompt_message_btn01:active, .prompt_message_btn02:active, .prompt_message_btn03:active {
 	background:url(/static/images/yh_button02_change.png) no-repeat;
 }
@@ -381,6 +410,9 @@ div.selector span {
 	line-height:27px;
 	margin-top:20px;
 }
+*html .prompt_message_btn02 {
+	padding-top: 8px;
+}
 .prompt_message_btn03 {
 	background: url("/static/images/yh_button02.png") no-repeat scroll 0 0 transparent;
 	clear: both;
@@ -393,6 +425,10 @@ div.selector span {
 	margin-top: 20px;
 	text-align: center;
 	width: 72px;
+}
+*html .prompt_message_btn03 {
+	padding-top: 8px;
+	margin-left:90px;
 }
 /*弹出层背景公共样式=========================================================================*/
 
@@ -597,6 +633,16 @@ table.overlay-panel td.overlay-ftR {
 	color:#FFF;
 	font-family:"Arial";
 }
+.date1 {
+	width:75px;
+	height:18px;
+	background:url(/static/images/time_top_gray.jpg) no-repeat;
+	text-align:center;
+	line-height:18px;
+	display:block;
+	color:#FFF;
+	font-family:"Arial";
+}
 .time {
 	width:73px;
 	height:16px;
@@ -615,6 +661,10 @@ table.overlay-panel td.overlay-ftR {
 	line-height:18px;
 	font-weight:bold;
 	color:#666666;
+	margin-top: 8px;
+}
+.title a {
+	text-decoration: underline;
 }
 .content {
 	height:16px;
@@ -747,7 +797,7 @@ table.overlay-panel td.overlay-ftR {
 	float: left;
 }
 .k02_span {
-	width: 5em;
+	width: 66px;
 	height: 27px;
 	text-align: left;
 	word-break:keep-all;
@@ -800,7 +850,7 @@ table.overlay-panel td.overlay-ftR {
 }
 .k06 {
 	margin-left:15px;
-	width:80px;
+	width:88px;
 	margin-right: 18px;
 }
 .k06 a {
@@ -819,6 +869,18 @@ table.overlay-panel td.overlay-ftR {
 .k06 a:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;
 }
+
+.k_n_06 {
+	margin-left:15px;
+	width:88px;
+	margin-right: 18px;
+	text-align: center;
+}
+.k_n_06 a {
+	cursor: default;
+	color: #999;
+	font-weight: bold;
+}
 .subnav ul li {
 	float:left
 }
@@ -833,13 +895,13 @@ table.overlay-panel td.overlay-ftR {
 	color:#666666;
 	margin-left:18px;
 }
+*html .email01 {
+	padding: 5px 0px;
+}
 .email01:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;
 }
-.email01 img {
-	vertical-align:middle;
-	_margin-top:7px;
-}
+
 .email02:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;
 }
@@ -897,6 +959,12 @@ table.overlay-panel td.overlay-ftR {
 	float:left;
 	float:right;
 	margin-right: 18px;
+}
+*html .email04 {
+	padding: 5px 0px;	
+}
+*html .email05 {
+	padding: 5px 0px;	
 }
 /*jaide*/
 .date_top_01 {
@@ -1643,6 +1711,10 @@ table.overlay-panel td.overlay-ftR {
 	display:block;
 	cursor:pointer;
 }
+
+*html .button_common a{
+	padding-top: 8px;
+}
 .button_common a {
 	width:auto;
 	height:28px;
@@ -1730,6 +1802,10 @@ table.overlay-panel td.overlay-ftR {
 	color:#666666;
 	cursor:pointer;
 }
+
+*html .meau_btn a{
+	padding-top: 8px;
+}
 .meau_btn a {
 	width:auto;
 	height:40px;
@@ -1770,6 +1846,9 @@ a.activeMeau-right {
 	text-align:center;
 	margin-left:10px;
 	margin-top:20px;
+}
+*html .Personal_settings_main_hold{
+	padding-top: 8px;
 }
 .Personal_settings_main_hold:active {
 	background:url(/static/images/yh_button01_change.png) no-repeat;

@@ -1,17 +1,25 @@
 package com.bizconf.audio.action.admin;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.MyfnTag;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.ConfConstant;
+import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.SortConstant;
 import com.bizconf.audio.entity.Condition;
 import com.bizconf.audio.entity.ConfBase;
@@ -27,6 +35,7 @@ import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.UserService;
 import com.bizconf.audio.util.BeanUtil;
 import com.bizconf.audio.util.DateUtil;
+import com.bizconf.audio.util.ExcelUtil;
 import com.bizconf.audio.util.StringUtil;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.annotation.AsController;
@@ -65,26 +74,13 @@ public class ConfController extends BaseController {
 	@AsController(path = "list")
 	public Object List(@CParam("title") String title, PageModel pageModel, HttpServletRequest request){
 		List<ConfBase> confList = null;
-		int rows = 0;
 		String sortField = request.getParameter("sortField");
 		String sortord = request.getParameter("sortord");
 		UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
 		SiteBase currentSite = siteService.getCurrentSiteBaseByAdminLogin(request);
-//		if(currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
-//			rows = confService.countConfListBySubject(title, currentSiteAdmin.getSiteId(), null);
-//		}else{
-//			rows = confService.countConfListBySubject(title, currentSiteAdmin.getSiteId(), currentSiteAdmin.getId());
-//		}
-//		logger.info(rows);
-//		pageModel.setRowsCount(rows);
-//		if(currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
-//			confList = confService.getConfListBySubject(currentSite, title, currentSiteAdmin.getSiteId(), sortField, sortord, pageModel, null);
-//		}else{
-//			confList = confService.getConfListBySubject(currentSite, title, currentSiteAdmin.getSiteId(), sortField, sortord, pageModel, currentSiteAdmin.getId());
-//		}
-		
 		
 		PageBean<ConfBase> page = new PageBean<ConfBase>();
+		pageModel.setPageSize(currentSiteAdmin.getPageSize());     // 2013.6.24 因客户需求每页展示用户设置的条数
 		if(currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
 			page = confService.getAdminConfByName(title, currentSite, sortField, sortord, pageModel, null);
 		}else{
@@ -125,7 +121,6 @@ public class ConfController extends BaseController {
 		List<ConfBase> confList = null;
 		UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
 		SiteBase currentSite = siteService.getCurrentSiteBaseByAdminLogin(request);
-//		Condition condition = initCondition(confBase, currentSiteAdmin, request);
 		String sortField = request.getParameter("sortField");
 		String sortord = request.getParameter("sortord");
 		String effeDateStart = request.getParameter("effeDateStart");
@@ -138,17 +133,9 @@ public class ConfController extends BaseController {
 	    if(StringUtil.isNotBlank(effeDateEnd)){
 	      endTime = DateUtil.StringToDate(effeDateEnd, "yyyy-MM-dd");
 	    }
-//		Integer rows = 0;
-//		if(!currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
-//			condition.equal("b.create_user", currentSiteAdmin.getId().intValue());  //普通站点管理员只能查看自己创建的站点
-//		}
-//		rows = confService.countConfListByCondition(condition);
-//		logger.info(rows);
-//		pageModel.setRowsCount(rows);
-//		confList = confService.getConfListByCondition(currentSite, condition, sortField, sortord, pageModel);
-		
 		
 		PageBean<ConfBase> page = new PageBean<ConfBase>();
+		pageModel.setPageSize(currentSiteAdmin.getPageSize());     // 2013.6.24 因客户需求每页展示用户设置的条数
 		if(currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
 			page = confService.getAdminConfByCondition(confBase, currentSite, beginTime, endTime, sortField, sortord, pageModel, null);
 		}else{
@@ -176,6 +163,133 @@ public class ConfController extends BaseController {
 		request.setAttribute("sortord", sortord);       //传排序方式的编号
 		sortAttribute(confBase, request);                    //向前台传递高级搜索表单值
 		return new ActionForward.Forward("/jsp/admin/conf_list.jsp");
+	}
+	
+	/**
+	 * 导出会议
+	 * martin
+	 * 2013-2-21
+	 */
+	@AsController(path = "exportConfdetails")
+	@Post
+	public void exportConfLogs(ConfBase confBase, PageModel pageModel, 
+			@CParam("title") String title,
+			HttpServletRequest request,HttpServletResponse response){
+		List<ConfBase> confList = null;
+		UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
+		SiteBase currentSite = siteService.getCurrentSiteBaseByAdminLogin(request);
+		String sortField = request.getParameter("sortField");
+		String sortord = request.getParameter("sortord");
+		String effeDateStart = request.getParameter("effeDateStart");
+		String effeDateEnd = request.getParameter("effeDateEnd");
+		Date beginTime = null;
+		Date endTime = null;
+		if(StringUtil.isNotBlank(effeDateStart)){
+			beginTime = DateUtil.StringToDate(effeDateStart, "yyyy-MM-dd");
+		}
+		if(StringUtil.isNotBlank(effeDateEnd)){
+			endTime = DateUtil.StringToDate(effeDateEnd, "yyyy-MM-dd");
+		}
+		// 为了查询出所有的合符条件的数据，但不想添加新的逻辑
+		PageBean<ConfBase> page = new PageBean<ConfBase>();
+		pageModel.setPageSize(5000);
+		pageModel.setPageNo("1");
+		if(title!=null && !title.equals("")){
+			if(currentSiteAdmin.isSuperSiteAdmin()){
+				page = confService.getAdminConfByName(title, currentSite, sortField, sortord, pageModel, null);
+			}else{
+				page = confService.getAdminConfByName(title, currentSite, sortField, sortord, pageModel, currentSiteAdmin.getId());
+			}
+		}else{
+			if(currentSiteAdmin.isSuperSiteAdmin()){
+				page = confService.getAdminConfByCondition(confBase, currentSite, beginTime, endTime, sortField, sortord, pageModel, null);
+			}else{
+				page = confService.getAdminConfByCondition(confBase, currentSite, beginTime, endTime, sortField, sortord, pageModel, currentSiteAdmin.getId());
+			}
+		}
+		confList = page.getDatas();
+		
+		Map<Integer,Integer> terminalPcs = confService.getConfsTerminalNums(confList, ConfConstant.CONF_USER_TERM_TYPE_PC);
+		Map<Integer,Integer> terminalPhones = confService.getConfsTerminalNums(confList, ConfConstant.CONF_USER_TERM_TYPE_MOBILE);
+		
+		//时间已经转换成站点时间故不需要再转
+//		Integer timezone = currentSite.getTimeZone();
+//		if(timezone==null){
+//			timezone = 28800000;
+//		}
+		response.reset();
+		response.setContentType("octets/stream");
+        response.setHeader("Content-Disposition", "attachment;filename=conf_list.xls");
+        List<Object[]> objlist = new ArrayList<Object[]>();
+        Object[] title_timezone = new Object[1];
+        title_timezone[0] = ResourceHolder.getInstance().getResource("bizconf.jsp.site.confexport.timzzoneinfo")+currentSite.getTimeZoneDesc()
+				+ResourceHolder.getInstance().getResource("website.message.time");
+        objlist.add(title_timezone);
+        Object[] titles = new Object[8];
+		titles[0] = ResourceHolder.getInstance().getResource("system.list.meeting.title");//会议主题
+		titles[1] =	ResourceHolder.getInstance().getResource("system.list.meeting.host");// "主持人";
+		titles[2] = ResourceHolder.getInstance().getResource("user.menu.conf.func");//"会议功能";//
+		titles[3] = ResourceHolder.getInstance().getResource("system.list.meeting.status");//"会议状态";
+		titles[4] = ResourceHolder.getInstance().getResource("system.list.meeting.start.time");//"开始时间";
+		titles[5] = ResourceHolder.getInstance().getResource("system.list.meeting.stop.time");//"结束时间";
+		titles[6] = ResourceHolder.getInstance().getResource("bizconf.jsp.site.confexport.phonenum");//"电话用户数";
+		titles[7] = ResourceHolder.getInstance().getResource("bizconf.jsp.site.confexport.pcnum");//"电脑用户数";
+		objlist.add(titles);//
+		if(confList!=null && !confList.isEmpty()){
+			for (Iterator it = confList.iterator(); it.hasNext();) {
+				ConfBase conf = (ConfBase) it.next();
+				Object[] dataline = new Object[8];
+				dataline[0] = conf.getConfName();
+				dataline[1] = conf.getCompereName();
+				String typelang = "conf.type.list."+conf.getConfType();
+				String confFun = ResourceHolder.getInstance().getResource(typelang);
+				if(confFun==null || confFun.equals("")){
+					confFun = "其他";
+				}
+ 				String statulang = "conf.status."+conf.getConfStatus();
+ 				String confStatu = ResourceHolder.getInstance().getResource(statulang);
+ 				if(confStatu==null || confStatu.equals("")){
+ 					confStatu = "其他";
+				}
+ 				dataline[2] = confFun;
+ 				dataline[3] = confStatu;
+ 				
+ 				dataline[4] = MyfnTag.fmtDate("yyyy-MM-dd HH:mm", conf.getStartTime(), 0);
+				dataline[5] = MyfnTag.fmtDate("yyyy-MM-dd HH:mm", conf.getEndTime(), 0);
+				if(conf.getConfStatus().equals(ConfConstant.CONF_STATUS_OPENING)){
+					dataline[5] = "--";
+					dataline[6] = conf.getPhoneNum();
+					dataline[7] = conf.getPcNum();
+				}else if(conf.getConfStatus().equals(ConfConstant.CONF_STATUS_FINISHED)){
+					if(terminalPhones.get(conf.getId())!=null){
+						dataline[6] = terminalPhones.get(conf.getId());
+					}else{
+						dataline[6] = "0";
+					}
+					if(terminalPcs.get(conf.getId())!=null){
+						dataline[7] = terminalPcs.get(conf.getId());
+					}else{
+						dataline[7] = "0";
+					}
+				}else{
+					dataline[6] = "--";
+					dataline[7] = "--";
+				}
+				objlist.add(dataline);
+			}
+		}
+		HSSFWorkbook wb = ExcelUtil.createExcelWorkbook("users", objlist);
+        try {
+        	wb.write(response.getOutputStream());
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			objlist = null;
+			wb = null;
+		}
+		
 	}
 	
 	/**

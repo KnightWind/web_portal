@@ -27,7 +27,13 @@
 			$(".meau_btn a").removeClass("activeMeau-left activeMeau-right");
 			$(this).find("a").addClass("activeMeau-left activeMeau-right");
 		});
-	});	
+
+	});
+	
+	function refreshIHeight() {
+		var height = $("#contentFrame").contents().find("body").height() + 50;
+		$("#contentFrame").height(height);  
+	}
 </script>
 </head>
 <body>

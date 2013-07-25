@@ -38,6 +38,7 @@ public class ContactGroupServiceImpl extends BaseService implements ContactGroup
 			values.add(userId);
 		}
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sql += " and  group_name like ? ";
 			values.add("%"+ keyword +"%");
 		}
@@ -109,7 +110,7 @@ public class ContactGroupServiceImpl extends BaseService implements ContactGroup
 	}
 
 	@Override
-	public PageBean<Contacts> getImorpContectsList(Integer siteId,Integer userId,Integer group_id,String keyword,
+	public PageBean<Contacts> getImorpContectsList(Integer siteId, UserBase currUser ,Integer group_id,String keyword,
 			Integer pageNo) {
 		// TODO Auto-generated method stub
 		String sql = "select * from t_contacts where del_flag != ? and group_id =?  ";
@@ -120,16 +121,20 @@ public class ContactGroupServiceImpl extends BaseService implements ContactGroup
 			sql += " and  site_id = ? ";
 			values.add(siteId);
 		}
-		if(userId>0){
+		if(currUser != null && currUser.getId() != null && currUser.getId().intValue() > 0){
 			sql += " and user_id = ? ";
-			values.add(userId);
+			values.add(currUser.getId());
 		}
 		if(keyword!=null && !keyword.trim().equals("")){
-			sql += " and  (contact_name like ? or contact_mobile like ?) ";
+			keyword = keyword.trim();
+			sql += " and  (contact_name like ? or contact_mobile like ? or contact_name_en like ? or contact_email like ? or  contact_phone like ?) ";
+			values.add("%"+ keyword +"%");
+			values.add("%"+ keyword +"%");
+			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
 		}
-		PageBean<Contacts> pageModel = getPageBeans(Contacts.class, sql, pageNo,values.toArray(new Object[values.size()]));
+		PageBean<Contacts> pageModel = getPageBeans(Contacts.class, sql, pageNo, currUser.getPageSize(), values.toArray(new Object[values.size()]));
 		if(pageModel!=null && pageModel.getDatas()!=null){
 			pageModel.setDatas(ObjectUtil.parseHtmlWithList(pageModel.getDatas(), "contactName","contactDesc"));
 		}
@@ -181,7 +186,7 @@ public class ContactGroupServiceImpl extends BaseService implements ContactGroup
 
 	@Override
 	public PageBean<Contacts> getContactsByGroup(Integer siteId,
-			Integer userId, Integer groupId, String keyword, Integer pageNo) {
+			UserBase currUser, Integer groupId, String keyword, Integer pageNo) {
 		List<Object> values = new ArrayList<Object>();
 		String sql = "select * from t_contacts where del_flag != ? and group_id = ? ";
 		values.add(ConstantUtil.DELFLAG_DELETED);
@@ -190,11 +195,12 @@ public class ContactGroupServiceImpl extends BaseService implements ContactGroup
 			sql += " and  site_id = ? ";
 			values.add(siteId);
 		}
-		if(userId>0){
+		if(currUser != null && currUser.getId() != null && currUser.getId().intValue() > 0){
 			sql += " and user_id = ? ";
-			values.add(userId);
+			values.add(currUser.getId());
 		}
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sql += " and  (contact_name like ? or contact_mobile like ? or contact_name_en like ? or contact_email like ? or contact_phone like ?) ";
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -202,7 +208,7 @@ public class ContactGroupServiceImpl extends BaseService implements ContactGroup
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
 		}
-		PageBean<Contacts> pageModel = getPageBeans(Contacts.class, sql, pageNo,values.toArray(new Object[values.size()]));
+		PageBean<Contacts> pageModel = getPageBeans(Contacts.class, sql, pageNo, currUser.getPageSize(), values.toArray(new Object[values.size()]));
 		if(pageModel!=null && pageModel.getDatas()!=null){
 			pageModel.setDatas(ObjectUtil.parseHtmlWithList(pageModel.getDatas(), "contactName","contactDesc"));
 		}

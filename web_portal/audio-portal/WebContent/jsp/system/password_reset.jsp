@@ -27,8 +27,8 @@
 					"authCode": "${LANG['bizconf.jsp.admin.password_forget.res2']}"
 				},
 				rangelength: {
-					"lp": "${LANG['bizconf.jsp.admin.login.res4']}6~16${LANG['bizconf.jsp.admin.login.res5']}",
-					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"
+					"lp": "${LANG['bizconf.jsp.admin.pass.res4000']}",
+					"authCode": "${LANG['bizconf.jsp.admin.login.res4000']}"
 				},
 				custom: {
 					"equalTo": "${LANG['bizconf.jsp.admin.password_reset.res3']}"

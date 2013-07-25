@@ -2,7 +2,6 @@ package com.bizconf.audio.action.user;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -369,7 +368,40 @@ public class ConfController extends BaseController {
 		}else{
 			conf = confService.getConfBasebyConfId(confId, currentSite);
 		}
-		
+		confResourceAppend(conf, currentUser, currentSite, request);    //查询会议详情时拼接会议的资源
+		request.setAttribute("conf", conf);
+		request.setAttribute("site", currentSite);
+		request.setAttribute("user", currentUser);
+		return new ActionForward.Forward("/jsp/user/viewConf.jsp");
+	}
+	
+	@AsController(path = "view4sys/{confId:([0-9]+)}")
+	@Get
+	public Object sysviewConf(@CParam("confId") Integer confId,HttpServletRequest request){
+		logger.info("confId=="+confId);
+		ConfBase conf = confService.getConfBasebyConfId(confId);
+		SiteBase realSite = siteService.getSiteBaseById(conf.getSiteId());
+		UserBase realUser = userService.getUserBaseById(conf.getCreateUser());
+		String[] fields = new String[]{"startTime","endTime"};
+		long offset = 0 ;
+		if(realSite != null){
+			offset = realSite.getTimeZone();
+			realUser.setTimeZone(new Long(offset).intValue());
+		}else{
+			offset = DateUtil.getDateOffset();
+		}
+		conf = (ConfBase)ObjectUtil.offsetDate(conf, offset, fields);
+		confResourceAppend(conf, realUser, realSite, request);    //查询会议详情时拼接会议的资源
+		request.setAttribute("conf", conf);
+		request.setAttribute("site", realSite);
+		request.setAttribute("user", realUser);
+		return new ActionForward.Forward("/jsp/system/viewConf.jsp");
+	}
+	
+	/**
+	 * 查询会议详情时拼接会议周期信息的资源
+	 */
+	private void confResourceAppend(ConfBase conf, UserBase currentUser, SiteBase currentSite, HttpServletRequest request){
 		if(conf.getCycleId() != null && conf.getCycleId().intValue() > 0){
 			ConfCycle confCycle = confService.getConfCyclebyConfId(conf.getCycleId().intValue());
 			long offset = 0 ;
@@ -379,48 +411,55 @@ public class ConfController extends BaseController {
 				offset = currentSite.getTimeZone();
 			}
 			//定期模式：按月（6号；第2个周一）
-			StringBuilder cycleMode = new StringBuilder("按");
-			int cycleType = confCycle.getCycleType();
-			String cycleValue = confCycle.getCycleValue();
-			StringBuilder monthValue = new StringBuilder("月(");
-			if(cycleType == ConfConstant.CONF_CYCLE_MONTHLY.intValue()){     //按月循环的
-				if(cycleValue.indexOf(ConfConstant.CONF_CYCLE_VALUE_MONTH_SPLIT)>0){     //有分号的
-					String[] monthValueArray = cycleValue.split(ConfConstant.CONF_CYCLE_VALUE_MONTH_SPLIT);
-					monthValue.append("每月第").append(monthValueArray[0]).append("个").append(ConfConstant.WEEK_DAYS_MAP.get(monthValueArray[1])).append(")");
+			StringBuilder cycleMode = new StringBuilder("");
+			if(confCycle.getCycleType().intValue() == ConfConstant.CONF_CYCLE_MONTHLY.intValue()){      //按月循环的
+				if(confCycle.getCycleValue().indexOf(ConfConstant.CONF_CYCLE_VALUE_MONTH_SPLIT)>0){     //有分号的
+					String[] monthValueArray = confCycle.getCycleValue().split(ConfConstant.CONF_CYCLE_VALUE_MONTH_SPLIT);
+					String week = ResourceHolder.getInstance().getResource("system.month." + monthValueArray[1]);
+					cycleMode.append(String.format(ResourceHolder.getInstance().getResource("system.by.month.week"), monthValueArray[0], week));   // 格式化字符串，按月(每月第几个周几)
 				}else{
-					monthValue.append("每月第").append(cycleValue).append("天)");
+					cycleMode.append(String.format(ResourceHolder.getInstance().getResource("system.by.month.day"), confCycle.getCycleValue()));   // 格式化字符串，按月(每月第几天)
 				}
-				cycleMode.append(monthValue);
-			}else if(cycleType == ConfConstant.CONF_CYCLE_DAILY.intValue()){    //按日循环的
-				cycleMode.append("日(每"+confCycle.getCycleValue()+"天)");
-			}else if(cycleType == ConfConstant.CONF_CYCLE_WEEKLY.intValue()){   //按周循环的
-				String[] weekValueArray = cycleValue.split(ConfConstant.CONF_CYCLE_VALUE_DAYS_SPLIT);
-				cycleMode.append("周(每");
-				for(String week : weekValueArray){
-					cycleMode.append(ConfConstant.WEEK_DAYS_MAP.get(week)).append(",");
+			}else if(confCycle.getCycleType().intValue() == ConfConstant.CONF_CYCLE_DAILY.intValue()){    //按日循环的
+				cycleMode.append(String.format(ResourceHolder.getInstance().getResource("system.by.day"), confCycle.getCycleValue()));      // 格式化字符串，按日(每几天)
+			}else if(confCycle.getCycleType().intValue() == ConfConstant.CONF_CYCLE_WEEKLY.intValue()){   //按周循环的
+				StringBuilder week = new StringBuilder();
+				for(String weekValue : confCycle.getCycleValue().split(ConfConstant.CONF_CYCLE_VALUE_DAYS_SPLIT)){
+					week.append(ResourceHolder.getInstance().getResource("system.month." + weekValue)).append(",");
 				}
-				cycleMode.deleteCharAt(cycleMode.lastIndexOf(","));
-				cycleMode.append(")");
+				cycleMode.append(String.format(ResourceHolder.getInstance().getResource("system.by.week"), 
+						week.deleteCharAt(week.lastIndexOf(",")).toString()));      // 格式化字符串，按周（每周几）
 			}
 			request.setAttribute("cycleMode", cycleMode.toString());
 			request.setAttribute("confCycle", (ConfCycle)ObjectUtil.offsetDate(confCycle, offset, new String[]{"beginDate","endDate"}));
 		}
 		int duraH = conf.getDuration()/60;
 		int duraM = conf.getDuration()%60;
-		String duration = String.valueOf(duraM) + "分";
+		String duration = "";
 		if(duraH >= 1){
-			duration = String.valueOf(duraH) + "小时" + duration;
+			duration = String.valueOf(duraH) + ResourceHolder.getInstance().getResource("user.menu.conf.hour");
+			if(duraH > 1){
+				duration = String.valueOf(duraH) + ResourceHolder.getInstance().getResource("user.menu.conf.hours");
+			}
+		}
+		if(duraM > 0){
+			duration += " " + String.valueOf(duraM) + ResourceHolder.getInstance().getResource("user.menu.conf.minute");
 		}
 		duraH = conf.getAheadTime()/60;
 		duraM = conf.getAheadTime()%60;
-		String aheadTime = String.valueOf(duraM) + "分钟";
+		String aheadTime = String.valueOf(duraM) + ResourceHolder.getInstance().getResource("user.menu.conf.minute");
 		if(duraH >= 1){
-			aheadTime = String.valueOf(duraH) + "小时" + aheadTime;
+			aheadTime = String.valueOf(duraH) + ResourceHolder.getInstance().getResource("user.menu.conf.hour") + aheadTime;
 		}
 //		int confUserNum = confService.getTerminalNum(confId, null);    //会议的参会人数
 //		request.setAttribute("confUserNum", confUserNum);
 		List<ConfUser> userBaseList = null;
-		userBaseList = confService.getConfInviteUser(confId);
+		
+		if(conf.getPermanentConf().intValue() == ConfConstant.CONF_PERMANENT_ENABLED_CHILD){
+			userBaseList = confService.getConfInviteUser(conf.getBelongConfId());
+		}else{
+			userBaseList = confService.getConfInviteUser(conf.getId());
+		}
 		if(userBaseList != null && userBaseList.size() > 0){
 			request.setAttribute("inviteUserCount", userBaseList.size());
 		}else{
@@ -428,13 +467,15 @@ public class ConfController extends BaseController {
 		}
 		if(currentUser == null || currentUser.getId() == null){
 			conf.setCompereSecure("");
-			conf.setUserSecure("");
 			conf.setPublicConfPass("");
+			if (!conf.isPublic()) {
+				conf.setUserSecure("");
+			}
 		}
 		
 		StringBuilder confType = new StringBuilder("");
 		if(conf.getPublicFlag().intValue() == ConfConstant.CONF_PUBLIC_FLAG_TRUE.intValue()){
-			confType.append("公开会议");
+			confType.append(ResourceHolder.getInstance().getResource("user.menu.conf.public"));
 		}
 		String resourceConfType = ResourceHolder.getInstance().getResource("conf.confType." + conf.getConfType().intValue());
 		if(StringUtil.isNotBlank(confType.toString()) && StringUtil.isNotBlank(resourceConfType)){
@@ -449,21 +490,18 @@ public class ConfController extends BaseController {
 //		文件传输 录制
 		StringBuilder clientFunc = new StringBuilder();
 		char[] clientConfig = conf.getClientConfig().toCharArray();
-		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_SHARE_DOCS] == '1' ? ConfConstant.CLIENT_CONFIG_MAP.get(ConfConstant.CLIENT_CONFIG_SHARE_DOCS) : "");
-		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_SHARE_SCREEN] == '1' ? " "+ConfConstant.CLIENT_CONFIG_MAP.get(ConfConstant.CLIENT_CONFIG_SHARE_SCREEN) : "");
-		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_SHARE_MEDIA] == '1' ? " "+ConfConstant.CLIENT_CONFIG_MAP.get(ConfConstant.CLIENT_CONFIG_SHARE_MEDIA) : "");
-		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_WHITE_BOARD] == '1' ? " "+ConfConstant.CLIENT_CONFIG_MAP.get(ConfConstant.CLIENT_CONFIG_WHITE_BOARD) : "");
-		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_FILE_TRANS] == '1' ? " "+ConfConstant.CLIENT_CONFIG_MAP.get(ConfConstant.CLIENT_CONFIG_FILE_TRANS) : "");
-		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_RECORD] == '1' ? " "+ConfConstant.CLIENT_CONFIG_MAP.get(ConfConstant.CLIENT_CONFIG_RECORD) : "");
+		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_SHARE_DOCS] == '1' ? ResourceHolder.getInstance().getResource("system.site.empower.item.5") + ", " : "");
+		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_SHARE_SCREEN] == '1' ? ResourceHolder.getInstance().getResource("system.site.empower.item.6") + ", " : "");
+		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_SHARE_MEDIA] == '1' ? ResourceHolder.getInstance().getResource("system.site.empower.item.3") + ", "  : "");
+		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_WHITE_BOARD] == '1' ? ResourceHolder.getInstance().getResource("system.site.empower.item.7") + ", "  : "");
+		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_FILE_TRANS] == '1' ? ResourceHolder.getInstance().getResource("system.site.empower.item.12") + ", "  : "");
+		clientFunc.append(clientConfig[ConfConstant.CLIENT_CONFIG_RECORD] == '1' ? ResourceHolder.getInstance().getResource("system.site.empower.item.4") + ", "  : "");
+		String client =  clientFunc.toString();
 		request.setAttribute("hostUrl", emailService.getJoinUrlForHost(conf));
 		request.setAttribute("userUrl", emailService.getJoinUrlForUser(conf));
-		request.setAttribute("clientFunc", clientFunc.toString());
+		request.setAttribute("clientFunc", client.lastIndexOf(",") > 0 ? client.substring(0, client.lastIndexOf(",")) : client);
 		request.setAttribute("duration", duration);
 		request.setAttribute("aheadTime", aheadTime);
-		request.setAttribute("conf", conf);
-		request.setAttribute("site", currentSite);
-		request.setAttribute("user", currentUser);
-		return new ActionForward.Forward("/jsp/user/viewConf.jsp");
 	}
 	
 	/**
@@ -520,19 +558,19 @@ public class ConfController extends BaseController {
 					eventLogService.saveUserEventLog(currentUser, 
 							EventLogConstants.SITEUSER_CONF_IMMEDIATELY_CREATE, "创建即时会议失败"+ ":" + errorMessage,
 							EventLogConstants.EVENTLOG_FAIL, confBase, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "创建即时会议失败"+ ":" + errorMessage);
+					return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.create.confnow.failed")+ errorMessage);
 				}
 			}else{
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_IMMEDIATELY_CREATE, "当前企业用户无权限创建即时会议",
 						EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-				return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "当前企业用户无权限创建即时会议");
+				return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.confnow.create.not"));
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_IMMEDIATELY_CREATE, "当前企业用户创建即时会议失败",
 					EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-			return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "当前企业用户创建即时会议失败");
+			return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.create.confnow.failed"));
 		}
 	}
 	
@@ -575,12 +613,12 @@ public class ConfController extends BaseController {
 //		}
 		EmpowerConfig userEmpower = empowerConfigService.makeEmpowerForConf(currentUser);   //获取用户创建会议，缺省会议设置的权限
 		setEmpowerFlag(request, userEmpower);    //将用户权限flag传递到前台
+		request.setAttribute("userEmpower", userEmpower);
 		request = confService.confConfigAttr(confConfig, request);
 		request.setAttribute("defaultDate", curDate);
 		request.setAttribute("currentUser", currentUser);
 		request.setAttribute("siteBase", currentSite);
 		request.setAttribute("defaultLicence", licService.getSiteLicenseNum(currentSite.getId()) + currentSite.getLicense().intValue());    //最大参会人数
-//		DefaultConfig defaultConfig = confLogic.getDefaultConfig(currentUser);  //创建站点时，获取站点用户默认会议参数设置
 		request.setAttribute("defaultConfig", confConfig);
 		return new ActionForward.Forward("/jsp/user/create_Reservation_Conf.jsp");
 	}
@@ -627,11 +665,12 @@ public class ConfController extends BaseController {
 						eventLogService.saveUserEventLog(currentUser, 
 								EventLogConstants.SITEUSER_CONF_CYCLE_CREATE, "创建周期预约会议失败" + errorMessage,
 								EventLogConstants.EVENTLOG_FAIL, confBase, request);   //创建失败后写EventLog
-						return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "创建周期预约会议失败" + errorMessage);
+						return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.create.confcycle.failed") + errorMessage);
 					}
 				}else{
 					if(conf.isBelongPermanentConf()){
 						confBase = confService.createPermanentConf(conf, currentSite, currentUser);
+						confUserService.fillConfUserForCreate(confBase, currentUser);
 					}else {
 						conf.setDuration(conf.getDuration());
 						confBase = confService.createSingleReservationConf(conf, currentSite, currentUser);
@@ -646,20 +685,20 @@ public class ConfController extends BaseController {
 						eventLogService.saveUserEventLog(currentUser, 
 								EventLogConstants.SITEUSER_CONF_RESERVATION_CREATE, "创建预约会议失败" + errorMessage,
 								EventLogConstants.EVENTLOG_FAIL, confBase, request);   //创建失败后写EventLog
-						return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "创建预约会议失败" + errorMessage);
+						return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.create.conf.failed") + errorMessage);
 					}
 				}
 			}else{
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_RESERVATION_CREATE, "当前企业用户无权限创建预约会议",
 						EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-				return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "当前企业用户无权限创建预约会议");
+				return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.create.conf.failed"));
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
-					EventLogConstants.SITEUSER_CONF_RESERVATION_CREATE, "当前企业用户创建预约会议失败",
+					EventLogConstants.SITEUSER_CONF_RESERVATION_CREATE, "创建预约会议失败",
 					EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-			return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, "当前企业用户创建预约会议失败");
+			return returnJsonStr(ConstantUtil.CREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.create.conf.failed"));
 		}
 		json.put("status", ConstantUtil.CREATE_CONF_SUCCEED);
 		jsonArrConf.add(JsonUtil.parseJsonWithFullFieldByObject(confBase));
@@ -729,6 +768,7 @@ public class ConfController extends BaseController {
 		EmpowerConfig userEmpower = empowerConfigService.makeEmpowerForConf(currentUser);   //获取用户创建会议，缺省会议设置的权限
 		setEmpowerFlag(request, userEmpower);    //将用户权限flag传递到前台
 		request.setAttribute("conf", conf);
+		request.setAttribute("userEmpower", userEmpower);
 		return new ActionForward.Forward("/jsp/user/create_Reservation_Conf.jsp");
 	}
 	
@@ -792,6 +832,7 @@ public class ConfController extends BaseController {
 		EmpowerConfig userEmpower = empowerConfigService.makeEmpowerForConf(currentUser);   //获取用户创建会议，缺省会议设置的权限
 		setEmpowerFlag(request, userEmpower);    //将用户权限flag传递到前台
 		request.setAttribute("conf", conf);
+		request.setAttribute("userEmpower", userEmpower);
 		return new ActionForward.Forward("/jsp/user/create_Reservation_Conf.jsp");
 	}
 	
@@ -885,19 +926,19 @@ public class ConfController extends BaseController {
 					eventLogService.saveUserEventLog(currentUser, 
 							EventLogConstants.SITEUSER_CONF_UPDATE, "修改预约会议失败" + errorMessage,
 							EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "修改预约会议失败" + errorMessage);
+					return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed") + errorMessage);
 				}
 			}else{
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_UPDATE, "当前企业用户无权限修改预约会议",
 						EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-				return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "当前企业用户无权限修改预约会议");
+				return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed"));
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_UPDATE, "当前企业用户修改预约会议失败",
 					EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-			return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "当前企业用户修改预约会议失败");
+			return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed"));
 		}
 		json.put("status", ConstantUtil.UPDATE_CONF_SUCCEED);
 		jsonArrConf.add(JsonUtil.parseJsonWithFullFieldByObject(conf));
@@ -943,19 +984,19 @@ public class ConfController extends BaseController {
 					eventLogService.saveUserEventLog(currentUser, 
 							EventLogConstants.SITEUSER_CONF_UPDATE, "修改预约会议失败" + errorMessage,
 							EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "修改预约会议失败" + errorMessage);
+					return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed") + errorMessage);
 				}
 			}else{
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_UPDATE, "当前企业用户无权限修改预约会议",
 						EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-				return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "当前企业用户无权限修改预约会议");
+				return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed"));
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_UPDATE, "当前企业用户修改预约会议失败",
 					EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-			return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "当前企业用户修改预约会议失败");
+			return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed"));
 		}
 		json.put("status", ConstantUtil.UPDATE_CONF_SUCCEED);
 		jsonArrConf.add(JsonUtil.parseJsonWithFullFieldByObject(confBase));
@@ -992,7 +1033,7 @@ public class ConfController extends BaseController {
 				conf.setClientConfig(clientConfig);
 				conf = confService.checkConfFunc(conf, currentUser);
 				if(conf.isBelongPermanentConf()){
-					confBase = confService.updatePermanentConf(conf,currentUser);
+					confBase = confService.updatePermanentConf(conf, currentSite, currentUser);
 				}else{
 					confBase = confService.updateSingleReservationConf(conf, currentSite, currentUser);
 				}
@@ -1005,19 +1046,19 @@ public class ConfController extends BaseController {
 					eventLogService.saveUserEventLog(currentUser, 
 							EventLogConstants.SITEUSER_CONF_UPDATE, "修改预约会议失败" + errorMessage,
 							EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "修改预约会议失败" + errorMessage);
+					return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed") + errorMessage);
 				}
 			}else{
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_UPDATE, "当前企业用户无权限修改预约会议",
 						EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-				return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "当前企业用户无权限修改预约会议");
+				return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed"));
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_UPDATE, "当前企业用户修改预约会议失败",
 					EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-			return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, "当前企业用户修改预约会议失败");
+			return returnJsonStr(ConstantUtil.UPDATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.update.confcycle.failed"));
 		}
 		json.put("status", ConstantUtil.UPDATE_CONF_SUCCEED);
 		jsonArrConf.add(JsonUtil.parseJsonWithFullFieldByObject(confBase));
@@ -1042,7 +1083,7 @@ public class ConfController extends BaseController {
 		ConfBase conf = confService.getConfBasebyConfId(confId, currentUser);
 		if(conf != null && currentUser != null){
 			if(conf.getCreateUser() != null && conf.getCreateUser().intValue() != currentUser.getId()){
-				setErrMessage(request,  "只能重新创建自己创建过的会议");
+				setErrMessage(request,  ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.recreate.error"));
 				return false;
 			}
 		}
@@ -1088,6 +1129,7 @@ public class ConfController extends BaseController {
 //		}
 		EmpowerConfig userEmpower = empowerConfigService.makeEmpowerForConf(currentUser);   //获取用户创建会议，缺省会议设置的权限
 		setEmpowerFlag(request, userEmpower);    //将用户权限flag传递到前台
+		request.setAttribute("userEmpower", userEmpower);
 		return new ActionForward.Forward("/jsp/user/create_Reservation_Conf.jsp");
 	}
 	
@@ -1133,19 +1175,19 @@ public class ConfController extends BaseController {
 					eventLogService.saveUserEventLog(currentUser, 
 							EventLogConstants.SITEUSER_CONF_RECREATE, "重新创建会议失败" + errorMessage,
 							EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.RECREATE_CONF_FAIL, "重新创建会议失败" + errorMessage);
+					return returnJsonStr(ConstantUtil.RECREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.recreate.conf.failed") + errorMessage);
 				}
 			}else{
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_RECREATE, "当前企业用户无权限重新创建会议",
 						EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-				return returnJsonStr(ConstantUtil.RECREATE_CONF_FAIL, "当前企业用户无权限重新创建会议");
+				return returnJsonStr(ConstantUtil.RECREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.recreate.conf.failed"));
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_RECREATE, "当前企业用户重新创建会议失败",
 					EventLogConstants.EVENTLOG_FAIL, conf, request);   //创建失败后写EventLog
-			return returnJsonStr(ConstantUtil.RECREATE_CONF_FAIL, "当前企业用户重新创建会议失败");
+			return returnJsonStr(ConstantUtil.RECREATE_CONF_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.user.recreate.conf.failed"));
 		}
 		json.put("status", ConstantUtil.RECREATE_CONF_SUCCEED);
 		jsonArrConf.add(JsonUtil.parseJsonWithFullFieldByObject(confBase));
@@ -1170,21 +1212,21 @@ public class ConfController extends BaseController {
 			delFlag = confService.cancleCycleConfInfo(cycleId, currentSite, currentUser);
 			if(delFlag){
 				delStatus = ConstantUtil.DELETE_CONF_SUCCEED;
-				setInfoMessage(request, "删除周期预约会议成功");
+				setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.del.confcycle.success"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_DELETE, "删除周期预约会议成功",
 						EventLogConstants.EVENTLOG_SECCEED, null, request);   //删除成功后写EventLog
 			}else{
-				setErrMessage(request,  "删除周期预约会议失败");
+				setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.del.confcycle.failed"));
 				eventLogService.saveUserEventLog(currentUser, 
-						EventLogConstants.SITEUSER_CONF_DELETE, "删除周期预约会议成功",
+						EventLogConstants.SITEUSER_CONF_DELETE, "删除周期预约会议失败",
 						EventLogConstants.EVENTLOG_FAIL, null, request);   //删除失败后写EventLog
 			}
 		}else{
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_DELETE, "删除周期预约会议成功",
 					EventLogConstants.EVENTLOG_FAIL, null, request);   //删除失败后写EventLog
-			setErrMessage(request,  "当前企业用户无权限删除周期预约会议");
+			setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.confcycle.delete.not"));
 		}
 		return delFlag;
 	}
@@ -1206,18 +1248,18 @@ public class ConfController extends BaseController {
 			delFlag = confService.cancleSingleCycleConfInfo(confId, currentSite, currentUser);
 			if(delFlag){
 				delStatus = ConstantUtil.DELETE_CONF_SUCCEED;
-				setInfoMessage(request, "删除预约会议成功");
+				setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.del.conforder.success"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_DELETE, "删除预约会议成功",
 						EventLogConstants.EVENTLOG_SECCEED, null, request);   //删除成功后写EventLog
 			}else{
-				setErrMessage(request,  "删除预约会议失败");
+				setErrMessage(request,  ResourceHolder.getInstance().getResource("bizconf.jsp.user.del.conforder.failed"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_DELETE, "删除预约会议失败",
 						EventLogConstants.EVENTLOG_FAIL, null, request);   //删除失败后写EventLog
 			}
 		}else{
-			setErrMessage(request,  "当前企业用户无权限删除预约会议");
+			setErrMessage(request,  ResourceHolder.getInstance().getResource("bizconf.jsp.user.conforder.delete.not"));
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_DELETE, "删除预约会议失败",
 					EventLogConstants.EVENTLOG_FAIL, null, request);   //删除失败后写EventLog
@@ -1242,18 +1284,18 @@ public class ConfController extends BaseController {
 			delFlag = confService.cancleSingleReservationConf(confId, currentSite, currentUser);
 			if(delFlag){
 				delStatus = ConstantUtil.DELETE_CONF_SUCCEED;
-				setInfoMessage(request, "删除预约会议成功");
+				setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.del.conforder.success"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_DELETE, "删除预约会议成功",
 						EventLogConstants.EVENTLOG_SECCEED, null, request);   //删除失败后写EventLog
 			}else{
-				setErrMessage(request,  "删除预约会议失败");
+				setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.del.conforder.failed"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_DELETE, "删除预约会议失败",
 						EventLogConstants.EVENTLOG_FAIL, null, request);   //删除失败后写EventLog
 			}
 		}else{
-			setErrMessage(request,  "当前企业用户无权限删除预约会议");
+			setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.conforder.delete.not"));
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_DELETE, "当前企业用户无权限删除预约会议",
 					EventLogConstants.EVENTLOG_FAIL, null, request);   //删除失败后写EventLog
@@ -1340,18 +1382,18 @@ public class ConfController extends BaseController {
 			participantsFlag = confService.inviteParticipants(confId, cycleId, participantsList, currentUser);
 			if(participantsFlag){
 				participantsStatus = ConstantUtil.INVITE_CONF_USER_SUCCEED;
-				setInfoMessage(request, "主持人邀请参会人成功");
+				setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.success"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_INVITE, "主持人邀请参会人成功",
 						EventLogConstants.EVENTLOG_SECCEED, null, request);   //邀请成功后写EventLog
 			}else{
-				setErrMessage(request,  "主持人邀请参会人失败");
+				setErrMessage(request,  ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.failed"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_INVITE, "主持人邀请参会人失败",
 						EventLogConstants.EVENTLOG_FAIL, null, request);   //邀请失败后写EventLog
 			}
 		}else{
-			setErrMessage(request,  "当前企业用户无权限邀请参会人");
+			setErrMessage(request,  ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.not"));
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_INVITE, "当前企业用户无权限邀请参会人",
 					EventLogConstants.EVENTLOG_FAIL, null, request);   //邀请失败后写EventLog
@@ -1427,7 +1469,7 @@ public class ConfController extends BaseController {
 			@CParam("email") String email, HttpServletRequest request){
 		boolean flag = false;
 		Integer status = ConstantUtil.GLOBAL_FAIL_FLAG;
-		String msg = "设置日历提醒失败！";
+		String msg = ResourceHolder.getInstance().getResource("bizconf.jsp.user.reminder.email.failed");
 		UserBase currUser = userService.getCurrentUser(request);
 		ConfBase currConf = confService.getConfBasebyConfId(confId);
 		if(currUser!=null && currConf!=null){
@@ -1440,7 +1482,7 @@ public class ConfController extends BaseController {
 		
 		if(flag){
 			status = ConstantUtil.GLOBAL_SUCCEED_FLAG;
-			msg = "设置日历提醒成功！";
+			msg = ResourceHolder.getInstance().getResource("bizconf.jsp.user.reminder.email.success");
 		}
 		return StringUtil.returnJsonStr(status, msg);
 	}
@@ -1646,7 +1688,8 @@ public class ConfController extends BaseController {
 		List<ConfBase> dringConfList = new ArrayList<ConfBase>();
 		List<ConfBase> upcomingConfList = new ArrayList<ConfBase>();
 		List<ConfBase> attendedConfList = new ArrayList<ConfBase>();
-		dringConfList = confService.getDailyOpeningConfListForHost(confName, currentUser, pageNo).getDatas();
+//		dringConfList = confService.getDailyOpeningConfListForHost(confName, currentUser, pageNo).getDatas();
+		dringConfList = confService.getFullOpeningConfListForHost(confName, currentUser, pageNo, beginTime, endTime).getDatas();
 		if(dateScopeFlag == ConfConstant.CONF_DATE_SCOPE_FLAG_TODAY || dateScopeFlag == 0){      //今天
 			upcomingConfList = confService.getDailyComingConfListForHost(confName, currentUser, pageNo).getDatas();
 			attendedConfList = confService.getDailyJoinedConfListForHost(confName, currentUser, pageNo).getDatas();
@@ -1681,7 +1724,8 @@ public class ConfController extends BaseController {
 		List<ConfBase> dringConfList = new ArrayList<ConfBase>();
 		List<ConfBase> upcomingConfList = new ArrayList<ConfBase>();
 		List<ConfBase> attendedConfList = new ArrayList<ConfBase>();
-		dringConfList = confService.getDailyOpeningConfListForActor(confName, currentUser, pageNo).getDatas();
+//		dringConfList = confService.getDailyOpeningConfListForActor(confName, currentUser, pageNo).getDatas();
+		dringConfList = confService.getFullOpeningConfListForActor(confName, currentUser, pageNo, beginTime, endTime).getDatas();
 		if(dateScopeFlag == ConfConstant.CONF_DATE_SCOPE_FLAG_TODAY || dateScopeFlag == 0){      //今天
 			upcomingConfList = confService.getDailyComingConfListForActor(confName, currentUser, pageNo).getDatas();
 			attendedConfList = confService.getDailyJoinedConfListForActor(confName, currentUser, pageNo).getDatas();
@@ -1765,7 +1809,7 @@ public class ConfController extends BaseController {
 			request.setAttribute("confList", confList);
 			return new ActionForward.Forward("/jsp/user/conf_list_index_more.jsp");
 		}
-		return returnJsonStr(ConstantUtil.GLOBAL_FAIL_FLAG, "无更多会议信息");
+		return returnJsonStr(ConstantUtil.GLOBAL_FAIL_FLAG, ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.nomore"));
 	}
 	
 	/**

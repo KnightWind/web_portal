@@ -50,6 +50,7 @@ public class SiteStatusInterceptor implements SysInterceptorExt {
 			if(siteBase!=null && siteBase.getId()!=null && siteBase.getId().intValue() > 0){
 				effeDate=siteBase.getEffeDate();
 				expireDate=siteBase.getExpireDate();
+				expireDate=DateUtil.addDateSecond(expireDate, 24*60 * 60 -1);
 				lockFlag=siteBase.getLockFlag();
 			}
 			if(effeDate!=null && nowGmtDate.before(effeDate)){//未到生效日期

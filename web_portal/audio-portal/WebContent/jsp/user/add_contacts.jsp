@@ -53,13 +53,13 @@
 	    	return this.optional(element) || /^[a-zA-Z0-9\u4e00-\u9fa5_\-&]{1,32}$/.test(value);
 	 	}, ruleString.custom.checkUserName);	
 		$.validator.addMethod("checkEnName", function(value, element) {       
-	    	return this.optional(element) || /^[a-zA-Z0-9_\-&]{1,32}$/.test(value);
+	    	return this.optional(element) || /^[a-zA-Z0-9_\-&\s]{1,32}$/.test(value);
 	 	}, ruleString.custom.checkEnName);
 		$.validator.addMethod("checkTelphone", function(value, element) {       
-	    	return this.optional(element) || /^((\+?[0-9]{2,4}\-[0-9]{3,4}\-)|([0-9]{3,4}\-))?([0-9]{7,8})(\-[0-9]+)?$/.test(value);
+	    	return this.optional(element) || /^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$/.test(value);
 	 	}, ruleString.custom.checkPhone);
 		$.validator.addMethod("checkMobile", function(value, element) {       
-	    	return this.optional(element) || /^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$/.test(value);
+			return this.optional(element) || /^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$/.test(value);
 	 	}, ruleString.custom.checkMobile);
 		
 		contactForm = $("#contactForm").validate({
@@ -72,7 +72,7 @@
 	            'contactName' : {required:true, rangelength: [1, 32], checkUserName:true},
 	            'contactNameEn' : {notRequired:true, rangelength: [1, 32], checkEnName:true},
 	            'contactEmail' : {required:true, rangelength:[6, 64], email: true},
-	            'contactPhone' : {required:true, rangelength: [4, 32], checkTelphone:true},
+	            'contactPhone' : {notRequired:true, rangelength: [4, 32], checkTelphone:true},
 	            'contactMobile' : {notRequired:true, rangelength: [4, 32], checkMobile:true},
 	            'remark' : {notRequired:true, maxlength: 256}
 	        },
@@ -149,7 +149,7 @@
       	<div class="First_Steps_quick_a" style=" background:#FFF;height: 464px;">
 	        <div class="First_Steps_title_a"> <a href="javascript:closeDialog();"></a>
 	          <h3 class="tit_a">${LANG['bizconf.jsp.add_contacts.res1']}</h3>
-	          <p class="tit_b">${LANG['bizconf.jsp.add_contacts.res3']}, ${LANG['bizconf.jsp.add_contacts.res4']}</p>
+	          <p class="tit_b">${LANG['bizconf.jsp.add_contacts.res3']}</p>
 	        </div>
         	<div style=" background:#fff">
         		<img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" />
@@ -174,7 +174,7 @@
 	              <td align="left"><input class="right_text_a" id="contactEmail" name="contactEmail" type="text" value="${contact.contactEmail}" /></td>
 	            </tr>
 	            <tr class="box01">
-	              <td align="right" class="left_text_a"><label class='red_star'>*</label>${LANG['bizconf.jsp.add_contacts.res10']}</td>
+	              <td align="right" class="left_text_a">${LANG['bizconf.jsp.add_contacts.res10']}</td>
 	              <td align="left"><input class="right_text_a" id="contactPhone" name="contactPhone" type="text" value="${contact.contactPhone}"  /></td>
 	            </tr>
 	             <tr class="box01">

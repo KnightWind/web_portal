@@ -21,6 +21,9 @@ import freemarker.template.Template;
  */
 public class EmailContentGenerator {
 	
+	final String INTERNAL_CONTEXT_PATH = "/data/webapps/audio-portal/templates";
+	final String FORMAL_CONTEXT_PATH = "D:/Java/bizconf/portal/audio-portal/WebContent/templates";
+	
 	private final  Logger logger = Logger.getLogger(EmailContentGenerator.class);
 	private EmailContentGenerator(){
 		try{
@@ -29,6 +32,13 @@ public class EmailContentGenerator {
 		}catch(Exception e){
 			logger.error("init EmailContentGenerator config failed! maybe is get tempDirPath error!");
 			e.printStackTrace();
+			File file = new File(FORMAL_CONTEXT_PATH);
+			if (!file.exists()) {
+				this.init(INTERNAL_CONTEXT_PATH);
+			}
+			else {
+				this.init(FORMAL_CONTEXT_PATH);
+			}
 		}
 	}
 	private static EmailContentGenerator instance = new EmailContentGenerator();
@@ -71,6 +81,7 @@ public class EmailContentGenerator {
 			temp.process(datas, out);
 			content = out.getBuffer().toString();
 		}catch (Exception e) {
+			System.out.println(tempName + ":" + e.getLocalizedMessage() + "-" + e.getCause());
 			e.printStackTrace();
 		}finally{
 			out.flush();

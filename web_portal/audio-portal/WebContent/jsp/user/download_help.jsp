@@ -24,7 +24,7 @@
 
   <h3>${LANG['bizconf.jsp.download_help.res2']}</h3>
   <div class="fubiaoti">${LANG['bizconf.jsp.download_help.res3']}</div>
-  <p>${LANG['bizconf.jsp.download_help.res4']}/${LANG['bizconf.jsp.download_help.res5']}<span>${LANG['bizconf.jsp.download_help.res6']}IE${LANG['bizconf.jsp.download_help.res7']}</span></p>
+  <p>${LANG['bizconf.jsp.download_help.res4000']}<span>${LANG['bizconf.jsp.download_help.res6']}</span></p>
   <p><img src="/static/images/down_help_img01.png" width="555" height="29" /></p>
   <p>${LANG['bizconf.jsp.download_help.res8']}</p>
   <div class="fubiaoti">${LANG['bizconf.jsp.download_help.res9']}</div>

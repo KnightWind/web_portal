@@ -13,6 +13,7 @@ import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.service.ClientAPIService;
 import com.bizconf.audio.service.ConfService;
 import com.bizconf.audio.service.ContactService;
@@ -47,6 +48,9 @@ public class ClientAPIController {
 	
 	@Autowired
 	ContactService contactService;
+	
+	@Autowired
+	SiteLogic siteLogic;
 	
 	/**
 	 * 获取小参数，这个是供setup程序来调用的
@@ -139,9 +143,11 @@ public class ClientAPIController {
 		String xml = "";
 		String retCode = ConstantUtil.AS_SUCCESS_CODE;
 		String retContext = ConstantUtil.SUCCESS_FLAG;
-		List<UserBase> datas = null;
+		List<UserBase> datas = null;//int[martin]
 		try{
-			SiteBase site = siteService.getSiteBaseBySiteSign(enterpriseId);
+			SiteBase site = siteService.getSiteBaseBySiteSign(enterpriseId);//如果是Host、ActiveUser模式则取父站点对象
+			site = siteLogic.getParentSite(site);
+			
 			boolean isExact = false;
 			if("1".equals(isExactQuery)){
 				isExact = true;

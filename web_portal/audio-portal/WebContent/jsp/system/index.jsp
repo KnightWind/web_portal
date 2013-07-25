@@ -12,9 +12,24 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/style.css"/>
+<style type="text/css">
+body {
+	_width:expression((documentElement.clientWidth < 1002) ? "1002px" : "auto");
+}
 
+#mainFrame {
+	width: 100%;
+}
+
+*html #mainFrame {
+	width: 98%;
+}
+</style>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="/static/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
+<!--[if lte IE 6]>  
+<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/development-bundle/external/jquery.bgiframe-2.1.2.js"></SCRIPT>  
+<![endif]-->
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js"></SCRIPT>
 <script type="text/javascript" src="${baseUrlStatic}/js/util.js"></script>
@@ -68,7 +83,7 @@
 		$('body').bind(EVENT_SEND_EMAIL, function(event, siteInfo, userInfo) {
     		app.sendSiteEmail(siteInfo, userInfo);
 		});
-		//left menu 
+		//left menu
 		$('.nav span').click(function() {
 			var selectText = $(this).text();
 			var ul = $(this).next();
@@ -105,8 +120,13 @@
 
 	//resize index body height when search div Collapsing 
 	function resizeHeight() {
-		$("#mainFrame").height($("#mainFrame").contents().find("body").height());  
-		
+		var height = $("#mainFrame").contents().find("body").height()+50;
+		if(height<640){
+			height = 640;
+		}
+		$("#mainFrame").height(height);  
+		$(".main_container").height(height);
+		$(".main_left").height(height);
 	}
 	
 	function createOrUpdateHost(siteId,userId) {
@@ -118,7 +138,7 @@
 				"type" : VIEW_TYPE.hostUser,
 				"action" : ACTION.update,
 				"width" : 510,
-				"height" : 450
+				"height" : 480
 			});
 		} else {
 			$("<div id=\"hostDiv\"/>").showDialog({
@@ -128,7 +148,7 @@
 				"type" : VIEW_TYPE.hostUser,
 				"action" : ACTION.create,
 				"width" : 510,
-				"height" : 450
+				"height" : 480
 			});
 		}		
 	}
@@ -354,7 +374,7 @@
 		$("<div id=\"logview\"/>").showDialog({
 			"title" : "${LANG['bizconf.jsp.admin.index.res15']}",
 			"dialogClass" : "ui-dialog-smile",
-			"url" : "<%=request.getContextPath()%>/user/conflog/loglist?confId="+id,
+			"url" : "<%=request.getContextPath()%>/user/conflog/loglist?issys=true&confId="+id,
 			"type" : VIEW_TYPE.group,
 			"action" : ACTION.create,
 			"width" : 804,
@@ -362,11 +382,11 @@
 		});
 	}
 	
-	function showTelDetail(id) {
+	function showTelDetail(id,year,month) {
 		$("<div id=\"billingView\"/>").showDialog({
-			"title" : "${LANG['bizconf.jsp.index.res8']}",
-			"dialogClass" : "ui-dialog-user",
-			"url" : "/common/billing/showTelDetail?id="+id,
+			"title" : "${LANG['bizconf.jsp.common.bill_detaillist.res1']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/common/billing/sysShowTelDetail?id="+id+"&year="+year+"&month="+month,
 			"type" : VIEW_TYPE.billing,
 			"action" : ACTION.create,
 			"width" : 624,
@@ -374,16 +394,42 @@
 		});
 	}
 	
-	function showDataFeeDetail(id) {
+	function showDataFeeDetail(id,year,month) {
 		$("<div id=\"dataFeeView\"/>").showDialog({
-			"title" : "${LANG['bizconf.jsp.index.res8']}",
-			"dialogClass" : "ui-dialog-user",
-			"url" : "/common/billing/showDataDetail?id="+id,
+			"title" : "${LANG['bizconf.jsp.common.bill_detaillist.res1']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/common/billing/sysShowDataDetail?id="+id+"&year="+year+"&month="+month,
 			"type" : VIEW_TYPE.billing,
 			"action" : ACTION.create,
 			"width" : 624,
 			"height" : 487
 		});
+	}
+	
+	
+	//查看会议详情
+	function viewConf(id) {
+		$("<div id=\"viewMeeting\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.index.res14']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/user/conf/view4sys/" + id,
+			"type" : VIEW_TYPE.bookMeeting,
+			"action" : ACTION.view,
+			"width" : 684,
+			"height" : 409
+		});
+	}
+	
+	function editInventContact(confId) {
+		$("<div id=\"eidtInventContact\"/>").showDialog({
+			"title" : "${LANG['bizconf.jsp.conf_list_main.res2']}",
+			"dialogClass" : "ui-dialog-smile",
+			"url" : "/user/inviteUser/sysview?confId="+confId,
+			"type" : VIEW_TYPE.attendee,
+			"action" : ACTION.create,
+			"width" : 624,
+			"height" : 504
+		});	
 	}
 </script>
 
@@ -396,32 +442,32 @@
 <div class="main_left" >
  <ul class="nav">
  		<c:if test="${isSuperSystemAdmin}">
-	 		<li><span class="nav_top05"><a href="#">${LANG['system.menu.config.user']}</a></span>
+	 		<li><span class="nav_top05"><a href="#"><b>${LANG['system.menu.config.user']}</b></a></span>
 	          <ul class="sub_nav">
 	            <li><a class="li_alink" href="/system/sysUser/list" target="mainFrame">${LANG['system.menu.config.sysUser']}</a></li>
 	          </ul>
 	        </li>
-        <li><span class="nav_top01"><a href="#">${LANG['system.menu.config']}</a></span>
+        <li><span class="nav_top01"><a href="#"><b>${LANG['system.menu.config']}</b></a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" href="/system/email/showhost" target="mainFrame">${LANG['system.menu.config.host']}</a></li>
             <li><a class="li_alink" href="/system/email/goTemplate" target="mainFrame">${LANG['system.menu.config.template']}</a></li>
           </ul>
         </li>
         </c:if>
-        <li><span class="nav_top02"><a class="" href="#">${LANG['system.menu.site.manage']}</a></span>
+        <li><span class="nav_top02"><a class="" href="#"><b>${LANG['system.menu.site.manage']}</b></a></span>
           <ul class="sub_nav">
             <li><a class="li_alink li_actived" href="/system/site/list" target="mainFrame">${LANG['system.menu.site.list']}</a></li>
           </ul>
         </li>
         <c:if test="${isSuperSystemAdmin}">
-        <li><span class="nav_top03"><a class="" href="#">${LANG['system.menu.notice.manage']}</a></span>
+        <li><span class="nav_top03"><a class="" href="#"><b>${LANG['system.menu.notice.manage']}</b></a></span>
           <ul class="sub_nav">
             <li><a class="li_alink" href="/system/notice/list" target="mainFrame">${LANG['system.menu.notice.list']}</a></li>
           </ul>
         </li>
         </c:if>
        
-        <li><span class="nav_top04"><a class="" href="#">${LANG['system.menu.info.list']}</a></span>
+        <li><span class="nav_top04"><a class="" href="#"><b>${LANG['system.menu.info.list']}</b></a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" href="/system/conf/list" target="mainFrame">${LANG['system.menu.info.meeting']}</a></li>
             <c:if test="${user.sysType gt 6}">
@@ -430,13 +476,13 @@
          	</c:if>
           </ul>
         </li>
-<%--        <li><span class="nav_top04"><a class="" href="#">${LANG['bizconf.jsp.admin.index.res20']}</a></span>--%>
-<%--          <ul class="sub_nav">--%>
-<%--            <li class="b_line"><a class="li_alink" href="/common/billing/goSysBilling" target="mainFrame">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>--%>
-<%--          </ul>--%>
-<%--        </li>--%>
+        <li><span class="nav_top04"><a class="" href="#">${LANG['bizconf.jsp.admin.index.res20']}</a></span>
+          <ul class="sub_nav">
+            <li class="b_line"><a class="li_alink" href="/common/billing/goSysBilling" target="mainFrame">${LANG['bizconf.jsp.admin.CopyOfadminIndex.res22']}</a></li>
+          </ul>
+        </li>
         
-         <li><span class="nav_top06"><a class="" href="#">${LANG['system.menu.info.user.manage']}</a></span>
+         <li><span class="nav_top06"><a class="" href="#"><b>${LANG['system.menu.info.user.manage']}</b></a></span>
           <ul class="sub_nav">
             <li class="b_line"><a class="li_alink" href="/system/profile" target="mainFrame">${LANG['system.menu.info.user.manage']}</a></li>
             
@@ -444,8 +490,8 @@
         </li>
     </ul>    
 </div>
-<div class="main_container">
-<iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/system/site/list"></iframe>
+<div class="main_container" style="margin-left: 225px;">
+<iframe frameborder="0" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/system/site/list"></iframe>
 </div>
 
 <!--${LANG['bizconf.jsp.system.index.res7']}-->

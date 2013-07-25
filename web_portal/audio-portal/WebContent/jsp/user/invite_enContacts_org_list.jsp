@@ -8,6 +8,15 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css?ver=${version}"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css?ver=${version}"/>
+<style type="text/css">
+*html table {
+	border-collapse: collapse;
+}
+
+*+html table {
+	border-collapse: collapse;
+}
+</style>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js?ver=${version}"></script>	
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.plugin.js?ver=${version}"></script>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js?ver=${version}"></SCRIPT>
@@ -32,6 +41,7 @@
 		return datas;
 	}
 	function getContactsIds() {
+		if($("input[name=id]:checked").length<1) return null;
 		var parms = "&userImportFlag=true";
 		$("input[name=id]:checked").each(function(){
 			parms += "&id="+$(this).val();
@@ -49,6 +59,7 @@
 	}
 	
 	$(document).ready(function(){
+		parent.refreshIHeight();
 		//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 		$("#checkAll").click(function(){
 			if($(this).attr("checked")){
@@ -129,6 +140,7 @@
 <body>
 <form id="query" name="query" action="/user/contact/showEnterpriseOrgContacts" method="post" onsubmit="javascript:$('input').trigger('submitForm');">
 	  <input type="hidden"  name="showAll" value="${showAll}"/>
+	  <input name="keyword" type="hidden" value="${keyword}" />
 	  <input type="hidden" id="orgId"  name="orgId" value=""/>
 	  <!--${LANG['bizconf.jsp.invite_enContacts_list.res2']}-->
         <div class="First_Steps_main_invite" style=" background:#FFF;">

@@ -10,7 +10,12 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/login.css"/>
 <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-
+<style type="text/css">
+*html input {
+	border: expression((this.type=="text" || this.type=="password")?"0px":"");
+	padding: 0px;
+}
+</style>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js"></script>
@@ -47,7 +52,7 @@ $(function() {
         messages: {
             'loginName' : {required:'${LANG['bizconf.jsp.admin.login.res1']}'},
             'loginPass' : {required:'${LANG['bizconf.jsp.admin.login.res2']}'},
-            'authCode'  : {required:'${LANG['bizconf.jsp.admin.login.res3']}', rangelength: "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"}
+            'authCode'  : {required:'${LANG['bizconf.jsp.admin.login.res3']}', rangelength: "${LANG['bizconf.jsp.admin.login.res4000']}"}
         },
 
         success: function (label) {
@@ -122,7 +127,7 @@ function successDialog(message) {
                     <input name="authCode" type="text" id="authCode"/>
                     <img id="authCodeImg" class="yanzheng" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" onclick="randomImg()"/>
                     <a class="code_link" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.admin.login.res11']}</a>
-                    </div>
+                </div>
                
              <div class="m_right04">
              <input type="submit" class="denglu" name="loginBtn" value="${LANG['bizconf.jsp.admin.login.res6']}"/>

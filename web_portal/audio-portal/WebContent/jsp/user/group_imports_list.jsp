@@ -13,7 +13,9 @@
 <script type="text/javascript">
 	 var group_id = "${group_id}";
 $(document).ready(function(){
-	$(".group_search").watermark('${LANG['bizconf.jsp.group_contacts_list.res3']}');
+	if (!$.browser.msie || $.browser.version>7) {
+		$(".group_search").watermark('${LANG['bizconf.jsp.group_contacts_list.res3']}');
+	}
 	//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 	$("#checkAll").click(function(){
 		if($(this).attr("checked")){
@@ -52,11 +54,11 @@ $(document).ready(function(){
   		<div style=" background:#fff"><img class="toa_quick_invite" src="${baseUrlStatic}/images/min.jpg" width="730" height="1" /></div>
  
   		<div class="jianju"></div>
-	  	<form id="query" name="query" action="/user/group/importContacts" method="post">
-	  	<div class="First_Steps_main_invite" style=" background:#FFF;">
-		    <table width="730" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >
+	  	<form id="query" name="query" action="/user/group/importContacts" method="post" style="position: relative;">
+	  	<div style="width:96%;height: 430px;overflow-y: auto;position: absolute ;top: 5px;left:15px;">
+		    <table width="730" align="center" cellpadding="0" cellspacing="0" border="0">
 		      <tr>
-		        <td height="40" colspan="6" bgcolor="#333" class="tr_top"><input name="keyword" type="text" class="meeting_ss group_search" value="${keyword }"/>
+		        <td height="40" colspan="6" class="tr_top" style="background: #FFF"><input name="keyword" type="text" class="meeting_ss group_search" value="${keyword }"/>
 		          <input type="hidden" name="group_id" value="${group_id}" />
 		          <input class="meeting_but" type="button" onclick="query.submit();"/>
 		          </td>
@@ -77,11 +79,11 @@ $(document).ready(function(){
 			<c:forEach var="contact" items="${pageModel.datas}" varStatus="status">
 		       <tr align="center" bgcolor="#FFFFFF" height="30">
 		        <td class="tr_main" style=" border-left:#D2D8DB 1px solid"><input name="id" type="checkbox" value="${contact.id }" /></td>
-		     	<td class="tr_main">${contact.contactName}</td>
-			    <td class="tr_main">${contact.contactNameEn}</td>
-			    <td class="tr_main">${contact.contactEmail}</td>
-			    <td class="tr_main">${contact.contactPhone}</td>
-			    <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center">${contact.contactMobile}</td>
+		     	<td class="tr_main">${contact.contactName}&nbsp;</td>
+			    <td class="tr_main">${contact.contactNameEn}&nbsp;</td>
+			    <td class="tr_main">${contact.contactEmail}&nbsp;</td>
+			    <td class="tr_main">${contact.contactPhone}&nbsp;</td>
+			    <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center">${contact.contactMobile}&nbsp;</td>
 		      </tr>
 		     </c:forEach>
 		     <tr align="center" bgcolor="#FFFFFF" height="30">

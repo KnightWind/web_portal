@@ -443,7 +443,7 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 		StringBuilder sqlBuilder = new StringBuilder("INSERT INTO t_contacts ");
 		sqlBuilder.append(" ( user_id, site_id, group_id, group_sort, contact_id, contact_name_en, contact_name, contact_email, ");
 		sqlBuilder.append("   contact_phone, contact_mobile, contact_desc, create_time, create_user, del_flag, del_time, del_user) ");
-		sqlBuilder.append(" SELECT ?, ?, ?, ?, id, en_name, true_name, user_email, phone, mobile, remark, ?, ?, ?, ?, ? FROM t_user_base WHERE 1=1 AND id IN( ");
+		sqlBuilder.append(" SELECT ?, ?, ?, ?, id, en_name, true_name, user_email, mobile, phone, remark, ?, ?, ?, ?, ? FROM t_user_base WHERE 1=1 AND id IN( ");
 		sqlBuilder.append(" ");
 		if(currentUser != null && currentUser.getId() != null){
 			valueList.add(currentUser.getId());
@@ -581,6 +581,7 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 		sql+= " and t.user_type = ? ";
 		values.add(ConstantUtil.USERTYPE_USERS);
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sql += " and (t.mobile like ? or t.true_name like ? or t.user_email like ? or t.phone like ? or t.en_name like ?)";
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -592,7 +593,8 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 			sql += " and t.org_code like ? ";
 			values.add(orgCode +"%");
 		}
-		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sql, pageNo,values.toArray(new Object[values.size()]));
+		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sql, pageNo, 
+				currUser.getPageSize(), values.toArray(new Object[values.size()])); // 2013.6.24 因客户需求新加常量，部分每页展示用户偏好设置每页显示条数
 		return pageModel;
 	}
 
@@ -614,6 +616,7 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 			values.add(userId);
 		}
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sql += " and  (contact_name like ? or contact_email like ? or contact_phone like ? or contact_mobile like ? )";
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -702,6 +705,7 @@ public class ContactServiceImpl extends BaseService implements ContactService {
 		values.add(siteId);
 		values.add(ConstantUtil.USERTYPE_USERS);
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			if(!isExactQuery){
 				sql += " and (t.mobile like ? or t.true_name like ? or t.user_email like ? or t.phone like ? or t.en_name like ?)";
 				values.add("%"+ keyword +"%");

@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import com.bizconf.audio.action.BaseController;
 import com.bizconf.audio.constant.ConstantUtil;
+import com.bizconf.audio.util.StringUtil;
 import com.bizconf.audio.util.UploadUtil;
 import com.libernate.liberc.ActionForward;
 import com.libernate.liberc.LiberCFile;
@@ -33,7 +34,7 @@ public class UploadController extends BaseController {
 	
 	@AsController @Post
 	public Object common(@CParam("commonFile") LiberCFile file, 
-			@CParam("siteBrand") String siteBrand) {
+			@CParam("siteBrand") String siteBrand,@CParam("type") String type) {
 		String fileName = UploadUtil.getSiteLogoName(file, siteBrand);
 		String error = "";
 		if(file.getSize() > ConstantUtil.SITELOG_LIMIT * 1024){
@@ -58,8 +59,16 @@ public class UploadController extends BaseController {
 			}
 		}
 		String ret = "<script language=\"javascript\">";
+		if(StringUtil.isNotBlank(error)){
+			fileName = "";
+		}
+		
+		if (type == null || "null".equals(type) || type.length() == 0) {
+			type = "";
+		}
+		
 		ret += error;
-		ret += "parent.uploadCallback(\""+fileName+"\");";
+		ret += "parent.uploadCallback"+ type +"(\""+fileName+"\");";
 		ret += "</script>";
 		return ret;
 	}

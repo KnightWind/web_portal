@@ -58,21 +58,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
           <p class="tit_b_invite">${LANG['bizconf.jsp.inviteContactsSelect.res2']}</p>
         </div>
         <div style=" background:#fff"><img class="toa_quick_invite" src="/static/images/min.jpg" width="730" height="1" /></div>
-        <div class="First_Steps_top_invite" style=" background:#FFF;">
-          <div class="cluster"><a href="#" style="margin-left:10px; color: #ED6F00;" onclick="selectContact(this);"><img src="/static/images/lianxiren.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.contacts_main.res1']}&nbsp;&nbsp;</a></div>
-          <div class="cluster"><a href="#" style="margin-left:10px; " onclick="selectGroup(this);"><img src="/static/images/qunzu.png" width="20" height="18" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.contacts_main.res2']}&nbsp;&nbsp;</a></div>
-          <div class="cluster"><a href="#" style="margin-left:10px;" onclick="selectEnContacts(this);"><img src="/static/images/tongxl.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.inviteContactsSelect.res3']}&nbsp;&nbsp;</a></div>
+        <div class="First_Steps_top_invite" style=" background:#FFF;clear: both;height: 35px;">
+          <div class="cluster"><a href="#" style="margin-left:10px; color: #ED6F00;" onclick="selectContact(this);"><img src="/static/images/lianxiren.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.inviteContactsSelect.res5']}&nbsp;&nbsp;</a></div>
+          <div class="cluster"><a href="#" style="margin-left:10px; " onclick="selectGroup(this);"><img src="/static/images/qunzu.png" width="20" height="18" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.inviteContactsSelect.res6']}&nbsp;&nbsp;</a></div>
+          <div class="cluster"><a href="#" style="margin-left:10px;" onclick="selectEnContacts(this);"><img src="/static/images/tongxl.png" width="18" height="20" align="absmiddle" style=" margin-right:5px;" />${LANG['bizconf.jsp.inviteContactsSelect.res7']}&nbsp;&nbsp;</a></div>
         </div>
-        <div class="jianju"></div>
         <!--${LANG['bizconf.jsp.contacts_import_main.res7']}-->
-        <div class="First_Steps_main_invite">
-        	<iframe frameborder="0" width="100%" height="500px;" id="contactFrame" name="contactFrame" scrolling="no" src="/user/contact/invitelist"></iframe>
+        <div class="First_Steps_main_invite" style="width: 100%;height: 495px;">
+        	<iframe frameborder="0" width="100%" style="height: 440px;overflow-x: hidden;overflow-y: auto;" id="contactFrame" name="contactFrame" scrolling="yes" src="/user/contact/invitelist"></iframe>
+        	<div class="First_Steps_bottom_s">
+	          <div class="but44"><span class="button_common"><a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a></span></div>
+	          <div class="but09"><span class="button_common"><a href="javascript:;" onclick="selectContacts()"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />${LANG['bizconf.jsp.inviteContactsSelect.res4']}</a></span></div>
+	        </div>
         </div>
         <!--${LANG['bizconf.jsp.contacts_import_main.res8']}-->
-        <div class="First_Steps_bottom_s">
-          <div class="but44"><span class="button_common"><a href="javascript:;" onclick="closeDialog()"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px;"/>${LANG['bizconf.jsp.add_contacts.res13']}</a></span></div>
-          <div class="but09"><span class="button_common"><a href="javascript:;" onclick="selectContacts()"><img src="/static/images/right.png" width="16" height="14" align="absmiddle" style=" margin-right:8px; margin-left:10px;" />${LANG['bizconf.jsp.inviteContactsSelect.res4']}</a></span></div>
-        </div>
+        
       	</div>
       <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->      
       </td>

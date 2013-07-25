@@ -31,7 +31,9 @@ function getContactsData(){
 }
 
 $(document).ready(function(){
-	$(".group_search").watermark('${LANG['bizconf.jsp.add_group.res3']}');
+	if (!$.browser.msie || $.browser.version>7) {
+		$(".group_search").watermark('${LANG['bizconf.jsp.add_group.res3']}');
+	}
 	//${LANG['bizconf.jsp.bill_detaillist.res4']}and${LANG['bizconf.jsp.bill_detaillist.res5']}
 	$("#checkAll").click(function(){
 		if($(this).attr("checked")){
@@ -79,8 +81,8 @@ function submitForm(){
 			<c:forEach var="group" items="${pageModel.datas}" varStatus="status">
 	            <tr align="center" bgcolor="#FFFFFF" height="30">
 	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid"><input name="id" type="checkbox" value="${group.id }" /></td>
-	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${group.groupName}</td>
-	              <td class="tr_main"><div style="display:block; width:20em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${group.groupDesc}</div></td>
+	              <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${group.groupName}&nbsp;</td>
+	              <td class="tr_main"><div style="display:block; width:20em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${group.groupDesc}&nbsp;</div></td>
 	              <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center"><a href="#" onclick="viewContacts('${group.id}');">${LANG['bizconf.jsp.invite_group_list.res6']}</a></td>
 	            </tr>
            	</c:forEach>

@@ -2,7 +2,7 @@
 <%@ include file="/jsp/common/taglibs.jsp"%>
 <!--${LANG['bizconf.jsp.conf_list_index_more.res1']}7${LANG['bizconf.jsp.conf_list_index_more.res2']}-->
 <c:if test="${newConfBase !=null}"> 
-		<div class="extras-tr">
+		<div class="extras-tr" style="border-bottom:${empty newConfBase.confDesc?'1px solid #D2D8DB':'1px dashed #D2D8DB'}">
 			<div class="date_part">
 				<fmt:formatDate var="comingStartTime" value="${newConfBase.startTime}" pattern="yyyy-MM-dd HH:mm:ss" />
 				<fmt:formatDate var="comingEndTime" value="${newConfBase.endTime}" pattern="yyyy-MM-dd HH:mm:ss" />
@@ -32,24 +32,24 @@
 		        			</c:choose>
 	        			</c:if>
 	        		</a></span> 
-	        		<span class="content"><a href="#">${newConfBase.confDesc}</a></span>
+<%-- 	        		<span class="content"><a href="#">${newConfBase.confDesc}</a></span> --%>
 	        	</section>
 	        </div>
 			<div class="action_part" style="float: right;">
 				<table  border="0" align="right" cellpadding="0" cellspacing="0">
 	          		<tr>
-	          			<td class="" ><div class="k_f k_d" onclick="inventContact(${newConfBase.id})"><img src="/static/images/yaoqing.png" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res13']}</div></td>
-	            		<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${newConfBase.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${newConfBase.duration}"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${newConfBase.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
-	            		<td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${newConfBase.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.png" width="20" height="20" align="absmiddle" />${newConfBase.compereName}</div></td>
-	            		<td><div onclick="editInventContact('${newConfBase.id}')" class="k04 attendee" title="${LANG['bizconf.jsp.conf_list_index.res35']}"><img src="${baseUrlStatic}/images/ico24.png" width="20" height="20" align="absmiddle" />0</div></td>
-	            		<td><div title="${LANG['bizconf.jsp.conf_list_index.res47']}" class="viewtip extras-default" onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
+	          			<td class="" ><div class="k_f k_d" onclick="inventContact(${newConfBase.id})"><img src="/static/images/yaoqing.jpg" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res13']}</div></td>
+	            		<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${newConfBase.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${newConfBase.duration}"><img src="${baseUrlStatic}/images/clockbtn.jpg" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${newConfBase.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
+	            		<td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${newConfBase.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.jpg" width="20" height="20" align="absmiddle" />${newConfBase.compereName}</div></td>
+	            		<td><div onclick="editInventContact('${newConfBase.id}')" class="k04 attendee" title="${LANG['bizconf.jsp.conf_list_index.res35']}"><img src="${baseUrlStatic}/images/ico24.jpg" width="20" height="20" align="absmiddle" />0</div></td>
+	            		<td><div title="${LANG['bizconf.jsp.conf_list_index.res47']}" class="viewtip extras-default" onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.jpg" width="20" height="20" /></a></div></td>
 	            		<td><div class="k06" onclick="javascript:joinMeeting(1,'${newConfBase.id}');"><a href="javascript:;">${LANG['bizconf.jsp.conf_list_index.res54']}</a></div></td>
 	          		</tr>
         		</table>
 			</div>
 			<span class="fader" onclick="faderClick(this)"></span>		
 		</div>
-   		<div class="extras-action">
+   		<div class="extras-action" style="border-bottom:${empty newConfBase.confDesc?'1px solid #D2D8DB':'1px dashed #D2D8DB'}">
 				<div align="left" style="padding-top:10px">
 					<a class="email01" href="javascript:sendNoticeEmail(${newConfBase.id});"><img src="${baseUrlStatic}/images/email05.png" width="16" height="12" align="absmiddle" style=" padding-right:5px;"/>Outlook</a>
 					<a class="email02" href="javascript:sendNoticeEmail(${newConfBase.id});" style="display: none;"> <img src="${baseUrlStatic}/images/ico002.png" width="16" height="11" align="absmiddle" style=" padding-right:5px;" />Gmail</a>
@@ -81,5 +81,13 @@
 						 	</c:otherwise>
 						</c:choose>
 				</div>
-		</div>	
+		</div>
+		<c:if test="${!empty newConfBase.confDesc}">
+			<div class="extras-desc">
+				<div style="width: 60%;line-height: 18px;text-indent: 2em">
+				<c:set var="newConfDesc" value="${fn:replace(newConfBase.confDesc,' ','&nbsp;')}" />
+				${fn:replace(newConfDesc,vEnter,"<br>")}
+				</div>
+			</div>
+		</c:if>	
 </c:if>

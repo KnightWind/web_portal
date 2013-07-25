@@ -7,16 +7,19 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css"/>
-	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />	
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
+	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery.uniform/themes/default/css/uniform.custom.css">	
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js"></script>
 	<script type="text/javascript" src="${baseUrlStatic}/js/tipsy-master/src/javascripts/jquery.tipsy.js"></script>
+	<script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js"></SCRIPT>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/util.js"></SCRIPT>
 	
 	<script type="text/javascript">
 	$(document).ready(function(){
+		$("#noticeForm").find("input, textarea").not(".skipThese").uniform();
 		$('#noticeForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 		var ruleString = {
 				required: {
@@ -25,7 +28,8 @@
 					"stopTime": "${LANG['system.notice.stoptime.input']}"
 				},
 				rangelength: {
-					"title": "${LANG['system.notice.title.rangelength']}"
+					"title": "${LANG['system.notice.title.rangelength']}",
+					"content": "${LANG['system.notice.content.rangelength']}"
 				},
 				custom: {
 					"dateISO": "${LANG['system.notice.date.dateISO']}",
@@ -59,11 +63,11 @@
 			},
 			rules: {
 	            'title' : {required:true, rangelength: [2, 32], checkTitle:true},
-	            'content' : {required:true}
+	            'content' : {required:true, rangelength: [1,2000]}
 	        },
 	        messages: {
 	            'title' : {required: ruleString.required.title, rangelength: ruleString.rangelength.title},
-	            'content' : {required: ruleString.required.contents}
+	            'content' : {required: ruleString.required.contents, rangelength: ruleString.rangelength.content}
 	        },
 	        success: function (label) {
 	            $(label).each(function () {
@@ -104,17 +108,17 @@
 			</tr>		
 			<tr>
 				<td align="right" width="60px"><span class='red_star'>*</span>${LANG['system.notice.list.Title']}</td>
-				<td><input id="title" name="title" type="text" class="form-input" value="${notice.title }"/></td>
+				<td><input id="title" name="title" type="text" class="" value="${notice.title }"/></td>
 			</tr>
 			<tr>
 				<td align="right" width="60px" valign="top"><span class='red_star'>*</span>${LANG['system.notice.list.Contents']}</td>
 				<td>
-					<textarea id="content" name="content" style="width:520px;height:250px;resize:none"><c:out value="${notice.content }" /></textarea>
+					<textarea id="content" name="content" style="width:520px;height:250px;resize:none;font-size: 12px;"><c:out value="${notice.content }" /></textarea>
 				</td>
 			</tr>
 			<td colspan="2" align="center">
-				<input name="submit" type="submit"  value="${LANG['system.ok']}" class="form-button" id="submitForm"/>
-				<input name="submit" type="button"  value="${LANG['system.cancel']}" class="form-button closeButton"/>
+				<input name="submit" type="submit"  value="${LANG['system.ok']}" class="form-button skipThese" id="submitForm"/>
+				<input name="submit" type="button"  value="${LANG['system.cancel']}" class="form-button closeButton skipThese"/>
 			</td>
 		</table>
 	</form>

@@ -12,11 +12,12 @@
 <body onload="loaded();">
 <form id="query" name="query" action="/user/conflog/attendConflist" method="post">
 <input type="hidden" value="${userId}" name="userId" />
-<div class="First_Steps_invite" style=" background:#FFF; border-radius:3px;">
+<div class="First_Steps_invite" style=" background:#FFF; border-radius:3px;width: 100%">
           <div class="jianju"></div>
           <!--${LANG['bizconf.jsp.attendConfloglist.res2']}-->
-          <div class="First_Steps_main_invite" style=" background:#FFF;">
-            <table width="750" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >
+          <div style="position: relative;width: 750px;height: 435px;">
+          <div style="width: 780px;height: 435px;overflow-y: auto;position: absolute ;top: 5px;left:15px;overflow-x: hidden;">
+            <table width="760" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" style="margin: 0px auto;">
 		        <tr align="center" height="35" class="tr_center" bgcolor="#000066">
 		        <td width="20%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res3']}</td>
 		        <td width="8%" class="tr_center">${LANG['bizconf.jsp.attendConfloglist.res4']}</td>
@@ -36,12 +37,22 @@
 	        <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${conf.confName}</td>
 	        <td class="tr_main">${numMap[conf.id]}</td>
 	        <td class="tr_main">${conf.compereName}</td>
-	        <td class="tr_main"><fmt:formatDate value="${conf.startTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-	        <td class="tr_main"><fmt:formatDate value="${conf.endTime}" pattern="yyyy-MM-dd HH:mm" /></td>
+	        <td class="tr_main"> 
+	        ${myfn:fmtDate('yyyy-MM-dd HH:mm',conf.startTime,timezone)}
+<%--	        <fmt:formatDate value="${conf.startTime}" pattern="yyyy-MM-dd HH:mm" />--%>
+	        </td>
+	        <td class="tr_main"> 
+	        ${myfn:fmtDate('yyyy-MM-dd HH:mm',conf.endTime,timezone)} 
+<%--	        <fmt:formatDate value="${conf.endTime}" pattern="yyyy-MM-dd HH:mm" />--%>
+	        </td>
 	        
-	        <td class="tr_main"><fmt:formatDate value="${cls[conf.id].joinTime}" pattern="yyyy-MM-dd HH:mm" /></td>
+	        <td class="tr_main"> 
+	       	 	${myfn:fmtDate('yyyy-MM-dd HH:mm',cls[conf.id].joinTime,timezone)}
+<%--	        	<fmt:formatDate value="${cls[conf.id].joinTime}" pattern="yyyy-MM-dd HH:mm" />--%>
+	        </td>
 	        <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center">
-	        	<fmt:formatDate value="${cls[conf.id].exitTime}" pattern="yyyy-MM-dd HH:mm" />
+	        	${myfn:fmtDate('yyyy-MM-dd HH:mm',cls[conf.id].exitTime,timezone)} 
+<%--	        	<fmt:formatDate value="${cls[conf.id].exitTime}" pattern="yyyy-MM-dd HH:mm" />--%>
 	        </td>
      	</tr>
         </c:forEach>
@@ -51,6 +62,7 @@
                 </td>
               </tr>
             </table>
+          </div>
           </div>
           <div class="First_Steps_bottom_b" style="position: absolute;bottom: 0px;left:20px;">
           	<input type="button" class="create_system_user_button" value="${LANG['bizconf.jsp.attendConfloglist.res10']}" onclick="closeDialog()" />

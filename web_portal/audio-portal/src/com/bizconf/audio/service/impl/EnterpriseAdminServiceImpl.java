@@ -45,6 +45,7 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 			values.add(siteId);
 		}
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sqlBuilder.append("and (login_name like ? or true_name like ? or user_email like ?)");
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -66,7 +67,7 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 	
 	@Override
 	public PageBean<UserBase> getUserBases(String keyword, String sortField,
-			String sortRule, Integer siteId,Integer creator, String pageNo) {
+			String sortRule, UserBase userBase, Integer creator, String pageNo) {
 		if(pageNo==null || pageNo.equals("")){
 			pageNo = "1";
 		}
@@ -74,9 +75,9 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		StringBuilder sqlBuilder = new StringBuilder(" select * from t_user_base where del_flag = ? and user_type = ? ");
 		values.add(ConstantUtil.DELFLAG_UNDELETE);
 		values.add(ConstantUtil.USERTYPE_USERS);
-		if (siteId!=null && siteId>0) {
+		if (userBase != null && userBase.getSiteId() != null && userBase.getSiteId().intValue() > 0) {
 			sqlBuilder.append(" and site_id =? ");
-			values.add(siteId);
+			values.add(userBase.getSiteId());
 		}
 		
 		if(creator!=null && creator.intValue()>0){
@@ -85,6 +86,7 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		}
 		
 		if(keyword!=null && !keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sqlBuilder.append("and (login_name like ? or true_name like ? or user_email like ?)");
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -100,13 +102,13 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		}else{
 			sqlBuilder.append(" order by id desc ");
 		}
-		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sqlBuilder.toString(), Integer.parseInt(pageNo), values.toArray(new Object[values.size()]));
+		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sqlBuilder.toString(), Integer.parseInt(pageNo), userBase.getPageSize(), values.toArray(new Object[values.size()]));
 		return pageModel;
 	}
 	
 	@Override
 	public PageBean<UserBase> getSiteManagers(String keyword, String sortField,
-			String sortRule, Integer siteId,Integer creator, String pageNo) {
+			String sortRule, UserBase userBase, Integer creator, String pageNo) {
 		if(pageNo==null || pageNo.equals("")){
 			pageNo = "1";
 		}
@@ -114,15 +116,16 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		StringBuilder sqlBuilder = new StringBuilder(" select * from t_user_base where del_flag = ? and user_type=? ");
 		values.add(ConstantUtil.DELFLAG_UNDELETE);
 		values.add(ConstantUtil.USERTYPE_ADMIN);
-		if (siteId!=null && siteId>0) {
+		if (userBase != null && userBase.getId() != null && userBase.getId().intValue() > 0) {
 			sqlBuilder.append(" and site_id =? ");
-			values.add(siteId);
+			values.add(userBase.getSiteId());
 		}
 		if (creator!=null && creator>0) {
 			sqlBuilder.append(" and create_user =? ");
 			values.add(creator);
 		}
 		if(keyword!=null && keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sqlBuilder.append("and (login_name like ? or true_name like ? or user_email like ?)");
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -138,7 +141,7 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		}else{
 			sqlBuilder.append(" order by id desc ");
 		}
-		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sqlBuilder.toString(), Integer.parseInt(pageNo), values.toArray(new Object[values.size()]));
+		PageBean<UserBase> pageModel = getPageBeans(UserBase.class, sqlBuilder.toString(), Integer.parseInt(pageNo), userBase.getPageSize(), values.toArray(new Object[values.size()]));
 		
 		return pageModel;
 	}
@@ -154,6 +157,7 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		values.add(ConstantUtil.DELFLAG_UNDELETE);
 		values.add(siteId);
 		if(keyword!=null && keyword.trim().equals("")){
+			keyword = keyword.trim();
 			sqlBuilder.append("and (login_name like ? or true_name like ? or user_email like ?)");
 			values.add("%"+ keyword +"%");
 			values.add("%"+ keyword +"%");
@@ -214,7 +218,11 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 	@Override
 	public boolean changeLockState(String[] ids, Integer userStatus) throws Exception {
 		boolean lockFlag = true;
-		StringBuilder sqlBuilder = new StringBuilder("update t_user_base t set t.user_status=? where t.del_flag=? and t.id in (0");
+		StringBuilder sqlBuilder = new StringBuilder("update t_user_base t set t.user_status=? ");
+		if(ConstantUtil.USER_STATU_UNLOCK.equals(userStatus)){
+			sqlBuilder.append(",error_count = 0");
+		}
+		sqlBuilder.append(" where t.del_flag=? and t.id in (0 ");
 		for(String id:ids){
 			sqlBuilder.append(",");
 			sqlBuilder.append(id);
@@ -223,6 +231,9 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		Object[] values = new Object[2];
 		values[0] = userStatus;
 		values[1] = ConstantUtil.DELFLAG_UNDELETE;
+//		if(ConstantUtil.USER_STATU_UNLOCK.equals(userStatus)){
+//			sqlBuilder
+//		}
 		lockFlag = libernate.executeSql(sqlBuilder.toString(), values);
 		return lockFlag;
 	}
@@ -250,13 +261,15 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		if(user.getLoginName()==null ||user.getLoginName().equals("")){
 			return false;
 		}else{
-			Pattern pattern = Pattern.compile("^[a-zA-Z0-9]{4,16}$");
+			Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]{4,16}$");
 			Matcher matcher = pattern.matcher(user.getLoginName());
 			if(!matcher.matches()){
 				return false;
 			}
 		}
 		if(user.getLoginPass()==null || user.getLoginPass().equals("")){
+			return false;
+		}else if(user.getLoginPass().length()<6 || user.getLoginPass().length()>16){
 			return false;
 		}
 		if(user.getSiteId()==null || user.getSiteId()<=0){
@@ -271,6 +284,14 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 		}else{
 			Pattern pattern = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 			Matcher matcher = pattern.matcher(user.getUserEmail());
+			if(!matcher.matches()){
+				return false;
+			}
+		}
+		
+		if(user.getMobile()!=null){
+			Pattern pattern = Pattern.compile("(^((\\+86)?|\\(\\+86\\)|\\+86\\s|\\+86-)0?1[358]\\d{9}$)|(^((\\+86)?|\\(\\+86\\)|\\+86\\s|\\+86-)0?([1-9]\\d{1,2}-?\\d{6,8}|[3-9][13579]\\d-?\\d{6,7}|[3-9][24680]\\d{2}-?\\d{6})(-\\d{4})?$)");
+			Matcher matcher = pattern.matcher(user.getMobile());
 			if(!matcher.matches()){
 				return false;
 			}
@@ -320,6 +341,21 @@ public class EnterpriseAdminServiceImpl extends BaseService implements Enterpris
 				userBase.setLoginPass(MD5.encodePassword(userBase.getLoginPass(), "MD5"));
 			}
 			user = libernate.saveEntity(userBase);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+	
+	public UserBase saveUserBaseForImport(UserBase userBase,EmpowerConfig userConfig) {
+		UserBase user = null;
+		try {
+			userBase.setLoginPass(MD5.encodePassword(userBase.getLoginPass(), "MD5"));
+			user = libernate.saveEntity(userBase);
+			if(userConfig!=null){
+				userConfig.setUserId(user.getId());
+				empowerLogic.saveEmpowerConfig(userConfig);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

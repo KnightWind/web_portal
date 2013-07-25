@@ -44,6 +44,49 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 	@Autowired
 	UserService userService;
 	
+	public boolean loginForPad(String loginName, String loginPass,SiteBase siteBase,HttpServletRequest request){
+		boolean loginStatus=false;
+		if (StringUtil.isEmpty(loginName) || StringUtil.isEmpty(loginPass) || siteBase==null) {
+			return loginStatus;
+		}
+		UserBase userBase = userService.getSiteUserByLoginName(siteBase.getId(), loginName);
+		if(userBase==null){
+			return loginStatus;
+		}
+		if(userBase.getUserStatus()==0){
+			return loginStatus;
+		}
+		if(userBase.isExpried()){
+			return loginStatus;
+		}
+		if (userBase.getErrorCount().intValue() >= ConstantUtil.MAX_ERROR_COUNT_USER.intValue()) {
+			if (DateUtil.getGmtDate(null).getTime() < userBase.getLastErrorTime().getTime()
+					+ ConstantUtil.LIMIT_LOGIN_HOUR_USER * 3600 * 1000L) {
+				return loginStatus;
+			}
+			else {
+				userBase.setErrorCount(0);
+				userBase.setUserStatus(ConstantUtil.USER_STATU_UNLOCK);
+				this.updateErrorCount(userBase);
+			}
+		}
+		if (!MD5.encodePassword(loginPass, "MD5").equalsIgnoreCase(userBase.getLoginPass())) {
+			userBase.setErrorCount(userBase.getErrorCount() + 1);
+			userBase.setLastErrorTime(DateUtil.getGmtDate(null));
+			this.updateErrorCount(userBase);
+			boolean loginLogStatus = saveSiteAdminOrUserLoginLog(userBase,request);
+			logger.info("Ipad loginName="+loginName+"; user loginLogStatus----->>"+loginLogStatus);
+			return loginStatus;
+		}
+		if(userBase.getErrorCount().intValue()>0){
+			userBase.setErrorCount(0);
+			this.updateErrorCount(userBase);
+			
+		}
+		loginStatus=true;
+		return loginStatus;
+	}
+	
 	@Override
 	public int login(String loginName, String loginPass, String authCode,
 			HttpServletResponse response, HttpServletRequest request)
@@ -66,14 +109,18 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 		}
 		
 		if (userBase.getErrorCount().intValue() >= ConstantUtil.MAX_ERROR_COUNT_USER.intValue()) {
-			Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_USER);
-			if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
+			//modified by Chris Gao 06/13/13
+			//Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_USER);
+			//if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
+			if (DateUtil.getGmtDate(null).getTime() < userBase.getLastErrorTime().getTime()
+					+ ConstantUtil.LIMIT_LOGIN_HOUR_USER * 3600 * 1000L) {
 				return LoginConstants.LOGIN_ERROR_USER_LOCKED;
 			}
-//			else {
-//				userBase.setErrorCount(0);
-//				this.updateErrorCount(userBase);
-//			}
+			else {
+				userBase.setErrorCount(0);
+				userBase.setUserStatus(ConstantUtil.USER_STATU_UNLOCK);
+				this.updateErrorCount(userBase);
+			}
 		}
 		
 		if (!MD5.encodePassword(loginPass, "MD5").equalsIgnoreCase(userBase.getLoginPass())) {
@@ -86,14 +133,14 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 		}
 		
 		//授权
-		String sessionId = getSessionIdForUserBase(userBase.getId()+"");
+		String sessionId = getSessionIdForUserBase(userBase);
 		CookieUtil.setPageCookie(response, LoginConstants.SESSION_ID_NAME, sessionId, 
 				siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
 		CookieUtil.setPageCookie(response, LoginConstants.USER_SESSION_ID_NAME, 
 				String.valueOf(userBase.getId()), siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
+		//removed by Chris Gao 06/13/13
 		if(userBase.getErrorCount().intValue()>0){
 			userBase.setErrorCount(0);
-			userBase.setLastErrorTime(DateUtil.getGmtDate(null));
 			this.updateErrorCount(userBase);
 		}
 		return LoginConstants.LOGIN_ERROR_SUCCESS;
@@ -117,16 +164,22 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 			System.out.println("error2");
 			return LoginConstants.LOGIN_ERROR_USER_NOT_EXIST;
 		}
-		
+		if(userBase.getUserStatus()==0){
+			return LoginConstants.LOGIN_ERROR_USER_LOCKED;
+		}
 		if (userBase.getErrorCount().intValue() >= ConstantUtil.MAX_ERROR_COUNT_ADMIN.intValue()) {
-			Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_ADMIN);
-			if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
+			//modified by Chris Gao 06/20/13
+			//Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_ADMIN);
+			//if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
+			if (DateUtil.getGmtDate(null).getTime() < userBase.getLastErrorTime().getTime()
+					+ ConstantUtil.LIMIT_LOGIN_HOUR_ADMIN * 3600 * 1000L) {
 				return LoginConstants.LOGIN_ERROR_USER_LOCKED;
 			}
-//			else {
-//				userBase.setErrorCount(0);
-//				this.updateErrorCount(userBase);
-//			}
+			else {
+				userBase.setUserStatus(ConstantUtil.USER_STATU_UNLOCK);
+				userBase.setErrorCount(0);
+				this.updateErrorCount(userBase);
+			}
 		}
 
 		logger.info("md5 pass="+MD5.encodePassword(loginPass, "MD5"));
@@ -151,9 +204,9 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 				siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
 		CookieUtil.setPageCookie(response, LoginConstants.SITE_ADMIN_USER_SESSION_ID_NAME, 
 				String.valueOf(userBase.getId()), siteBrand + "." + SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
+		//modified by Chris Gao 06/20/13
 		if(userBase.getErrorCount().intValue()>0){
 			userBase.setErrorCount(0);
-			userBase.setLastErrorTime(DateUtil.getGmtDate(null));
 			this.updateErrorCount(userBase);
 		}
 		return LoginConstants.LOGIN_ERROR_SUCCESS;
@@ -191,8 +244,11 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 		}
 		
 		if (systemUser.getErrorCount().intValue() >= ConstantUtil.MAX_ERROR_COUNT_SYSTEM.intValue()) {
-			Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_SYSTEM);
-			if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
+			//modified by Chris Gao 06/20/13
+			//Date autoUnlockDate = DateUtil.getGmtDateByAfterHour(ConstantUtil.LIMIT_LOGIN_HOUR_SYSTEM);
+			//if (DateUtil.getGmtDate(null).before(autoUnlockDate)) {
+			if (DateUtil.getGmtDate(null).getTime() < systemUser.getLastErrorTime().getTime()
+					+ ConstantUtil.LIMIT_LOGIN_HOUR_SYSTEM * 3600 * 1000L) {
 				return LoginConstants.LOGIN_ERROR_USER_LOCKED;
 			}
 			else {
@@ -211,7 +267,7 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 		}
 		
 		//授权
-		String sessionId = getSessionIdForSystemUser(systemUser.getId()+"");
+		String sessionId = getSessionIdForSystemUser(systemUser);
 		CookieUtil.setPageCookie(response, LoginConstants.SESSION_ID_NAME, sessionId, 
 				SiteIdentifyUtil.MEETING_CENTER_DOMAIN);
 		CookieUtil.setPageCookie(response, LoginConstants.SYSTEM_USER_SESSION_ID_NAME, 
@@ -275,7 +331,7 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 		if(!ConstantUtil.USERTYPE_USERS.equals(userBase.getUserType())){
 			return false;
 		}
-		String validSessionId = this.getSessionIdForUserBase(uid);
+		String validSessionId = this.getSessionIdForUserBase(userBase);
 		if (!sessionId.equalsIgnoreCase(validSessionId)) {
 			return false;
 		}
@@ -332,8 +388,13 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 			return false;
 		}
 
+		//added by Chris Gao 06/13/13
+		SystemUser systemUser = userService.getSystemUserById(IntegerUtil.parseInteger(said));
+		if (systemUser == null) {
+			return false;
+		}
 
-		String validSessionId = this.getSessionIdForSystemUser(said);
+		String validSessionId = this.getSessionIdForSystemUser(systemUser);
 		if (!sessionId.equalsIgnoreCase(validSessionId)) {
 			return false;
 		}
@@ -364,15 +425,20 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 	
 	private void updateErrorCount(UserBase user) {
 		try {
-			libernate.updateEntity(user, "error_count", "last_error_time");
+			if (user.getErrorCount() >= ConstantUtil.MAX_ERROR_COUNT_USER) {
+				user.setUserStatus(ConstantUtil.USER_STATU_LOCK);
+			}
+			libernate.updateEntity(user, "error_count", "last_error_time", "user_status");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private String getSessionIdForSystemUser(String id) {
-		return MD5.encodePassword(id + "-systemAdmin-" + 
-				LoginConstants.SYSTEM_USER_SESSION_ID_KEY, "MD5");
+	//modified by Chris Gao 06/13/13
+	//private String getSessionIdForSystemUser(String id) {
+	private String getSessionIdForSystemUser(SystemUser systemUser) {
+		return MD5.encodePassword(systemUser.getId() + "-systemAdmin-" + 
+				LoginConstants.SYSTEM_USER_SESSION_ID_KEY + "-" + systemUser.getLoginPass(), "MD5");
 	}
 	
 	private String getSessionIdForSiteAdmin(String id) {
@@ -380,9 +446,11 @@ public class LoginServiceImpl  extends BaseService implements LoginService{
 				LoginConstants.SITE_ADMIN_SESSION_ID_KEY, "MD5");
 	}
 	
-	private String getSessionIdForUserBase(String id) {
-		return MD5.encodePassword(id + "-"+ SiteIdentifyUtil.getCurrentBrand() + "-" +
-				LoginConstants.USER_SESSION_ID_KEY, "MD5");
+	//modified by Chris Gao 06/13/13
+	//private String getSessionIdForUserBase(String id) {
+	private String getSessionIdForUserBase(UserBase userBase) {
+		return MD5.encodePassword(userBase.getId() + "-"+ SiteIdentifyUtil.getCurrentBrand() + "-" +
+				LoginConstants.USER_SESSION_ID_KEY + "-" + userBase.getLoginPass(), "MD5");
 	}
 	
 	private boolean saveSystemLoginLog(SystemUser systemUser,HttpServletRequest request){

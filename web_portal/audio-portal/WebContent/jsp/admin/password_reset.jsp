@@ -27,8 +27,8 @@
 					"authCode": "${LANG['bizconf.jsp.admin.password_forget.res2']}"
 				},
 				rangelength: {
-					"lp": "${LANG['bizconf.jsp.admin.login.res4']}6~16${LANG['bizconf.jsp.admin.login.res5']}",
-					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"
+					"lp": "${LANG['bizconf.jsp.admin.login.res4fix2']}",
+					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}"
 				},
 				custom: {
 					"equalTo": "${LANG['bizconf.jsp.admin.password_reset.res3']}"
@@ -92,15 +92,15 @@
   <h3>${LANG['bizconf.jsp.admin.index.res7']}</h3>
   
 	<ul>
-    	<li><span>${LANG['bizconf.jsp.admin.password_reset.res4']}</span><input id="lp" name="lp" class="text01" type="password" /></li>
-    	<li><span>${LANG['bizconf.jsp.admin.password_reset.res5']}</span><input id="clp" name="clp" class="text01" type="password" /></li>
-    	<li><span>${LANG['bizconf.jsp.admin.password_forget.res11']}</span><input id="authCode" name="authCode" type="text" class="text02 " />
-                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;" onclick="randomImg()"/>
+    	<li><span style="width: 120px;">${LANG['bizconf.jsp.admin.password_reset.res4']}：</span><input id="lp" name="lp" class="text01" type="password" /></li>
+    	<li><span style="width: 120px;">${LANG['bizconf.jsp.admin.password_reset.res5']}</span><input id="clp" name="clp" class="text01" type="password" /></li>
+    	<li><span style="width: 120px;">${LANG['bizconf.jsp.admin.password_forget.res11']}</span><input id="authCode" name="authCode" type="text" class="text02 " style="margin-right: 15px;"/>
+                    <img id="authCodeImg" class="yanzhengma" alt="${LANG['bizconf.jsp.admin.login.res10']}" src=""  width="0" height="0" style="border: 1px solid #bbbbbb;margin-left: 0px;" onclick="randomImg()"/>
                     &nbsp;&nbsp;<a class="change" href="javascript:;" onclick="randomImg()">${LANG['bizconf.jsp.admin.password_forget.res12']}</a>
    	    </li>
 	</ul>
 	<div style="clear: both;"></div>
-	<input name="button01" class="button01" type="submit" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" />
+	<input name="button01" class="button01" type="submit" value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" style="margin-left: 240px;"/>
     <input name="button02" class="button02" type="button" value="${LANG['bizconf.jsp.admin.createOrg.res4']}" onclick="javascript:back();" />
 </form>  
 </div>      

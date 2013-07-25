@@ -430,11 +430,12 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public Notice getCurrentSystemNotice() {
 		List<Notice> noticeList = null;
-		StringBuffer strSql = new StringBuffer(" select * from t_notice where site_id = 0 and del_flag = ? and notice_status = ?");
+		StringBuffer strSql = new StringBuffer(" select * from t_notice where site_id = 0 and del_flag = ? and notice_status = ? and stop_time > ?");
 		try{
-			Object[] values = new Object[2];
+			Object[] values = new Object[3];
 			values[0] = ConstantUtil.DELFLAG_UNDELETE;
 			values[1] = ConstantUtil.NOTICE_PUBLISHED;
+			values[2] = DateUtil.getGmtDate(null);
 			noticeList = DAOProxy.getLibernate().getEntityListBase(Notice.class, strSql.toString(), values);
 			if(noticeList != null && noticeList.size()>0){
 				return noticeList.get(0);

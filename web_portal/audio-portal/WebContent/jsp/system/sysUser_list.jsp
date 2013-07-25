@@ -61,7 +61,7 @@ function del(id){
 <div class="">
   <div class="m_top">
    <div class="">
- 	 <a href="javascript:;" class="zengjia" id="createSysUser">${LANG['system.sysUser.list.addUser']}</a>
+ 	 <a href="javascript:;" class="zengjia" id="createSysUser"><b>${LANG['system.sysUser.list.addUser']}</b></a>
    </div>   
   </div>
     	
@@ -71,13 +71,13 @@ function del(id){
     <td>
     <table width="100%" class="table001" border="0" cellpadding="0" cellspacing="0" id="site-list">
      <tr class="table003" height="38" >
-        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.loginName']}</span></div></td>
-        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
-        <td width="12%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.enName']}</span></div></td>
-        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['bizconf.jsp.system.createSystemUser.res2']}</span></div></td>
-        <td width="13%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.email']}</span></div></td>
-        <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.telephone']}</span></div></td>
-        <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center" class="caozuo" style="border-right:none"><span>${LANG['system.sysUser.list.operate']}</span></div></td>
+        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.loginName']}</b></span></div></td>
+        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.userName']}</b></span></div></td>
+        <td width="12%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.enName']}</b></span></div></td>
+        <td width="10%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['bizconf.jsp.system.createSystemUser.res2']}</b></span></div></td>
+        <td width="13%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.email']}</b></span></div></td>
+        <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.sysUser.list.telephone']}</b></span></div></td>
+        <td width="14%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center" class="caozuo" style="border-right:none"><span><b>${LANG['system.sysUser.list.operate']}</b></span></div></td>
      </tr>
       <c:if test="${fn:length(systemUserList)<=0 }">
          <tr>

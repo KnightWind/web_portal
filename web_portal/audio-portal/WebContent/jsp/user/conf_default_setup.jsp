@@ -14,9 +14,10 @@
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/tipsy-master/src/javascripts/jquery.tipsy.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery.uniform.min.js?ver=${version}"></script>
+<cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
 <cc:confList var="CONF_VIDEO_TYPE_FLUENCY"/>
 <cc:confList var="CONF_VIDEO_TYPE_DISTINCT"/>
-<cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
+<cc:confList var="CONF_VIDEO_TYPE_BEST"/>
 <c:set var="CONF_VIDEO_TYPE_FLUENCY" value="${CONF_VIDEO_TYPE_FLUENCY }"></c:set>
 <c:set var="CONF_VIDEO_TYPE_DISTINCT" value="${CONF_VIDEO_TYPE_DISTINCT }"></c:set>
 <c:set var="CONF_VIDEO_TYPE_WEBBAND" value="${CONF_VIDEO_TYPE_WEBBAND }"></c:set>
@@ -36,15 +37,25 @@ $(function() {
 	$("#maxVideo").attr("value",maxVideoNum);
 	$("#maxAudio").attr("value",maxAudioNum);
 	var videoType = "${confConfig.videoType}";
-	if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
+	if(videoType=="${CONF_VIDEO_TYPE_WEBBAND}"){
 		$("input:radio[name=videoType]:eq(0)").attr("checked",'checked');
-	} else if(videoType=="${CONF_VIDEO_TYPE_DISTINCT}"){
+	} else if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
 		$("input:radio[name=videoType]:eq(1)").attr("checked",'checked');
-	} else if(videoType=="${CONF_VIDEO_TYPE_WEBBAND}"){
+	} else if(videoType=="${CONF_VIDEO_TYPE_DISTINCT}"){
 		$("input:radio[name=videoType]:eq(2)").attr("checked",'checked');
-	}
+	} else if(videoType=="${CONF_VIDEO_TYPE_BEST}"){
+		$("input:radio[name=videoType]:eq(3)").attr("checked",'checked');
+	} 
 	$("#aheadTimes").val("${confConfig.aheadTimes}");
 	//${LANG['bizconf.jsp.conf_default_setup.res2']}
+	
+	var isAudioFlag = "${isAudioFlag}";
+	if(isAudioFlag){
+		$(".audioTR").show();
+	}else{
+		$(".audioTR").hide();
+	}
+	
 	var isVideoFlag = "${isVideoFlag}"; 
 	if(isVideoFlag){
 		$(".videoTR").show();
@@ -78,23 +89,25 @@ $(function() {
 		$(".callFunc").hide();
 	}
 
-	//${LANG['bizconf.jsp.conf_default_setup.res6']}
 	var isAutoFlag = "${isAutoFlag}";
+	$('input:radio[name="confType"]').change(function() {
+		var confTypeValue = $(this).val();
+		if (isAutoFlag && confTypeValue=="1") {
+			$(".callFunc").show();
+		} else {
+			$(".callFunc").hide();
+			$("input:radio[name=allowCall]:eq(1)").attr("checked",'checked');
+		}
+	});
+	
+	//自动外呼
 	if(isAutoFlag){
-		$('input:radio[name="confType"]').change(function() {
-			var confTypeValue = $(this).val();
-			if (confTypeValue=="1") {
-				$(".callFunc").show();
-			} else {
-				$(".callFunc").hide();
-				$("input:radio[name=allowCall]:eq(1)").attr("checked",'checked');
-			}
-		});
-		//${LANG['bizconf.jsp.conf_default_setup.res7']}
 		var callFunc = "${allowCall}"; 
 		if(callFunc=="1"){
 			$("input:radio[name=allowCall]:eq(0)").attr("checked",'checked');
 		}
+	}else{
+		$(".callFunc").hide();
 	}	
 	
 	//${LANG['bizconf.jsp.conf_default_setup.res8']}
@@ -219,11 +232,11 @@ function saveInfo() {
 <!--   	<tr height="40"> -->
 <!--     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res16']}</td> -->
 <!--         <td align="left" class="confsetTD"> -->
-<%--         	<input class="Personal_settings_01 skipThese" id="maxUser" name="maxUser" type="text"  value="${confConfig.maxUser}"/> --%>
+<%--         	<input class=" skipThese" id="maxUser" name="maxUser" type="text"  value="${confConfig.maxUser}"/> --%>
 <%--         	&nbsp;<span style="color: red">${LANG['bizconf.jsp.conf_default_setup.res17']}: ${defaultLicence }</span> --%>
 <!--         </td> -->
 <!--     </tr> -->  
-    <tr height="40">
+    <tr height="40" class="audioTR">
     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res18']}</td>
         <td align="left" class="confsetTD">
         	<select name="maxAudio" id="maxAudio" class="video_channels">
@@ -253,9 +266,23 @@ function saveInfo() {
         	    <cc:confList var="CONF_VIDEO_TYPE_FLUENCY"/>
 	            <cc:confList var="CONF_VIDEO_TYPE_DISTINCT"/>
 	            <cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
+	            <cc:confList var="CONF_VIDEO_TYPE_BEST"/>
+	            
+	            <cc:confList var="CONF_VIDEO_TYPE_FLUENCY_CODE"/>
+	            <cc:confList var="CONF_VIDEO_TYPE_DISTINCT_CODE"/>
+	            <cc:confList var="CONF_VIDEO_TYPE_WEBBAND_CODE"/>
+	            <cc:confList var="CONF_VIDEO_TYPE_BEST_CODE"/>
+	            <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_WEBBAND }" <c:if test="${userEmpower.dpiNumber==CONF_VIDEO_TYPE_WEBBAND_CODE }"> checked="checked" </c:if>/>${LANG['bizconf.jsp.conf_default_setup.res24']}</li>
+	            <c:if test="${userEmpower.dpiNumber>=CONF_VIDEO_TYPE_FLUENCY_CODE }">
         		<li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_FLUENCY }" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res22']}</li>
+        		</c:if>
+        		<c:if test="${userEmpower.dpiNumber>=CONF_VIDEO_TYPE_DISTINCT_CODE }">
                 <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_DISTINCT }" />${LANG['bizconf.jsp.conf_default_setup.res23']}</li>
-                <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_WEBBAND }" />${LANG['bizconf.jsp.conf_default_setup.res24']}</li>
+        		</c:if>
+        		<c:if test="${userEmpower.dpiNumber>=CONF_VIDEO_TYPE_BEST_CODE }">
+                <li><input name="videoType" type="radio" value="${CONF_VIDEO_TYPE_BEST }" />${LANG['system.quality.level.best']}</li>
+        		</c:if>
+                
            </ul>
        </td>
     </tr>
@@ -269,29 +296,29 @@ function saveInfo() {
      	<tr height="40">
     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res3']}</td>
         <td align="left" class="confsetTD">
-        	<input class="Personal_settings_01" name="confModel" type="radio" value="1" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res26']}
-          	<input class="Personal_settings_01" name="confModel" type="radio" value="0" />${LANG['bizconf.jsp.conf_default_setup.res27']}</td>
+        	<input class="" name="confModel" type="radio" value="1" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res26']}
+          	<input class="" name="confModel" type="radio" value="0" />${LANG['bizconf.jsp.conf_default_setup.res27']}</td>
         </td>
     </tr>        
  	<tr height="40">
     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res4']}</td>   <!-- ${LANG['bizconf.jsp.conf_default_setup.res28']} -->
         <td align="left" class="confsetTD">
-          	<input class="Personal_settings_01" name="micStatus" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res29']}
-          	<input class="Personal_settings_01" name="micStatus" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res30']}
+          	<input class="" name="micStatus" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res29']}
+          	<input class="" name="micStatus" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res30']}
         </td>
     </tr>        
  	<tr height="40" class="phoneFuc">
     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res5']}</td>
         <td align="left" class="confsetTD">
-          	<input class="Personal_settings_01" name="confType" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res31']}
-          	<input class="Personal_settings_01" name="confType" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.attendConfloglist.res10']}
+          	<input class="" name="confType" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res31']}
+          	<input class="" name="confType" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.attendConfloglist.res10']}
         </td>
     </tr>        
  	<tr height="40" class="callFunc">
     	<td align="right" width="160">${LANG['bizconf.jsp.conf_default_setup.res32']}</td>
         <td align="left" class="confsetTD">
-          	<input class="Personal_settings_01" name="allowCall" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res31']}
-          	<input class="Personal_settings_01" name="allowCall" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.attendConfloglist.res10']}
+          	<input class="" name="allowCall" type="radio" value="1" />${LANG['bizconf.jsp.conf_default_setup.res31']}
+          	<input class="" name="allowCall" type="radio" value="0" checked="checked"/>${LANG['bizconf.jsp.attendConfloglist.res10']}
         </td>
     </tr>  
     

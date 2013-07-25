@@ -319,10 +319,18 @@ public class Contacts implements java.io.Serializable {
 	 * 2013-3-11
 	 */
 	public void initContact(){
-		setGroupId(0);
-		setGroupSort(0);
-		setContactId(0);
-		setContactDesc("");
+		if(this.groupId==null){
+			setGroupId(0);
+		}
+		if(this.groupSort==null){
+			setGroupSort(0);
+		}
+		if(this.contactId==null){
+			setContactId(0);
+		}
+		if(this.contactDesc==null){
+			setContactDesc("");
+		}
 		setCreateTime(DateUtil.getGmtDate(null));
 		setDelFlag(ConstantUtil.DELFLAG_UNDELETE);
 		if(this.contactMobile==null){

@@ -3,10 +3,10 @@
 <div id="head">
     <div class="header_left">
     <c:if test="${!empty siteBase.siteLogo}">
-		<img id="logo_icon" class="logo" src="${siteBase.siteLogo}" width="100" height="48" onerror="this.src='${baseUrlStatic}/images/logo.png';"/>
+		<img id="logo_icon" class="logo png" src="${siteBase.siteLogo}" width="100" height="48" onerror="this.src='${baseUrlStatic}/images/logo.png';"/>
 	</c:if>
 	<c:if test="${empty siteBase.siteLogo}">
-		<img id="logo_icon" class="logo" src="/static/images/logo.png" width="100" height="48" alt=""/>
+		<img id="logo_icon" class="logo png" src="/static/images/logo.png" width="100" height="48" alt=""/>
 	</c:if>
     <span class="name">${siteBase.siteName}</span>
     </div>
@@ -31,7 +31,7 @@
 			</ul> 
      	</div>
         <div class="header_right02">
-        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['website.message.welcome']}${LANG['bizconf.jsp.admin.header.res1']}${user.trueName }${LANG['bizconf.jsp.admin.CopyOfadminIndex.res7']}</span></div>
+        <div class="aname"><img src="${baseUrlStatic}/images/user.jpg" width="15" height="15" /><span>${LANG['bizconf.jsp.admin.CopyOfadminIndex.res6']}${user.trueName }${LANG['bizconf.jsp.admin.CopyOfadminIndex.res7']}</span></div>
         </div>
         
   </div>

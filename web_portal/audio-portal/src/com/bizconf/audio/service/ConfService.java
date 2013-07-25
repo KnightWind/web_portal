@@ -788,6 +788,14 @@ public interface ConfService {
 
 	/**
 	 * 我主持的会议
+	 * 所有的正在开始的会议列表
+	 * @param userBase
+	 * @return
+	 */
+	public PageBean<ConfBase> getFullOpeningConfListForHost(String confName, UserBase userBase,Integer pageNo,Date beginTime, Date endTime);
+	
+	/**
+	 * 我主持的会议
 	 * 所有的即将开始的会议列表
 	 * @param userBase
 	 * @return
@@ -886,6 +894,15 @@ public interface ConfService {
 	
 	/**
 	 * 我参与的会议
+	 * 所有的正在开始的会议列表
+	 * @param userBase
+	 * @return
+	 */
+	public PageBean<ConfBase> getFullOpeningConfListForActor(String confName, UserBase userBase, int pageNo, Date beginTime, Date endTime);
+	
+	
+	/**
+	 * 我参与的会议
 	 * 所有的即将开始的会议列表
 	 * @param userBase
 	 * @return
@@ -907,7 +924,7 @@ public interface ConfService {
 	 * @param isHost
 	 * @return
 	 */
-	public PageBean<ConfBase> getConfBasePage(int pageNo,int pageSize,UserBase user,boolean isCreator);
+	public PageBean<ConfBase> getConfBasePage(int pageNo,int pageSize,UserBase user,Date startTime,Date endTime,String theme,boolean isCreator);
 
 	
 	/**
@@ -952,7 +969,7 @@ public interface ConfService {
 	 * @param conf
 	 * @return
 	 */
-	public ConfBase updatePermanentConf(ConfBase conf,UserBase currUser);
+	public ConfBase updatePermanentConf(ConfBase conf, SiteBase currentSite, UserBase currUser);
 	
 	/**
 	 * 系统管理员根据会议主题、企业名称、企业标识模糊查询所有站点的会议列表
@@ -1003,5 +1020,12 @@ public interface ConfService {
 	public PageBean<ConfBase> getAdminConfByCondition(ConfBase conf, SiteBase currentSite,  
 			Date beginTime, Date endTime, String sortField, String sortord, PageModel pageModel, Integer adminId);
 	
-	
+	/**
+	 * 验证是否允许创建、修改会议(创建、修改会议时调用)
+	 * 1.根据会议的的开始时间、站点信息验证该站点同一时间内是否超过了最大并发会议数
+	 * @param confBase
+	 * @param siteBase
+	 * @return true 允许  false 不允许
+	 */
+	public boolean checkSiteMaxConfCount(ConfBase confBase, SiteBase siteBase);
 }

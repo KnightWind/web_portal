@@ -13,50 +13,6 @@
 </head>
 <body>
 
-<!-- ${LANG['bizconf.jsp.common.join_page.res14']} -->
-
-<%--
-
-<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0"  id="installPlugDiv" style="display:none">
-  <tbody>
-    <tr class="no-header">
-      <td class="overlay-hdL"></td>
-      <td class="overlay-hdC"></td>
-      <td class="overlay-hdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-bdL"></td>
-      
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
-      
-      <td class="overlay-content">
-        <div class="First_Steps_quick_b" style=" background:#FFF">
-          <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-            <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
-            <p class="tit_b">${LANG['bizconf.jsp.common.join_page.res15']}</p>
-          </div>
-          <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
-          <div class="First_Steps_top" style=" background:#FFF"> </div>
-          <div class="First_Steps_main_quick">
-            <p class="qidong">${LANG['bizconf.jsp.common.join_page.res16']}</p>
-          </div>
-        </div>
-      </td>
-      
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->
-      
-      <td class="overlay-bdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-ftL"></td>
-      <td class="overlay-ftC"></td>
-      <td class="overlay-ftR"></td>
-    </tr>
-  </tbody>
-</table>
-
---%>
-
 
 
 <!-- ${LANG['bizconf.jsp.common.join_page.res14']} -->
@@ -83,7 +39,7 @@
           <div class="First_Steps_main_quick">
           <img class="top_ico" src="/static/images/top_ico.png" width="146" height="143" />
           <p class="qidong_top">${LANG['bizconf.jsp.common.join_page.res16']}</p>
-            <p class="tishi01">1.${LANG['bizconf.jsp.common.join_plug.res2']}...${LANG['bizconf.jsp.common.join_plug.res3']}...</p>
+            <p class="tishi01">1.${LANG['bizconf.jsp.common.join_plug.res2fix']}</p>
 			<p class="tishi02">2.${LANG['bizconf.jsp.common.join_plug.res4']}
 			</p>
           </div>
@@ -132,7 +88,7 @@
           <div class="First_Steps_main_quick">
           <img class="down_ico" src="/static/images/down_ico.png" width="146" height="142" />
           <p class="qidong_top_down">${LANG['bizconf.jsp.common.join_page.res16']}</p>
-            <p class="tishi01_down">1.${LANG['bizconf.jsp.common.join_plug.res2']}...${LANG['bizconf.jsp.common.join_plug.res3']}...</p>
+            <p class="tishi01_down">1.${LANG['bizconf.jsp.common.join_plug.res2fix']}</p>
 			<p class="tishi02_down">2.${LANG['bizconf.jsp.common.join_plug.res4']}</p>
           </div>
           <!-- <div class="First_Steps_bottom01">
@@ -253,135 +209,7 @@
 
 <embed id="joinConf" name="joinConf"  width="0" height="0" type="application/x-vnd-eSpace Meeting-scriptableplugin" >
 </embed>
-<%--
 
-<!-- ${LANG['bizconf.jsp.common.join_page.res19']}Client -->
-
-<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="startClientDiv" style="display:none">
-  <tbody>
-    <tr class="no-header">
-      <td class="overlay-hdL"></td>
-      <td class="overlay-hdC"></td>
-      <td class="overlay-hdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-bdL"></td>
-      <td class="overlay-content">
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
-		<div class="First_Steps_quick_b" style=" background:#FFF">
-        <div class="First_Steps_title_a"> <a   href="javascript:"  onclick="javascript:closeDialog();" ></a>
-          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
-          <p class="tit_b">${LANG['bizconf.jsp.common.join_plug.res5']}</p>
-        </div>
-        <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
-        <div class="First_Steps_top" style=" background:#FFF"> </div>
-        <div class="First_Steps_main_quick">
-         <p class="qidong">${LANG['bizconf.jsp.common.join_page.res21']}...</p>
-        </div>
-      </div>
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
-      </td>
-      <td class="overlay-bdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-ftL"></td>
-      <td class="overlay-ftC"></td>
-      <td class="overlay-ftR"></td>
-    </tr>
-  </tbody>
-</table>
- 
-
-<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="downClientDiv" style="display:none">
-  <tbody>
-    <tr class="no-header">
-      <td class="overlay-hdL"></td>
-      <td class="overlay-hdC"></td>
-      <td class="overlay-hdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-bdL"></td>
-      <td class="overlay-content">
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
-      <div class="First_Steps_quick_b" style=" background:#FFF">
-        <div class="First_Steps_title_a"> <a  href="javascript:"  onclick="javascript:closeDialog();" ></a>
-          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
-          <p class="tit_b">${LANG['bizconf.jsp.common.join_plug.res5']}</p>
-        </div>
-        <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
-        <div class="First_Steps_top" style=" background:#FFF"> </div>
-        <div class="First_Steps_main_quick">
-         <p class="qidong">${LANG['bizconf.jsp.common.join_plug.res6']}<a  href="javascript:" onclick="download();" style=" color:#03F; text-decoration:underline;">${LANG['bizconf.jsp.common.join_plug.res7']}</a>${LANG['bizconf.jsp.common.join_plug.res8']}</p>
-        </div>
-      </div>
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
-      </td>
-      <td class="overlay-bdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-ftL"></td>
-      <td class="overlay-ftC"></td>
-      <td class="overlay-ftR"></td>
-    </tr>
-  </tbody>
-</table>
-
-<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="startClientDiv" style="display:none">
-  <tbody>
-    <tr class="no-header">
-      <td class="overlay-hdL"></td>
-      <td class="overlay-hdC"></td>
-      <td class="overlay-hdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-bdL"></td>
-      <td class="overlay-content">
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->  
-		<div class="First_Steps_quick_b" style=" background:#FFF">
-	        <div class="First_Steps_title_a"> <a   href="javascript:"  onclick="javascript:closeDialog();" ></a>
-	          <h3 class="tit_a">${LANG['bizconf.jsp.common.join_page.res2']}</h3>
-	          <p class="tit_b">${LANG['bizconf.jsp.common.join_plug.res5']}</p>
-	        </div>
-	        <div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>
-	        <div class="First_Steps_top" style=" background:#FFF"> </div>
-	        <div class="First_Steps_main_quick">
-	         <p class="qidong">${LANG['bizconf.jsp.common.join_page.res21']}...</p>
-	        </div>
-     	</div>
-      <!--${LANG['bizconf.jsp.admin.viewNotice.res2']}========================================================================-->      
-      </td>
-      <td class="overlay-bdR"></td>
-    </tr>
-    <tr>
-      <td class="overlay-ftL"></td>
-      <td class="overlay-ftC"></td>
-      <td class="overlay-ftR"></td>
-    </tr>
-  </tbody>
-</table>
- <form name="downForm" id="downForm" method="post" action="/join/download" target="downFrame">
- <input name="userName" type="hidden" value="${userName}"/>
- <input name="cId" type="hidden" value="${cId}"/>
-</form>
-<iframe frameborder="0" width="0" height="0" scrolling="no" id="downFrame" name="downFrame"></iframe>
-
-<object id="meetplugin" codebase="http://www.confcloud.cn/download/kip/mcieplgmeet.cab" width=0
-        height=0 classid="clsid:2BB4DED4-1CF2-4b5f-8345-95D73E4197A1"
-        VIEWASTEXT></object>
-        
-        
-        
-         	<c:if test="${msgFlag!=null && msgFlag!=''}"> 
-		function initPage(){
-			//var msgFlag="${msgFlag}";
-			<c:set var="msgName" value="website.conf.join.type.${msgFlag}"/>
-			var msgFlag="${LANG[msgName]}";
-			alert(msgFlag);
-		}
-		initPage();
-		 	</c:if> 
-		
---%>
 
 </body>
 </html>
@@ -473,7 +301,7 @@
         function download(){
         	if(downCount>0){
         		 $("#downLoadLink").attr("clickCount",1);
-                 alert("${LANG['bizconf.jsp.common.join_plug.res14']},${LANG['bizconf.jsp.common.join_plug.res15']}");
+                 alert("${LANG['bizconf.jsp.common.join_plug.res14fix']}");
                  return false;
         	}
         	clearReload();
@@ -514,7 +342,6 @@
         *******************************************************************************/
         //${LANG['bizconf.jsp.common.join_page.res19']}IE${LANG['bizconf.jsp.common.join_plug.res20']}
         function startConfForIe(){
-
                 //createObjectForIe();
                 var mtgObj=document.getElementById("meetplugin");
                 try{
@@ -640,256 +467,4 @@
         }
 
 </script>
-<%--
-
-<script type="text/javascript">
-	function initPage(){
-		startConf();
-	}
-	initPage();
-	
-	var interDelay=2;
-	var closeDelay=5;
-	var plugDelay=20;
-	var plugInter;
-	
-	//${LANG['bizconf.jsp.common.join_plug.res9']}Plugin${LANG['bizconf.jsp.common.join_plug.res10']}
-	function showPlugDiv(){
-		<c:if test="${reload==null}">
-		installPlug();
-		</c:if>
-		<c:if test="${reload!=null}">
-		loadPlug();
-		</c:if>
-	}
-	
-	
-	
-	function clearReload(){
-		var domain=getDomain();
-		clearCookie("reload",domain);
-	}
-	
-	//${LANG['bizconf.jsp.common.join_plug.res11']}
-	function installPlug(){
-		var version=$.browser.version;
-	//	alert("version="+version);
-		var isShowUp=true;
-		if($.browser.msie) {
-			if(parseFloat(version,10)>=9){
-				isShowUp=false;
-			}
-		}
-
-		// if($.browser.mozilla) {
-			 
-		 //}
-		//alert("isShowUp="+isShowUp);
-		$("#installPlugUpDiv").hide();
-		$("#installPlugDownDiv").hide();
-		if(isShowUp){
-			$("#installPlugUpDiv").show();
-		}else{
-			$("#installPlugDownDiv").show();
-		}
-		$("#loadPlugDiv").hide();
-		$("#downClientDiv").hide();
-		resetFrameHeight();
-		var domain=getDomain();
-		setCookie("reload","1,${cId},${userName},${joinType},${code},${cPass},${rId}",domain);
-	}
-	//${LANG['bizconf.jsp.common.join_plug.res12']}
-	function loadPlug(){
-		$("#installPlugUpDiv").hide();
-		$("#installPlugDownDiv").hide();
-		$("#loadPlugDiv").show();
-		$("#downClientDiv").hide();
-		resetFrameHeight();
-		window.setTimeout(downClient,plugDelay*1000);
-		//plugInter=window.setInterval("startNoCallBackForIe()",interDelay*1000);
-	}
-	
-	
-	
-	//${LANG['bizconf.jsp.common.join_plug.res13']}
-	function downClient(){
-		$("#installPlugUpDiv").hide();
-		$("#installPlugDownDiv").hide();
-		$("#loadPlugDiv").hide();
-		$("#downClientDiv").show();
-		resetFrameHeight();
-		plugInter=window.clearInterval(plugInter);
-	}
-	
-	//${LANG['bizconf.jsp.common.join_page.res33']}URL${LANG['bizconf.jsp.common.join_page.res34']}Client
-	function download(){
-		var clickCount=$("#downLoadLink").attr("clickCount");
-		if(clickCount==null || clickCount==""){
-			clearReload();
-			$("#downForm").submit();
-		}else{
-			$("#downLoadLink").attr("clickCount",1);
-			alert("${LANG['bizconf.jsp.common.join_plug.res14']},${LANG['bizconf.jsp.common.join_plug.res15']}");
-		}
-		closeDialogForDelay();
-	}
-	/*
-	var ii=0;
-	function startNoCallBackForIe(){
-		if($.browser.msie) {
-			var mtgObj=document.getElementById("meetplugin");
-			try{
-				alert("AAAAA"+(ii++));
-				if(mtgObj){
-					mtgObj.attachEvent("IePluginDownloadComplete", plugInterClearStart);
-					mtgObj.attachEvent("IePluginDownloadException",plugInterStart);
-					mtgObj.StartConf("${preParam}");
-				}
-			}catch(e){
-				return null;
-			}
-		}
-	}
-	function plugInterClearStart(){
-		plugInter=window.clearInterval(plugInter);
-	}
-
-	function plugInterStart(){
-		plugInter=window.setInterval("startNoCallBackForIe()",interDelay*1000);
-	}
-	
-	*/
-	//${LANG['bizconf.jsp.common.join_plug.res16']}
-	function startConf(){
-		var time1=(new Date()).getTime();
-		if($.browser.msie) {
-			startConfForIe();
-		}else if($.browser.mozilla) {
-			startConfForFireFox();
-			
-		}else{
-			downClient();//alert("${LANG['bizconf.jsp.common.join_plug.res17']} IE ${LANG['bizconf.jsp.admin.add_site_user.res7']} FireFox ${LANG['bizconf.jsp.common.join_plug.res18']}");//downClient();//
-		}
-		var time2=(new Date()).getTime();
-		//alert(time2-time1);
-	}
-	/******************************************************************************
-	       			IE ${LANG['bizconf.jsp.common.join_plug.res19']}
-	*******************************************************************************/
-	//${LANG['bizconf.jsp.common.join_page.res19']}IE${LANG['bizconf.jsp.common.join_plug.res20']}
-	function startConfForIe(){
-		
-		//createObjectForIe();
-		var mtgObj=document.getElementById("meetplugin");
-		try{
-			if(mtgObj){
-				mtgObj.attachEvent("IePluginDownloadComplete", startSucceedForIe);
-				mtgObj.attachEvent("IePluginDownloadException",startFailedForIe);
-				mtgObj.StartConf("${preParam}");
-			}
-		}catch(e){
-			showPlugDiv()
-			return null;
-		}
-	
-	} 
-	//${LANG['bizconf.jsp.common.join_plug.res21']}IE${LANG['bizconf.jsp.common.join_plug.res20']}
-	function createObjectForIe(){
-		var ieObject=document.createElement("object");
-		if(ieObject){
-			ieObject.setAttribute("id","meetplugin");
-			ieObject.setAttribute("width","0px");
-			ieObject.setAttribute("height","0px");
-			ieObject.setAttribute("codebase","http://www.confcloud.cn/download/kip/mcieplgmeet.cab");	
-			ieObject.setAttribute("classid","clsid:2BB4DED4-1CF2-4b5f-8345-95D73E4197A1");
-			document.body.appendChild(ieObject);
-		}	
-	}
-	
-	//IE${LANG['bizconf.jsp.common.join_plug.res22']}
-	function startSucceedForIe(){
-		//alert("IE${LANG['bizconf.jsp.common.join_plug.res23']}");
-		//$("#downClientDiv").hide();
-		//$("#startClientDiv").show();
-		loadPlug();
-		closeDialogForDelay();
-	}
-	
-	//IE${LANG['bizconf.jsp.common.join_plug.res24']} ${LANG['bizconf.jsp.common.join_plug.res25']}
-	function startFailedForIe(){
-		showPlugDiv()
-	}
-		
-		
-		
-	/******************************************************************************
-					FireFox${LANG['bizconf.jsp.common.join_plug.res19']}
-	*******************************************************************************/
-	
-	function startConfForFireFox(){
-		//createObjectForFireFox();
-		var plg=document.getElementById("joinConf");  //${LANG['bizconf.jsp.common.join_plug.res26']}
-		if(plg){
-			try{
-				plg.StartConf("${preParam}");  //${LANG['bizconf.jsp.common.join_plug.res27']}preparam${LANG['bizconf.jsp.common.join_plug.res28']}
-			}catch(e){
-				downClient();
-				return null;
-			}
-			var startStaus=plg.LoadPlugin; 
-			if(startStaus){
-				startSucceedForFireFox();
-			}else{
-				startFailedForFireFox();
-			}
-		}
-	}
-	
-	function createObjectForFireFox(){
-		var firefox=document.createElement("embed");
-		if(firefox){
-			firefox.setAttribute("id","joinConf");
-			firefox.setAttribute("name","joinConf");
-			firefox.setAttribute("width","0");
-			firefox.setAttribute("height","0");
-			firefox.setAttribute("type","application/x-vnd-eSpace Meeting-scriptableplugin");
-			document.body.appendChild(firefox);
-		}
-	}
-	
-	function startSucceedForFireFox(){
-		loadPlug();
-		closeDialogForDelay();
-		
-	}
-	
-	function startFailedForFireFox(){
-		//showPlugDiv()
-		downClient();
-	}
-		
-		
-	function closeDialogForDelay(){
-		window.setTimeout(closeDelay,5000);
-	}
-	
-	window.onload=	function() {
-		var frame = parent.$("#joinMeeting");
-		frame.trigger("loaded");
-	}
-	
-	function closeDialog() {
-		clearReload();
-		var dialog = parent.$("#joinMeeting");
-		dialog.trigger("closeDialog");
-	}
-
-	function resetFrameHeight(){
-	    var pageHeight=document.body.scrollHeight;
-	    var pageHeight=pageHeight+5;
-	    parent.changeIframeSize("dialogFrame",0,pageHeight);
-	}
-	
-</script>
---%>
 

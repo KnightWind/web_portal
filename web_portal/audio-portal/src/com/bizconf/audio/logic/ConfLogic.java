@@ -32,15 +32,6 @@ public interface ConfLogic {
 	 */
 	public boolean saveConfValidate(ConfBase conf, ConfCycle confCycle, SiteBase siteBase);
 	
-	/**
-	 * 获取会议参数设置
-	 * 1.优先级最高为用户自定义配置（查找条件为：userId为用户ID）
-	 * 2.若无用户自定义配置，则查找系统默认配置（查找条件为：userId为0，siteId为0）
-	 * wangyong
-	 * 2013-3-4
-	 */
-	public DefaultConfig getDefaultConfig(UserBase user);
-	
 //
 //	/**
 //	 * 根据时间范围取剩余的License数
@@ -123,4 +114,19 @@ public interface ConfLogic {
 	 */
 	public void setServerClientConfig(char[] clientConfig);
 	
+	
+	/**
+	 * 根据华为ID查询会议的创建者
+	 * @param confHwId
+	 * @return
+	 */
+	public UserBase getConfCreator(String confHwId);
+	
+	/**
+	 * 创建即时会议的权限控制以及特殊变量赋值
+	 * 1. 创建即时会议，initConf()初始化会议信息后调用
+	 * wangyong
+	 * 2013-7-4
+	 */
+	public void immediatelyConfAuthority(ConfBase conf, UserBase user);
 }

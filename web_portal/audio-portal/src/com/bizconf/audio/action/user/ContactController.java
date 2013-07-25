@@ -5,6 +5,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,10 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.axis.utils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.EventLogConstants;
 import com.bizconf.audio.entity.ConfBase;
@@ -46,6 +50,7 @@ import com.bizconf.audio.service.EventLogService;
 import com.bizconf.audio.service.OrgService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.UserService;
+import com.bizconf.audio.util.BeanUtil;
 import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.ExcelUtil;
 import com.bizconf.audio.util.IntegerUtil;
@@ -102,7 +107,8 @@ public class ContactController extends BaseController{
 	@AsController(path = "list")
 	public Object groupsList(@CParam("keyword") String keyword, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
-		PageBean<Contacts> page = contactService.getContactsPage(keyword,currUser.getSiteId(),currUser.getId(),pageNo,15);
+		PageBean<Contacts> page = contactService.getContactsPage(keyword,currUser.getSiteId(),
+				currUser.getId(),pageNo, currUser.getPageSize()); // 2013.6.24 因客户需求新加常量，部分每页展示偏好设置显示条数
 		request.setAttribute("pageModel", page);
 		request.setAttribute("keyword", keyword);
 		return new ActionForward.Forward("/jsp/user/contacts_list.jsp");
@@ -111,7 +117,8 @@ public class ContactController extends BaseController{
 	@AsController(path = "invitelist")
 	public Object inviteContactslist(@CParam("keyword") String keyword, @CParam("pageNo")Integer pageNo, HttpServletRequest request){
 		UserBase currUser = userService.getCurrentUser(request);
-		PageBean<Contacts> page = contactService.getContactsPage(keyword,currUser.getSiteId(),currUser.getId(),pageNo,0);
+		PageBean<Contacts> page = contactService.getContactsPage(keyword,currUser.getSiteId(),
+				currUser.getId(),pageNo, currUser.getPageSize()); // 2013.6.24 因客户需求新加常量，部分每页展示偏好设置显示条数
 		request.setAttribute("pageModel", page);
 		request.setAttribute("keyword", keyword);
 		return new ActionForward.Forward("/jsp/user/invite_contacts_list.jsp");
@@ -142,21 +149,25 @@ public class ContactController extends BaseController{
 		contact = (Contacts) ObjectUtil.parseHtml(contact, "contactName","contactDesc");
 		contact.setUserId(currentUser.getId());
 		if(contact != null){
+			if(!contactLogic.contactEmailAvailable(contact)){
+				String errorInfo = "联系人邮箱重复";
+				return StringUtil.returnJsonStr(createFlag, errorInfo);
+			}
 			if(contact.getId()!=null&&contact.getId()>0){
 				contactInfo = contactService.updateContactInfo(contact, currentUser);
-				retInfo += "修改";
+				retInfo += ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.update");
 			}else{
 				contactInfo = contactService.createContactSingle(contact, currentUser);
-				retInfo += "新建";
+				retInfo += ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.create");
 			}
 			if(contactInfo != null && contactInfo.getId() != null && contactInfo.getId() > 0){
 				createFlag = ConstantUtil.CREATE_CONF_SUCCEED;
-				retInfo += "联系人成功";
+				retInfo += ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.success");
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_CONTACT_CREATE, retInfo,
 						EventLogConstants.EVENTLOG_SECCEED, contactInfo, request);   //创建成功后写EventLog
 			}else{
-				retInfo +=  "联系人失败";
+				retInfo +=  ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.failed");
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_CONTACT_CREATE, retInfo,
 						EventLogConstants.EVENTLOG_FAIL, contactInfo, request);   //创建成功后写EventLog
@@ -208,7 +219,8 @@ public class ContactController extends BaseController{
 				List<Contacts> unSaveableusers = new ArrayList<Contacts>(); //数据格式不对或者不全的
 				Set<String> userEmails = new HashSet<String>();
 				List<Object[]> datas = ExcelUtil.getDataByInputStream(file.getInputStream(), file.getOriginalFilename(), 2, 0);
-					//用于显示总共多少数据
+				BeanUtil.trimObjs(datas);
+				//用于显示总共多少数据
 				request.setAttribute("itemnum",datas.size());
 				for (Iterator<Object[]> it = datas.iterator(); it.hasNext();) {
 						Object[] objs = it.next();
@@ -271,7 +283,7 @@ public class ContactController extends BaseController{
 				logger.error("从Excel文件批量导入联系人出错！" + e);
 				
 				request.setAttribute("statu", ConstantUtil.GLOBAL_FAIL_FLAG);
-				request.setAttribute("info", "导入联系人失败！");
+				request.setAttribute("info", ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.import.failed"));
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_CONTACTBATCH_CREATE, "从Excel文件批量导入联系人出错！",
 						EventLogConstants.EVENTLOG_FAIL, null, request);
@@ -284,7 +296,7 @@ public class ContactController extends BaseController{
 			Integer[] repeats = idsdata.get("unsaveable");
 			String repeatInfo = "";
 			if(repeats!=null && repeats.length>0){
-				repeatInfo += "重复联系人信息有：";
+				repeatInfo += ResourceHolder.getInstance().getResource("bizconf.jsp.user.repeate.contact");
 				for (int i = 0; i < repeats.length; i++) {
 					UserBase repeatUser = userService.getUserBaseById(repeats[i]);
 					repeatInfo += repeatUser.getTrueName()+"、";
@@ -295,14 +307,14 @@ public class ContactController extends BaseController{
 			}
 			if(importFlag){
 				statu = ConstantUtil.GLOBAL_SUCCEED_FLAG;
-				retInfo = "导入联系人成功, "+repeatInfo;
+				retInfo = ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.import.success")+repeatInfo;
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_CONTACTBATCH_CREATE, "从Excel文件批量导入联系人成功！",
 						EventLogConstants.EVENTLOG_SECCEED, null, request);
 			}else{
-				retInfo = "导入联系人失败。 ";
+				retInfo = ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.import.failed");
 				if(!repeatInfo.equals("")){
-					retInfo += "联系人信息重复！";
+					retInfo += ResourceHolder.getInstance().getResource("bizconf.jsp.user.contact.repeate");
 				}
 				eventLogService.saveUserEventLog(currentUser, 
 						EventLogConstants.SITEUSER_CONF_CONTACTBATCH_CREATE, retInfo,
@@ -396,12 +408,12 @@ public class ContactController extends BaseController{
 		}
 		if(delFlag){
 			//delStatus = ConstantUtil.DELETE_CONF_SUCCEED;
-			setInfoMessage(request, "删除联系人成功");
+			setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.success"));
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_CONTACT_DELETE, "删除联系人成功",
 					EventLogConstants.EVENTLOG_SECCEED, null, request);
 		}else{
-			setErrMessage(request,  "删除联系人失败");
+			setErrMessage(request,  ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.failed"));
 			eventLogService.saveUserEventLog(currentUser, 
 					EventLogConstants.SITEUSER_CONF_CONTACT_DELETE, "删除联系人失败",
 					EventLogConstants.EVENTLOG_FAIL, null, request);
@@ -466,7 +478,9 @@ public class ContactController extends BaseController{
 // 				break;
 // 			}
 // 		}
- 		request.setAttribute("orgList", orgList);
+ 		if(orgList != null && orgList.size() > 0){
+ 			request.setAttribute("orgList", orgList);
+ 		}
 //		return new ActionForward.Forward("/jsp/user/enContacts_list.jsp");
 		return new ActionForward.Forward("/jsp/user/invite_enContacts_list.jsp");
 	}
@@ -477,8 +491,20 @@ public class ContactController extends BaseController{
 	 * @return
 	 */
 	@AsController(path = "showEnterpriseOrgContacts")
-	public Object showEnterpriseOrgContacts(@CParam("keyword") String keyword,@CParam("showAll")String showAll,@CParam("pageNo") Integer pageNo,HttpServletRequest request){
+	public Object showEnterpriseOrgContacts(@CParam("keyword") String keyword,@CParam("showAll")String showAll,@CParam("pageNo") Integer pageNo,HttpServletRequest request)
+		throws Exception
+	{
 		UserBase currentUser = userService.getCurrentUser(request);
+		String keywordUtf8="";
+		
+		if(!StringUtil.isEmpty(keyword)){
+				try {
+					keywordUtf8 = URLDecoder.decode(request.getParameter("keyword"),"utf-8");
+				} catch (UnsupportedEncodingException e) {
+					logger.error("我的会议搜索转码错误"+e);
+				}			
+			//keywordUtf8=new String(keyword.getBytes("ISO8859_1"), "UTF-8");//getBytes("ISO8859_1"),"
+		}
 		UserBase creator = userService.getUserBaseById(currentUser.getCreateUser());
 		SiteOrg org = orgService.getSiteOrgById(IntegerUtil.parseIntegerWithDefaultZero(request.getParameter("orgId")));
 		String orgCode = "";
@@ -494,10 +520,10 @@ public class ContactController extends BaseController{
 		if(showAll != null && showAll.trim().equals("1")){
 			showAllFlag =false;
 		}
-		PageBean<UserBase> page = contactService.getEnterpriseContacts(keyword, pageNo, isSupper, showAllFlag,currentUser, orgCode);
+		PageBean<UserBase> page = contactService.getEnterpriseContacts(keywordUtf8, pageNo, isSupper, showAllFlag,currentUser, orgCode);
  		request.setAttribute("pageModel", page);
  		request.setAttribute("showAll", showAll);
- 		request.setAttribute("keyword", keyword);
+ 		request.setAttribute("keyword", keywordUtf8);
 //		return new ActionForward.Forward("/jsp/user/enContacts_list.jsp");
 		return new ActionForward.Forward("/jsp/user/invite_enContacts_org_list.jsp");
 	}
@@ -553,7 +579,7 @@ public class ContactController extends BaseController{
 		UserBase currUser =userService.getCurrentUser(request);
 		SiteBase currSite = siteService.getSiteBaseById(currUser.getSiteId());
 		Integer status = ConstantUtil.GLOBAL_SUCCEED_FLAG;
-		String msg = "邀请参会者成功！";
+		String msg = ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.success");
 		List<ConfUser> users = new ArrayList<ConfUser>();
 		List<UserBase> ubs = new ArrayList<UserBase>();
 		try{
@@ -572,8 +598,14 @@ public class ContactController extends BaseController{
 					ub.setId(cu.getUserId());
 				}
 				ub.setTrueName(cu.getUserName());
+				if(ub.getTrueName()==null || ub.getTrueName().equals("")){
+					ub.setTrueName(cu.getUserEmail());
+				}
 				ub.setUserEmail(cu.getUserEmail());
 				ub.setPhone(cu.getTelephone());
+				if(ub.getTrueName()==null||ub.getTrueName().equals("")){
+					ub.setTrueName(cu.getTelephone());
+				}
 				ubs.add(ub);
 			}
 //			invertedUsers.addAll(users);
@@ -592,12 +624,12 @@ public class ContactController extends BaseController{
 			}
 			if(!flag){
 				status =ConstantUtil.GLOBAL_FAIL_FLAG;
-				msg = "邀请参会人失败！";
+				msg = ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.failed");
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
 			status =ConstantUtil.GLOBAL_FAIL_FLAG;
-			msg = "邀请参会人失败！";
+			msg = ResourceHolder.getInstance().getResource("bizconf.jsp.user.conf.invite.failed");
 		}
 		return StringUtil.returnJsonStr(status, msg);
 	}

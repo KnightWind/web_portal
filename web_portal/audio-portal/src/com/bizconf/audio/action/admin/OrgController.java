@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.EventLogConstants;
 import com.bizconf.audio.entity.PageBean;
@@ -59,7 +60,7 @@ public class OrgController extends BaseController{
 	 * wangyong
 	 * 2013-5-6
 	 */
-	@AsController(path = "orgListIndex")
+	@AsController(path = "orgListIndexBak")
 	public Object orgListIndex(@CParam("orgName") String orgName, HttpServletRequest request){
 		UserBase userBase = userService.getCurrentSiteAdmin(request);
 		PageBean<SiteOrg> pageModel = orgService.getSiteOrgList(userBase.getSiteId());
@@ -104,7 +105,7 @@ public class OrgController extends BaseController{
 	 * wangyong
 	 * 2013-5-6
 	 */
-	@AsController(path = "orgList")
+	@AsController(path = "orgListIndex")
 	public Object orgList(@CParam("orgName") String orgName,@CParam("sortField") String sortField,@CParam("sortord") String sortord,@CParam("pageNo") String pageNo, HttpServletRequest request){
 		UserBase userBase = userService.getCurrentSiteAdmin(request);
 		PageBean<SiteOrg> pageModel = orgService.getSiteOrgList(userBase.getSiteId());
@@ -134,9 +135,9 @@ public class OrgController extends BaseController{
 //			}
 //		}
 		if(userBase.isSuperSiteAdmin()){
-			pageModel = orgService.getNoOrgUserList(orgName, sortField, sortord, userBase.getSiteId(), null, pageNo, orgList);
+			pageModel = orgService.getNoOrgUserList(orgName, sortField, sortord, userBase.getSiteId(), null, pageNo, userBase.getPageSize(), orgList);
 		}else{
-			pageModel = orgService.getNoOrgUserList(orgName, sortField, sortord, userBase.getSiteId(), userBase.getId(), pageNo, orgList);
+			pageModel = orgService.getNoOrgUserList(orgName, sortField, sortord, userBase.getSiteId(), userBase.getId(), pageNo,  userBase.getPageSize(), orgList);
 		}
 		request.setAttribute("orgId", id);
 		request.setAttribute("orgName", orgName);
@@ -158,7 +159,7 @@ public class OrgController extends BaseController{
 		UserBase userBase = userService.getCurrentSiteAdmin(request);
 		PageBean<UserBase> pageModel = null;
 		List<SiteOrg> orgList = orgService.getSiteSubOrgList(userBase.getSiteId(), Integer.parseInt(id)).getDatas();
-		pageModel = orgService.getOrgSubUserList(orgName, sortField, sortord, userBase.getSiteId(), pageNo, orgList);
+		pageModel = orgService.getOrgSubUserList(orgName, sortField, sortord, userBase.getSiteId(), pageNo, userBase.getPageSize(), orgList);
 		request.setAttribute("orgId", id);
 		request.setAttribute("orgName", orgName);
 		request.setAttribute("sortField", sortField);
@@ -184,9 +185,9 @@ public class OrgController extends BaseController{
 		sysHelpAdminEventLog(updateFlag, userService.getCurrentSysAdmin(request), currentUser, 
 				EventLogConstants.SYSTEM_ORG_BATCH, EventLogConstants.SITE_ORG_BATCH, "为用户批量分配机构成功", null, request);
 		if(updateFlag){
-			return returnJsonStr(EventLogConstants.EVENTLOG_SECCEED, "为用户批量分配机构成功");
+			return returnJsonStr(EventLogConstants.EVENTLOG_SECCEED, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.assign.user.success"));
 		}else{
-			return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "为用户批量分配机构失败");
+			return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.assign.user.failed"));
 		}
 	}
 	
@@ -214,7 +215,7 @@ public class OrgController extends BaseController{
 		if(siteOrg != null && StringUtil.isNotBlank(siteOrg.getOrgName())){
 			UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
 			if(orgNameValidate(siteOrg, currentSiteAdmin.getSiteId())){
-				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "同一级别的部门名称已存在！");
+				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.department.exist"));
 			}
 			siteOrg = (SiteOrg)ObjectUtil.parseHtml(siteOrg, "orgName", "orgDesc");
 			JSONObject json = new JSONObject();
@@ -231,7 +232,7 @@ public class OrgController extends BaseController{
 				json.put("siteOrg", jsonArrOrg);
 				return json.toString();
 			}else{
-				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "新增站点下的组织机构失败");
+				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.action.add.failed"));
 			}
 		}
 		return new ActionForward.Forward("/admin/org/orgList");
@@ -262,7 +263,7 @@ public class OrgController extends BaseController{
 		if(siteOrg != null && StringUtil.isNotBlank(siteOrg.getOrgName())){
 			UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
 			if(orgNameValidate(siteOrg, currentSiteAdmin.getSiteId())){
-				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "同一级别的部门名称已存在！");
+				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.department.exist"));
 			}
 			siteOrg = (SiteOrg)ObjectUtil.parseHtml(siteOrg, "orgName", "orgDesc");
 			JSONObject json = new JSONObject();
@@ -279,7 +280,7 @@ public class OrgController extends BaseController{
 				json.put("siteOrg", jsonArrOrg);
 				return json.toString();
 			}else{
-				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "修改站点下的组织机构失败");
+				return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.action.update.failed"));
 			}
 		}
 		return new ActionForward.Forward("/admin/org/orgList");
@@ -298,7 +299,7 @@ public class OrgController extends BaseController{
 		List<SiteOrg> orgList = orgService.getSiteSubOrgList(currentSiteAdmin.getSiteId(), id).getDatas();
 		boolean deleteFlag = orgService.deleteSiteOrg(id, currentSiteAdmin);
 		if(!deleteFlag){
-			return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "删除站点下的组织机构失败");
+			return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.action.delete.failed"));
 		}
 		//删除机构成功后，移除相关联的用户
 		List<UserBase> userList = orgService.getOrgSubUserList(currentSiteAdmin.getSiteId(), orgList).getDatas();
@@ -311,7 +312,7 @@ public class OrgController extends BaseController{
 		}
 		sysHelpAdminEventLog(deleteFlag, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
 				EventLogConstants.SYSTEM_ORG_DELETE, EventLogConstants.SITE_ORG_DELETE, "删除站点下的组织机构", null, request);
-		return returnJsonStr(EventLogConstants.EVENTLOG_SECCEED, "删除站点下的组织机构成功");
+		return returnJsonStr(EventLogConstants.EVENTLOG_SECCEED, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.action.delete.success"));
 	}
 	
 	/**
@@ -327,11 +328,11 @@ public class OrgController extends BaseController{
 		UserBase currentSiteAdmin = userService.getCurrentSiteAdmin(request);
 		boolean deleteFlag = orgService.delUserFromOrg(id);
 		if(!deleteFlag){
-			return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, "从组织机构中移除用户失败");
+			return returnJsonStr(EventLogConstants.EVENTLOG_FAIL, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.remove.user.failed"));
 		}
 		sysHelpAdminEventLog(deleteFlag, userService.getCurrentSysAdmin(request), currentSiteAdmin, 
 				EventLogConstants.SYSTEM_ORG_USER_REMOVE, EventLogConstants.SITE_ORG_DELETE, "从组织机构中移除用户", null, request);
-		return returnJsonStr(EventLogConstants.EVENTLOG_SECCEED, "从组织机构中移除用户成功");
+		return returnJsonStr(EventLogConstants.EVENTLOG_SECCEED, ResourceHolder.getInstance().getResource("bizconf.jsp.admin.remove.user.success"));
 	}
 	
 	/**

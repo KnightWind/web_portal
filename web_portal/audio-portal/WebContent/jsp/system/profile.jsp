@@ -42,8 +42,9 @@ $(function() {
 			"checkMobile": "${LANG['bizconf.jsp.admin.profile.res2']}"
 		}
 	};
-	$("#profileForm").find("input").not(".skipThese").uniform();
+
 	$("#profileForm :input").tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
+	$("#profileForm").find("input").not(".skipThese").uniform();
 	$.validator.addMethod("notRequired", function(value, element) {
 		if(value==null || value=="" || value.length==0){
 			$(element).tipsy('hide').removeAttr('original-title');
@@ -57,7 +58,7 @@ $(function() {
     	return this.optional(element) || /^[a-zA-Z0-9_\-&\s]{1,32}$/.test(value);
  	}, ruleString.custom.checkEnName);
 	$.validator.addMethod("checkMobile", function(value, element) {       
-    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
+    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
  	}, ruleString.custom.checkMobile);
 	
 	var v = $("#profileForm").validate({
@@ -190,6 +191,7 @@ $(function() {
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
+			$("#orgPass").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");
@@ -202,6 +204,7 @@ $(function() {
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
+			$("#loginPass").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#orgPass").rules("remove");
 			$("#loginPass2").rules("remove");
@@ -214,6 +217,7 @@ $(function() {
 			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
 			$("#orgPass").rules("add", { required: true, rangelength: [6, 16]});
 		} else {
+			$("#loginPass2").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");

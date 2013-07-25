@@ -9,6 +9,16 @@ import com.bizconf.audio.entity.UserBase;
 public interface LoginService {
 
 	/**
+	 * PAD用户登录
+	 * @param loginName
+	 * @param loginPass
+	 * @param siteBase
+	 * @param request
+	 * @return
+	 */
+	public boolean loginForPad(String loginName, String loginPass,SiteBase siteBase,HttpServletRequest request);
+	
+	/**
 	 * 站点管理员与普通用户的登录
 	 * <p>
 	 * 登录成功后，写入session<br/>

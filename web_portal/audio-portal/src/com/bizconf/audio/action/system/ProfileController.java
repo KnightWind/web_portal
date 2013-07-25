@@ -1,5 +1,6 @@
 package com.bizconf.audio.action.system;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
@@ -19,6 +20,8 @@ import com.libernate.liberc.annotation.ReqPath;
 @Interceptors({SystemUserInterceptor.class})
 @ReqPath("profile")
 public class ProfileController extends BaseController {
+	
+	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Autowired
 	UserService userService;
@@ -43,6 +46,15 @@ public class ProfileController extends BaseController {
 		oldUser.setTelephone(newUser.getTelephone());
 		oldUser.setMobile(newUser.getMobile());
 		oldUser.setPassEditor(oldUser.getId());
+		
+		if(StringUtil.isNotBlank(oldUser.getEmail())){
+			if("false".equals(emailValidate(oldUser.getEmail(), oldUser.getId()))){
+				this.setErrMessage(inv.getRequest(), "该邮箱已存在!");
+				inv.getRequest().setAttribute("currentSystemUser", oldUser);
+				return new ActionForward.Forward("/jsp/system/profile.jsp");
+			}
+		}
+		
 		if (newUser.getLoginPass() != null && newUser.getLoginPass().length() > 0) {
 			if(StringUtil.isEmpty(orgPass)){
 				this.setErrMessage(inv.getRequest(), "如需修改密码，请输入正确的原始密码");
@@ -62,4 +74,23 @@ public class ProfileController extends BaseController {
 		
 		return new ActionForward.Forward("/system/profile");
 	}
+	
+	/**
+	 * 创建(修改)系统管理员时验证邮箱是否已存在
+	 * return true(不存在) false(已存在)
+	 * wangyong
+	 * 2013-6-17
+	 */
+	private String emailValidate(@CParam("userEmail") String userEmail, @CParam("userId") int userId){
+		String flag = "true";
+		if(StringUtil.isNotBlank(userEmail)){
+			SystemUser systemUser = userService.getSystemUserByEmail(userEmail.trim());
+			if(systemUser != null && userId != 0 && systemUser.getId().intValue() != userId){    //修改用户
+				logger.info("邮箱名"+userEmail+"已存在!");
+				flag = "false";
+			}
+		}
+		return flag;
+	}
+	
 }

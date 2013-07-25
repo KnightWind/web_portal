@@ -3,6 +3,7 @@ package com.bizconf.audio.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.util.DateUtil;
 
@@ -85,7 +86,16 @@ public class EmpowerConfig implements Serializable {
 	/*
 	 * 音频路数
 	 */
-	private Integer audioNumber = 0;
+	private Integer audioNumber = 16;
+
+	/*
+	 * 授权的最大分辨率（或者画面质量）
+	 */
+	private Integer dpiFlag = SiteConstant.EMPOWER_ENABLED;
+	/*
+	 * 授权的最大分辨率（或者画面质量）
+	 */
+	private Integer dpiNumber = ConfConstant.CONF_VIDEO_TYPE_FLUENCY_CODE;
 	
 	/*
 	 * 操作时间功能：对应GMT时间
@@ -256,6 +266,26 @@ public class EmpowerConfig implements Serializable {
 	}
 
 
+	public Integer getDpiFlag() {
+		return dpiFlag;
+	}
+
+
+	public void setDpiFlag(Integer dpiFlag) {
+		this.dpiFlag = dpiFlag;
+	}
+
+
+	public Integer getDpiNumber() {
+		return dpiNumber;
+	}
+
+
+	public void setDpiNumber(Integer dpiNumber) {
+		this.dpiNumber = dpiNumber;
+	}
+
+
 	public Date getEmTime() {
 		return emTime;
 	}
@@ -315,7 +345,8 @@ public class EmpowerConfig implements Serializable {
 				+ videoFlag + ", audioFlag=" + audioFlag + ", noticeFlag="
 				+ noticeFlag + ", fileFlag=" + fileFlag + ", questionFlag="
 				+ questionFlag + ", videoNumber=" + videoNumber
-				+ ", audioNumber=" + audioNumber + ", emTime=" + emTime
+				+ ", audioNumber=" + audioNumber + ", dpiFlag=" + dpiFlag
+				+ ", dpiNumber=" + dpiNumber + ", emTime=" + emTime
 				+ ", emUser=" + emUser + ", emUserType=" + emUserType + "]";
 	}
 

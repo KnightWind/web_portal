@@ -188,18 +188,20 @@ public class PublicConfServiceImpl extends BaseService implements
 			sqlBuilder.append(" AND conf_name LIKE ? ");
 			valueList.add("%" + confName + "%");
 		}
-		if(beginDate != null && endDate != null){
-			sqlBuilder.append(" and start_time > ? and start_time < ? ");
-			valueList.add(beginDate);
-			valueList.add(endDate);
-		}else{
-			Date startTime = DateUtil.getWeekStartDate(currentSite.getTimeZone());
-			Date endTime = DateUtil.getWeekEndDate(startTime);
-//			sqlBuilder.append(" and start_time < ? ");
-//			valueList.add(DateUtils.addDays(DateUtil.getGmtDate(null), 7));
-			sqlBuilder.append(" and start_time > ? and start_time < ? ");
-			valueList.add(startTime);
-			valueList.add(endTime);
+		if( ConfConstant.CONF_STATUS_SUCCESS.equals(confStatus)){
+			if(beginDate != null && endDate != null){
+				sqlBuilder.append(" and start_time > ? and start_time < ? ");
+				valueList.add(beginDate);
+				valueList.add(endDate);
+			}else{
+				Date startTime = DateUtil.getWeekStartDate(currentSite.getTimeZone());
+				Date endTime = DateUtil.getWeekEndDate(startTime);
+	//			sqlBuilder.append(" and start_time < ? ");
+	//			valueList.add(DateUtils.addDays(DateUtil.getGmtDate(null), 7));
+				sqlBuilder.append(" and start_time > ? and start_time < ? ");
+				valueList.add(startTime);
+				valueList.add(endTime);
+			}
 		}
 		sqlBuilder.append(" ORDER BY start_time ASC ");
 		PageBean<ConfBase> page = getPageBeans(ConfBase.class, sqlBuilder.toString(), pageNo, valueList.toArray());

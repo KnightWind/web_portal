@@ -14,6 +14,7 @@
 <script type="text/javascript" src="/static/js/jquery-validation-1.10.0/dist/jquery.validate.js"></script>
 <script type="text/javascript" src="/static/js/tipsy-master/src/javascripts/jquery.tipsy.js"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery.uniform/jquery.uniform.js"></script>
+<cc:siteList var="USER_FAVOR_PAGE_SIZE"/>
 <script type="text/javascript">
 $(function() {
 	var ruleString = {
@@ -47,7 +48,7 @@ $(function() {
 			"checkMobile": "${LANG['bizconf.jsp.admin.profile.res2']}"
 		}
 	};
-	$("#profileForm").find("input").not(".skipThese").uniform();
+	$("#profileForm").find("input, select").not(".skipThese").uniform();
 	$("#profileForm :input").tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
 	$.validator.addMethod("notRequired", function(value, element) {
 		if(value==null || value=="" || value.length==0){
@@ -65,31 +66,15 @@ $(function() {
     	return this.optional(element) || /^[a-zA-Z0-9_\-&\s]{1,32}$/.test(value);
  	}, ruleString.custom.checkEnName);
 	$.validator.addMethod("checkMobile", function(value, element) {       
-    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
+    	return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
  	}, ruleString.custom.checkMobile);
 	
 	var v = $("#profileForm").validate({
 		onkeyup: false,
 		errorClass: "warning",
 		rules: {
-            'loginName' : {required:true, rangelength: [4, 16], checkLoginName:true, remote: {
-            	url: '/admin/profile/loginNameValidate',
-            	type: 'post',
-            	data: {
-            		loginName: function() {
-            			return $("#loginName").val();
-            		},
-                    adminId: function() {
-                    	siteId = "${currentSiteAdmin.id}";
-                    	if (siteId && siteId.length>0) {
-                        	return siteId;	
-                    	} else {
-                        	return null;
-                    	}
-                    }
-            	}
-            }},
-            'enName' : {required:true, rangelength: [1, 32], checkEnName:true},
+            'loginName' : {required:true, rangelength: [4, 16], checkLoginName:true},
+            'enName' : {notRequired:true, rangelength: [1, 32], checkEnName:true},
             'trueName' : {required:true, rangelength: [1, 32], checkUserName:true},
             'userEmail' : {required:true, rangelength: [6, 64], email: true},
             'mobile' : {notRequired:true, rangelength:[4, 32], checkMobile: true}
@@ -98,7 +83,7 @@ $(function() {
         messages: {
             'loginName' : {required:ruleString.required.loginname, rangelength: ruleString.rangelength.loginname},
             'trueName' : {required:ruleString.required.username, rangelength: ruleString.rangelength.username},
-            'enName' : {required:ruleString.required.enname, rangelength: ruleString.rangelength.enName},
+            'enName' : {rangelength: ruleString.rangelength.enName},
             'orgPass' : {required:ruleString.required.orgpassword, rangelength: ruleString.rangelength.password},
             'loginPass' : {required:ruleString.required.password, rangelength: ruleString.rangelength.password},
             'loginPass2' : {required:ruleString.required.confirmpass, rangelength: ruleString.rangelength.password, equalTo: ruleString.custom.equalTo},
@@ -201,7 +186,30 @@ $(function() {
 		      <input type="text" name="mobile" id="mobile" class="text-input" value="${currentSiteAdmin.mobile}"/>
 		    </td>
 		  </tr>
+		  
 		</table>
+		    	
+
+		<div class="emile_01_top"><span>${LANG['site.admin.favor']}</span></div>
+    	<table class="form-table" style="margin-left: 92px;">
+		  <tr >
+		      <td align="right">${LANG['user.favor.page.size']}</td>
+		      <td class="form-table-td">
+		        <select id="pageSize" name="pageSize">
+			         <c:forEach var="eachPageSize" items="${USER_FAVOR_PAGE_SIZE}">
+						<c:set var="eachPage" value="${eachPageSize}"/>
+						<option value="${eachPageSize}" <c:if test="${eachPageSize == currentSiteAdmin.pageSize }">selected="selected"</c:if> >${eachPageSize} ${LANG['website.pagination.word.record']}</option>
+					 </c:forEach>
+		        </select>
+		      </td>
+		      <td>
+		      	<div style="margin-left: 10px;">
+			      	<label class='red_star'> * ${LANG['user.favor.page.default.records']}</label>
+		      	</div>
+		      </td>
+	     </tr> 
+		</table>
+		
     	<div>
     		<input class="skipThese" name="emile_button" id="emile_button" type="submit"  value="${LANG['system.email.config.submit']}" />
  			<c:if test="${!empty infoMessage}">
@@ -224,6 +232,7 @@ $(function() {
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
+			$("#orgPass").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");
@@ -236,6 +245,7 @@ $(function() {
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
+			$("#loginPass").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#orgPass").rules("remove");
 			$("#loginPass2").rules("remove");
@@ -248,6 +258,7 @@ $(function() {
 			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
 			$("#orgPass").rules("add", { required: true, rangelength: [6, 16]});
 		} else {
+			$("#loginPass2").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");

@@ -35,9 +35,11 @@ import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SiteOrg;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.entity.UserSiteMap;
 import com.bizconf.audio.interceptors.SiteAdminInterceptor;
 import com.bizconf.audio.logic.ConfLogic;
 import com.bizconf.audio.logic.ConfUserLogic;
+import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.service.ConfService;
 import com.bizconf.audio.service.EmailService;
 import com.bizconf.audio.service.EmpowerConfigService;
@@ -46,6 +48,7 @@ import com.bizconf.audio.service.EventLogService;
 import com.bizconf.audio.service.OrgService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.UserService;
+import com.bizconf.audio.util.BeanUtil;
 import com.bizconf.audio.util.DateUtil;
 import com.bizconf.audio.util.ExcelUtil;
 import com.bizconf.audio.util.IntegerUtil;
@@ -102,20 +105,25 @@ public class EnterpriseAdminsController extends BaseController{
 	@Autowired
 	OrgService orgService;
 	
+	@Autowired
+	SiteLogic siteLogic;
+	
 	@AsController(path = "listAll")
 	public Object list(@CParam("keyword") String keyword,@CParam("sortField") String sortField,@CParam("sortRule") String sortRule,@CParam("pageNo") String pageNo, HttpServletRequest request) throws Exception{
 		PageBean<UserBase> pageModel = null;
 		UserBase userBase = userService.getCurrentSiteAdmin(request);
+		SiteBase site = siteService.getSiteBaseById(userBase.getSiteId());
 		if(userBase.isSuperSiteAdmin()){
-			pageModel = enterpriseAdminsService.getUserBases(keyword, sortField, sortRule, userBase.getSiteId(),null, pageNo);
+			pageModel = enterpriseAdminsService.getUserBases(keyword, sortField, sortRule, userBase,null, pageNo);
 		}else{
-			pageModel = enterpriseAdminsService.getUserBases(keyword, sortField, sortRule, userBase.getSiteId(),userBase.getId(), pageNo);
+			pageModel = enterpriseAdminsService.getUserBases(keyword, sortField, sortRule, userBase,userBase.getId(), pageNo);
 		}
 		if(pageModel != null && pageModel.getDatas() != null){
 			Map<Integer, String> orgNamesMap = getOrgNames(pageModel.getDatas());   //获取每个会议的参会人个数
 			request.setAttribute("orgNamesMap", orgNamesMap);
 		}
 		request.setAttribute("keyword", keyword);
+		request.setAttribute("site", site);
 		request.setAttribute("sortField", sortField);
 		request.setAttribute("sortRule", sortRule);
 		request.setAttribute("pageModel", pageModel);
@@ -147,9 +155,36 @@ public class EnterpriseAdminsController extends BaseController{
 	public Object delEnterpriseUsers(HttpServletRequest request){
 		boolean deleteFlag = false;
 		UserBase user = userService.getCurrentSiteAdmin(request);
+		SiteBase currSite = siteService.getSiteBaseById(user.getSiteId());
+		
 		String[] ids = request.getParameterValues("id");
 		logger.info("批量删除站点用户ID：" + ids);
-		deleteFlag = enterpriseAdminsService.deleteUserBases(ids, user.getId());
+		//active user模式
+		if(currSite.getChargeMode().equals(2)){
+			for (int i = 0; i < ids.length; i++) {
+				UserBase userBase = userService.getUserBaseById(Integer.parseInt(ids[i]));
+				if(userBase.getUserRole().equals(ConstantUtil.USERROLE_HOST)){
+					SiteBase mySite = siteLogic.getVirtualSubSite(userBase.getId());
+					String updateInfo = siteService.soapDelSite(mySite.getSiteSign());
+					if(updateInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
+						//删除主持人
+						siteService.delSubVritualSite(mySite.getId());
+					}
+				}
+				enterpriseAdminsService.deleteUserBase(userBase.getId(), user.getId());
+			}
+			//namehost 模式
+		}else if(currSite.getChargeMode().equals(1)){
+			for (int i = 0; i < ids.length; i++) {
+				UserBase userBase = userService.getUserBaseById(Integer.parseInt(ids[i]));
+				//只能删非主持人
+				if(!userBase.getUserRole().equals(ConstantUtil.USERROLE_HOST)){
+					enterpriseAdminsService.deleteUserBase(userBase.getId(), user.getId());
+				}
+			}
+		}else{
+			deleteFlag = enterpriseAdminsService.deleteUserBases(ids, user.getId());
+		}
 //		if(deleteFlag){
 			//======删除该用户创建的会议======
 //			for (int i = 0; i < ids.length; i++) {
@@ -232,13 +267,13 @@ public class EnterpriseAdminsController extends BaseController{
 	 */
 	@AsController(path = "list")
 	public Object listBySite(@CParam("keyword") String keyword,@CParam("pageNo") String pageNo, HttpServletRequest request) throws Exception{
-		UserBase userBase = userService.getCurrentSiteAdmin(request);
+ 		UserBase userBase = userService.getCurrentSiteAdmin(request);
 		int siteId = userBase.getSiteId();//当前登录站点
 		PageBean<UserBase> pageModel = null;
 		if(userBase.isSuperSiteAdmin()){
-			pageModel = enterpriseAdminsService.getSiteManagers(keyword, null, null, siteId,null, pageNo);;
+			pageModel = enterpriseAdminsService.getSiteManagers(keyword, null, null, userBase,null, pageNo);;
 		}else{
-			pageModel = enterpriseAdminsService.getSiteManagers(keyword, null, null, userBase.getSiteId(),userBase.getId(), pageNo);
+			pageModel = enterpriseAdminsService.getSiteManagers(keyword, null, null, userBase,userBase.getId(), pageNo);
 		}
 		request.setAttribute("keyword", keyword);
 		request.setAttribute("pageModel", pageModel);
@@ -413,6 +448,8 @@ public class EnterpriseAdminsController extends BaseController{
 				}
 			}
 			orgUser.setMobile(user.getMobile());
+			orgUser.setErrorCount(0);
+			orgUser.setUserStatus(ConstantUtil.USER_STATU_UNLOCK);
 			if(StringUtil.isNotBlank(user.getLoginPass())){
 				orgUser.setPassEditor(userAdmin.getId());
 				orgUser.setLoginPass(MD5.encodePassword(user.getLoginPass(), "MD5"));
@@ -489,6 +526,8 @@ public class EnterpriseAdminsController extends BaseController{
 		if (userAdmin==null){
 			return null;
 		}
+		SiteBase currSite = siteService.getSiteBaseById(userAdmin.getSiteId());
+		
 		List<String[]> empowerFieldList=SiteConstant.EMPOWER_CODE_FIELD_LIST;
 		EmpowerConfig globalPower = empowerConfigService.getSiteEmpowerGlobalBySiteId(userAdmin.getSiteId());	
 		EmpowerConfig userPower=null;
@@ -515,10 +554,11 @@ public class EnterpriseAdminsController extends BaseController{
 			orgUser.setEnName(user.getEnName());
 			orgUser.setUserEmail(user.getUserEmail());
 			orgUser.setMobile(user.getMobile());
-			orgUser.setUserRole(user.getUserRole());
+			//orgUser.setUserRole(user.getUserRole());
 			orgUser.setOrgId(user.getOrgId());
 			orgUser.setOrgCode(user.getOrgCode());
 			orgUser.setExprieDate(user.getExprieDate());
+			orgUser.setRemark(user.getRemark());
 			if(StringUtil.isNotBlank(user.getUserEmail())){
 				userBase =	userService.getSiteUserByEmail(userAdmin.getSiteId(), user.getUserEmail());
 				if(userBase != null && userBase.getId() != null && userBase.getId().intValue() != user.getId().intValue()){
@@ -538,6 +578,14 @@ public class EnterpriseAdminsController extends BaseController{
 			}
 			boolean flag = false;
 			if(userService.siteUserSaveable(orgUser)){
+				if(currSite.getChargeMode().equals(2) && !orgUser.getUserRole().equals(user.getUserRole())){
+					if(ConstantUtil.USERROLE_HOST.equals(user.getUserRole())){
+						siteService.buildingVritualSite(currSite, orgUser);
+					}else{
+						siteService.delSubVritualSiteByUser(user.getId());
+					}
+				}
+				orgUser.setUserRole(user.getUserRole());
 				flag = enterpriseAdminsService.updateUserBase(orgUser);
 				if(flag){
 					userPower= empowerConfigService.getUserEmpowerConfigByUserId(user.getId());
@@ -593,7 +641,7 @@ public class EnterpriseAdminsController extends BaseController{
 			}else{
 				sysHelpAdminEventLog(false, userService.getCurrentSysAdmin(request), userAdmin, 
 						EventLogConstants.SYSTEM_ADMIN_USER_UPDATE, EventLogConstants.SITE_ADMIN_USER_UPDATE, "修改普通站点用户", user, request);
-				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.2")+":该用户名已存在");
+				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.failinfo.reparted"));
 			}
 			sysHelpAdminEventLog(flag, userService.getCurrentSysAdmin(request), userAdmin, 
 					EventLogConstants.SYSTEM_ADMIN_USER_UPDATE, EventLogConstants.SITE_ADMIN_USER_UPDATE, "修改普通站点用户", user, request);
@@ -616,11 +664,15 @@ public class EnterpriseAdminsController extends BaseController{
 				}
 			}
 			
-			
 			boolean flag = false;
 			if(userService.siteUserSaveable(user)){
-				userBase = enterpriseAdminsService.saveUserBase(user);
 				
+				//activeuser 模式
+				if(currSite.getChargeMode().equals(2)&&user.getUserRole().equals(ConstantUtil.USERROLE_HOST)){
+					userBase = siteService.buildingVritualSite(currSite, user);
+				}else{
+					userBase = enterpriseAdminsService.saveUserBase(user);
+				}
 				if(userBase != null && userBase.getId() > 0){
 					flag = true;
 					//保存权限设置
@@ -648,12 +700,12 @@ public class EnterpriseAdminsController extends BaseController{
 					user.setLoginPass(orgPass);
 					emailService.createSiteUser(user);
 				}else{
-					return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
+					return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.failinfo.reparted"));
 				}
 			}else{
 				sysHelpAdminEventLog(false, userService.getCurrentSysAdmin(request), userAdmin, 
 						EventLogConstants.SYSTEM_ADMIN_USER_CREATE, EventLogConstants.SITE_ADMIN_USER_CREATE, "新建普通站点用户", user, request);
-				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2")+":该用户名已存在");
+				return returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.failinfo.reparted"));
 			}
 			sysHelpAdminEventLog(flag, userService.getCurrentSysAdmin(request), userAdmin, 
 					EventLogConstants.SYSTEM_ADMIN_USER_CREATE, EventLogConstants.SITE_ADMIN_USER_CREATE, "新建普通站点用户", user, request);
@@ -663,16 +715,27 @@ public class EnterpriseAdminsController extends BaseController{
 	
 	@AsController(path = "downTemp")
 	public void downloadTemplate(HttpServletRequest request,HttpServletResponse response){
+		SiteBase site = siteService.getCurrentSiteBaseByAdminLogin(request);
 		String lang = getLang(request);
 		String dirPath = LiberContainer.getContainer().getServletContext().getRealPath("excel_template")+File.separator;
 		String tempPath = "";
-		if(lang.startsWith(ConstantUtil.LANG_CN)){
-			tempPath = dirPath+"template_user_zh.xlsx";
+		if(site!=null && site.getChargeMode().equals(1)){
+			if(lang.startsWith(ConstantUtil.LANG_CN)){
+				tempPath = dirPath+"template_host_zh.xlsx";
+			}else{
+				tempPath = dirPath+"template_host_en.xlsx";
+			}
 		}else{
-			tempPath = dirPath+"template_user_en.xlsx";
+			if(lang.startsWith(ConstantUtil.LANG_CN)){
+				tempPath = dirPath+"template_user_zh.xlsx";
+			}else{
+				tempPath = dirPath+"template_user_en.xlsx";
+			}
 		}
 		File file = new File(tempPath);
+		response.reset();
 		response.setContentType("octets/stream");
+		response.setContentLength(new Long(file.length()).intValue());
         response.setHeader("Content-Disposition", "attachment;filename=template_user.xlsx");
         BufferedInputStream in = null;
         BufferedOutputStream out = null; 
@@ -716,12 +779,12 @@ public class EnterpriseAdminsController extends BaseController{
 //		集成VoIP，密码字段的值为空，导出文件名为：export_user.xls
 		Object[] titles = new Object[9];
 		titles[0] = ResourceHolder.getInstance().getResource("system.sysUser.list.loginName");// "登录名";
-		titles[1] = ResourceHolder.getInstance().getResource("system.sysUser.list.loginPass");//"密码";
-		titles[2] = ResourceHolder.getInstance().getResource("system.sysUser.list.userName");//"用户名";
-		titles[3] = ResourceHolder.getInstance().getResource("system.sysUser.list.enName");//"英文名";
-		titles[4] = ResourceHolder.getInstance().getResource("site.admin.edituser.userrole");//"用户角色";
-		titles[5] = ResourceHolder.getInstance().getResource("system.sysUser.list.email");//"邮箱";
-		titles[6] = ResourceHolder.getInstance().getResource("system.sysUser.list.telephone");//"电话";
+		//titles[1] = ResourceHolder.getInstance().getResource("system.sysUser.list.loginPass");//"密码";
+		titles[1] = ResourceHolder.getInstance().getResource("system.sysUser.list.userName");//"用户名";
+		titles[2] = ResourceHolder.getInstance().getResource("system.sysUser.list.enName");//"英文名";
+		titles[3] = ResourceHolder.getInstance().getResource("site.admin.edituser.userrole");//"用户角色";
+		titles[4] = ResourceHolder.getInstance().getResource("system.sysUser.list.email");//"邮箱";
+		titles[5] = ResourceHolder.getInstance().getResource("system.sysUser.list.telephone");//"电话";
 		objlist.add(titles);//添加头信息
 		//添加数据信息
 		if(users!=null && users.size()>0){
@@ -729,22 +792,24 @@ public class EnterpriseAdminsController extends BaseController{
 				UserBase user =  it.next();
 				Object[] userObjs = new Object[9];
 				userObjs[0] = user.getLoginName();
-				userObjs[1] = "";
-				userObjs[2] = user.getTrueName()==null?"":user.getTrueName();
-				userObjs[3] = user.getEnName()==null?"":user.getEnName();
+				//userObjs[1] = "";
+				userObjs[1] = user.getTrueName()==null?"":user.getTrueName();
+				userObjs[2] = user.getEnName()==null?"":user.getEnName();
 				if(user.getUserRole().equals(ConstantUtil.USERROLE_HOST)){
-					userObjs[4] = ResourceHolder.getInstance().getResource("site.admin.edituser.role1");//"主持人";
+					userObjs[3] = ResourceHolder.getInstance().getResource("site.admin.edituser.role1");//"主持人";
 				}else{
-					userObjs[4] = ResourceHolder.getInstance().getResource("site.admin.edituser.role2");//"参会者";
+					userObjs[3] = ResourceHolder.getInstance().getResource("site.admin.edituser.role2");//"参会者";
 				}
-				userObjs[5] = user.getUserEmail()==null?"":user.getUserEmail();
-				userObjs[6] = user.getMobile()==null?"":user.getMobile();
+				userObjs[4] = user.getUserEmail()==null?"":user.getUserEmail();
+				userObjs[5] = user.getMobile()==null?"":user.getMobile();
 				objlist.add(userObjs);
 			}
 		}
 		HSSFWorkbook wb = ExcelUtil.createExcelWorkbook("users", objlist);
+		response.reset();
 		response.setContentType("octets/stream");
         response.setHeader("Content-Disposition", "attachment;filename=export_user.xls");
+       // response.setContentLength(wb.getBytes().length);
         try {
         	wb.write(response.getOutputStream());
 			response.getOutputStream().flush();
@@ -767,41 +832,68 @@ public class EnterpriseAdminsController extends BaseController{
 	public Object importUserBases(@CParam("excelfile") LiberCFile file,HttpServletRequest request,HttpServletResponse response){
 		UserBase currUser = userService.getCurrentSiteAdmin(request);
 		SiteBase site = siteService.getSiteBaseById(currUser.getSiteId());
-//		List<SiteOrg> siteOrgList = orgService.getSiteOrgList(site.getId()).getDatas();
-//		SiteOrg siteOrg = null;
-//		if(siteOrgList != null){
-//			for(SiteOrg org:siteOrgList){
-//				siteOrg = org;
-//				break;
-//			}
-//		}
+		
 		try {
-			List<UserBase> importusers = new ArrayList<UserBase>();//可成功导入的用户
+			//List<UserBase> importusers = new ArrayList<UserBase>();//可成功导入的用户
 			List<UserBase> repeatusers = new ArrayList<UserBase>();//数据库中已存在的用户
 			List<UserBase> unSaveableusers = new ArrayList<UserBase>();//数据格式不对或者不全的
 			Set<String> loginNames = new HashSet<String>();
 			Set<String> userEmails = new HashSet<String>();
+			
+			//int totalnum = 0;
+			int importnum = 0; //导入条数
 			if(file!=null){
+				long st = System.currentTimeMillis();
 				List<Object[]> datas = ExcelUtil.getDataByInputStream(file.getInputStream(), file.getOriginalFilename(), 2, 0);
+				BeanUtil.trimObjs(datas);
+				long et = System.currentTimeMillis();
+				long totaltime = (et-st)/1000;
+				logger.info("read excel template total time = "+totaltime+"s");
+				//这一步可以不要
+				EmpowerConfig siteConfig = empowerConfigService.getSiteEmpowerConfigBySiteId(site.getId());
+				EmpowerConfig userConfig = empowerConfigService.makeEmpowerForUser(siteConfig, null);
+				userConfig.setEmUser(currUser.getId());
+				userConfig.setEmUserType(currUser.getUserType());
+				String orgPass = "";
 				for (Iterator<Object[]> it = datas.iterator(); it.hasNext();) {
 					Object[] objs = it.next();
+					if(objs.length<1) continue;
 					UserBase user = new UserBase();
 					initSiteAdmin(user, currUser);
 					user.setSiteId(currUser.getSiteId());
 					user.setUserType(ConstantUtil.USERTYPE_USERS);
-					user.setLoginName(objs[0]==null?null:objs[0].toString());
-					user.setLoginPass(objs[1]==null?"":MD5.encodePassword(objs[1].toString(), "MD5"));
-					user.setTrueName(objs[2]==null?"":objs[2].toString());
-					user.setEnName(objs[3]==null?"":objs[3].toString());
+					//解决数组下标越界造成的提示信息错误问题  martin
+					try{
+						if(objs[0]!=null && !objs[0].toString().equals("")){
+							//totalnum++; //累计总共导入的条数
+							user.setLoginName(objs[0].toString().trim());
+						}else{
+							//continue;
+						}
+						
+						if(objs[1]!=null && !objs[1].toString().equals("")){
+							user.setLoginPass(objs[1].toString());
+						}else{
+							//continue;
+						}
+						
+						if(objs[5]!=null && !objs[5].toString().equals("")){
+							user.setUserEmail(objs[5].toString());
+						}else{
+							//continue;
+						}
+						user.setTrueName(objs[2]==null?"":objs[2].toString());
+						user.setEnName(objs[3]==null?"":objs[3].toString());
+						
+						user.setMobile(objs[6]==null?"":objs[6].toString());
+					}catch (Exception e) {
+						//continue;
+					}
+					
 					user.setPassEditor(currUser.getId());
-//					if(siteOrg != null){
-//						user.setOrgId(siteOrg.getId());
-//						user.setOrgCode(siteOrg.getOrgCode());
-//					}
-					//userRole
 					if(site.getChargeMode()!=null && site.getChargeMode().intValue()==1){
 						user.setUserRole(ConstantUtil.USERROLE_PARTICIPANT);
-					}else if(objs[4]!=null){
+					}else if(objs.length>5 && objs[4]!=null){
 						if(objs[4].toString().equalsIgnoreCase("主持人")|| objs[4].toString().equalsIgnoreCase("host")){
 							user.setUserRole(ConstantUtil.USERROLE_HOST);
 						}else{
@@ -810,35 +902,35 @@ public class EnterpriseAdminsController extends BaseController{
 					}else{
 						user.setUserRole(ConstantUtil.USERROLE_PARTICIPANT);
 					}
-					//name host 模式全是参会者
-					user.setUserEmail(objs[5]==null?"":objs[5].toString());
-					user.setMobile(objs[6]==null?"":objs[6].toString());
+					
+					UserBase libuser = null;
+					orgPass = user.getLoginPass();
 					//去除excel文件中重复的记录
 					if(!enterpriseAdminsService.validUserBase(user)){
 						unSaveableusers.add(user);
-					}else if(!userService.siteUserSaveable(user)||loginNames.contains(user.getLoginName()) || userEmails.contains(user.getUserEmail())){
+					}else if(loginNames.contains(user.getLoginName())||userEmails.contains(user.getUserEmail())||!userService.siteUserSaveable(user)){
 						repeatusers.add(user);
+					}else if((libuser = enterpriseAdminsService.saveUserBaseForImport(user,userConfig))!=null){
+						if(site.getChargeMode().equals(2)){
+							siteService.buildingVritualSite(site, libuser);
+						}
+						user.setLoginPass(orgPass);//邮件显示密码
+						emailService.createSiteUser(user);
+						importnum++;
+						//importusers.add(user);
 					}else{
-						importusers.add(user);
+						unSaveableusers.add(user);
 					}
+					
 					loginNames.add(user.getLoginName());
 					userEmails.add(user.getUserEmail());
 				}
 				//用于显示总共多少数据
 				request.setAttribute("itemnum",datas.size());	
 			}
-			request.setAttribute("statu", 2);
+			request.setAttribute("statu", 1);
 			//成功导入的
-			if(importusers.size()>0){
-				//生成默认权限设置
-				EmpowerConfig siteConfig = empowerConfigService.getSiteEmpowerConfigBySiteId(site.getId());
-				EmpowerConfig userConfig = empowerConfigService.makeEmpowerForUser(siteConfig, null);
-				boolean flag = enterpriseAdminsService.batchAddUsers(importusers,userConfig);
-				if(flag){
-					request.setAttribute("statu", 1);
-				}
-			}
-			request.setAttribute("iptitemnum",importusers.size());
+			request.setAttribute("iptitemnum",importnum);
 			//重复账号的
 			if(repeatusers.size()>0){
 				request.setAttribute("repeated",repeatusers);

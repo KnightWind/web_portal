@@ -145,7 +145,7 @@ public class ConfUserLogicImpl extends BaseLogic implements ConfUserLogic {
 	@Override
 	public ConfUser getConfUserByEmailAndName(int confId, String userName,String email) {
 		if(userName==null){
-			return null;
+			userName = email;
 		}
 		if(email==null){
 			return null;

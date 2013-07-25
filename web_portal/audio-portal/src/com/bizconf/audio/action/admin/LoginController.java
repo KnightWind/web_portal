@@ -12,6 +12,7 @@ import com.bizconf.audio.constant.LoginConstants;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.interceptors.LicenseManageInterceptor;
+import com.bizconf.audio.interceptors.SiteStatusInterceptor;
 import com.bizconf.audio.service.LoginService;
 import com.bizconf.audio.service.SiteService;
 import com.bizconf.audio.service.ValidCodeService;
@@ -31,6 +32,7 @@ import com.libernate.liberc.annotation.ReqPath;
  */
 
 @ReqPath("login")
+@Interceptors(SiteStatusInterceptor.class)
 public class LoginController extends BaseController {
 	private final Logger logger = Logger.getLogger(LoginController.class);
 

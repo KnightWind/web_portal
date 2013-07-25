@@ -2,7 +2,6 @@ package com.bizconf.audio.action.user;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,8 +77,7 @@ public class IndexController extends BaseController{
 		}
 		if(currentSite != null && currentSite.getId() != null && currentSite.getId().intValue() > 0){
 			//当前站点时区的时间
-			Date curDate=currentSite.getSiteLocalTime();
-			inv.getRequest().setAttribute("defaultDate", curDate);
+			inv.getRequest().setAttribute("defaultDate", currentSite.getSiteLocalTime());
 		}
 		if(user != null && user.getId() != null && user.getId().intValue() > 0){
 			inv.getRequest().setAttribute("isConfHost", user.isConfHost());
@@ -87,8 +85,7 @@ public class IndexController extends BaseController{
 				inv.getRequest().setAttribute("needResetPass", "true");      //用户密码被管理员修改后，第一次登陆需重置密码
 			}
 			//当前用户时区的时间
-			Date curDate = user.getUserLocalTime();
-			inv.getRequest().setAttribute("defaultDate", curDate);
+			inv.getRequest().setAttribute("defaultDate", user.getUserLocalTime());
 			currentSite.setTimeZoneId(user.getTimeZoneId());
 		}
 		inv.getRequest().setAttribute("siteBase", currentSite);

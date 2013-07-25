@@ -321,6 +321,16 @@ public class DefaultConfig implements java.io.Serializable {
 	public void setConfType(Integer confType) {
 		this.confType = confType;
 	}
+	
+	/**
+	 * 是否有电话功能
+	 */
+	public boolean hasPhoneFunc() {
+		if (this.confType.intValue() == 1 || this.confType.intValue() == 3) {
+			 return true;
+		}
+		return false;
+	}
 
 	@Override
 	public int hashCode() {

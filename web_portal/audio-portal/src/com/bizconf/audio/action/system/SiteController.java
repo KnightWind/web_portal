@@ -24,6 +24,7 @@ import com.bizconf.audio.constant.SiteConstant;
 import com.bizconf.audio.constant.SortConstant;
 import com.bizconf.audio.entity.Condition;
 import com.bizconf.audio.entity.EmpowerConfig;
+import com.bizconf.audio.entity.License;
 import com.bizconf.audio.entity.PageModel;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SystemUser;
@@ -95,8 +96,9 @@ public class SiteController extends BaseController{
 		List<SiteBase> siteList = null;
 		Integer rows = 0;
 		Condition condition = null;
+		condition = new Condition();
+		condition.equal("is_virtual_site", 0);
 		if(!currentSysUser.isSuperSystemAdmin() && !currentSysUser.isSystemClientServer()){
-			condition = new Condition();
 			condition.equal("create_user", currentSysUser.getId().intValue());       //普通系统管理员只能查看自己创建的站点
 		}
 		try {
@@ -139,9 +141,9 @@ public class SiteController extends BaseController{
 		String sortFieldValue = request.getParameter("sortField");
 		String sortField = initSort(sortFieldValue);     //获取页面传递的排序参数
 		String sortordValue = request.getParameter("sortord");
-		String sortord = "desc";
-		if(SortConstant.SORT_ASC.equals(sortordValue)){
-			sortord = "asc";
+		String sortord = "asc";
+		if(SortConstant.SORT_DESC.equals(sortordValue)){
+			sortord = "desc";
 		}
 		Integer rows = 0;
 		try {
@@ -193,15 +195,16 @@ public class SiteController extends BaseController{
 		List<SiteBase> siteList = null;
 		SystemUser  currentSysUser = userService.getCurrentSysAdmin(request);
 		Condition condition = initCondition(siteBase, request);
+		condition.equal("is_virtual_site", 0);
 		String sortFieldValue = request.getParameter("sortField");
 		String sortField = initSort(sortFieldValue);     //获取页面传递的排序参数
 		String sortordValue = request.getParameter("sortord");
-		String sortord = "desc";
+		String sortord = "asc";
 		if(!currentSysUser.isSuperSystemAdmin() && !currentSysUser.isSystemClientServer()){
 			condition.equal("create_user", currentSysUser.getId().intValue());   //普通系统管理员只能查看自己创建的站点
 		}
-		if(SortConstant.SORT_ASC.equals(sortordValue)){
-			sortord = "asc";
+		if(SortConstant.SORT_DESC.equals(sortordValue)){
+			sortord = "desc";
 		}
 		Integer rows = 0;
 		try {
@@ -281,6 +284,7 @@ public class SiteController extends BaseController{
 			}
 			siteBase = initSiteObject(siteBase, systemUser);	//初始化siteBase对象
 			siteAdmin = initSiteAdmin(siteAdmin, systemUser);    //初始化UserBase对象
+			int licenseNum = siteBase.getLicense();
 			empowerConfig.initEmpower(systemUser);
 			if(StringUtil.isNotBlank(siteAdmin.getLoginPass())){
 				loginPass = siteAdmin.getLoginPass();
@@ -300,11 +304,27 @@ public class SiteController extends BaseController{
 			if(site != null && site.getId() != null && site.getId().intValue() > 0){
 				saveFlag = true;
 			}
-			site.setEffeDate(DateUtil.getBejingDateByGmtDate(site.getEffeDate()));   //将数据库中的GMT时间转换为北京时间
-			site.setExpireDate(DateUtil.getBejingDateByGmtDate(site.getExpireDate()));
-			//记录系统管理员操作日志
-			saveSystemEventLog(saveFlag, systemUser, EventLogConstants.SYSTEM_SITE_CREATE, "创建站点", site, request);
+			
 			if(saveFlag){
+				site.setEffeDate(DateUtil.getBejingDateByGmtDate(site.getEffeDate()));   //将数据库中的GMT时间转换为北京时间
+				site.setExpireDate(DateUtil.getBejingDateByGmtDate(site.getExpireDate()));
+				//记录系统管理员操作日志
+				saveSystemEventLog(saveFlag, systemUser, EventLogConstants.SYSTEM_SITE_CREATE, "创建站点", site, request);
+				//martin 2013-06-18添加 start
+				if(!site.getChargeMode().equals(1) && !site.getChargeMode().equals(2)){
+					License lic = new License();
+					lic.init();
+					lic.setSiteId(site.getId());
+					lic.setCreateUser(systemUser.getId());
+					lic.setEffeDate(siteBase.getEffeDate());
+					lic.setEffeFlag(1);
+					lic.setLicNum(licenseNum);     //新建站点时，站点表不保存license数，将license保存到t_license表中
+					lic.setExpireDate(siteBase.getExpireDate());
+					lic.setFirstLicFlag(1);     //创建seats、time模式的话，则将该标识置为1
+					licService.saveOrUpdate(lic);
+				}
+				//martin 2013-06-18添加 end
+				
 				createSiteSuccess(site, siteAdmin, loginPass);
 				logger.info("创建站点成功");
 			}else{
@@ -419,6 +439,32 @@ public class SiteController extends BaseController{
 				}
 				siteAdmin.setLoginPass(MD5.encodePassword(siteAdmin.getLoginPass(), "MD5"));
 			}
+			
+			if(siteBase.getExpireDate() != null){
+				SiteBase currentSite = siteService.getSiteBaseById(siteBase.getId());
+				//改为23:59:59,到期时间减1秒
+				siteBase.setExpireDate(DateUtil.addDateSecond(DateUtil.getGmtDateByTimeZone(siteBase.getExpireDate(), 28800000), -1));
+				siteBase.setExpireDate(DateUtil.addDate(siteBase.getExpireDate(), 1));    //到期时间+1天
+				if(!DateUtil.dateToString(siteBase.getExpireDate(), "yyyy-MM-dd"). 
+						equals(DateUtil.dateToString(DateUtil.getBejingDateByGmtDate(currentSite.getExpireDate()), "yyyy-MM-dd"))){
+					logger.info("2013.6.25 新增当修改站点到期时间后，则将站点的sendRemindFlag字段置为0");
+					siteBase.setSendRemindFlag(0);    //2013.6.25 新增当修改站点到期时间后，则将站点的sendRemindFlag字段置为0
+					//2013.6.27修复bug1051:若修改站点到期时间则相应修改站点第一条license到期时间（seats、time站点模式）
+//					License firstLic = licService.getFirstLic(siteBase.getId());
+//					if(firstLic != null){
+//						firstLic.setExpireDate(siteBase.getExpireDate());
+//						if(!licService.saveOrUpdate(firstLic)){
+//							logger.error("修改站点到期时间则相应修改站点第一条license到期时间出错！" + firstLic);
+//						}
+//					}
+					//may be we can do this to update license date
+					if(!licService.updateInitLicExpireDate(siteBase.getId(), siteBase.getExpireDate())){
+							logger.error("修改站点到期时间则相应修改站点第一条license到期时间出错！站点ID：" + siteBase.getId());
+					}
+					
+				}
+			}
+			//2013.6.25
 			try {
 				empowerConfig.initEmpower(systemUser);
 				if(siteBase.getChargeMode().intValue() == SiteConstant.SITE_CHARGEMODE_NAMEHOST){
@@ -602,6 +648,12 @@ public class SiteController extends BaseController{
 	public String siteSignValidate(@CParam("siteSign") String siteSign, @CParam("siteId") int siteId){
 		String flag = "true";
 		if(StringUtil.isNotBlank(siteSign)){
+			for(String systemSign : SiteConstant.SYSTEM_SITE_SIGN){
+				if(siteSign.equals(systemSign)){
+					logger.info("该站点标识"+siteSign+"为系统保留站点标识!");
+					return "false";
+				}
+			}
 			SiteBase site = siteService.getSiteBaseBySiteSign(siteSign);
 			if(site != null && siteId == 0){    //创建站点
 				logger.info("该站点标识"+siteSign+"已存在!");
@@ -749,7 +801,8 @@ public class SiteController extends BaseController{
 	 * 2013-1-22
 	 */
 	private String initSort(String field){
-		String sortField = SortConstant.SITEBASE_FIELDS[0][1];
+		String sortField = SortConstant.SITEBASE_FIELDS[3][1];
+		sortField = BeanUtil.att2Field(sortField);
 		for (String[] eachField : SortConstant.SITEBASE_FIELDS) {
 			if (eachField != null && eachField[0].equals(field)) {
 				sortField = BeanUtil.att2Field(eachField[1]);
@@ -826,7 +879,7 @@ public class SiteController extends BaseController{
 		if(StringUtil.isNotBlank(expireDateEnd)){
 			Date endTime = DateUtil.StringToDate(expireDateEnd, "yyyy-MM-dd");
 			endTime = DateUtil.getGmtDate(DateUtil.addDate(endTime, 1));
-			condition.lessEqual("expire_date", DateUtil.getDateStrCompact(endTime, "yyyy-MM-dd HH:mm:ss"));
+			condition.lessEqual("expire_date", DateUtil.getDateStrCompact(DateUtil.addDateSecond(endTime, -1), "yyyy-MM-dd HH:mm:ss"));
 		}
 		return condition;
 	}

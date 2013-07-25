@@ -28,6 +28,7 @@
 		parent.parent.viewGroup(id);
 	}
 	$(document).ready(function(){
+		parent.refreshIHeight();
 		$("span[name=contactnum]").each(function(){
 			var countdata = $.parseJSON('${countJson}') || {};
 			var group_id = $(this).attr("groupId");
@@ -51,8 +52,9 @@
 				$("#query").submit();
 			}
 		});
-		
-		$(".group_search").watermark('${LANG['bizconf.jsp.add_group.res3']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".group_search").watermark('${LANG['bizconf.jsp.add_group.res3']}');
+		}
 	});
 	
 	
@@ -83,10 +85,16 @@
 			     </tr>
 			</c:if>
 	<c:forEach var="group" items="${pageModel.datas}" varStatus="status">
-	      <tr align="center" bgcolor="#FFFFFF" height="32">
-<%--	        <td class="tr_main" style="border-left:#D2D8DB 1px solid"><input value="" name="" type="checkbox"></td>--%>
+	      <tr align="center" bgcolor="#FFFFFF">
 	        <td class="tr_main" style="border-left:#D2D8DB 1px solid"><a href="javascript:viewContacts('${group.id }')">${group.groupName}</a></td>
-	        <td class="tr_main"><div style="display:block; width:20em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${group.groupDesc}</div></td>
+	        <td class="tr_main">
+	        	<c:if test="${!empty group.groupDesc}">
+	        		${group.groupDesc}
+	        	</c:if>
+	        	<c:if test="${empty group.groupDesc}">
+	        		&nbsp;
+	        	</c:if>
+	        </td>
 	        <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center">
 	       	 <table>
 	            <tbody><tr>

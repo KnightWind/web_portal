@@ -34,13 +34,13 @@
   <div class="jianju"></div>
  
   <!--${LANG['bizconf.jsp.attendConfloglist.res2']}-->
-  <div class="First_Steps_main_invite" style=" background:#FFF;">
+  <div class="First_Steps_main_invite" style=" width:96%;height: 430px;overflow-y: auto;margin: 5px auto;">
   <form id="query" name="query" action="/user/group/showContacts" method="post">
   	<input type="hidden" name="viewOnly" value="1"/>
   	<input type="hidden" name="group_id" value="${group_id}"/>
-    <table width="730" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >
+    <table width="730" align="center" cellpadding="0" cellspacing="0" border="0">
       <tr>
-        <td height="40" colspan="6" bgcolor="#333" class="tr_top"><input name="keyword" type="text" class="meeting_ss group_search" value="${keyword}"/>
+        <td height="40" colspan="6" class="tr_top" style="background: #FFF"><input name="keyword" type="text" class="meeting_ss group_search" value="${keyword}"/>
           <input class="meeting_but" type="button" onclick="query.submit();" /></td>
       </tr>
       <tr align="center" height="35" class="tr_center" bgcolor="#000066">
@@ -58,11 +58,11 @@
 	<c:forEach var="contact" items="${pageModel.datas}" varStatus="status">
 	      <tr align="center" bgcolor="#FFFFFF" height="30">
 	        
-	        <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${contact.contactName}</td>
-	        <td class="tr_main">${contact.contactNameEn}</td>
-	        <td class="tr_main">${contact.contactEmail}</td>
-	        <td class="tr_main">${contact.contactPhone}</td>
-	        <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center"><a href="#">${contact.contactMobile}</a></td>
+	        <td class="tr_main" style=" border-left:#D2D8DB 1px solid">${contact.contactName}&nbsp;</td>
+	        <td class="tr_main">${contact.contactNameEn}&nbsp;</td>
+	        <td class="tr_main">${contact.contactEmail}&nbsp;</td>
+	        <td class="tr_main">${contact.contactPhone}&nbsp;</td>
+	        <td class="tr_main" style=" border-right:1px solid #D2D8DB" align="center"><a href="#">${contact.contactMobile}&nbsp;</a></td>
 	      </tr>
       </c:forEach>
       <tr>
@@ -91,7 +91,9 @@
 </html>
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".group_search").watermark('${LANG['bizconf.jsp.view_group_contacts_list.res1']}');
+	if (!$.browser.msie || $.browser.version>7) {
+		$(".group_search").watermark('${LANG['bizconf.jsp.view_group_contacts_list.res1']}');
+	}
 });
 function loaded() {
 	var frame = parent.parent.$("#viewContact");

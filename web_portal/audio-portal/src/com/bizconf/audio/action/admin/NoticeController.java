@@ -79,6 +79,7 @@ public class NoticeController extends BaseController{
 			logger.error("获取页数出错!"+e);
 		}
 		pageModel.setRowsCount(rows);
+		pageModel.setPageSize(currentSiteAdmin.getPageSize());    //2013.6.26 修改为按用户设置每页显示条数
 		try {
 			if(currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
 				noticeList = noticeService.getNoticeListBySiteId(currentSiteAdmin.getSiteId(), pageModel, null);

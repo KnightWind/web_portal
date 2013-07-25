@@ -67,7 +67,10 @@ function del(id){
 <div class="main_right">
  <div class="m_top">
  
-    <div class="make_new"><a href="javascript:;" target="mainFrame" id="createNotice">${LANG['system.notice.list.Create']}</a></div>
+    <div class="make_new">
+    	<a href="javascript:;" style="float:left;" target="mainFrame" id="createNotice"><b>${LANG['system.notice.list.Create']}</b></a>
+    	<span style="color:red; position: relative; left: 10px; top: 5px;"> * ${LANG['system.notice.warn']}</span>
+    </div>
  
   </div>
 <table width="98.5%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" style=" margin-left:10px; margin-right:10px; border:#D6D6D6 1px solid; border-top:none; border-bottom:none;">
@@ -76,10 +79,10 @@ function del(id){
     <td>
     <table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list">
       <tr class="table003" height="38" >
-        <td width="45%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.Title']}</span></div></td>
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.StartTime']}</span></div></td>
-        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.notice.list.StopTime']}</span></div></td>
-        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10" class="STYLE_none" style="border-right:none"><div align="center"><span>${LANG['system.Operate']}</span></div></td>
+        <td width="45%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.Title']}</b></span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.StartTime']}</b></span></div></td>
+        <td width="20%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['system.notice.list.StopTime']}</b></span></div></td>
+        <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10" class="STYLE_none" style="border-right:none"><div align="center"><span><b>${LANG['system.Operate']}</b></span></div></td>
       </tr>
        <c:if test="${fn:length(noticeList)<=0 }">
          <tr>

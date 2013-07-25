@@ -199,6 +199,14 @@
                 <input class="right_text_a" name="userName" id="userName" type="text" value="${userName}" watermark="${LANG['bizconf.jsp.common.join_page.res5']}"/>
               </td>
             </tr>
+            <c:if test="${passCheck==1}">
+            <tr class="box01">
+              <td align="right" class="left_text_a">${LANG['bizconf.jsp.common.join_page.res11']}</td>
+              <td align="left">
+              <input class="right_text_a" name="cPass" id="cPass"  type="password"   watermark="${LANG['bizconf.jsp.common.join_page.res12']}" />
+              </td>
+            </tr>
+            </c:if>
             <tr>
             	<td colspan="3">
             		<div style="height: 50px;">
@@ -541,6 +549,16 @@ function join(){
 		isTip=true;
 		chkStatus=false;
 	}
+	<c:if test="${passCheck==1}">
+	var cPass=$("#cPass").val();
+	if(cPass==null || $.trim(cPass)==""  ){
+		if(!isTip){
+			parent.errorDialog("${LANG['bizconf.jsp.common.join_page.res12']}");
+		}
+		isTip=true;
+		chkStatus=false;
+	}
+	</c:if>
 	if(chkStatus==true){
 		$("#joinEmailForm").submit();
 	}

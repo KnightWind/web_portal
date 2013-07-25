@@ -51,6 +51,11 @@ public interface EmailLogic {
 	 */
 	Date getSiteLocalDate(Date date,Integer siteId);
 	
-	
+	/**
+	 * 获取站点可用的license总数
+	 * @param siteId
+	 * @return
+	 */
+	public int getSiteLicenseNum(Integer siteId);
 //	EmailInfo get
 }

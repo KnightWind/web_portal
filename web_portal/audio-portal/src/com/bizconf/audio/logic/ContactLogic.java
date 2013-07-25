@@ -18,4 +18,12 @@ public interface ContactLogic {
 	 */
 	public boolean createContactSingleValidate(Contacts contact);
 	
+	/**
+	 * 检测联系人邮件地址是否可用
+	 * @param contact
+	 * @return
+	 */
+	public boolean contactEmailAvailable(Contacts contact);
+
+	
 }

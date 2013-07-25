@@ -46,8 +46,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			$(this).find("a").addClass("activeMeau-left activeMeau-right");
 			$("#query").submit();
 		});
+		
+		$("#contentFrame").load(function(){
+			getHeight();  
+	    });
 	});
-
+	
+	function getHeight() {
+		var height = $("#contentFrame").contents().find("body").height()+50;
+		if(height<850){
+			height = 850;
+		}
+		$("#contentFrame").height(height);  
+	}
 </script>
 </head>
 <body>
@@ -59,7 +70,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     </ul>
   </div>
   <div class="meeting_main" >
-  	<iframe frameborder="0" width="100%" height="650px;" id="contentFrame" name="contentFrame" scrolling="no" src="/common/billing/sysBillList"></iframe>
+  	<iframe frameborder="0" width="100%" height="650px;" id="contentFrame" name="contentFrame" scrolling="auto;" src="/common/billing/sysBillList"></iframe>
   </div>
 </div>
 </body>

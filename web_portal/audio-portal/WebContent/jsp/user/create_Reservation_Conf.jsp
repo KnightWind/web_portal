@@ -35,22 +35,21 @@
 		var validString  = {
 			pageRequired:{
 				confName: "${LANG['bizconf.jsp.create_Reservation_Conf.res1']}",
-				confNameLength: "${LANG['bizconf.jsp.create_Reservation_Conf.res2']}1~32${LANG['bizconf.jsp.create_Reservation_Conf.res3']}",
+				confNameLength: "${LANG['bizconf.jsp.create_Reservation_Conf.res2000']}",
 				hostKey: "${LANG['bizconf.jsp.create_Reservation_Conf.res4']}",
 				hostKeyType: "${LANG['bizconf.jsp.create_Reservation_Conf.res5']}",
-				confDescLength: "${LANG['bizconf.jsp.create_Reservation_Conf.res6']}256${LANG['bizconf.jsp.create_Reservation_Conf.res3']}",
+				confDescLength: "${LANG['bizconf.jsp.create_Reservation_Conf.res6000']}",
 				confPass: "${LANG['bizconf.jsp.create_Reservation_Conf.res7']}",
 				confPass2: "${LANG['bizconf.jsp.create_Reservation_Conf.res8']}",
 				confirmPass: "${LANG['bizconf.jsp.create_Reservation_Conf.res9']}",
-				passLength: "${LANG['bizconf.jsp.create_Reservation_Conf.res10']}6~16${LANG['bizconf.jsp.conf_default_setup.res12']}",
+				passLength: "${LANG['bizconf.jsp.create_Reservation_Conf.res1000']}",
 				startDate: "${LANG['bizconf.jsp.create_Reservation_Conf.res11']}",
-				aheadTime: "${LANG['bizconf.jsp.create_Reservation_Conf.res12']}0~60${LANG['bizconf.jsp.attended_conf_list.res10']}",
+				aheadTime: "${LANG['bizconf.jsp.create_Reservation_Conf.res1200']}",
 				aheadTimeInt: "${LANG['bizconf.jsp.create_Reservation_Conf.res13']}",
 				maxUser: "${LANG['bizconf.jsp.conf_default_setup.res10']}",
-				maxLicense: "${LANG['bizconf.jsp.create_Reservation_Conf.res14']}2${LANG['bizconf.jsp.create_Reservation_Conf.res15']}, ${LANG['bizconf.jsp.create_Reservation_Conf.res16']}",
 				maxUserNumber: "${LANG['bizconf.jsp.create_Reservation_Conf.res17']}",
 				dayInterval: "${LANG['bizconf.jsp.create_Reservation_Conf.res18']}",
-				maxInterval: "${LANG['bizconf.jsp.create_Reservation_Conf.res19']}31${LANG['bizconf.jsp.create_Reservation_Conf.res20']}",
+				maxInterval: "${LANG['bizconf.jsp.create_Reservation_Conf.res1900']}",
 				weekInterval: "${LANG['bizconf.jsp.create_Reservation_Conf.res21']}",
 				weekFlag: "${LANG['bizconf.jsp.create_Reservation_Conf.res22']}",
 				weekStartDate: "${LANG['bizconf.jsp.create_Reservation_Conf.res23']}",
@@ -58,7 +57,9 @@
 				cycleError: "${LANG['bizconf.jsp.create_Reservation_Conf.res25']}",
 				timeError: "${LANG['bizconf.jsp.create_Reservation_Conf.res26']}",
 				hour: "${LANG['bizconf.jsp.conf_list_index.res16']}",
+				hours: "${LANG['bizconf.jsp.conf_list_index.res16000']}",
 				minute: "${LANG['bizconf.jsp.attended_conf_list.res10']}",
+				minutes: "${LANG['bizconf.jsp.attended_conf_list.res10000']}",
 				firConfType: "${LANG['bizconf.jsp.create_Reservation_Conf.res27']}",
 				secConfType: "${LANG['bizconf.jsp.conf_default_setup.res5']} ",
 				thirdConfType: "${LANG['bizconf.jsp.create_Reservation_Conf.res28']} ",
@@ -69,13 +70,14 @@
 				fourCycleType: "${LANG['bizconf.jsp.create_Reservation_Conf.res33']}",
 				infiniteType: "${LANG['bizconf.jsp.create_Reservation_Conf.res34']}",
 				repeatCountLeft:"${LANG['bizconf.jsp.create_Reservation_Conf.res35']}",
-				repeatCountRight:"${LANG['bizconf.jsp.create_Reservation_Conf.res36']}"
+				repeatCountRight:"${LANG['bizconf.jsp.create_Reservation_Conf.res36']}",
+				sendInventors: "${LANG['bizconf.jsp.create_Reservation_Conf.inventor']}"
 				
 			},
 			maxlength: {
-				confName: "${LANG['bizconf.jsp.create_Reservation_Conf.res37']}32${LANG['bizconf.jsp.create_Reservation_Conf.res38']}",
-				confDesc: "${LANG['bizconf.jsp.create_Reservation_Conf.res39']}256${LANG['bizconf.jsp.create_Reservation_Conf.res38']}",
-				duration: "${LANG['bizconf.jsp.create_Reservation_Conf.res40']}0"
+				confName: "${LANG['bizconf.jsp.create_Reservation_Conf.res3700']}",
+				confDesc: "${LANG['bizconf.jsp.create_Reservation_Conf.res3900']}",
+				duration: "${LANG['bizconf.jsp.create_Reservation_Conf.res40']}"
 			},
 			digits: {
 				masterPass: "${LANG['bizconf.jsp.create_Reservation_Conf.res41']}"			
@@ -154,13 +156,14 @@
 	<fmt:formatDate var="beijingDate" value="${defaultDate}" type="date" pattern="yyyy-MM-dd HH:mm:ss"/>
 	<fmt:formatDate var="serverTime" value="${defaultDate}" type="date" pattern="yyyy-MM-dd"/>
 	<c:set var="cycleConfType" value="${cycleConfType}"></c:set>
+    <cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
 	<cc:confList var="CONF_VIDEO_TYPE_FLUENCY"/>
     <cc:confList var="CONF_VIDEO_TYPE_DISTINCT"/>
-    <cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
+    <cc:confList var="CONF_VIDEO_TYPE_BEST"/>
     <c:set var="CONF_VIDEO_TYPE_FLUENCY" value="${CONF_VIDEO_TYPE_FLUENCY }"></c:set>
     <c:set var="CONF_VIDEO_TYPE_DISTINCT" value="${CONF_VIDEO_TYPE_DISTINCT }"></c:set>
     <c:set var="CONF_VIDEO_TYPE_WEBBAND" value="${CONF_VIDEO_TYPE_WEBBAND }"></c:set>
-	<script type="text/javascript">   //${LANG['bizconf.jsp.create_Reservation_Conf.res44']}
+	<script type="text/javascript">   //该脚本为创建会议时，加载用户默认会议设置信息
 		var cycleConfType = "${cycleConfType}";
 		var isAutoFlag = "${isAutoFlag}";
 		var defaultDate = new Date("${serverDate}"); //2013/04/07 11:57:06 
@@ -185,24 +188,32 @@
 			}
 			
 			var videoType = "${defaultConfig.videoType}";
-			if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
+			if(videoType=="${CONF_VIDEO_TYPE_WEBBAND}"){
 				$("input:radio[name=videoType]:eq(0)").attr("checked",'checked');
-			} else if(videoType=="${CONF_VIDEO_TYPE_DISTINCT}"){
+			} else if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
 				$("input:radio[name=videoType]:eq(1)").attr("checked",'checked');
-			} else if(videoType=="${CONF_VIDEO_TYPE_WEBBAND}"){
+			} else if(videoType=="${CONF_VIDEO_TYPE_DISTINCT}"){
 				$("input:radio[name=videoType]:eq(2)").attr("checked",'checked');
+			} else if(videoType=="${CONF_VIDEO_TYPE_BEST}"){
+				$("input:radio[name=videoType]:eq(3)").attr("checked",'checked');
 			}
 			
 			//${LANG['bizconf.jsp.create_Reservation_Conf.res48']}
+			var isAudioFlag = "${isAudioFlag}"; 
+			if(!isAudioFlag){
+				$("#audioTR").hide();
+			}
 			var isVideoFlag = "${isVideoFlag}"; 
 			if(!isVideoFlag){
 				$("#videoFunc").hide();
 				$("#videoFuncM").hide();
-				$("#videoTR").hide;
+				$("#videoTR").hide();
 				$("input[name=confType]:eq(0)").removeAttr("checked");
 			}
 			
 			//${LANG['bizconf.jsp.create_Reservation_Conf.res49']}
+			var phoneFunc = "${defaultConfig.confType}";    //会议缺省设置中电话功能开启状态：1开启；2关闭
+			var allowCall = "${allowCall}";    //会议缺省设置中自动外呼开启状态：1开启；2关闭
 			var isPhoneFlag = "${isPhoneFlag}";
 			if(!isPhoneFlag) {
 				$("#phoneFunc").hide();
@@ -211,6 +222,15 @@
 				$("input[name=confType]:eq(1)").removeAttr("checked");
 			} else {
 				$("input[name=confType]:eq(1)").removeAttr("disabled");
+				if(phoneFunc == 1){
+					$("input[name=confType]:eq(1)").attr("checked",'checked');
+					if(isAutoFlag){
+						$("#allowCallTr").attr("style","");
+					}
+					if(isAutoFlag && allowCall == 1){
+						$("input:radio[name=allowCall]:eq(0)").attr("checked",'checked');
+					}
+				}
 			}
 			if(!isVideoFlag && !isPhoneFlag){
 				$(".confFuncTR").hide();
@@ -231,6 +251,23 @@
 			$("#maxVideo").attr("value",defaultMaxVideo);
 			$("#maxAudio").attr("value",defaultMaxAudio);
 			$("#aheadTime").attr("value","${defaultConfig.aheadTimes}");
+			
+			//修复bug808
+			var confModel = "${confModel}";
+			if(confModel==1){
+				$("input:radio[name=confModel]:eq(0)").attr("checked",'checked');
+			} else {
+				$("input:radio[name=confModel]:eq(1)").attr("checked",'checked');
+			}
+			var micStatus = "${micStatus}";
+			if(micStatus==1){
+				$("input:radio[name=micStatus]:eq(0)").attr("checked",'checked');
+			} else {
+				$("input:radio[name=micStatus]:eq(1)").attr("checked",'checked');
+			}
+			
+			
+			
 			//permission
 			if("${changePage}"==1){
 				$("input:checkbox[name=changePage]:eq(0)").attr("checked",'checked');
@@ -284,17 +321,18 @@
 			}
 		});
 	</script>
-<!-- ${LANG['bizconf.jsp.create_Reservation_Conf.res50']} -->
+<!-- 若会议信息不为空，则为修改会议，加载会议信息 -->
 	<c:if test="${conf != null}">    
 	<fmt:formatDate var="confStartTime" value="${conf.startTime}" type="date" pattern="yyyy/MM/dd HH:mm:ss"/>
 	<fmt:formatDate var="confEndTime" value="${conf.endTime}" type="date" pattern="yyyy/MM/dd HH:mm:ss"/>
 	<fmt:formatDate var="confStartDate" value="${conf.startTime}" type="date" pattern="yyyy-MM-dd"/>
 	<fmt:formatDate var="confEndDate" value="${conf.endTime}" type="date" pattern="yyyy-MM-dd"/>
-	<c:set var="timeZoneDesc" value="${conf.timeZoneDesc}"></c:set>
+	<c:set var="timeZoneDesc" value="website.timezone.city.${conf.timeZoneId}"/>
 	<script type="text/javascript">
 		$(function() {
 			$("#confName").val("${conf.confName}");
-			$("#confDesc").val("${conf.confDesc}");
+			//var confDesc = $("#confDescValue").html();
+			//$("#confDesc").val(confDesc);
 			var isPublic = "${conf.publicFlag}";
 			if(isPublic=="1"){
 				$("input:radio[name=allowPublic]:eq(0)").attr("checked",'checked');
@@ -343,7 +381,8 @@
 				if(cycleType=="1"){
 					$("input[name=cycleType]:eq(0)").attr("checked",'checked');
 					$("#cycleDayFlag").attr("disabled",'disabled');
-					$("#cycleDayFlag").val(1);//"${cycleDayValue}"
+					var cycleDayValue = "${cycleDayValue}";
+					$("#cycleDayFlag").val(cycleDayValue);//"${cycleDayValue}"
 					$(".cycleDay").show();
 				} else if (cycleType=="2") {
 					$("input[name=cycleType]:eq(1)").attr("checked",'checked');
@@ -403,6 +442,10 @@
 			}
 			var confType = "${conf.confType}";
 			if(confType) {
+				if(confType == 0){
+					$("input[name=confType]:eq(0)").removeAttr("checked");
+					$("#videoTR").hide();
+				}
 				if(confType==2 || confType==3){
 					$("#videoTR").attr("style","");
 					$("input[name=confType]:eq(0)").attr("checked",'checked');
@@ -425,7 +468,7 @@
 			if(!isVideoFlag){
 				$("#videoFunc").hide();
 				$("#videoFuncM").hide();
-				$("#videoTR").hide;
+				$("#videoTR").hide();
 				$("input[name=confType]:eq(0)").removeAttr("checked");
 			}
 			
@@ -460,12 +503,14 @@
 			$("#maxAudio").attr("value","${conf.maxAudio}");
 			$("#maxVideo").attr("value","${conf.maxVideo}");
 			var videoType = "${conf.videoType}";
-			if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
+			if(videoType=="${CONF_VIDEO_TYPE_WEBBAND}"){
 				$("input:radio[name=videoType]:eq(0)").attr("checked",'checked');
-			} else if(videoType=="${CONF_VIDEO_TYPE_DISTINCT}"){
+			} else if(videoType=="${CONF_VIDEO_TYPE_FLUENCY}"){
 				$("input:radio[name=videoType]:eq(1)").attr("checked",'checked');
-			} else if(videoType=="${CONF_VIDEO_TYPE_WEBBAND}"){
+			} else if(videoType=="${CONF_VIDEO_TYPE_DISTINCT}"){
 				$("input:radio[name=videoType]:eq(2)").attr("checked",'checked');
+			} else if(videoType=="${CONF_VIDEO_TYPE_BEST}"){
+				$("input:radio[name=videoType]:eq(3)").attr("checked",'checked');
 			}
 // 			if(videoType==1){
 // 				$("input:radio[name=videoType]:eq(0)").attr("checked",'checked');
@@ -534,7 +579,7 @@
 <body onload="loaded()">
 <form id="meetingForm" action="">
 <div id="step1" class="validation_group" style="">
-<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" >
+<table class="overlay-panel" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr class="no-header">
         <td class="overlay-hdL"></td>
@@ -548,7 +593,7 @@
 			<div class="First_Steps">
 			    <div class="First_Steps_title"> 
 			    	<a href="javascript:;" class="closeButton"></a> 
-			    	<img class="nar" src="/static/images/nar.png" width="261" height="18"/>
+			    	<img class="nar" src="/static/images/nar.jpg" width="261" height="18"/>
 			    	<c:if test="${!empty conf }">
 			      		<h3 class="tit">${LANG['user.menu.conf.update']}</h3>
 			    	</c:if>
@@ -589,12 +634,12 @@
 						</td>
 					</tr>
 					<tr class="box01 confInviterTR">
-						<td align="right" class="left_text">指定参会人</td>
+						<td align="right" class="left_text">${LANG['bizconf.jsp.conf.schedule.attendee']}</td>
 						<td align="left"  class="td_space">
 							<input class="right_radio01 " name="confInviterRadio" type="radio" value="0" /> 
-							所有注册用户
+							${LANG['bizconf.jsp.conf.schedule.registers']}
 							<input class="right_radio01 " name="confInviterRadio" type="radio" value="1" checked="checked"/>
-							仅被邀请用户  <span style="color:#EB6D00">(只有被邀请的注册用户可见)</span>
+							${LANG['bizconf.jsp.conf.schedule.invitors']}  <span style="color:#EB6D00">${LANG['bizconf.jsp.conf.schedule.notice']}</span>
 						</td>
 					</tr>
 					<tr class="box01 publicPassSet" style="display: none;">
@@ -615,13 +660,14 @@
 			        <tr class="box02">
 			          <td  align="right" valign="top" style="padding-top:5px">${LANG['bizconf.jsp.create_Reservation_Conf.res63']}</td>
 			          <td align="left" class="td_space" style="padding-top:5px">
-			          	<textarea class="textarea_step1 skipThese"  id="confDesc" name="confDesc" cols="" rows="" style="text-indent: 5px;"></textarea>
+			          	<textarea class="textarea_step1 skipThese"  id="confDesc" name="confDesc" cols="" rows="" style="text-indent: 5px;">${conf.confDesc}</textarea>
+			          	<div id="confDescValue" style="display: none;">${conf.confDesc}</div>
 			          </td>
 			        </tr>
 			      </table>
 			    </div>
 			    <div class="First_Steps_bottom">
-			      <div class="but01"><a href="javascript:;" class="closeButton"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res64']}&nbsp;&nbsp;${LANG['bizconf.jsp.create_Reservation_Conf.res65']}</a></div>
+			      <div class="but01"><a href="javascript:;" class="closeButton"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res6400']}</a></div>
 			      <div class="but02"><a href="javascript:;" class="next" pageIndex="1"><img src="/static/images/next_bg.png" width="9" height="11" align="absmiddle" style=" margin-right:5px; margin-left:10px;" />${LANG['bizconf.jsp.create_Reservation_Conf.res66']}</a></div>
 			    </div>
 			</div>
@@ -703,7 +749,7 @@
 			                <tr class="box01 cycleDay" style=" margin-top:14px; display:none" >
 			                	<td  align="right" class="left_text">${LANG['bizconf.jsp.create_Reservation_Conf.res80']}</td>
 			                    <td align="left" class="td_space">
-			                    	${LANG['bizconf.jsp.create_Reservation_Conf.res81']}<input class="right_text06 skipThese" id="cycleDayFlag" name="cycleDayFlag" type="text" value="1"/>${LANG['bizconf.jsp.conf_list_index.res17']}
+			                    	${LANG['bizconf.jsp.create_Reservation_Conf.res81']}<input class="right_text06 skipThese" id="cycleDayFlag" name="cycleDayFlag" type="text" value="1"/>${LANG['bizconf.jsp.conf_list_index.days']}
 			                    </td>
 			                </tr>
 			                <!--${LANG['bizconf.jsp.create_Reservation_Conf.res82']}-->
@@ -744,7 +790,8 @@
 												<c:set var="week_day_lang" value="conf.cycle.weekly.${eachDay}"/>
 												<option value="${eachDay}">${LANG[week_day_lang]}</option>
 											</c:forEach>
-										</select>                    	
+										</select>
+										${LANG['bizconf.jsp.conf_list_index.res17']}                    	
 			                    	</p>
 			                    </td>
 			                </tr>
@@ -759,42 +806,43 @@
 			                
 			                <!--${LANG['bizconf.jsp.create_Reservation_Conf.res91']}-->
 			                 <tr class="box01 cycleEnable cycleTimeTr" style=" margin-top:14px;" >
-			                	<td align="right" class="left_text" valign="top">${LANG['bizconf.jsp.create_Reservation_Conf.res92']}</td>
+			                	<td align="right" class="" valign="top">
+			                		<span style="position: relative;top: 7px;">
+			                			${LANG['bizconf.jsp.create_Reservation_Conf.res92']}
+			                		</span>
+			                	</td>
 			                    <td align="left" class="td_space">
-<!--			                    	<table>-->
-<!--			                    		<tr>-->
-<!--			                    			<td>-->
-<!--			                    				<input class="right_text05 skipThese" id="startTime" name="startTime" type="text" readonly="readonly" value=""/>-->
-<!--			                    			</td>-->
-<!--			                    			<td>-->
-<!--			                    				<span style="margin-left: 5px;">--</span>-->
-<!--			                    			</td>-->
-<!--			                    			<td>-->
-<!--			                    				<input class="right_text07 skipThese" id="endTime" name="endTime" type="text"  readonly="readonly" value="" />	-->
-<!--			                    			</td>-->
-<!--			                    		</tr>-->
-<!--			                    	</table>-->
-			                    	<table style="position:relative;top:3px;" >
-<!--			                    	<table style="position:relative;top:3px;display: none;" >-->
+			                    	<table style="" >
 			                    		<tr>
-			                    			<td style="width: 150px">
-			                    				${LANG['bizconf.jsp.create_Reservation_Conf.res93']} <input class="right_text05 skipThese" id="startTime" name="startTime" type="text" readonly="readonly" value=""  style="width:100px;"/>
+			                    			<td style="width: 30px;" align="center">
+			                    				${LANG['bizconf.jsp.create_Reservation_Conf.res93']}
+			                    			</td>
+			                    			<td style="width: 120px">
+			                    				<input class="right_text05 skipThese" id="startTime" name="startTime" type="text" readonly="readonly" value=""  style="width:100px;"/>
 			                    			</td>
 			                    			<td align="left">
 			                    				<input class="infiniteFlag" name="infiniteFlag" type="radio" value="1" <c:if test="${!empty conf}">disabled</c:if>/>${LANG['bizconf.jsp.create_Reservation_Conf.res94']}
-<!--			                    				<input name="rangeType" type="radio" value="1" checked="checked" />${LANG['bizconf.jsp.create_Reservation_Conf.res94']}-->
 			                    			</td>
+			                    			<td></td>
 			                    		</tr>
 			                    		<tr>
+			                    			<td></td>
 			                    			<td></td>
 			                    			<td align="left">
-			                    				<input class="infiniteFlag" name="infiniteFlag" type="radio" value="2" checked="checked"/>${LANG['bizconf.jsp.create_Reservation_Conf.res35']} <input class="right_text05 skipThese" id="repeatCount" type="text" value="30" style="margin-left: 22px;width:50px;"/> ${LANG['bizconf.jsp.create_Reservation_Conf.res36']}
+			                    				<input class="infiniteFlag" name="infiniteFlag" type="radio" value="2" checked="checked"/>${LANG['bizconf.jsp.create_Reservation_Conf.res35']} 
+			                    			</td>
+			                    			<td style="position: relative;">
+			                    				<input class="right_text05 skipThese" id="repeatCount" type="text" value="30" style="width:50px;"/> ${LANG['bizconf.jsp.create_Reservation_Conf.res36']}
 			                    			</td>
 			                    		</tr>
 			                    		<tr>
 			                    			<td></td>
-			                    			<td align="left" style="width:260px;">
-			                    				<input class="infiniteFlag" name="infiniteFlag" type="radio" value="3"/>${LANG['bizconf.jsp.create_Reservation_Conf.res95']}<input class="right_text07 skipThese" id="endTime" name="endTime" type="text"  readonly="readonly" value=""  style="width:100px;"/>
+			                    			<td></td>
+			                    			<td align="left" style="">
+			                    				<input class="infiniteFlag" name="infiniteFlag" type="radio" value="3"/>${LANG['bizconf.jsp.create_Reservation_Conf.res95']}
+			                    			</td>
+			                    			<td>
+			                    				<input class="right_text07 skipThese" id="endTime" name="endTime" type="text"  readonly="readonly" value=""  style="width:100px;margin-left: 0px"/>
 			                    			</td>
 			                    		</tr>
 			                    	</table>
@@ -818,12 +866,13 @@
 			                <td class="td_space">
 			                <span style="color:#EB6D00"  class="li01" title="${beijingDate}">${LANG['bizconf.jsp.create_Reservation_Conf.res96']}:
 			                <c:if test="${empty timeZoneDesc }">
-			                	${currentUser.timeZoneDesc }${LANG['bizconf.jsp.create_Reservation_Conf.res97']}&nbsp;
-			                </c:if>
+			                	<c:set var="timeZone" value="website.timezone.city.${currentUser.timeZoneId}"/>
+			                	${LANG[timeZone]}${LANG['bizconf.jsp.create_Reservation_Conf.res97']}&nbsp;
+			                </c:if> 
 			                <c:if test="${!empty timeZoneDesc }">
-			                	${timeZoneDesc }${LANG['bizconf.jsp.create_Reservation_Conf.res97']}&nbsp;
+			                	${LANG[timeZoneDesc]}${LANG['bizconf.jsp.create_Reservation_Conf.res97']}&nbsp;
 			                </c:if>
-			                 <span id="site_time">${beijingDate}</span> 
+			                 <span id="site_time">${beijingDate}</span>  
 			                </span></td>
 			                </tr>
 			               	<tr class="startDateTr">
@@ -884,12 +933,26 @@
 			                    <td align="left" class="td_space">
 			  						<select name="meetingTimeH" id="meetingTimeH">
 										<c:forEach var="h" begin="00" end="23" step="1">
-											<option value="${h}" <c:if test="${h==1}">selected="selected"</c:if>>${h} ${LANG['bizconf.jsp.conf_list_index.res16']}</option>
+											<option value="${h}" <c:if test="${h==1}">selected="selected"</c:if>>${h}
+											<c:if test="${h==1 || h==0}">
+											${LANG['bizconf.jsp.conf_list_index.hr']}
+											</c:if>
+											<c:if test="${h!=1 && h!=0}">
+											${LANG['bizconf.jsp.conf_list_index.hrs']}
+											</c:if> 
+											</option>
 										</c:forEach>
 									</select>                  
 									<select name="meetingTimeM" id="meetingTimeM">
 										<c:forEach var="m" begin="00" end="55" step="5">
-											<option value="${m}">${m} ${LANG['bizconf.jsp.attended_conf_list.res10']}</option>
+											<option value="${m}">${m} 
+											<c:if test="${m==0}">
+											${LANG['bizconf.jsp.conf_list_index.min']}
+											</c:if>
+											<c:if test="${m!=0}">
+											${LANG['bizconf.jsp.conf_list_index.mins']}
+											</c:if>
+											</option>
 										</c:forEach>
 									</select>
 			                    </td>
@@ -898,7 +961,7 @@
 			            </table>
 			            </div>
 						<div class="First_Steps_bottom">
-			      <div class="but01"><a href="javascript:;" class="closeButton"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res64']}&nbsp;&nbsp;${LANG['bizconf.jsp.create_Reservation_Conf.res65']}</a></div>
+			      <div class="but01"><a href="javascript:;" class="closeButton"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res6400']}</a></div>
 			      <div class="but02"><a href="javascript:;" class="prev"  pageIndex="2"><img src="/static/images/prev_bg.png" width="9" height="11" align="absmiddle" style=" margin-right:5px; margin-left:10px;" />${LANG['bizconf.jsp.create_Reservation_Conf.res103']}</a></div>
 			      <div class="but02"><a href="javascript:;" class="next"  pageIndex="2"><img src="/static/images/next_bg.png" width="9" height="11" align="absmiddle" style=" margin-right:5px; margin-left:10px;" />${LANG['bizconf.jsp.create_Reservation_Conf.res66']}</a></div>
 			    </div>
@@ -986,7 +1049,7 @@
 				    </div>
 				    <div class="extra_panel">
 				       <table class="box_a">
-				        <tr class="box01">
+				        <tr class="box01" id="audioTR">
 				          <td align="right" class="left_text">${LANG['bizconf.jsp.create_Reservation_Conf.res108']}</td>
 				          <td align="left" class="td_space">
 					          <select name="maxAudio" id="maxAudio">
@@ -1011,12 +1074,26 @@
 				        <tr class="box01">
 				          <td  align="right" class="left_text">${LANG['bizconf.jsp.conf_default_setup.res21']}</td>
 				          <td align="left" class="td_space">
-				          <cc:confList var="CONF_VIDEO_TYPE_FLUENCY"/>
-				          <cc:confList var="CONF_VIDEO_TYPE_DISTINCT"/>
-				          <cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
+				                <cc:confList var="CONF_VIDEO_TYPE_FLUENCY"/>
+					            <cc:confList var="CONF_VIDEO_TYPE_DISTINCT"/>
+					            <cc:confList var="CONF_VIDEO_TYPE_WEBBAND"/>
+					            <cc:confList var="CONF_VIDEO_TYPE_BEST"/>
+					            
+					            <cc:confList var="CONF_VIDEO_TYPE_FLUENCY_CODE"/>
+					            <cc:confList var="CONF_VIDEO_TYPE_DISTINCT_CODE"/>
+					            <cc:confList var="CONF_VIDEO_TYPE_WEBBAND_CODE"/>
+					            <cc:confList var="CONF_VIDEO_TYPE_BEST_CODE"/>
+				            <input class="leixing"  name="videoType" type="radio" value="${CONF_VIDEO_TYPE_WEBBAND }" <c:if test="${userEmpower.dpiNumber==CONF_VIDEO_TYPE_WEBBAND_CODE }"> checked="checked" </c:if> />${LANG['bizconf.jsp.conf_default_setup.res24']}
+				            <c:if test="${userEmpower.dpiNumber>=CONF_VIDEO_TYPE_FLUENCY_CODE }">
 				          	<input class="leixing"  name="videoType" type="radio" value="${CONF_VIDEO_TYPE_FLUENCY }" checked="checked"/>${LANG['bizconf.jsp.conf_default_setup.res22']}
+				          	</c:if>
+				          	<c:if test="${userEmpower.dpiNumber>=CONF_VIDEO_TYPE_DISTINCT_CODE }">
 				          	<input class="leixing"  name="videoType" type="radio" value="${CONF_VIDEO_TYPE_DISTINCT }" />${LANG['bizconf.jsp.conf_default_setup.res23']}
-				          	<input class="leixing"  name="videoType" type="radio" value="${CONF_VIDEO_TYPE_WEBBAND }" />${LANG['bizconf.jsp.conf_default_setup.res24']}</td>
+				          	</c:if>
+				          	<c:if test="${userEmpower.dpiNumber>=CONF_VIDEO_TYPE_BEST_CODE }">
+				          	<input class="leixing"  name="videoType" type="radio" value="${CONF_VIDEO_TYPE_BEST }" />${LANG['system.quality.level.best']}
+				          	</c:if>
+				          </td>
 				        </tr>
 				         <tr class="box01" >
 				          <td  align="right" class="left_text">${LANG['bizconf.jsp.conf_default_setup.res25']}</td>
@@ -1050,9 +1127,9 @@
 				    </div>    
 			    </div>
 			    <div class="First_Steps_bottom">
-			      <div class="but01"><a href="javascript:;" class="closeButton"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res64']}&nbsp;&nbsp;${LANG['bizconf.jsp.create_Reservation_Conf.res65']}</a></div>
+			      <div class="but01"><a href="javascript:;" class="closeButton"><img src="/static/images/quxiao.png" width="11" height="10" align="absmiddle" style=" margin-right:8px; margin-left:10px"/>${LANG['bizconf.jsp.create_Reservation_Conf.res6400']}</a></div>
 				  <div class="but02"><a href="javascript:;" class="prev"  pageIndex="2"><img src="/static/images/prev_bg.png" width="9" height="11" align="absmiddle" style=" margin-right:5px; margin-left:10px;" />${LANG['bizconf.jsp.create_Reservation_Conf.res103']}</a></div>
-			      <div class="but02"><a href="javascript:;" class="next"  pageIndex="3"><img src="/static/images/next_bg.png" width="9" height="11" align="absmiddle" style=" margin-right:5px; margin-left:10px;" />${LANG['bizconf.jsp.create_Reservation_Conf.res110']}&nbsp;&nbsp;${LANG['bizconf.jsp.create_Reservation_Conf.res111']}</a></div>
+			      <div class="but02"><a href="javascript:;" class="next"  pageIndex="3"><img src="/static/images/next_bg.png" width="9" height="11" align="absmiddle" style=" margin-right:5px; margin-left:10px;" />${LANG['bizconf.jsp.create_Reservation_Conf.res1101']}</a></div>
 			    </div>
 			</div>			
         <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->
@@ -1068,7 +1145,7 @@
   </table>
 </div>
 
-<div id="step4" class="" style="display:none;">
+<div id="step4" class="" style="display: none;">
   <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" >
     <tbody>
       <tr class="no-header">
@@ -1144,16 +1221,15 @@
             <div class="overlay-main_right">
            	 	<input type="hidden" id="confIdForEmail" value=""/>
             	<h3>${LANG['bizconf.jsp.conf_invite_recv.res13']}:</h3>
-                <p>${LANG['bizconf.jsp.create_Reservation_Conf.res116']}, ${LANG['bizconf.jsp.create_Reservation_Conf.res117']}</p>
-                <a class="overlay_email01" href="javascript:sendNoticeEmail();" style="margin-left: 180px;"><img src="/static/images/email05.png" width="16" height="12" align="absmiddle" style=" padding-right:5px;"/>Outlook</a>
+                <p>${LANG['bizconf.jsp.create_Reservation_Conf.res1160']}</p>
+                <a class="email_outlook" href="javascript:sendNoticeEmail();"><img src="/static/images/email05.png" width="16" height="12" align="absmiddle" style=" padding-right:5px;"/>Outlook</a>
                 <a class="overlay_email02" href="javascript:sendNoticeEmail();" style="display: none;"> <img src="/static/images/ico002.png" width="16" height="11" align="absmiddle" style=" padding-right:5px;" />Gmail</a>
                 <a class="overlay_email03" href="javascript:sendNoticeEmail();" style="display: none;"><img src="/static/images/ico003.png" width="14" height="17" align="absmiddle" style=" padding-right:5px;" />Foxmail</a>
 	            <div style="clear: left;"></div>
 				<h3 style="clear: left;">${LANG['bizconf.jsp.create_Reservation_Conf.res118']}:</h3>
 				<p>${LANG['bizconf.jsp.create_Reservation_Conf.res119']}</p>
-				<a class="overlay_email01" href="javascript:inventContact();" style="margin-left: 180px;"><img src="/static/images/yaoqing.png" width="16" height="12" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.conf_list_index.res13']}</a>
-                <a class="overlay_email04" href="javascript:createSuccess();"><img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.create_Reservation_Conf.res120']}</a>
-<!--                 <a class="overlay_email05" href="#"><img src="/static/images/ico004.png" width="16" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res57']}</a> -->
+				<a class="email_outlook" href="javascript:inventContact();"><img src="/static/images/yaoqing.jpg" width="16" height="12" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.conf_list_index.res13']}</a>
+                <a class="meet_ok" href="javascript:createSuccess();"><img src="/static/images/ys_r_bg.png" width="16" height="14" align="absmiddle" style=" padding-right:5px;"/>${LANG['bizconf.jsp.create_Reservation_Conf.res120']}</a>
 
             </div>
           </div>

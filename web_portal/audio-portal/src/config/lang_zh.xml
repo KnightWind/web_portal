@@ -156,7 +156,7 @@
 	</resource>
 	<resource>
 		<key>company.menu.meeting.permissions</key>
-		<value>会议功能设置</value>
+		<value>全局会议功能设置</value>
 	</resource>	
 
 	<!-- 系统用户登录 -->
@@ -252,7 +252,7 @@
 	<!-- 系统管理员操作提示 -->
 	<resource>
 		<key>system.sysUser.list.delete</key>
-		<value>确认是否删除系统管理员?</value>
+		<value>您确定删除此用户吗？</value>
 	</resource>
 	<resource>
 		<key>system.sysUser.delete.1</key>
@@ -477,7 +477,7 @@
 	</resource>
 	<resource>
 		<key>system.site.list.chargeMode.time</key>
-		<value>time</value>
+		<value>meeting time</value>
 	</resource>
 	<resource>
 		<key>system.site.list.effedate</key>
@@ -583,6 +583,14 @@
 	<resource>
 		<key>system.site.empower.item.13</key>
 		<value>调查问卷</value>
+	</resource>
+	<resource>
+		<key>system.site.empower.item.16</key>
+		<value>最大视频画质</value>
+	</resource>
+	<resource>
+		<key>system.site.empower.item.18</key>
+		<value>最大并发会场数</value>
 	</resource>
 	
 
@@ -890,6 +898,10 @@
 		<value>只允许数字、字母、&apos;&amp;&apos;、&apos;&#45;&apos;、&apos;&#95;&apos;、&apos;空格&apos;</value>
 	</resource>
 	<resource>
+		<key>system.site.list.checkChName.custom</key>
+		<value>不能是中文</value>
+	</resource>	
+	<resource>
 		<key>system.site.list.checkSiteSign.custom</key>
 		<value>只允许数字、字母、&apos;&amp;&apos;、&apos;&#45;&apos;、&apos;&#95;&apos;</value>
 	</resource>
@@ -1016,6 +1028,10 @@
 		<value>长度为2~32个字符</value>
 	</resource>
 	<resource>
+		<key>system.notice.content.rangelength</key>
+		<value>长度为1~2000个字符</value>
+	</resource>
+	<resource>
 		<key>system.notice.date.dateISO</key>
 		<value>请输入正确的时间格式</value>
 	</resource>
@@ -1029,7 +1045,7 @@
 	<!-- 语言按扭 -->
 	<resource>
 		<key>website.lang.zh</key>
-		<value>中文版</value>
+		<value>中文</value>
 	</resource>
 	<resource>
 		<key>website.lang.en</key>
@@ -1037,7 +1053,7 @@
 	</resource>
 	<resource>
 		<key>website.message.welcome</key>
-		<value>欢迎您</value>
+		<value>欢迎您，</value>
 	</resource>
 
 	<resource>
@@ -1083,6 +1099,10 @@
 		<key>system.search</key>
 		<value>查询</value>
 	</resource>
+	<resource>
+		<key>system.print</key>
+		<value>打印</value>
+	</resource>	
 	<resource>
 		<key>system.general.search</key>
 		<value>搜索</value>
@@ -1233,7 +1253,7 @@
 
 	<resource>
 		<key>system.eventlog.type.300</key>
-		<value>邮件服务器配置</value>
+		<value>邮件服务器信息测试</value>
 	</resource>
 	<resource>
 		<key>system.eventlog.type.301</key>
@@ -1804,7 +1824,7 @@
 
 	<resource>
 		<key>system.email.config.t1</key>
-		<value>邮件服务器信息录入</value>
+		<value>邮件服务器信息配置</value>
 	</resource>
 
 	<resource>
@@ -1928,7 +1948,7 @@
 	</resource>
 	<resource>
 		<key>system.list.meeting.license</key>
-		<value>参会人次</value>
+		<value>参会详情</value>
 	</resource>
 	<resource>
 		<key>system.list.meeting.host</key>
@@ -2123,11 +2143,15 @@
 		<key>conf.create.error.-1</key>
 		<value>参会方数大于站点当前所剩参会方数</value>
 	</resource>
+	<resource>
+		<key>conf.create.error.-2</key>
+		<value>超过站点最大并发会议数</value>
+	</resource>
 	
 	<!-- 个人信息资源 -->
 	<resource>
 		<key>system.user.title</key>
-		<value>个人信息修改</value>
+		<value>个人信息</value>
 	</resource>
 	<resource>
 		<key>system.user.username</key>
@@ -2225,7 +2249,7 @@
 	
 	<resource>
 		<key>site.admin.conf.config.phone.title</key>
-		<value>会议功能全局设置</value>
+		<value>全局会议功能设置</value>
 	</resource>
 	<resource>
 		<key>site.admin.conf.config.createphoneconf</key>
@@ -2336,7 +2360,7 @@
 	<!-- 批量导入企业用户Start -->
 		<resource>
 			<key>site.user.import.cbinfo1</key>
-			<value>导入用户完成，共</value>
+			<value>导入完成，共</value>
 		</resource>
 		<resource>
 			<key>site.user.import.cbinfo2</key>
@@ -2352,7 +2376,7 @@
 		</resource>
 		<resource>
 			<key>site.user.import.cbinfo5</key>
-			<value>未导入的有：</value>
+			<value>数据格式错误的有：</value>
 		</resource>
 		<resource>
 			<key>site.user.import.cbinfo6</key>
@@ -3385,6 +3409,10 @@
 		<value>开始时间</value>
 	</resource>	
 	<resource>
+		<key>user.menu.conf.endtime</key>
+		<value>结束时间</value>
+	</resource>	
+	<resource>
 		<key>user.menu.conf.duration</key>
 		<value>持续时间</value>
 	</resource>	
@@ -3429,8 +3457,12 @@
 		<value>加入会议</value>
 	</resource>	
 	<resource>
+		<key>user.menu.conf.immediatly</key>
+		<value>即时会议</value>
+	</resource>	
+	<resource>
 		<key>user.menu.conf.join.desc</key>
-		<value>我们将开始便捷式会议，所有参数都可以会议设置中配置。</value>
+		<value>我们将开始便捷式会议，所有参数都可以在会议设置中配置。</value>
 	</resource>	
 	<resource>
 		<key>user.menu.conf.begin</key>
@@ -3454,7 +3486,7 @@
 	</resource>	
 	<resource>
 		<key>user.menu.conf.schedule</key>
-		<value>安排会议</value>
+		<value>预约会议</value>
 	</resource>	
 	<resource>
 		<key>user.menu.conf.time.info</key>
@@ -3560,6 +3592,10 @@
 	</resource>	
 	<resource>
 		<key>user.menu.conf.hour</key>
+		<value>小时</value>
+	</resource>	
+	<resource>
+		<key>user.menu.conf.hours</key>
 		<value>小时</value>
 	</resource>	
 	<resource>
@@ -3733,6 +3769,12 @@
 	<key>bizconf.jsp.add_calendar_notice.res1</key>
 	<value>请输入邮箱</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.add_calendar_notice.res2000</key>
+	<value>长度为6~32个字符</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.add_calendar_notice.res2</key>
 	<value>长度为</value>
@@ -3947,6 +3989,10 @@
 	<value>分钟</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.attended_conf_list.res10000</key>
+	<value>分钟</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.attended_conf_list.res11</key>
 	<value>重新创建</value>
 </resource>
@@ -4099,15 +4145,15 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_default_setup.res22</key>
-	<value>优先保证视频流畅</value>
+	<value>中</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_default_setup.res23</key>
-	<value>优先保证画质清晰</value>
+	<value>高</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_default_setup.res24</key>
-	<value>优先保证网络带宽</value>
+	<value>低</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_default_setup.res25</key>
@@ -4193,10 +4239,30 @@
 	<key>bizconf.jsp.conf_default_setup.res45</key>
 	<value>保存</value>
 </resource>
+<resource>
+	<key>bizconf.jsp.conf.schedule.attendee</key>
+	<value>指定参会人</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf.schedule.registers</key>
+	<value>所有注册用户</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf.schedule.invitors</key>
+	<value>仅邀请用户 </value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf.schedule.notice</key>
+	<value>(只有被邀请的注册用户可见)</value>
+</resource>
 <!--resource of conf_invite_recv.jsp-->
 <resource>
 	<key>bizconf.jsp.conf_invite_recv.res1</key>
 	<value>发送通知邮件</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_invite_recv.res0</key>
+	<value>接受邀请</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_recv.res2</key>
@@ -4208,7 +4274,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_recv.res4</key>
-	<value>页面头部开始</value>
+	<value>拒绝邀请</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_recv.res5</key>
@@ -4232,7 +4298,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_recv.res10</key>
-	<value>安全会议号：</value>
+	<value>与会者安全会议号：</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_recv.res11</key>
@@ -4257,7 +4323,7 @@
 <!--resource of conf_invite_refuse.jsp-->
 <resource>
 	<key>bizconf.jsp.conf_invite_refuse.res1</key>
-	<value>中文版</value>
+	<value>中文</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_refuse.res2</key>
@@ -4298,15 +4364,15 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_user_list.res3</key>
-	<value>您可以查看邀请用户参会情况或再次提醒用户。</value>
+	<value>您可以查看邀请用户应答情况或再次提醒用户。</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_user_list.res4</key>
-	<value>详情</value>
+	<value>应答状态</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_user_list.res5</key>
-	<value>已接受</value>
+	<value>接受邀请</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_user_list.res6</key>
@@ -4314,8 +4380,14 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_invite_user_list.res7</key>
-	<value>已谢绝</value>
+	<value>谢绝邀请</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.conf_invite_user_list.res8000</key>
+	<value>返回</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.conf_invite_user_list.res8</key>
 	<value>返</value>
@@ -4411,20 +4483,72 @@
 	<value>邀请</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.conf_list_index.hr</key>
+	<value>小时</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.hrs</key>
+	<value>小时</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.min</key>
+	<value>分钟</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.mins</key>
+	<value>分钟</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.days</key>
+	<value>天</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.conf_list_index.res14</key>
-	<value>不到</value>
+	<value>不到1分钟</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_list_index.res15</key>
-	<value>大约</value>
+	<value>大约1分钟</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1500</key>
+	<value>%d 分钟</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1501</key>
+	<value>大约1小时</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1502</key>
+	<value>大约%d小时</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1503</key>
+	<value>大约1个月</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1504</key>
+	<value>大约1年</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_list_index.res16</key>
 	<value>小时</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.conf_list_index.res16000</key>
+	<value>小时</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.conf_list_index.res17</key>
 	<value>天</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1700</key>
+	<value>1天</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res1701</key>
+	<value>%d天</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_list_index.res18</key>
@@ -4435,8 +4559,16 @@
 	<value>月</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.conf_list_index.res1900</key>
+	<value>%d 月</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.conf_list_index.res20</key>
 	<value>年</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.res2000</key>
+	<value>%d 年</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_list_index.res21</key>
@@ -4545,6 +4677,10 @@
 <resource>
 	<key>bizconf.jsp.conf_list_index.res47</key>
 	<value>查看会议选项</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.conf_list_index.notres48</key>
+	<value>尚未开始</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.conf_list_index.res48</key>
@@ -4752,6 +4888,10 @@
 	<value>主题长度为</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res2000</key>
+	<value>主题长度为1~32位字符</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res3</key>
 	<value>位字符</value>
 </resource>
@@ -4768,12 +4908,16 @@
 	<value>描述长度最大为</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res6000</key>
+	<value>描述长度最大为150位字符</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res7</key>
-	<value>请输入会议密码</value>
+	<value>请输入会议密码, 不能含有空格</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res8</key>
-	<value>请输入会议确认密码</value>
+	<value>请输入会议确认密码, 不能含有空格</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res9</key>
@@ -4784,12 +4928,20 @@
 	<value>密码长度为</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res1000</key>
+	<value>密码长度为6~16位</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res11</key>
 	<value>请选择开始时间</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res12</key>
 	<value>会议提前时间为</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res1200</key>
+	<value>会议提前时间为0~60分钟</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res13</key>
@@ -4818,6 +4970,10 @@
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res19</key>
 	<value>循环周期不能大于</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res1900</key>
+	<value>循环周期不能大于31次</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res20</key>
@@ -4887,9 +5043,19 @@
 	<key>bizconf.jsp.create_Reservation_Conf.res36</key>
 	<value>次后结束</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.create_Reservation_Conf.inventor</key>
+	<value>您是否立即邀请与会者</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res37</key>
 	<value>会议主题不超过</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res3700</key>
+	<value>会议主题不超过31字符</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res38</key>
@@ -4900,8 +5066,12 @@
 	<value>会议描述不超过</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res3900</key>
+	<value>会议描述不超过150字符</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res40</key>
-	<value>会议时长不能为</value>
+	<value>会议时长不能为0</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res41</key>
@@ -4998,6 +5168,10 @@
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res64</key>
 	<value>取</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res6400</key>
+	<value>取  消</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res65</key>
@@ -5184,6 +5358,10 @@
 	<value>完</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res1101</key>
+	<value>完   成</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res111</key>
 	<value>成</value>
 </resource>
@@ -5208,6 +5386,10 @@
 	<value>您可以通过点击下面的按钮</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.create_Reservation_Conf.res1160</key>
+	<value>您可以通过点击下面的按钮，将此会议添加到邮件日历中。</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.create_Reservation_Conf.res117</key>
 	<value>将此会议添加到邮件日历中。</value>
 </resource>
@@ -5227,6 +5409,10 @@
 <resource>
 	<key>bizconf.jsp.download_center.res1</key>
 	<value>下载中心</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.download_center.res2000</key>
+	<value>ConfCloud </value>
 </resource>
 <resource>
 	<key>bizconf.jsp.download_center.res2</key>
@@ -5265,6 +5451,10 @@
 	<value>您可以使用该款视频转换软件</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.download_center.res1000</key>
+	<value>您可以使用该款视频转换软件，可以将AVI、WMV、MPG、3GP、MP4、MOV、WAV、FLV、wmv、wma、asf，等视频文件用于媒体共享</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.download_center.res11</key>
 	<value>可以将</value>
 </resource>
@@ -5298,12 +5488,16 @@
 	<value>在点击开始会议</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.download_help.res4000</key>
+	<value>在点击开始会议/加入会议后，弹出插件安装提示（如下图）</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.download_help.res5</key>
 	<value>加入会议后，弹出插件安装提示（如下图）</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.download_help.res6</key>
-	<value>注意：</value>
+	<value>注意：IE，火狐浏览器支持插件安装。</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.download_help.res7</key>
@@ -5755,6 +5949,10 @@
 	<value>您的浏览器可能与本站点不兼容，建议您使用</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.index.res2500</key>
+	<value>您的浏览器可能与本站点不兼容，建议您使用IE7或Firefox3.6及以上版本！</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.index.res26</key>
 	<value>或</value>
 </resource>
@@ -5793,7 +5991,7 @@
 <!--resource of inviteContactsSelect.jsp-->
 <resource>
 	<key>bizconf.jsp.inviteContactsSelect.res1</key>
-	<value>从联系人导入</value>
+	<value>选择与会者</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.inviteContactsSelect.res2</key>
@@ -5806,6 +6004,36 @@
 <resource>
 	<key>bizconf.jsp.inviteContactsSelect.res4</key>
 	<value>选定</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.inviteContactsSelect.before</key>
+	<value>已经邀请</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.inviteContactsSelect.after</key>
+	<value>人</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.inviteContactsSelect.after2</key>
+	<value>人</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.inviteContactsSelect.res5</key>
+	<value>选择联系人</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.inviteContactsSelect.res6</key>
+	<value>选择群组</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.inviteContactsSelect.res7</key>
+	<value>选择注册用户</value> 
 </resource>
 <!--resource of inviteFirst.jsp-->
 <resource>
@@ -5834,7 +6062,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.inviteFirst.res7</key>
-	<value>请填写电话或邮箱！</value>
+	<value>请填写邮箱！</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.inviteFirst.res8</key>
@@ -6095,7 +6323,11 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.profile.res3</key>
-	<value>只允许输入数字或字母</value>
+	<value>只允许输入数字或字母或下划线</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.profile.res3000</key>
+	<value>只允许输入数字或字母或下划线，必需在当前企业用户角色下唯一</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.profile.res4</key>
@@ -6106,12 +6338,20 @@
 	<value>只允许中文或数字或字母或</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.profile.res5000</key>
+	<value>只允许中文或数字或字母或"_"或"&amp;"或"-"或空格</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.profile.res6</key>
 	<value>或空格</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.profile.res7</key>
 	<value>只允许数字或字母或</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.profile.res7fix1</key>
+	<value>只允许数字或字母或"_"或"&amp;"或"-" 或空格</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.profile.res8</key>
@@ -6141,10 +6381,12 @@
 	<key>bizconf.jsp.profile.res14</key>
 	<value>支持手机号码或电话号码（</value>
 </resource>
+
 <resource>
-	<key>bizconf.jsp.profile.res15</key>
-	<value>）的输入</value>
+	<key>bizconf.jsp.profile.res14fix</key>
+	<value>支持手机号码或电话号码（+86 010-88888888）的输入</value>
 </resource>
+
 <!--resource of ptcConfloglist.jsp-->
 <resource>
 	<key>bizconf.jsp.ptcConfloglist.res1</key>
@@ -6197,7 +6439,7 @@
 <!--resource of viewConf.jsp-->
 <resource>
 	<key>bizconf.jsp.viewConf.res1</key>
-	<value>您使用的浏览器不支持此复制功能，请使用</value>
+	<value>您使用的浏览器不支持此复制功能，请使用Ctrl+C或鼠标右键</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.viewConf.res2</key>
@@ -6333,7 +6575,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.conf_list.res5</key>
-	<value>会议主题或会议号</value>
+	<value>会议主题</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.conf_list.res6</key>
@@ -6391,7 +6633,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.CopyOfadminIndex.res3</key>
-	<value>中文版</value>
+	<value>中文</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.CopyOfadminIndex.res4</key>
@@ -6427,7 +6669,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.CopyOfadminIndex.res12</key>
-	<value>邮件服务器配置</value>
+	<value>邮件服务器信息测试</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.CopyOfadminIndex.res13</key>
@@ -6499,6 +6741,10 @@
 	<key>bizconf.jsp.admin.createOrg.res4</key>
 	<value>取消</value>
 </resource>
+<resource>
+	<key>bizconf.jsp.admin.createOrg.ok</key>
+	<value>确定</value>
+</resource>
 <!--resource of edit_userbase.jsp-->
 <resource>
 	<key>bizconf.jsp.admin.edit_userbase.res1</key>
@@ -6522,7 +6768,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.edit_userbase.res6</key>
-	<value>会议功能</value>
+	<value>站点授权</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.edit_userbase.res7</key>
@@ -6565,15 +6811,7 @@
 <!--resource of footer.jsp-->
 <resource>
 	<key>bizconf.jsp.admin.footer.res1</key>
-	<value>沪</value>
-</resource>
-<resource>
-	<key>bizconf.jsp.admin.footer.res2</key>
-	<value>备</value>
-</resource>
-<resource>
-	<key>bizconf.jsp.admin.footer.res3</key>
-	<value>号</value>
+	<value>沪ICP备11034277号-5</value>
 </resource>
 <!--resource of header.jsp-->
 <resource>
@@ -6694,14 +6932,36 @@
 	<key>bizconf.jsp.admin.login.res3</key>
 	<value>验证码必须填</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.admin.email.res4000</key>
+	<value>字符长度为6~32位</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.admin.pass.res4000</key>
+	<value>字符长度为6~16位</value>
+</resource>
+
+<resource>
+	<key>bizconf.jsp.admin.login.res4000</key>
+	<value>字符长度为4位</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.admin.login.res4</key>
-	<value>字符长度为</value>
+	<value>字符长度为4位</value>
 </resource>
 <resource>
-	<key>bizconf.jsp.admin.login.res5</key>
-	<value>位</value>
+	<key>bizconf.jsp.admin.login.res4fix1</key>
+	<value>字符长度为6~32位</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.admin.login.res4fix2</key>
+	<value>字符长度为6~16位</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.admin.login.res6</key>
 	<value>登录</value>
@@ -6765,7 +7025,7 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.mybilling_list.res9</key>
-	<value>元</value>
+	<value>元</value> <!-- 货币单位：元 -->
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.mybilling_list.res10</key>
@@ -6783,12 +7043,9 @@
 </resource>
 <resource>
 	<key>bizconf.jsp.admin.organization.res2</key>
-	<value>最多支持</value>
+	<value>最多支持4级部门</value>
 </resource>
-<resource>
-	<key>bizconf.jsp.admin.organization.res3</key>
-	<value>及部门</value>
-</resource>
+
 <resource>
 	<key>bizconf.jsp.admin.organization.res4</key>
 	<value>组织机构</value>
@@ -6802,14 +7059,17 @@
 	<key>bizconf.jsp.admin.password_forget.res2</key>
 	<value>请输入验证码</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.admin.password_forget.email.res3</key>
+	<value>请输入正确的email格式</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.admin.password_forget.res3</key>
-	<value>请输入正确的</value>
+	<value>请输入正确的email格式</value>
 </resource>
-<resource>
-	<key>bizconf.jsp.admin.password_forget.res4</key>
-	<value>格式</value>
-</resource>
+
 <resource>
 	<key>bizconf.jsp.admin.password_forget.res5</key>
 	<value>企业管理员</value>
@@ -6822,14 +7082,17 @@
 	<key>bizconf.jsp.admin.password_forget.res7</key>
 	<value>页面头部结束</value>
 </resource>
+
 <resource>
-	<key>bizconf.jsp.admin.password_forget.res8</key>
-	<value>输入与</value>
+	<key>bizconf.jsp.admin.password_forget.conf.res8000</key>
+	<value>输入与 confcloud 账户关联的电子邮件地址。我们将向您发送页面链接，通过该页面您可以轻松创建新密码。</value>
 </resource>
+
 <resource>
-	<key>bizconf.jsp.admin.password_forget.res9</key>
-	<value>账户关联的电子邮件地址。我们将向您发送页面链接，通过该页面您可以轻松创建新密码。</value>
+	<key>bizconf.jsp.admin.password_forget.res8fix</key>
+	<value>输入与 confcloud 账户关联的电子邮件地址。我们将向您发送页面链接，通过该页面您可以轻松创建新密码。</value>
 </resource>
+
 <resource>
 	<key>bizconf.jsp.admin.password_forget.res10</key>
 	<value>邮箱地址：</value>
@@ -7308,6 +7571,10 @@
 	<value>选中浏览器上方的黄色栏并选择安装</value>
 </resource>
 <resource>
+	<key>bizconf.jsp.common.join_plug.res2fix</key>
+	<value>选中浏览器上方的黄色栏并选择安装...或运行...</value>
+</resource>
+<resource>
 	<key>bizconf.jsp.common.join_plug.res3</key>
 	<value>或运行</value>
 </resource>
@@ -7354,6 +7621,10 @@
 <resource>
 	<key>bizconf.jsp.common.join_plug.res14</key>
 	<value>已经下载</value>
+</resource>
+<resource>
+	<key>bizconf.jsp.common.join_plug.res14fix</key>
+	<value>已经下载,请不要重复下载！</value>
 </resource>
 <resource>
 	<key>bizconf.jsp.common.join_plug.res15</key>
@@ -7441,7 +7712,7 @@
 <resource>
 	<key>bizconf.jsp.common.site_locked.res1</key>
 	<value>企业站点锁定提示</value>
-</resource>c
+</resource>
 <resource>
 	<key>bizconf.jsp.common.site_locked.res2</key>
 	<value>站点已被锁定，请与会畅客服联系。</value>
@@ -7507,6 +7778,12 @@
 	<key>bizconf.jsp.system.createSite.res2</key>
 	<value>站点时区</value>
 </resource>
+
+<resource>
+	<key>bizconf.jsp.system.createSite.res3000</key>
+	<value>支持jpg,bmp,png,gif格式，256K。建议大小为：100*48</value>
+</resource>
+
 <resource>
 	<key>bizconf.jsp.system.createSite.res3</key>
 	<value>支持</value>
@@ -8053,12 +8330,638 @@
 <!--resource of copyright.jsp-->
 <resource>
 	<key>bizconf.jsp.copyright.res1</key>
-	<value>版权所有</value>
+	<value>版权所有上海上海会畅通讯股份有限公司</value>
+</resource>
+
+
+<!-- 2013.6.18 新增资源 -->
+
+<resource>
+	<key>system.admin.create.succeed</key>
+	<value>创建系统管理员成功！</value>
 </resource>
 <resource>
-	<key>bizconf.jsp.copyright.res2</key>
-	<value>上海上海会畅通讯股份有限公司</value>
+	<key>system.admin.create.failed</key>
+	<value>创建系统管理员失败！</value>
+</resource>
+<resource>
+	<key>system.admin.update.succeed</key>
+	<value>修改系统管理员成功！</value>
+</resource>
+<resource>
+	<key>system.admin.update.failed</key>
+	<value>修改系统管理员失败！</value>
+</resource>
+<resource>
+	<key>system.admin.delete.succeed</key>
+	<value>删除系统管理员成功！</value>
+</resource>
+<resource>
+	<key>system.admin.delete.failed</key>
+	<value>删除系统管理员失败！</value>
+</resource>
+<resource>
+	<key>system.admin.create.exists</key>
+	<value>该系统管理员已存在！</value>
+</resource>
+<resource>
+	<key>system.service.create.succeed</key>
+	<value>创建系统客服成功！</value>
+</resource>
+<resource>
+	<key>system.service.create.failed</key>
+	<value>创建系统客服失败！</value>
+</resource>
+<resource>
+	<key>system.service.update.succeed</key>
+	<value>修改系统客服成功！</value>
+</resource>
+<resource>
+	<key>system.service.update.failed</key>
+	<value>修改系统客服失败！</value>
+</resource>
+<resource>
+	<key>system.service.delete.succeed</key>
+	<value>删除系统客服成功！</value>
+</resource>
+<resource>
+	<key>system.service.delete.failed</key>
+	<value>删除系统客服失败！</value>
+</resource>
+<resource>
+	<key>system.service.create.exists</key>
+	<value>该系统客服已存在！</value>
+</resource>
+<resource>
+	<key>system.service.email.exists</key>
+	<value>该邮箱已存在！</value>
 </resource>
 
 
+
+
+
+
+<resource>
+	<key>system.cycle.end.time</key>
+	<value>重复%s次后结束</value>
+</resource>
+<resource>
+	<key>system.by.day</key>
+	<value>按日(每%s天)</value>
+</resource>
+<resource>
+	<key>system.by.month.day</key>
+	<value>按月(每月第%s天)</value>
+</resource>
+<resource>
+	<key>system.by.month.week</key>
+	<value>按月(每月第%s个%s)</value>
+</resource>
+<resource>
+	<key>system.by.week</key>
+	<value>按周(每%s)</value>
+</resource>
+<resource>
+	<key>system.month.1</key>
+	<value>周日</value>
+</resource>
+<resource>
+	<key>system.month.2</key>
+	<value>周一</value>
+</resource>
+<resource>
+	<key>system.month.3</key>
+	<value>周二</value>
+</resource>
+<resource>
+	<key>system.month.4</key>
+	<value>周三</value>
+</resource>
+<resource>
+	<key>system.month.5</key>
+	<value>周四</value>
+</resource>
+<resource>
+	<key>system.month.6</key>
+	<value>周五</value>
+</resource>
+<resource>
+	<key>system.month.7</key>
+	<value>周六</value>
+</resource>
+<resource>
+	<key>system.notice.warn</key>
+	<value>您成功发布公告后，将以弹层形式公示给所有站点用户</value>
+</resource>
+
+<resource>
+	<key>admin.site.userimport.infotail</key>
+	<value>可能有重复的帐号或信息填写格式不正确，请检查后重新导入。</value>
+</resource>
+
+<resource>
+	<key>admin.site.userlist.namehostundelete</key>
+	<value>namehost模式主持人不允许删除！</value>
+</resource>
+
+<resource>
+		<key>siteAdmin.siteUser.failinfo.reparted</key>
+		<value>保存企业用户失败,登录名或注册邮箱已存在！</value>
+</resource>
+<resource>
+		<key>user.favor.page.size</key>
+		<value>每页显示数据</value>
+</resource>
+<resource>
+		<key>user.favor.page.records</key>
+		<value>条</value>
+</resource>
+<resource>
+		<key>user.favor.page.default.records</key>
+		<value>默认显示15条，最有效且快速.</value>
+</resource>
+<resource>
+		<key>site.admin.favor</key>
+		<value>偏好设置</value>
+</resource>
+
+<resource>
+		<key>system.conflist.confdetail.online</key>
+		<value>在线</value>
+</resource>
+<resource>
+		<key>system.conflist.confdetail.members</key>
+		<value>人次</value>
+</resource>
+
+<resource>
+		<key>admin.site.userimport.notimport</key>
+		<value>未导入成功</value>
+</resource>
+
+<resource>
+		<key>admin.site.userimport.accdetail</key>
+		<value>详细信息为：</value>
+</resource>
+
+<resource>
+		<key>admin.site.userimport.emptydata</key>
+		<value>空数据</value>
+</resource>
+
+<resource>
+		<key>system.quality.level.best</key>
+		<value>最高</value>
+</resource>
+
+<resource>
+		<key>system.quality.level.high</key>
+		<value>高</value>
+</resource>
+
+<resource>
+		<key>system.quality.level.medium</key>
+		<value>中</value>
+</resource>
+
+<resource>
+		<key>system.quality.level.low</key>
+		<value>低</value>
+</resource>
+<resource>
+		<key>system.language.zh-cn</key>
+		<value>中文</value>
+</resource>
+<resource>
+		<key>system.language.en-us</key>
+		<value>English</value>
+</resource>
+
+
+<resource>
+		<key>system.billing.res.moth1</key>
+		<value>1月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth2</key>
+		<value>2月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth3</key>
+		<value>3月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth4</key>
+		<value>4月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth5</key>
+		<value>5月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth6</key>
+		<value>6月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth7</key>
+		<value>7月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth8</key>
+		<value>8月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth9</key>
+		<value>9月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth10</key>
+		<value>10月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth11</key>
+		<value>11月</value>
+</resource>
+<resource>
+		<key>system.billing.res.moth12</key>
+		<value>12月</value>
+</resource>
+
+
+<resource>
+		<key>admin.user.edituser.effinfo1</key>
+		<value>用户有效期限</value>
+</resource>
+
+<resource>
+		<key>admin.user.edituser.effinfo2</key>
+		<value>一直有效 : </value>
+</resource>
+
+<resource>
+		<key>admin.user.edituser.effinfo3</key>
+		<value>截止到 : </value>
+		<!-- 截止到2013-08-01有效 -->
+</resource>
+<resource>
+		<key>admin.user.edituser.effinfo4</key>
+		<value>有效 </value>
+</resource>
+
+
+<resource>
+		<key>bizconf.jsp.user.reminder.email.success</key>
+		<value>设置日历提醒成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.reminder.email.failed</key>
+		<value>设置日历提醒失败！</value>
+</resource>
+
+
+<resource>
+		<key>bizconf.jsp.user.conf.nomore</key>
+		<value>无更多会议信息</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.confconfig.update.not</key>
+		<value>该企业用户无权限修改会议设置！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.conforder.delete.not</key>
+		<value>当前企业用户无权限删除预约会议！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.confcycle.delete.not</key>
+		<value>当前企业用户无权限删除周期预约会议！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.confnow.create.not</key>
+		<value>当前企业用户无权限创建即时会议！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.confcycle.create.not</key>
+		<value>当前企业用户无权限创建周期预约会议！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.confconfig.update.failed</key>
+		<value>修改会议设置失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.confconfig.update.success</key>
+		<value>修改会议设置成功！</value>
+</resource>
+
+
+
+<resource>
+		<key>bizconf.jsp.user.del.conforder.failed</key>
+		<value>删除预约会议失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.del.conforder.success</key>
+		<value>删除预约会议成功！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.del.confcycle.failed</key>
+		<value>删除周期预约会议失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.del.confcycle.success</key>
+		<value>删除周期预约会议成功！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.update.confcycle.failed</key>
+		<value>修改预约会议失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.create.conf.failed</key>
+		<value>创建预约会议失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.recreate.conf.failed</key>
+		<value>重新创建会议失败！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.create.confcycle.failed</key>
+		<value>创建周期预约会议失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.create.confcycle.success</key>
+		<value>创建周期预约会议成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.create.confnow.failed</key>
+		<value>创建即时会议失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.conf.recreate.error</key>
+		<value>只能重新创建自己创建过的会议</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.conf.invite.not</key>
+		<value>当前企业用户无权限邀请参会人</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.conf.invite.failed</key>
+		<value>邀请参会人失败</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.conf.invite.success</key>
+		<value>邀请参会人成功</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.contact.del.failed</key>
+		<value>删除联系人失败</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.del.success</key>
+		<value>删除联系人成功</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.create</key>
+		<value>新建</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.update</key>
+		<value>修改</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.success</key>
+		<value>联系人成功</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.failed</key>
+		<value>联系人失败</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.import.success</key>
+		<value>导入联系人成功, </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.import.failed</key>
+		<value>导入联系人失败. </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.repeate.contact</key>
+		<value>重复联系人信息有：</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.contact.repeate</key>
+		<value>联系人信息重复！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.favor.update.failed</key>
+		<value>用户修改偏好设置失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.favor.update.success</key>
+		<value>用户修改偏好设置成功！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.profile.update.failed</key>
+		<value>个人信息设置失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.profile.update.success</key>
+		<value>个人信息设置成功！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.old.pass.error</key>
+		<value>原密码输入错误</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.group.update.failed</key>
+		<value>修改群组信息失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.group.update.success</key>
+		<value>修改群组信息成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.group.create.failed</key>
+		<value>创建群组信息失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.group.create.success</key>
+		<value>创建群组信息成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.group.import.failed</key>
+		<value>导入联系人到群组失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.group.import.success</key>
+		<value>已成功导入联系人到群组 </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.favor.input.error</key>
+		<value>输入不正确,请重新输入！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.accept.invite.error</key>
+		<value>接受会议请求失败！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.refuse.invite.error</key>
+		<value>谢绝会议请求失败！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.user.login.success</key>
+		<value>用户登录成功！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.site.error</key>
+		<value>站点不正确！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.email.send.success</key>
+		<value>邮件发送成功, 请即时查收！ </value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.email.find.pass.error</key>
+		<value>找回密码失败,请重新找回密码！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.email.find.pass.error.1</key>
+		<value>找回密码失败,用户不存在！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.email.find.pass.error.2</key>
+		<value>找回密码失败,请输入新密码！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.email.find.pass.error.3</key>
+		<value>找回密码失败,两次密码不相等！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.pass.error</key>
+		<value>原密码错误，请重新输入！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.reset.pass.error</key>
+		<value>重置密码失败！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.reset.pass.success</key>
+		<value>重置密码成功！ </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.radio.status.opened</key>
+		<value>开启</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.radio.status.closed</key>
+		<value>关闭 </value>
+</resource>
+<resource>
+		<key>bizconf.jsp.system.logo.reset</key>
+		<value>恢复系统默认Logo</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.system.banner.image</key>
+		<value>站点顶部图片</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.system.banner.support</key>
+		<value>最大上传256k，1001*100，支持jpg,bmp,png,gif格式。</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.system.banner.reset</key>
+		<value>恢复系统默认顶部图片</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.system.file.upload</key>
+		<value>上传</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.site.confexport.phonenum</key>
+		<value>电话用户数</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.site.confexport.pcnum</key>
+		<value>电脑用户数</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.site.confexport.timzzoneinfo</key>
+		<value>所有会议的时间均为</value>
+		<!-- 所有会议时间均为北京时间 -->
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.conf.starttime</key>
+		<value>会议开始时间</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.action.add.success</key>
+		<value>添加成功</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.action.delete.success</key>
+		<value>删除成功</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.action.add.failed</key>
+		<value>添加失败</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.action.update.failed</key>
+		<value>修改失败</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.action.delete.failed</key>
+		<value>删除失败</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.admin.config.update.success</key>
+		<value>修改会议功能全局设置成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.config.update.failed</key>
+		<value>修改会议功能全局设置失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.assign.user.success</key>
+		<value>为用户批量分配机构成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.assign.user.failed</key>
+		<value>为用户批量分配机构失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.department.exist</key>
+		<value>同一级别的部门名称已存在！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.remove.user.success</key>
+		<value>从组织机构中移除用户成功！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.remove.user.failed</key>
+		<value>从组织机构中移除用户失败！</value>
+</resource>
+<resource>
+		<key>bizconf.jsp.admin.user.not.exist</key>
+		<value>对不起, 没有这个用户！</value>
+</resource>
+
+<resource>
+		<key>bizconf.jsp.user.immediaconf.desc</key>
+		<value>该会议为即时会议！</value>
+</resource>
 </resources>

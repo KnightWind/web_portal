@@ -5,11 +5,7 @@
 	font-family:"宋体","Arial, Helvetica, sans-serif";
 	font-size:12px;
 }
-/*隐藏横向滚动，垂直滚动根据内容自适应（去除IE默认垂直滚动条）*/
-html {
-	overflow-x: hidden;
-	overflow-y: auto;
-}
+
 /* 清除内外边距 */
 body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, fieldset, lengend, button, select, input, textarea, th, td {
 	margin: 0;
@@ -39,4 +35,19 @@ ul, li, img, input, a {
 }
 input {
 	outline: medium none;
+}
+*html input {
+	border: expression((this.type=="text" || this.type=="password")?"1px #ABADB3 solid":"");
+	padding: 3px 4px 3px 4px;
+}
+*html textarea {
+	border: 1px solid #ABADB3;
+	padding: 3px 4px 3px 4px;
+}
+*html table {
+	border-collapse: collapse;
+}
+
+*+html table {
+	border-collapse: collapse;
 }

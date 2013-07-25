@@ -75,6 +75,12 @@ public class License implements java.io.Serializable {
 	 * 删除者ID号
 	 */
 	private Integer delUser;
+	
+	/**
+	 * 是否创建站点时的license标识，创建站点时：
+	 * 1. seats、time模式的话，该标识为1
+	 */
+	private int firstLicFlag = 0;
 
 	// Constructors
 	
@@ -100,22 +106,27 @@ public class License implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public License(Integer siteId,Integer userId, Integer licNum, Date effeDate,
-			Date expireDate, Date createTime, Integer createUser,
-			Integer delFlag, Date delTime, Integer delUser) {
+	public License(Integer id, Integer siteId, Integer userId, Integer licNum,
+			Date effeDate, Date expireDate, Integer effeFlag,
+			Integer expireFlag, Date createTime, Integer createUser,
+			Integer delFlag, Date delTime, Integer delUser, int firstLicFlag) {
+		super();
+		this.id = id;
 		this.siteId = siteId;
-		this.userId=userId;
-
+		this.userId = userId;
 		this.licNum = licNum;
 		this.effeDate = effeDate;
 		this.expireDate = expireDate;
+		this.effeFlag = effeFlag;
+		this.expireFlag = expireFlag;
 		this.createTime = createTime;
 		this.createUser = createUser;
 		this.delFlag = delFlag;
 		this.delTime = delTime;
 		this.delUser = delUser;
+		this.firstLicFlag = firstLicFlag;
 	}
-
+	
 	// Property accessors
 
 	public Integer getId() {
@@ -207,6 +218,14 @@ public class License implements java.io.Serializable {
 		this.delUser = delUser;
 	}
 
+	public int getFirstLicFlag() {
+		return firstLicFlag;
+	}
+
+	public void setFirstLicFlag(int firstLicFlag) {
+		this.firstLicFlag = firstLicFlag;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -232,15 +251,6 @@ public class License implements java.io.Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "License [id=" + id + ", siteId=" + siteId + ", userId="
-				+ userId + ", licNum=" + licNum + ", effeDate=" + effeDate
-				+ ", expireDate=" + expireDate + ", createTime=" + createTime
-				+ ", createUser=" + createUser + ", delFlag=" + delFlag
-				+ ", delTime=" + delTime + ", delUser=" + delUser + "]";
-	} 
-	
 	/**
 	 * 初始化默认值
 	 */
@@ -250,12 +260,6 @@ public class License implements java.io.Serializable {
 			this.userId=0;
 		}
 //		this.licNum = 0;
-		if(this.effeDate!=null){
-			this.effeDate = DateUtil.getGmtDate(this.effeDate);
-		}
-		if(this.expireDate!=null){
-			this.expireDate = DateUtil.getGmtDate(this.expireDate);
-		}
 		this.createTime = DateUtil.getGmtDate(null);
 		this.createUser = 0;
 		this.delFlag = ConstantUtil.DELFLAG_UNDELETE;
@@ -268,4 +272,35 @@ public class License implements java.io.Serializable {
 		this.delUser = 0;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "License [id=" + id + ", siteId=" + siteId + ", userId="
+				+ userId + ", licNum=" + licNum + ", effeDate=" + effeDate
+				+ ", expireDate=" + expireDate + ", effeFlag=" + effeFlag
+				+ ", expireFlag=" + expireFlag + ", createTime=" + createTime
+				+ ", createUser=" + createUser + ", delFlag=" + delFlag
+				+ ", delTime=" + delTime + ", delUser=" + delUser
+				+ ", firstLicFlag=" + firstLicFlag + "]";
+	}
+
+	//设置时间为GMT时间
+	public void transforGMTDate(int offset){
+		if(this.effeDate!=null){
+			this.effeDate = DateUtil.getGmtDateByTimeZone(this.effeDate,offset);
+		}
+		if(this.expireDate!=null){
+			this.expireDate = DateUtil.getGmtDateByTimeZone(this.expireDate,offset);
+		}
+	}
+	
+	//设置时间为本地时间
+	public void transforLocalDate(int offset){
+		if(this.effeDate!=null){
+			this.effeDate = DateUtil.getOffsetDateByGmtDate(this.effeDate,new Integer(offset).longValue());
+		}
+		if(this.expireDate!=null){
+			this.expireDate = DateUtil.getOffsetDateByGmtDate(this.expireDate,new Integer(offset).longValue());
+		}
+	}
 }

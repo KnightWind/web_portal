@@ -10,15 +10,35 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/enterprise/rightbox.css"/>
 <style type="text/css">
+	body {
+		overflow: hidden;
+	}
 	.sub-icon {
 		width: 16px;height: 16px;background-image: url('/static/css/user/zTreeStyle/img/zTreeCustom.gif');background-position: -385px -90px;
-		position: relative;bottom: 3px;float:left;
+/* 		position: relative;bottom: 3px; */
+		float:left;
 		margin-right: 5px;
 	}
 	.home-icon {
 		width: 16px;height: 16px;background-image: url('/static/css/user/zTreeStyle/img/diy/1_close.png');
-		position: relative;margin-right: 5px;float:left;
+/* 		position: relative; */
+		margin-right: 5px;float:left;
 	}
+	.add_org {
+	    background: url("/static/images/button01.jpg") no-repeat scroll 0 0 transparent;
+	    cursor: pointer;
+	    height: 24px;
+	    line-height: 24px;
+	    text-align: center;
+	    width: 72px;
+	    margin-left: 10px;
+	    margin-top: 20px;
+	    margin-bottom: 15px;
+   	}
+   	
+   	*html .main_content{
+   		width:98%;
+   	}	
 </style>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="${baseUrlStatic}/js/json2.js"></SCRIPT>
@@ -46,61 +66,65 @@ $(function() {
 			$(this).removeClass('tr-hover');
 	});
 });
+
+function refreshIframe() {
+	$("#query").submit();
+}
+
+function createOrg(id, level) {
+	if(level==4){
+		parent.errorDialog("${LANG['bizconf.jsp.admin.organization.res2']}");
+	} else {
+		parent.createOrg(id);	
+	}
+}
+
+function assignUser() {
+	refreshIframe();
+}
+
 function createSubOrg(id, level) {
-	parent.createOrg(id, level);
+	createOrg(id, level);
 }
 function updateOrg(id) {
-	parent.parent.updateOrg(id);
+	parent.updateOrg(id);
 }
 function arrangeUser(id) {
-	parent.parent.getOrgUserList(id);
+	parent.getOrgUserList(id);
 }
 function del(id){
-	parent.parent.confirmDialog("${LANG['bizconf.jsp.admin.site_org_list.res1']}", function() {
+	parent.confirmDialog("${LANG['bizconf.jsp.admin.site_org_list.res1']}", function() {
 		app.delSiteOrg(id, function(result) {
 			if(result){
 				if(result.status=="1"){
-					parent.refreshIframe();
-					parent.parent.successDialog(result.message);
+					refreshIframe();
+					parent.successDialog(result.message);
 				} else {
-					parent.parent.errorDialog(result.message);
+					parent.errorDialog(result.message);
 				}
 			}
 		});
 	});
 }
-jQuery(function($) {
-	parent.refreshIHeight();
-});
-// $(document).ready(function() {
-// 	$(".home-icon").click(function() {
-// 		var pTr = $(this).closest("tr").next();
-// 		if(pTr){
-// 			if(pTr.is(":visible")){
-// 				pTr.hide();
-// 			} else {
-// 				pTr.show();
-// 			}
-// 		}
-// 	});
-// });
+
 </script>
 <title>${LANG['bizconf.jsp.admin.index.res19']}</title>
 </head>
 <body>
-<form id="query" name="query" action="/admin/org/orgList/${orgId }" method="post">
-<div class="main_content" style="overflow-y: auto;height: 600px;">
-<!--  <div class="m_top">  -->
-<!--  	<input name="button_01" class="button_01" type="button" id="createOrg" value="${LANG['bizconf.jsp.admin.site_org_list.res2']}" onmouseover="this.className='Btn_Hover_01'" onmouseout="this.className='Btn_01'"/> -->
-<!--   </div> -->
+
+<form id="query" name="query" action="/admin/org/orgListIndex/${orgId }" method="post">
+<div style="width: 100%;height:50px;">
+	<input class="add_org" id="addOrg" type="button" value="${LANG['bizconf.jsp.admin.index.res9']}" onclick="createOrg(0)"/>
+</div>
+<div class="main_content" style="">
  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" >
     <tr class="table002" height="32" >
     <td style="border-bottom:1px solid  #A3C5DE"><table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list">
       <tr class="table003" height="38" >
-          <td width="25%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['bizconf.jsp.admin.site_org_list.res3']}</span></div></td>
-	      <td width="35%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['bizconf.jsp.admin.site_org_list.res4']}</span></div></td>
-	      <td width="15%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['bizconf.jsp.admin.site_org_list.res5']}</span></div></td>
-	      <td width="25%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" style="width: 300px;"><span>${LANG['bizconf.jsp.admin.site_org_list.res6']}</span></div></td>
+          <td width="25%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['bizconf.jsp.admin.site_org_list.res3']}</b></span></div></td>
+	      <td width="35%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['bizconf.jsp.admin.site_org_list.res4']}</b></span></div></td>
+	      <td width="15%"  height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span><b>${LANG['bizconf.jsp.admin.site_org_list.res5']}</b></span></div></td>
+	      <td width="25%"  height="38" bgcolor="d3eaef" class="STYLE10" style=" border-right:none;"><div align="center" style="width: 300px;"><span><b>${LANG['bizconf.jsp.admin.site_org_list.res6']}</b></span></div></td>
 	  </tr>
       <c:if test="${fn:length(pageModel.datas)<=0 }">
          <tr>
@@ -113,7 +137,7 @@ jQuery(function($) {
      <c:forEach var= "org" items = "${pageModel.datas}"  varStatus="status">
       <tr class="table001" height="32">
         <td height="32" valign="middle">
-	        <div style="padding-left: 10px;position: relative;">
+	        <div style="padding-left: 10px;">
 		        <span style="color:#73798E">
 			        <c:if test="${org.orgLevel == 1 }">
 			        	<div class="home-icon"></div>
@@ -131,7 +155,7 @@ jQuery(function($) {
 		        </span>
 	        </div>
         </td>
-        <td height="32"><div title="${org.orgDesc}" align="center" style="width: 450px;white-space:nowrap;overflow: hidden;">${org.orgDesc}</div></td>
+        <td height="32"><div title="${org.orgDesc}" align="center" style="width: 200px;white-space:nowrap;overflow: hidden;">${org.orgDesc}</div></td>
         <td height="32"><div onclick="parent.parent.showOrgUsers('${org.id}');" align="center"  style="cursor: pointer;" >${participantSizeList[org.id]}</div></td>
         <td height="32" align="center" style=""><div>
         	<c:if test="${org.orgLevel<4}">

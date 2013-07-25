@@ -10,6 +10,7 @@ import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.entity.Contacts;
 import com.bizconf.audio.logic.ContactLogic;
 import com.bizconf.audio.service.impl.BaseService;
+import com.bizconf.audio.util.StringUtil;
 
 @Service
 public class ContactLogicImpl extends BaseService implements ContactLogic {
@@ -41,20 +42,18 @@ public class ContactLogicImpl extends BaseService implements ContactLogic {
 				return false;
 			}
 		}
-		
-		if(contact.getContactPhone()==null || contact.getContactPhone().equals("")){
-			return false;
-		}
-		else {
-			Pattern pattern = Pattern.compile("^((\\+?[0-9]{2,4}\\-[0-9]{3,4}\\-)|([0-9]{3,4}\\-))?([0-9]{7,8})(\\-[0-9]+)?$");
+		//
+		if(StringUtil.isNotBlank(contact.getContactPhone())){
+			Pattern pattern = Pattern.compile("^((\\+86)?|\\(\\+86\\)|\\+86\\s|\\+86-)0?([1-9]\\d{1,2}-?\\d{6,8}|[3-9][13579]\\d-?\\d{6,7}|[3-9][24680]\\d{2}-?\\d{6})(-\\d{4})?$");//("^((\\+?[0-9]{2,4}\\-[0-9]{3,4}\\-)|([0-9]{3,4}\\-))?([0-9]{7,8})(\\-[0-9]+)?$");
 			Matcher matcher = pattern.matcher(contact.getContactPhone());
-			Pattern patternMobile = Pattern.compile("^((\\+86)?|\\(\\+86\\)|\\+86\\s|\\+86-)0?1[358]\\d{9}$");
-			String mobile = contact.getContactMobile();
-			if(mobile==null){
-				mobile = "";
+			if(!matcher.matches()){
+				return false;
 			}
-			Matcher matcherMobile = patternMobile.matcher(mobile);
-			if(!matcher.matches() && !matcherMobile.matches()){
+		}
+		if(StringUtil.isNotBlank(contact.getContactMobile())){
+			Pattern patternMobile = Pattern.compile("^((\\+86)?|\\(\\+86\\)|\\+86\\s|\\+86-)0?1[358]\\d{9}$");
+			Matcher matcherMobile = patternMobile.matcher(contact.getContactMobile());
+			if(!matcherMobile.matches()){
 				return false;
 			}
 		}
@@ -90,6 +89,28 @@ public class ContactLogicImpl extends BaseService implements ContactLogic {
 		}
 		
 		
+		return true;
+	}
+	
+	
+	@Override
+	public boolean contactEmailAvailable(Contacts contact) {
+		
+		StringBuffer strSql = new StringBuffer(" SELECT * FROM t_contacts WHERE del_flag !=? and contact_email = ? and user_id = ? and id!=?");
+		Object[] values = new Object[4];
+		values[0] = ConstantUtil.DELFLAG_DELETED;
+		values[1] = contact.getContactEmail();
+		values[2] = contact.getUserId();
+		values[3] = contact.getId()==null?0:contact.getId();
+		try {
+			contact = libernate.getEntityCustomized(Contacts.class, strSql.toString(), values);
+			if(contact!=null){
+				return false;
+			}
+		} catch (SQLException e) {
+			logger.error("根据邮箱地址获取联系人详细信息出错！",e);
+			return false;
+		}
 		return true;
 	}
 	

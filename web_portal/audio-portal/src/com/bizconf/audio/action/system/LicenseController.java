@@ -18,8 +18,10 @@ import com.bizconf.audio.entity.PageBean;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SystemUser;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.entity.UserSiteMap;
 import com.bizconf.audio.logic.ConfLogic;
 import com.bizconf.audio.logic.ConfUserLogic;
+import com.bizconf.audio.logic.SiteLogic;
 import com.bizconf.audio.service.ConfService;
 import com.bizconf.audio.service.EmailService;
 import com.bizconf.audio.service.EmpowerConfigService;
@@ -73,25 +75,39 @@ public class LicenseController extends BaseController{
 	@Autowired
 	ConfUserLogic confUserLogic;
 	
+	@Autowired
+	SiteLogic siteLogic;
 	
 	@AsController(path = "list")
 	public Object listBySite(@CParam("siteId") int siteId,@CParam("userId") int userId,@CParam("pageNo") int pageNo, HttpServletRequest request) throws Exception{
 		
 		PageBean<License> pageModel = null;
 		pageModel = licService.getLicensePage(siteId, userId, pageNo);
+		SiteBase site = siteService.getSiteBaseById(siteId);
 		if(pageModel!=null && pageModel.getDatas()!=null){
 			for(License lic:pageModel.getDatas()){
-				lic.setEffeDate(DateUtil.getBejingDateByGmtDate(lic.getEffeDate()));
-				lic.setExpireDate(DateUtil.getBejingDateByGmtDate(lic.getExpireDate()));
+				if(site!=null&&site.getTimeZone()!=null){
+					lic.transforLocalDate(site.getTimeZone());
+				}else{
+					lic.setEffeDate(DateUtil.getBejingDateByGmtDate(lic.getEffeDate()));
+					lic.setExpireDate(DateUtil.getBejingDateByGmtDate(lic.getExpireDate()));
+				}
 			}
 		}
 		request.setAttribute("pageModel", pageModel);
 		request.setAttribute("siteId", siteId);
+		if(siteId>0){
+			int licNum = licService.getSiteLicenseNum(siteId);
+			request.setAttribute("site", site);
+			request.setAttribute("licNum", site.getLicense()+licNum);
+		}
 		if(userId > 0){
 			request.setAttribute("userId", userId);
+			UserBase user = userService.getUserBaseById(userId);
+			int licNum = licService.getHostLicenseNum(userId);
+			request.setAttribute("user", user);
+			request.setAttribute("licNum", licNum);
 		}
-		SiteBase site = siteService.getSiteBaseById(siteId);
-		request.setAttribute("site", site);
 		
 		return new ActionForward.Forward("/jsp/system/license_list.jsp");
 	}
@@ -102,10 +118,14 @@ public class LicenseController extends BaseController{
 		license.init();
 		license.setCreateUser(currentUser.getId());
 		SiteBase site = siteService.getSiteBaseById(license.getSiteId());
-		boolean addflag = false;
-		//site.getChargeMode().intValue()!=1 &&
+		license.transforGMTDate(site.getTimeZone()==null?28800000:site.getTimeZone().intValue());
 		if(license.getEffeDate().before(DateUtil.getGmtDate(null))){
+			//判断是否为namehost主持人的license
+			if(license.getUserId()!=null && license.getUserId()>0){
+					site = siteLogic.getVirtualSubSite(license.getUserId());
+			}
 			SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
+			boolean addflag = false;
 			if(license.getLicNum().intValue()>0){
 				addflag = true;
 			}
@@ -177,15 +197,13 @@ public class LicenseController extends BaseController{
 	public Object delHostUser(@CParam("id") int id,@CParam("pageNo") int pageNo, HttpServletRequest request) throws Exception{
 		UserBase user = userService.getUserBaseById(id);
 		SystemUser currentUser = userService.getCurrentSysAdmin(request);
-		SiteBase site = siteService.getSiteBaseById(user.getSiteId());
-		
-		//删除namehost用户的同时 删除该namehost 的 license
-		SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
-		int licNum = asSite.getLicense() + licService.getHostLicenseNum(user.getId());
-		site.setLicense(licNum);
-		//添加license到as
-		String updateInfo = siteService.soapUpdateSite(site,true);
+		//删除AS子站点
+		SiteBase mySite = siteLogic.getVirtualSubSite(user.getId());
+		String updateInfo = siteService.soapDelSite(mySite.getSiteSign());
 		if(updateInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
+			//删除虚拟站点
+			siteService.deleteSiteById(mySite.getId(), currentUser);
+			//删除主持人
 			if(licService.delHostLicenses(user.getId())){
 				enterpriseAdminService.deleteUserBase(id, currentUser.getId());
 			}
@@ -246,8 +264,10 @@ public class LicenseController extends BaseController{
 			orgUser.setEnName(user.getEnName());
 			orgUser.setUserEmail(user.getUserEmail());
 			orgUser.setMobile(user.getMobile());
+			orgUser.setRemark(user.getRemark());
 			if(StringUtil.isNotBlank(user.getLoginPass())){
 				orgUser.setLoginPass(MD5.encodePassword(user.getLoginPass(), "MD5"));
+				orgUser.setPassEditor(userAdmin.getId());
 			}
 			if(userService.siteUserSaveable(orgUser)){
 				boolean flag = enterpriseAdminService.updateUserBase(orgUser);
@@ -267,6 +287,7 @@ public class LicenseController extends BaseController{
 						orgConfig.setRecordFlag(config.getRecordFlag());
 						empowerConfigService.updateEmpowerConfig(orgConfig);
 					}
+					
 //					eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_USER_UPDATE, 
 //							ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.1"), 
 //							EventLogConstants.EVENTLOG_SECCEED, user, request);   //修改成功后写EventLog
@@ -278,18 +299,67 @@ public class LicenseController extends BaseController{
 //				eventLogService.saveAdminEventLog(userAdmin, EventLogConstants.SITE_ADMIN_USER_UPDATE, 
 //						ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.2"), 
 //						EventLogConstants.EVENTLOG_FAIL, user, request);   //修改失败后写EventLog
-				return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.2"));
+				return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.failinfo.reparted"));
 			}
 			return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_SUCCEED, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.update.1"));
 		}else{
 			user.init();
 			user.setCreateUser(0);//
 			user.setUserType(ConstantUtil.USERTYPE_USERS);
+			user.setPassEditor(userAdmin.getId());
 			UserBase userBase = null;
-			if(userService.siteUserSaveable(user)){
-				userBase = enterpriseAdminService.saveUserBase(user);
-				if(userBase != null && userBase.getId() > 0){
+			if(!userService.siteUserSaveable(user)){
+				return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.failinfo.reparted"));
+			}
+				//获取父站点
+				SiteBase pSite = siteService.getSiteBaseById(user.getSiteId());
+				String subSign = pSite.getSiteSign()+"["+user.getLoginName()+"]";
+				pSite.setSiteSign(subSign);
+				pSite.setId(null);
+				pSite.setIsVirtualSite(1);
+				if(license!=null && license.getLicNum()!=null && license.getLicNum()>0){
+					license.init();
+					license.setCreateUser(userAdmin.getId());
+					//SiteBase site = siteService.getSiteBaseById(license.getSiteId());
+					license.setEffeDate(DateUtil.getGmtDate(null));
+					license.setExpireDate(pSite.getExpireDate());
+					
+					pSite.setLicense(license.getLicNum());
+				}else{
+					pSite.setLicense(0);
+				}
+				String  retCode = siteService.soapAddSite(pSite);
+				//创建站点成功
+				if(retCode.equals(ConstantUtil.AS_SUCCESS_CODE)){
+					userBase = enterpriseAdminService.saveUserBase(user);
+					//保存用户信息失败
+					if(userBase == null || userBase.getId() < 1){
+						siteService.soapDelSite(subSign);
+						return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
+					}
+					license.setFirstLicFlag(1);
+					license.setEffeFlag(LicenseConstant.HAS_EFFED);
+					license.setUserId(userBase.getId());
+					licService.saveOrUpdate(license); //保存初始的license记录
+					SiteBase subSite = siteService.saveSiteBase(pSite);//siteService.
+					//保存站点失败
+					if(subSite == null || subSite.getId() < 1){
+						siteService.soapDelSite(subSign);
+						return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
+					}
+					//保存用户-子站点关系
+					UserSiteMap userSiteMap = new UserSiteMap();
+					userSiteMap.setSiteId(subSite.getId());
+					userSiteMap.setUserId(userBase.getId());
+					siteService.saveUserSiteMap(userSiteMap);
+					
+					
 					//保存权限设置
+//					EmpowerConfig siteConfig = empowerConfigService.getSiteEmpowerConfigBySiteId(user.getSiteId());
+//					EmpowerConfig userConfig = empowerConfigService.makeEmpowerForUser(siteConfig, null);
+//					userConfig.setUserId(userBase.getId());
+//					empowerConfigService.saveEmpowerConfig(config);
+
 					config.setSiteId(user.getSiteId());
 					config.setUserId(userBase.getId());
 					config.setEmTime(DateUtil.getGmtDate(null));
@@ -297,43 +367,10 @@ public class LicenseController extends BaseController{
 					config.setEmUserType(user.getUserType());
 					empowerConfigService.saveEmpowerConfig(config);
 					
-					if(license!=null && license.getLicNum()!=null && license.getLicNum()>0){
-						license.init();
-						license.setCreateUser(userAdmin.getId());
-						SiteBase site = siteService.getSiteBaseById(license.getSiteId());
-						license.setEffeDate(DateUtil.getGmtDate(null));
-						license.setExpireDate(site.getExpireDate());
-						license.setUserId(userBase.getId());
-						if(DateUtil.getGmtDate(license.getEffeDate()).before(DateUtil.getGmtDate(null))){
-							SiteBase asSite= siteService.queryASSiteInfo(site.getSiteSign());
-							boolean flag = false;
-							if(license.getLicNum().intValue()>0){
-								flag = true;
-							}else{
-								throw new RuntimeException("init license num can not less then 0!");
-							}
-							int licNum = asSite.getLicense() + license.getLicNum();
-							site.setLicense(licNum);
-							//添加license到as
-							String updateInfo = siteService.soapUpdateSite(site,flag);
-							if(updateInfo.equals(ConstantUtil.AS_SUCCESS_CODE)){
-								license.setEffeFlag(LicenseConstant.HAS_EFFED);
-							}else{
-								logger.error("add license fialed");
-							}
-						}
-						licService.saveOrUpdate(license);
-					}
 					userBase.setLoginPass(orgPass);
-					
 					List<License> lics = licService.getHostLicenses(userBase.getId());
 					emailService.createNameHost(userBase, lics);
-				}else{
-					return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
 				}
-			}else{
-				return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_FAIL, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.2"));
-			}
 			return StringUtil.returnJsonStr(ConstantUtil.CREATESITEUSER_SUCCEED, ResourceHolder.getInstance().getResource("siteAdmin.siteUser.create.1"));
 		}
 	}

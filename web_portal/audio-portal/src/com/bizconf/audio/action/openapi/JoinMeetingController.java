@@ -464,7 +464,10 @@ public class JoinMeetingController  extends BaseController {
 			if(empowerConfig != null){
 				String clientConfig=siteDefaultConfig.getClientConfig();
 				char[] clientConfigChars=clientConfig.toCharArray();
-
+				clientConfigChars[7]='0';
+				clientConfigChars[8]='0';
+				clientConfigChars[12]='0';
+				clientConfigChars[21]='0';
 				if(SiteConstant.EMPOWER_ENABLED.equals(empowerConfig.getVideoFlag())){
 					clientConfigChars[7]='1';
 					videoNum=empowerConfig.getVideoNumber();

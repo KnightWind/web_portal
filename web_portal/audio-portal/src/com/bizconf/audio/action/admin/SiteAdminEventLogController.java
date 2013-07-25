@@ -78,6 +78,7 @@ private final Logger logger = Logger.getLogger(SiteController.class);
 		}
 		logger.info(rows);
 		pageModel.setRowsCount(rows);
+		pageModel.setPageSize(currentSiteAdmin.getPageSize());   // 2013.6.24 因客户需求每页展示用户设置的条数
 		if(currentSiteAdmin.isSuperSiteAdmin()){    //权限控制
 			logList = eventLogService.getSiteLogListBySiteId(currentSiteAdmin.getSiteId(), operator, logType, sortField, sortord, pageModel);
 		}else{

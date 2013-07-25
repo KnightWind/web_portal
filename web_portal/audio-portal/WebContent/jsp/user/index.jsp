@@ -14,6 +14,9 @@
 
 <fmt:formatDate var="serverDate" value="${defaultDate}" type="date" pattern="yyyy/MM/dd HH:mm:ss"/>
 <script language="javascript">
+	if(window.top!=window.self){
+		window.top.location.href="/"; 
+	}
  function killerrors() {
 	 return true;
  }
@@ -21,6 +24,9 @@
 </script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-1.8.3.min.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-ui-1.9.2.custom.min.js?ver=${version}"></script>
+<!--[if lte IE 6]>  
+<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/development-bundle/external/jquery.bgiframe-2.1.2.js"></SCRIPT>  
+<![endif]-->
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery-ui-i18n.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/jquery-validation-1.10.0/dist/jquery.validate.js?ver=${version}"></script>
 <script type="text/javascript" src="${baseUrlStatic}/js/min/jquery.uniform.min.js?ver=${version}"></script>
@@ -137,7 +143,7 @@ jQuery(function($) {
 		joinMtgFromEmail();
     });
 	//change lang
-	$("#langForm").find("select").not(".skipThese").uniform();
+	//$("#langForm").find("select").not(".skipThese").uniform();
 	$("#langForm select").change(function () {
 		var lang = $(this).val();
 		changeLang(lang);
@@ -147,6 +153,9 @@ jQuery(function($) {
 		resizeHeight();
 		//resizeFloatBar();
 	});
+	//call online
+	//$(".floatContactMe").callOnline();
+	 
 	popupNotice();
 	showRemindBar();
 	var needResetPass = "${needResetPass}";
@@ -252,11 +261,11 @@ function refreshChildIframe() {
 	showChildURL(iframeSrc);
 }
 //show billing detail
-function showTelDetail(id) {
+function showTelDetail(id,year,month) {
 	$("<div id=\"billingView\"/>").showDialog({
 		"title" : "${LANG['bizconf.jsp.index.res8']}",
 		"dialogClass" : "ui-dialog-user",
-		"url" : "/common/billing/showTelDetail?userId="+id,
+		"url" : "/common/billing/showTelDetail?userId="+id+"&year="+year+"&month="+month,
 		"type" : VIEW_TYPE.billing,
 		"action" : ACTION.create,
 		"width" : 624,
@@ -381,7 +390,7 @@ function editInventContact(confId) {
 		"type" : VIEW_TYPE.attendee,
 		"action" : ACTION.create,
 		"width" : 624,
-		"height" : 504
+		"height" : 539
 	});	
 }
 function contactImport() {
@@ -512,7 +521,7 @@ function createImmediatelyConf() {
 			"type" : VIEW_TYPE.tempMeeting,
 			"action" : ACTION.create,
 			"width" : 474,
-			"height" : 184
+			"height" : 197
 		});	
 	} else {
 		login();
@@ -712,11 +721,6 @@ function login() {
 function popupNotice() { 
 	var noticeId = "${sysNotice.id}";
 	if(noticeId){
-// 		var data = {};
-// 		data.id = "${sysNotice.id}";
-// 		data.title = "${sysNotice.title}";
-// 		data.content = $("#noticeText").html();
-		//data.content = "${sysNotice.content}";
 		var existId = $.cookie("noticeId");
 		if( !existId || (existId && existId!=noticeId) ){
 			$("<div id=\"popupNotice\"/>").showDialog({
@@ -848,7 +852,7 @@ function getMonthEnd(date) {
 			<tbody>
 				<tr>
 					<td align="center" style="font-size: 16px;">
-						${LANG['bizconf.jsp.index.res25']}IE7${LANG['bizconf.jsp.index.res26']}Firefox3.6${LANG['bizconf.jsp.index.res27']}!&nbsp;&nbsp;&nbsp;
+						${LANG['bizconf.jsp.index.res2500']}&nbsp;&nbsp;&nbsp;
 						<a class="remind_link" type="button" href="javascript:closeRemindBar();">&nbsp;&nbsp;${LANG['bizconf.jsp.index.res28']}&nbsp;&nbsp;</a>
 					</td>
 				</tr>
@@ -864,8 +868,8 @@ function getMonthEnd(date) {
   <div class="nav_profile" >
   	<c:if test="${!empty user}">
   		<img style="float: left; margin-right: 10px;margin-top: 14px;_margin-top: 0px;" class="png" src="${baseUrlStatic}/images/header_bar_01.png" width="14" height="16" align="absmiddle" />
-  		<span class="nav_name" title="${user.trueName }">${LANG['website.message.welcome']}${LANG['bizconf.jsp.index.res29']}${user.trueName }&nbsp;&nbsp;</span>
-  		<a style="display:inline-block;" href="javascript:void(0);" onclick="logout();return false;">${LANG['website.message.logout']}</a>
+  		<span class="nav_name" title="${user.trueName }">${LANG['website.message.welcome']}${user.trueName }&nbsp;&nbsp;</span>
+  		<a style="display:inline-block;text-decoration: underline;" href="javascript:void(0);" onclick="logout();return false;">${LANG['website.message.logout']}</a>
   	</c:if>
   	<c:if test="${empty user }">
   		<img class="png" src="${baseUrlStatic}/images/header_bar_01.png" width="14" height="16" align="absmiddle" />
@@ -886,12 +890,17 @@ function getMonthEnd(date) {
   </ul>  
   </div>
   <ul class="nav_right">
-    <li class="time_bj" align="absmiddle" onclick="jumpToFavor();"><a style="font-weight: bold;	" title="${siteBase.fullTimeZoneDesc }${LANG['website.message.time']}" href="javascript:;">${siteBase.timeZoneDesc }${LANG['website.message.time']}</a></li>
+    <li class="time_bj" align="absmiddle" onclick="jumpToFavor();">
+    	<c:set var="timeZoneDesc" value="website.timezone.city.${siteBase.timeZoneId}"/>
+    	<c:set var="fullTimeZoneDesc" value="website.timezone.city.zone.${siteBase.timeZoneId}"/>
+    	<a style="font-weight: bold;" title="${LANG[fullTimeZoneDesc]}${LANG['website.message.time']}" href="javascript:;">
+    		${LANG[timeZoneDesc]}${LANG['website.message.time']}</a>
+    </li>
     <li class="language_box">
-      <form name="form" id="form">
-        <select name="jumpMenu_language" id="jumpMenu_language" style="padding: 2px;width: 65px;">
-          <option selected="selected">${LANG['bizconf.jsp.conf_invite_refuse.res1']}</option>
-<!--           <option>English</option> -->
+      <form name="langForm" id="langForm">
+        <select name="jumpMenu_language" id="jumpMenu_language" style="padding: 2px;width: 70px;">
+          <option value="zh-cn">中文</option>
+          <option value="en-us">English</option>
         </select>
       </form>
     </li>
@@ -917,13 +926,15 @@ function getMonthEnd(date) {
           <span class="icon-arrow"></span>
       </a>
       <ul>
-          <li class="active">
-              <a href="/user/conf/getControlPadIndex?userRole=1" class="ico11">
-                  <span class="icon11-img"></span>
-                  <span class="icon11-span">${LANG['user.menu.conf.myhost']}</span>
-                  <span></span>
-              </a>
-          </li>
+	      <c:if test="${isConfHost}">
+	          <li class="active">
+	              <a href="/user/conf/getControlPadIndex?userRole=1" class="ico11">
+	                  <span class="icon11-img"></span>
+	                  <span class="icon11-span">${LANG['user.menu.conf.myhost']}</span>
+	                  <span></span>
+	              </a>
+	          </li>
+	      </c:if>
           <li>
               <a href="/user/conf/getControlPadIndex?userRole=2" class="ico12">    
                   <span class="icon12-img"></span>
@@ -948,6 +959,14 @@ function getMonthEnd(date) {
           <span></span>
       </a>
   </li>
+  <c:if test="${isConfHost and siteBase.siteFlag eq 1}">
+   <li>
+    	<a href="<%=request.getContextPath()%>/common/billing/userBillList" class="ico9">
+    	<span class="icon9-img"></span>
+    	<span class="icon9-span">${LANG['bizconf.jsp.index.res31']}</span>
+    	</a>
+  </li>
+</c:if>
   <c:if test="${isLogined}"> 
   <li>
       <a href="javascript" class="isParent ico4 nav-ul-off">
@@ -956,13 +975,15 @@ function getMonthEnd(date) {
           <span class="icon-arrow"></span> 
       </a>
       <ul style="display:none;">
-          <li>
-              <a href="/user/conflog/list?isCreator=true" class="ico41">
-                  <span class="icon41-img"></span>
-                  <span class="icon41-span">${LANG['bizconf.jsp.index.res32']}</span>
-                  <span></span>
-              </a>
-          </li>
+	      <c:if test="${isConfHost}">
+	          <li>
+	              <a href="/user/conflog/list?isCreator=true" class="ico41">
+	                  <span class="icon41-img"></span>
+	                  <span class="icon41-span">${LANG['bizconf.jsp.index.res32']}</span>
+	                  <span></span>
+	              </a>
+	          </li>
+	      </c:if>
           <li>
               <a href="/user/conflog/list?isCreator=false" class="ico42">
                   <span class="icon42-img"></span>
@@ -1022,107 +1043,20 @@ function getMonthEnd(date) {
         </ul>
   </li>
 </ul>
-
-  <ul class="nav_menu" style="display: none;">
-  	<c:if test="${!isLogined}">
-  	<li class="nav_li nav_li_active" flag="publicConf">
-    	<span class="m01_public">
-    		<img class="m01_img" src="${baseUrlStatic}/images/yh_icon01.png" width="25" height="24" />
-    		<a href="javascript:;" link="/user/conf/getPublicControlPadIndex" target="mainFrame">${LANG['user.menu.conf.public']}</a>
-    	</span>
-    </li>
-    </c:if>
-    <c:if test="${isLogined}">
-    <li class="">
-    	<span class="m01 nav_ul">
-    	<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon01.png" width="25" height="24" />
-    	<a class="nav_a_on" href="javascript:;" link="/user/conf/listConf" target="mainFrame">${LANG['user.menu.conf.myconf']}</a>
-    	</span>
-    	<ul>
-        	<li class="preside_li nav_li m09 nav_li_active" flag="myPresideMeet">
-        		<img  class="m09_img" src="${baseUrlStatic}/images/icon_a.png" width="25" height="23" />
-        		<a href="javascript:;" target="mainFrame" link="/user/conf/getControlPadIndex?userRole=1">${LANG['user.menu.conf.myhost']}</a>
-        	</li>
-        	<li class="nav_li m09" flag="myAttendMeet">
-        		<img  class="m09_img" src="${baseUrlStatic}/images/icon_b.png" width="25" height="23" />
-        		<a href="javascript:;" target="mainFrame" link="/user/conf/getControlPadIndex?userRole=2">${LANG['user.menu.conf.myact']}</a>
-        	</li>
-    	</ul>
-    </li>
-    </c:if>
-    <li class="nav_li m03" flag="myContact">
-    	<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon03.png" width="25" height="25" />
-    	<a href="javascript:;" link="/user/contact/goContacts" target="mainFrame">${LANG['siteAdmin.eventlog.type.4200']}</a>
-    </li>
-    <li class="nav_li m04" flag="noticeList">
-    	<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon04.png" width="25" height="22" />
-    	<a href="javascript:;" link="/user/notice/list" target="mainFrame">${LANG['system.menu.notice.list']}</a>
-    </li>
-<%--    <li class="nav_li m03" flag="myContact">--%>
-<%--    	<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon05.png" width="25" height="25" />--%>
-<%--    	<a href="javascript:;" link="<%=request.getContextPath()%>/common/billing/userBillList" target="mainFrame">${LANG['bizconf.jsp.index.res31']}</a>--%>
-<%--    </li>--%>
-
-    <c:if test="${isLogined}"> 
- 	<li class=""> 
-    		<span class="m07 nav_ul">
-    			<img  class="m01_img" src="${baseUrlStatic}/images/set_ico.png" width="25" height="22" /> 
-   			<a href="javascript:;" target="mainFrame" style="background:url('/static/images/new02.png') no-repeat scroll right center transparent">${LANG['bizconf.jsp.hostConfloglist.res2']}</a> 
-   		</span> 
-   		<ul style="display: none;"> 
- 	    	<li class="nav_li m09"  flag="myPresideReport">
- 	    		<img  class="m09_img" src="${baseUrlStatic}/images/icon_a.png" width="22" height="22" /> 
- 	    		<a href="javascript:;" link="/user/conflog/list?isCreator=true" target="mainFrame">${LANG['bizconf.jsp.index.res32']}</a>
-	    	</li> 
- 	    	<li class="nav_li m09"  flag="myAttendReport"> 
- 	    		<img  class="m09_img" src="${baseUrlStatic}/images/icon_b.png" width="20" height="20" /> 
- 	    		<a href="javascript:;" link="/user/conflog/list?isCreator=false"  target="mainFrame">${LANG['bizconf.jsp.index.res33']}</a>
-	    	</li> 
- 	    </ul> 
-   	</li>    
-    </c:if>
-
-    <c:if test="${isConfHost}">
-    	<li class="nav_li m06" flag="meetConfig">
-    		<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon06.png" width="25" height="25" />
-    		<a href="javascript:;" link="/user/confConfig/getConfConfig" target="mainFrame">${LANG['user.menu.conf.default.setup']}</a>
-    	</li>
-    </c:if>
-    <c:if test="${isLogined}">
-    	<li id="favorSetUp" class="nav_li m06" flag="favorConfig">
-    		<img  class="m01_img" src="${baseUrlStatic}/images/ico22.png" width="25" height="22" />
-    		<a href="javascript:;" link="/user/favor/getTimeZone" target="mainFrame">${LANG['user.menu.conf.favor.setup']}</a>
-    	</li>
-    	<li class="nav_li m06" flag="personConfig">
-    		<img  class="m01_img" src="${baseUrlStatic}/images/yh_icon07.png" width="25" height="22" />
-    		<a href="javascript:;" link="/user/profile" target="mainFrame">${LANG['user.menu.conf.person.setup']}</a>
-    	</li>
-    </c:if>
-    	<li class="m06">
-    		<span class="m07 nav_ul">
-    			<img  class="m01_img" src="${baseUrlStatic}/images/new05.png" width="25" height="22" />
-    			<a href="javascript:;" target="mainFrame" style="background:url('/static/images/new02.png') no-repeat scroll right center transparent">${LANG['user.menu.conf.support']}</a>
-    		</span>
-    		<ul style="display: none;">
-    			<li class="nav_li m09" flag="helpCenter">
-		    		<img  class="m09_img" src="${baseUrlStatic}/images/hele_new.png" width="20" height="20" />
-		    		<a href="/help" link="/help" target="_blank">${LANG['bizconf.jsp.help.res1']}</a>
-		    	</li>
-		    	<li class="nav_li m09" flag="downloadCenter">
-		    		<img  class="m09_img" src="${baseUrlStatic}/images/download_new.png" width="20" height="20" />
-		    		<a href="javascript:;" link="/downCenter/downClient" target="mainFrame">${LANG['user.menu.conf.down.center']}</a>
-		    	</li>
-		    </ul>
-    	</li>    
-  </ul>
 </div>
 <!--${LANG['bizconf.jsp.index.res34']}-->
-<div class="main_right">
+<div class="main_right" style="margin-left: 190px;">
 <c:if test="${isLogined}"> 
-  <iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getControlPadIndex?userRole=1#"></iframe>
+  <c:if test="${isConfHost}"> 
+  	<iframe frameborder="0" width="100%" height="600" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getControlPadIndex?userRole=1#"></iframe>
+  </c:if>
+  <c:if test="${!isConfHost}"> 
+  	<iframe frameborder="0" width="100%" height="600" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getControlPadIndex?userRole=2#"></iframe>
+  </c:if>
 </c:if>
+
 <c:if test="${!isLogined}">
-   <iframe frameborder="0" width="100%" height="100%" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getPublicControlPadIndex"></iframe>
+   <iframe frameborder="0" width="100%" height="600" id="mainFrame" name="mainFrame" scrolling="no" src="/user/conf/getPublicControlPadIndex"></iframe>
 </c:if>
 </div>
 <!--${LANG['bizconf.jsp.conf_invite_recv.res15']}-->
@@ -1141,8 +1075,10 @@ function getMonthEnd(date) {
   		<!-- setCookie("reload","1,${cId},${userName},${joinType},${code},${cPass}",domain); -->
   </form>
   </div>
-  <div id="noticeText" style="display: none;">${sysNotice.content}</div>
   <div style="display: none;" id="b_down_s"></div>
+  <div class="floatContactMe" style="position: absolute;top:200px; left: 0px;width: 170px;height: 280px;display: none;">
+  	
+  </div>
 </body>
 </html>
 
@@ -1166,7 +1102,7 @@ function joinMtgFromEmail(){
 	}
 	function initPage(){
 		var useLang="${lang}";
-		$("#lang").val(useLang); 
+		$("#jumpMenu_language").val(useLang); 
 		
 	}
 	initPage();

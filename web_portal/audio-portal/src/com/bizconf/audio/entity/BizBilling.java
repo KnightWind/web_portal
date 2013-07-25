@@ -37,11 +37,11 @@ public class BizBilling {
 	private Date billDate; //账单日期
 	private Date createDate; //账单生成日期  
 	
-	//数据费用   billtype为3(每月总账单)时设置
-	private float dataFee = 0f;
+	//数据费用   billtype为1或者2(每月总账单)时设置
+	private double dataFee = 0d;
 	
-	//通信费用   billtype为3时设置
-	private float telFee = 0f;
+	//通信费用   billtype为0或者2时设置
+	private double telFee = 0d;
 	
 	//用于时长的显示
 	public String getShowDuration(){
@@ -62,7 +62,7 @@ public class BizBilling {
 			showBuilder.append(":");
 			
 			int sec = (this.duration%3600)%60;
-			if(min<10){
+			if(sec<10){
 				showBuilder.append("0");
 			}
 			showBuilder.append(sec);
@@ -132,7 +132,7 @@ public class BizBilling {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
-	public float getTotalFee() {
+	public double getTotalFee() {
 		return this.dataFee+this.telFee;
 	}
 	
@@ -163,22 +163,21 @@ public class BizBilling {
 	}
 	
 	
-	public float getDataFee() {
+	public double getDataFee() {
 		return dataFee;
 	}
 	
-
-//	public void setDataFee(float dataFee) {
-//		this.dataFee = dataFee;
+//	public void setDataFee(Object dataFee) {
+//		if(dataFee!=null){
+//			this.dataFee = Float.parseFloat(dataFee.toString());
+//		}
 //	}
 	
-	public void setDataFee(Object dataFee) {
-		if(dataFee!=null){
-			this.dataFee = Float.parseFloat(dataFee.toString());
-		}
+	public void setDataFee(double dataFee) {
+			this.dataFee = dataFee;
 	}
 
-	public float getTelFee() {
+	public double getTelFee() {
 		return telFee;
 	}
 
@@ -186,11 +185,15 @@ public class BizBilling {
 //		this.telFee = telFee;
 //	}
 	
-	public void setTelFee(Object telFee) {
-		if(telFee!=null){
-			this.telFee = Float.parseFloat(telFee.toString()) ;
-		}
+	public void setTelFee(double telFee) {
+			this.telFee = telFee;
 	}
+	
+//	public void setTelFee(Object telFee) {
+//		if(telFee!=null){
+//			this.telFee = Float.parseFloat(telFee.toString()) ;
+//		}
+//	}
 	
 
 	public String getUserId() {

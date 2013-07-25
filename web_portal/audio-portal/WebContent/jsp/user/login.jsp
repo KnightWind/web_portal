@@ -36,10 +36,10 @@ $(function() {
 	fillInUserName();
 	$("#loginName").watermark('${LANG['bizconf.jsp.login.res1']}');
 	$("#loginPass").watermark('${LANG['bizconf.jsp.login.res2']}');
-	$("#authCode").watermark('${LANG['bizconf.jsp.login.res3']}');
+// 	$("#authCode").watermark('${LANG['bizconf.jsp.login.res3']}');
 	
-	$("#authCodeImg").width(66);
-	$("#authCodeImg").height(22);
+// 	$("#authCodeImg").width(66);
+// 	$("#authCodeImg").height(22);
 	randomImg();
 	
     $('#userLoginForm').validate({
@@ -47,16 +47,14 @@ $(function() {
     	errorClass: "warning",
         rules: {
             'loginName' : {required:true},
-            'loginPass' : {required:true},
-            'authCode'  : {required:true}
+            'loginPass' : {required:true}
         },
 		submitHandler: function(form) {
 			userlogin();
 		},
         messages: {
             'loginName' : {required:'${LANG['bizconf.jsp.login.res4']}'},
-            'loginPass' : {required:'${LANG['bizconf.jsp.login.res5']}'},
-            'authCode'  : {required:'${LANG['bizconf.jsp.login.res6']}'}
+            'loginPass' : {required:'${LANG['bizconf.jsp.login.res5']}'}
         },
 
         success: function (label) {
@@ -84,7 +82,7 @@ $(function() {
 });
 
 function reloadPage() {
-    parent.reloadPage();
+    window.top.reloadPage();
 }
 
 function randomImg() {
@@ -210,7 +208,7 @@ function checkRemember() {
           	</c:if> 
           </div>
           <div class="login_main_right">
-            <table>
+            <table style="margin-top: 30px;">
             
               <tr>
                 <td colspan="3">
@@ -232,20 +230,24 @@ function checkRemember() {
                 </td>
                 </tr>
                 
-                <tr>
-                <td>
-                <div class="text_boder02">
-                	<b class="text_boder_img"><img class="png" src="${baseUrlStatic}/images/identifying_code.png" width="15" height="16" /></b>
+<!--                 <tr> -->
+<!--                 <td> -->
+<!--                 <div class="text_boder02"> -->
+<%--                 	<b class="text_boder_img"><img class="png" src="${baseUrlStatic}/images/identifying_code.png" width="15" height="16" /></b> --%>
 <!--                 	<input class="placeholder02" name="" type="text" value="${LANG['bizconf.jsp.admin.login.res9']}" onfocus="this.value=' '; this.onfocus=null;" /> -->
-						<input class="placeholder02 placeValid" name="authCode" type="text" id="authCode" maxlength="4" watermark="${LANG['bizconf.jsp.login.res3']}" tabindex="3"/>
-                  </div>
-                </td>
-                <td align="left">
+<%-- 						<input class="placeholder02 placeValid" name="authCode" type="text" id="authCode" maxlength="4" watermark="${LANG['bizconf.jsp.login.res3']}" tabindex="3"/> --%>
+<!--                   </div> -->
+<!--                 </td> -->
+<!--                 <td align="left"> -->
 <!--                 	<img class="text_boder02_code" src="${baseUrlStatic}/images/identifying_code_img.png" width="67" height="22" align="absmiddle" /> -->
-                	<img  class="text_boder02_code" align="absmiddle" id="authCodeImg" class="yanzheng" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" onclick="randomImg()"/>
-                </td>
+<%--                 	<img  class="text_boder02_code" align="absmiddle" id="authCodeImg" class="yanzheng" alt="${LANG['bizconf.jsp.login.res8']}" src=""  width="0" height="0" onclick="randomImg()"/> --%>
+<!--                 </td> -->
+<!--                 </tr> -->
+                <tr>
+                	<td colspan="3" style="height: 15px">
+                		&nbsp;
+                	</td>
                 </tr>
-                
                 <tr>
                   <td colspan="3">
                   	<ul class="text_boder03">

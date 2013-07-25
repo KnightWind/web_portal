@@ -208,24 +208,24 @@ public class Condition implements  java.io.Serializable  {
 							condSql=fieldName + opera + eachValue;
 						} else if ("string".equals(eachValueType)
 								|| "date".equals(eachValueType)) {
-							condSql=fieldName + opera + "'"+eachValue+"'";
+							condSql=fieldName + opera + "'"+escape(eachValue)+"'";
 						}
 						return condSql;
 					}
 				}
 				if("".equals(condSql)){
 					if("like".equals(operaType)){
-						condSql=fieldName +" like '%"+String.valueOf(eachValue)+"%'";
+						condSql=fieldName +" like '%"+escape(eachValue)+"%'";
 					}else if("leftLike".equals(operaType)){
-						condSql= fieldName +" like '"+String.valueOf(eachValue)+"%'";
+						condSql= fieldName +" like '"+escape(eachValue)+"%'";
 					}else if("rightLike".equals(operaType)){
-						condSql= fieldName +" like '%"+String.valueOf(eachValue)+"'";
+						condSql= fieldName +" like '%"+escape(eachValue)+"'";
 					}else if("notLike".equals(operaType)){
-						condSql= fieldName +"  not like '%"+String.valueOf(eachValue)+"%'";
+						condSql= fieldName +"  not like '%"+escape(eachValue)+"%'";
 					}else if("notLeftLike".equals(operaType)){
-						condSql= fieldName +" not like '"+String.valueOf(eachValue)+"%'";
+						condSql= fieldName +" not like '"+escape(eachValue)+"%'";
 					}else if("notRightLike".equals(operaType)){
-						condSql= fieldName + " not like '%"+String.valueOf(eachValue)+"'";
+						condSql= fieldName + " not like '%"+escape(eachValue)+"'";
 					}
 				}
 				if("isNull".equals(operaType)){
@@ -258,7 +258,11 @@ public class Condition implements  java.io.Serializable  {
 		return condSql;
 	}
 	
-	
+	private String escape(Object str){
+		String escapeStr= String.valueOf(str).replaceAll("'", "\\\\'");
+		return escapeStr;
+		
+	}
 	private String getTypeName(Object value){
 		String typeName="";
 		if(value!=null){

@@ -67,24 +67,26 @@ public class TestService {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String siteId="emcps";
-		String mtgTitle=siteId+"JoinMtg会议00001";
-		String mtgKey="201321111222001"; 
-		List<String[]> userList=new ArrayList<String[]>();
-		userList.add(new String[]{"Dick","0"});
-		userList.add(new String[]{"Chris","9997"});
-		userList.add(new String[]{"John","9993"});
-		userList.add(new String[]{"Anke","9992"});
-		userList.add(new String[]{"Frank","9998"});
-//		userList.add(new String[]{"William","9991"});
-//		userList.add(new String[]{"Alan","9996"});
-//		userList.add(new String[]{"Martin","9995"});
-//		userList.add(new String[]{"Jack","9990"});
-	//	userList.add(new String[]{"John001","0"});
-		for(String[] userInfo:userList){
-			makeJoinMtgUrl(siteId,mtgTitle,mtgKey,userInfo[0],userInfo[1]);
-		}
+//		String siteId="go";
+//		String mtgTitle=siteId+"站点上通过外部入会地址进入会议";
+//		String mtgKey="201300112211121"; 
+//		List<String[]> userList=new ArrayList<String[]>();
+//		userList.add(new String[]{"Dick","5158"});
+//		userList.add(new String[]{"Chris","9997"});
+////		userList.add(new String[]{"John","9993"});
+////		userList.add(new String[]{"Anke","9992"});
+//		userList.add(new String[]{"Frank","9998"});
+////		userList.add(new String[]{"William","9991"});
+////		userList.add(new String[]{"Alan","9996"});
+////		userList.add(new String[]{"Martin","9995"});
+////		userList.add(new String[]{"Jack","9990"});
+//	//	userList.add(new String[]{"John001","0"});
+//		for(String[] userInfo:userList){
+//			makeJoinMtgUrl(siteId,mtgTitle,mtgKey,userInfo[0],userInfo[1]);
+//		}
 //		
+		
+		System.out.println(Base64.decode("am9pbi9qb2lucGFnZT9qb2luVHlwZT0zJmNJZD02NjUyJnNjb2RlPTEyOTk4MDQwMSZ1SWQ9MA==", "utf8"));
 //		String siteId="int";
 //		String language="0";
 //		String duration="120";

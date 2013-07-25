@@ -12,6 +12,6 @@
 </style>
 </head>
 <body>
-<div class="copyright-text">${LANG['bizconf.jsp.copyright.res1']} &copy; 2013 ${LANG['bizconf.jsp.copyright.res2']}</div>
+<div class="copyright-text">${LANG['bizconf.jsp.copyright.res1']}</div>
 </body>
 </html>

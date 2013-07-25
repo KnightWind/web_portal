@@ -40,6 +40,16 @@ public class SiteBase implements java.io.Serializable {
 	 */
 	private String siteLogo;
 	
+	/**
+	 * 站点banner
+	 */
+	private String siteBanner = "";
+	
+	/**
+	 * 是否可以自定义站点风格
+	 */
+	private int siteDiy = 0;
+	
 	/*
 	 * 站点标识
 	 * 删除标志为1时，不能重复
@@ -140,12 +150,27 @@ public class SiteBase implements java.io.Serializable {
 	
 	private String priseId;
 	
-	/**
-	 * 是否发送到期提醒
+	/*
+	 * 是否发送到期提醒   0未送过期提醒   >0则表示已发送邮件提醒 
 	 */
 	private Integer sendRemindFlag = 0;
 	// Constructors
 
+	//是否为虚拟站点 0:非虚拟  1:虚拟
+	private Integer isVirtualSite = 0;
+	/*
+	 * 屏幕共享时时间间隔 ，单位毫秒，默认1000
+	 */
+	private Integer frameTimeInterval = 1000;
+	
+	/*
+	 * 创建（修改）站点权限：新增字段
+	 * 最大并发会场数
+	 * 该值为0，代表不限制并发会场数
+	 * 2013.7.10
+	 */
+	private int syncConfNum = 0;
+	
 	/** default constructor */
 	public SiteBase() {
 	}
@@ -156,19 +181,31 @@ public class SiteBase implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public SiteBase(String siteName,String enName, String clientName, String siteLogo,
-			String siteSign, String siteDesc, Integer timeZone,Integer timeZoneId, Integer siteFlag,Integer license,
-			Integer mtgType, Integer lockFlag, Date effeDate, Date expireDate, Date createTime,
-			Integer createUser, Integer delFlag, Date delTime, Integer delUser,String priseId) {
+	
+	public SiteBase(Integer id, String siteName, String enName,
+			String clientName, String siteLogo, String siteBanner, int siteDiy,
+			String siteSign, String siteDesc, Integer timeZone,
+			Integer timeZoneId, Integer siteFlag, Integer hireMode,
+			Integer chargeMode, Integer license, Integer mtgType,
+			Integer lockFlag, Date effeDate, Date expireDate, Date createTime,
+			Integer createUser, Integer delFlag, Date delTime, Integer delUser,
+			String priseId, Integer sendRemindFlag, Integer isVirtualSite,
+			Integer frameTimeInterval, int syncConfNum) {
+		super();
+		this.id = id;
 		this.siteName = siteName;
-		this.enName=enName;
+		this.enName = enName;
 		this.clientName = clientName;
 		this.siteLogo = siteLogo;
+		this.siteBanner = siteBanner;
+		this.siteDiy = siteDiy;
 		this.siteSign = siteSign;
 		this.siteDesc = siteDesc;
 		this.timeZone = timeZone;
-		this.timeZoneId=timeZoneId;
+		this.timeZoneId = timeZoneId;
 		this.siteFlag = siteFlag;
+		this.hireMode = hireMode;
+		this.chargeMode = chargeMode;
 		this.license = license;
 		this.mtgType = mtgType;
 		this.lockFlag = lockFlag;
@@ -179,7 +216,11 @@ public class SiteBase implements java.io.Serializable {
 		this.delFlag = delFlag;
 		this.delTime = delTime;
 		this.delUser = delUser;
-		this.priseId=priseId;
+		this.priseId = priseId;
+		this.sendRemindFlag = sendRemindFlag;
+		this.isVirtualSite = isVirtualSite;
+		this.frameTimeInterval = frameTimeInterval;
+		this.syncConfNum = syncConfNum;
 	}
 
 	// Property accessors
@@ -187,6 +228,18 @@ public class SiteBase implements java.io.Serializable {
 
 	public Integer getId() {
 		return this.id;
+	}
+
+	public Integer getIsVirtualSite() {
+		return isVirtualSite;
+	}
+
+	public void setIsVirtualSite(Integer isVirtualSite) {
+		this.isVirtualSite = isVirtualSite;
+		//如果虚拟站点，则不需要过期提醒
+		if(isVirtualSite!=null&&isVirtualSite.intValue()==1){
+			this.sendRemindFlag = 100;
+		}
 	}
 
 	public void setId(Integer id) {
@@ -224,6 +277,23 @@ public class SiteBase implements java.io.Serializable {
 
 	public void setSiteLogo(String siteLogo) {
 		this.siteLogo = siteLogo;
+	}
+	
+	public String getSiteBanner() {
+		return siteBanner;
+	}
+
+	public void setSiteBanner(String siteBanner) {
+		this.siteBanner = siteBanner;
+	}
+
+	
+	public int getSiteDiy() {
+		return siteDiy;
+	}
+
+	public void setSiteDiy(int siteDiy) {
+		this.siteDiy = siteDiy;
 	}
 
 	public String getSiteSign() {
@@ -396,6 +466,22 @@ public class SiteBase implements java.io.Serializable {
 		this.sendRemindFlag = sendRemindFlag;
 	}
 
+	public Integer getFrameTimeInterval() {
+		return frameTimeInterval;
+	}
+
+	public void setFrameTimeInterval(Integer frameTimeInterval) {
+		this.frameTimeInterval = frameTimeInterval;
+	}
+	
+	public int getSyncConfNum() {
+		return syncConfNum;
+	}
+
+	public void setSyncConfNum(int syncConfNum) {
+		this.syncConfNum = syncConfNum;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -429,15 +515,19 @@ public class SiteBase implements java.io.Serializable {
 	public String toString() {
 		return "SiteBase [id=" + id + ", siteName=" + siteName + ", enName="
 				+ enName + ", clientName=" + clientName + ", siteLogo="
-				+ siteLogo + ", siteSign=" + siteSign + ", siteDesc="
-				+ siteDesc + ", timeZone=" + timeZone + ", timeZoneId="
-				+ timeZoneId + ", siteFlag=" + siteFlag + ", hireMode="
-				+ hireMode + ", chargeMode=" + chargeMode + ", license="
-				+ license + ", mtgType=" + mtgType + ", lockFlag=" + lockFlag
+				+ siteLogo + ", siteBanner=" + siteBanner + ", siteDiy="
+				+ siteDiy + ", siteSign=" + siteSign + ", siteDesc=" + siteDesc
+				+ ", timeZone=" + timeZone + ", timeZoneId=" + timeZoneId
+				+ ", siteFlag=" + siteFlag + ", hireMode=" + hireMode
+				+ ", chargeMode=" + chargeMode + ", license=" + license
+				+ ", mtgType=" + mtgType + ", lockFlag=" + lockFlag
 				+ ", effeDate=" + effeDate + ", expireDate=" + expireDate
 				+ ", createTime=" + createTime + ", createUser=" + createUser
 				+ ", delFlag=" + delFlag + ", delTime=" + delTime
-				+ ", delUser=" + delUser + ", priseId=" + priseId + "]";
+				+ ", delUser=" + delUser + ", priseId=" + priseId
+				+ ", sendRemindFlag=" + sendRemindFlag + ", isVirtualSite="
+				+ isVirtualSite + ", frameTimeInterval=" + frameTimeInterval
+				+ ", syncConfNum=" + syncConfNum + "]";
 	}
 	
 	/**
@@ -447,9 +537,43 @@ public class SiteBase implements java.io.Serializable {
 	public int getExpireDateNumber(){
 		Date gmtNow = DateUtil.getGmtDate(null);
 		if(expireDate.after(gmtNow)){
-			int i = new Long((expireDate.getTime()-gmtNow.getTime())).intValue()/(24*3600*1000);
-			return i;
+			Date localDate=DateUtil.getOffsetDateByGmtDate(gmtNow, (long)timeZone);
+			Date localExpireDate=DateUtil.getOffsetDateByGmtDate(expireDate, (long)timeZone);
+			return  DateUtil.getDateDiff(localDate,localExpireDate);
+			//int i = new Long((expireDate.getTime()-gmtNow.getTime())).intValue()/(24*3600*1000);
+			//return i;
 		}
 		return 0;
+	}
+
+	public SiteBase Copy(){
+		SiteBase copySite = new SiteBase();
+		copySite.id = id;
+		copySite.siteName = siteName;
+		copySite.enName = enName;
+		copySite.clientName = clientName;
+		copySite.siteLogo = siteLogo;
+		copySite.siteSign = siteSign;
+		copySite.siteDesc = siteDesc;
+		copySite.timeZone = timeZone;
+		copySite.timeZoneId = timeZoneId;
+		copySite.siteFlag = siteFlag;
+		copySite.hireMode = hireMode;
+		copySite.chargeMode = chargeMode;
+		copySite.license = license;
+		copySite.mtgType = mtgType;
+		copySite.lockFlag = lockFlag;
+		copySite.effeDate = effeDate;
+		copySite.expireDate = expireDate;
+		copySite.createTime = createTime;
+		copySite.createUser = createUser;
+		copySite.delFlag = delFlag;
+		copySite.delTime = delTime;
+		copySite.delUser = delUser;
+		copySite.priseId = priseId;
+		copySite.sendRemindFlag = sendRemindFlag;
+		copySite.isVirtualSite = isVirtualSite;
+		copySite.frameTimeInterval = frameTimeInterval;
+		return copySite;
 	}
 }

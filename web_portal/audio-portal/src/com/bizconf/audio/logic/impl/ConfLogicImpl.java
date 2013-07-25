@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.constant.ConstantUtil;
 import com.bizconf.audio.constant.SiteConstant;
@@ -19,18 +20,24 @@ import com.bizconf.audio.dao.DAOProxy;
 import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.ConfCycle;
 import com.bizconf.audio.entity.DefaultConfig;
+import com.bizconf.audio.entity.EmpowerConfig;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.UserBase;
 import com.bizconf.audio.logic.ConfLogic;
 import com.bizconf.audio.service.ConfService;
+import com.bizconf.audio.service.EmpowerConfigService;
 import com.bizconf.audio.service.impl.BaseService;
 import com.bizconf.audio.util.DateUtil;
+import com.bizconf.audio.util.IntegerUtil;
+import com.bizconf.audio.util.StringUtil;
 
 @Service
 public class ConfLogicImpl extends BaseService implements ConfLogic {
 	
 	@Autowired
 	ConfService confService;
+	@Autowired
+	EmpowerConfigService empowerConfigService;
 	
 	/**
 	 * 创建或修改会议时获取可用license
@@ -353,44 +360,6 @@ public class ConfLogicImpl extends BaseService implements ConfLogic {
 		return true;
 	}
 	
-	/**
-	 * 获取会议参数设置
-	 * 1.优先级最高为用户自定义配置（查找条件为：userId为用户ID,siteId为用户所在站点id）
-	 * 2.若无用户自定义配置，则查找系统默认配置（查找条件为：userId为0，siteId为0）
-	 * wangyong
-	 * 2013-3-4
-	 */
-	public DefaultConfig getDefaultConfig(UserBase user){
-		DefaultConfig mtgParam = null;
-		StringBuffer strSql = new StringBuffer(" SELECT * FROM t_default_config WHERE 1=1 AND site_id = ? AND user_id = ? ");
-		Object[] values = new Object[2];
-		values[0] = user.getSiteId();
-		values[1] = user.getId();
-		try {
-			mtgParam = libernate.getEntityCustomized(DefaultConfig.class, strSql.toString(), values);
-		} catch (SQLException e) {
-			logger.error("获取会议参数设置出错！",e);
-		}
-		if(mtgParam == null){
-			values[0] = 0;
-			values[1] = 0;
-			try {
-				mtgParam = libernate.getEntityCustomized(DefaultConfig.class, strSql.toString(), values);
-			} catch (SQLException e) {
-				logger.error("获取会议参数设置出错！",e);
-			}
-		}else if(mtgParam.getId() == null){
-			values[0] = 0;
-			values[1] = 0;
-			try {
-				mtgParam = libernate.getEntityCustomized(DefaultConfig.class, strSql.toString(), values);
-			} catch (SQLException e) {
-				logger.error("获取会议参数设置出错！",e);
-			}
-		}
-		return mtgParam;
-	}
-
 //	
 //	@Override
 //	public HashMap<String,Integer> getSurplusLicense(ConfBase confBase,ConfCycle confCycle, SiteBase siteBase){
@@ -663,36 +632,81 @@ public class ConfLogicImpl extends BaseService implements ConfLogic {
 		clientConfig[ConfConstant.CLIENT_CONFIG_VOTE] = '1';            //投票(问卷调查)
 	}
 
-}
+	@Override
+	public UserBase getConfCreator(String confHwId) {
+		if (!StringUtil.isEmpty(confHwId)) {
+			try {
+				ConfBase conf =  libernate.getEntity(ConfBase.class, "conf_hwid", confHwId);
+				if(conf!=null){
+					return libernate.getEntity(UserBase.class, conf.getCreateUser());
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public void immediatelyConfAuthority(ConfBase conf, UserBase user){
+		EmpowerConfig userEmpower = empowerConfigService.makeEmpowerForConf(user);   //获取用户创建会议，缺省会议设置的权限
+		DefaultConfig defaultConfig = confService.getDefaultConfig(user);
+		char[] clientConfig = conf.getClientConfig().toCharArray();
+		if(userEmpower.getVideoFlag().intValue() == SiteConstant.EMPOWER_ENABLED && defaultConfig.getMaxVideo().intValue() > 0){
+			clientConfig[ConfConstant.CLIENT_CONFIG_VIDEO] = '1';      //由于个人缺省设置不设置视频是否开启，所以只要站点授权视频功能，则创建即时会议时，自动打开视频功能
+			conf.setConfType(ConfConstant.CONF_TYPE_VIDEO_FUNC);
+			conf.setClientConfig(String.valueOf(clientConfig));
+		}
+		if(userEmpower.getAudioFlag().intValue() == SiteConstant.EMPOWER_ENABLED && defaultConfig.getMaxAudio().intValue() > 0){
+			clientConfig[ConfConstant.CLIENT_CONFIG_AUDIO] = '1';      //由于个人缺省设置不设置音频是否开启，所以只要站点授权音频功能，则创建即时会议时，自动打开音频功能
+			conf.setClientConfig(String.valueOf(clientConfig));
+		}
+		//2013.7.2新增站点分辨率权限控制    ----开始
+		String userDefaultMaxDpi = defaultConfig.getMaxDpi();
+		String siteEmpowerMaxDpi = "";
+		String siteEmpowerVideoType = "";
+		String confVideoType = defaultConfig.getVideoType();
+		if(userEmpower.getDpiNumber() != null && userEmpower.getDpiNumber().intValue() == ConfConstant.CONF_VIDEO_TYPE_WEBBAND_CODE){
+			siteEmpowerMaxDpi = ConfConstant.CONF_VIDEO_TYPE_WEBBAND.substring(1,2);
+			siteEmpowerVideoType = ConfConstant.CONF_VIDEO_TYPE_WEBBAND;
+		}
 
-//				if(sqlBuffer!=null && sqlBuffer.length() >0){
-//					List<CountLicenseObject>  countList=null;
-//					try {
-//						countList=libernate.getEntityListBase(CountLicenseObject.class, sqlBuffer.toString(), values);
-//					} catch (SQLException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					if(countList!=null && countList.size()>0){
-//						surpMap=new HashMap<String, Integer>();
-//						Integer eachCountLicense=0;
-//						Integer eachSurpLicense=0;
-//						for(CountLicenseObject countLicense:countList){
-//							if(countLicense!=null){
-//								eachCountLicense=0;
-//								if(countLicense.getLicCount()!=null){
-//									eachCountLicense=IntegerUtil.parseInteger(countLicense.getLicCount());
-//								}
-//								eachSurpLicense=siteLicense-eachCountLicense;
-//								if(eachSurpLicense<=0){
-//									eachSurpLicense=0;
-//								}
-//								surpMap.put(countLicense.getLicDate(), eachSurpLicense);
-//							}
-//						}
-//					}
-//					
-//					countList=null;
-//					
-//					
-//				}
+		if(userEmpower.getDpiNumber() != null && userEmpower.getDpiNumber().intValue() == ConfConstant.CONF_VIDEO_TYPE_FLUENCY_CODE){
+			siteEmpowerMaxDpi = ConfConstant.CONF_VIDEO_TYPE_FLUENCY.substring(1,2);
+			siteEmpowerVideoType = ConfConstant.CONF_VIDEO_TYPE_FLUENCY;
+		}
+
+		if(userEmpower.getDpiNumber() != null && userEmpower.getDpiNumber().intValue() == ConfConstant.CONF_VIDEO_TYPE_DISTINCT_CODE){
+			siteEmpowerMaxDpi = ConfConstant.CONF_VIDEO_TYPE_DISTINCT.substring(1,2);
+			siteEmpowerVideoType = ConfConstant.CONF_VIDEO_TYPE_DISTINCT;
+		}
+		// 2013.7.8 新增视频质量 （最高）
+		if(userEmpower.getDpiNumber() != null && userEmpower.getDpiNumber().intValue() == ConfConstant.CONF_VIDEO_TYPE_BEST_CODE){
+			siteEmpowerMaxDpi = ConfConstant.CONF_VIDEO_TYPE_BEST.substring(1,2);
+			siteEmpowerVideoType = ConfConstant.CONF_VIDEO_TYPE_BEST;
+		}
+		if(userDefaultMaxDpi != null && !userDefaultMaxDpi.equals(siteEmpowerMaxDpi)
+				&& IntegerUtil.parseIntegerWithDefaultZero(userDefaultMaxDpi) > IntegerUtil.parseIntegerWithDefaultZero(siteEmpowerMaxDpi)){
+				userDefaultMaxDpi = siteEmpowerMaxDpi;
+				confVideoType = siteEmpowerVideoType;
+			
+		}
+		conf.setVideoType(confVideoType);
+		conf.setMaxDpi(userDefaultMaxDpi);
+		conf.setDefaultDpi(confVideoType.substring(0,1));
+		//2013.7.2新增站点分辨率权限控制   -----结束
+		//2013.7.4创建即时会议根据权限与个人缺省设置，是否有电话功能、视频功能  ------开始
+		if(userEmpower.getPhoneFlag().intValue() == SiteConstant.EMPOWER_ENABLED && defaultConfig.hasPhoneFunc()){
+			conf.setConfType(ConfConstant.CONF_TYPE_PHONE_FUNC);
+			if(userEmpower.getVideoFlag().intValue() == SiteConstant.EMPOWER_ENABLED && defaultConfig.getMaxVideo().intValue() > 0){
+				conf.setConfType(ConfConstant.CONF_TYPE_PHONE_VIDEO_FUNC);
+			}
+		}
+		//2013.7.4创建即时会议根据权限与个人缺省设置，是否有电话功能、视频功能   -----结束
+		conf.setAheadTime(ConfConstant.CONF_CONFIG_AHEADTIMES+5);//即时会议的提前时间多加5分钟，以免在入会时提示用户会议未到开始时间
+		conf.setStartTime(DateUtil.addDateMinutes(DateUtil.getGmtDate(null), ConfConstant.CONF_CONFIG_AHEADTIMES));      //即时会议为当前GMT时间+5分钟 
+		conf.setEndTime(DateUtil.addDateMinutes(conf.getStartTime(), conf.getDuration()));
+		conf.setConfDesc(ResourceHolder.getInstance().getResource("bizconf.jsp.user.immediaconf.desc"));
+	}
+
+}

@@ -13,6 +13,7 @@
 .tr_center {
 	border:#D2D8DB 1px solid;
 	border-right:none;
+	background: url("/static/images/table_head_bg.jpg") repeat-x scroll 0 0 transparent;
 }
 .tr_main {
 	border-bottom:#D2D8DB 1px solid;
@@ -20,17 +21,28 @@
 }
 .tr_top {
 	border:#D2D8DB 1px solid;
+	border-top:none;
 	border-bottom:none;
 	margin-top:26px;
+	background: url("/static/images/table_head_bg.jpg") repeat-x scroll 0 0 transparent;
 }
 .tr_bottom {
 	border:#D2D8DB 1px solid;
 	border-top:none
 }
+.zd01, .zd02 {
+	margin: 5px;
+	padding: 2px;
+	border: 1px solid #D2D8DB;
+}
 </style>
 <script type="text/javascript">
 function viewDetail(id){
-		parent.parent.showTelDetail(id);
+		parent.parent.showTelDetail(id,"${year}","${month}");
+}
+
+function submitQuery(){
+	$("#query").submit();
 }
 </script>
 </head>
@@ -38,14 +50,16 @@ function viewDetail(id){
 <form id="query" name="query" action="/common/billing/siteBillList" method="post">
     <table width="100%" align="center" cellpadding="0" cellspacing="0" border="0" id="t_box" >
       <tr>
-        <td height="40" colspan="4" bgcolor="#EAF4FC" class="tr_top">
-          <select class="zd01" name="year" id="yearSelect">
-            <option value="2013" <c:if test="${year eq '2013'}">selected="selected"</c:if>>2013${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>
-            <option value="2012" <c:if test="${year eq '2012'}">selected="selected"</c:if>>2012${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>
-            <option value="2011" <c:if test="${year eq '2011'}">selected="selected"</c:if>>2011${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>
-            <option value="2010" <c:if test="${year eq '2010'}">selected="selected"</c:if>>2010${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>
+        <td height="40" colspan="4" class="tr_top">
+          <select class="zd01" name="year" id="yearSelect" onchange="submitQuery();">
+<%--            <option value="2013" <c:if test="${year eq '2013'}">selected="selected"</c:if>>2013${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>--%>
+<%--            <option value="2012" <c:if test="${year eq '2012'}">selected="selected"</c:if>>2012${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>--%>
+<%--            <option value="2011" <c:if test="${year eq '2011'}">selected="selected"</c:if>>2011${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>--%>
+<%--            <option value="2010" <c:if test="${year eq '2010'}">selected="selected"</c:if>>2010${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>--%>
+         		<option value="${curryear}" <c:if test="${year eq curryear}">selected="selected"</c:if>>${curryear} ${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>
+            	<option value="${curryear-1}" <c:if test="${year eq (curryear-1)}">selected="selected"</c:if>>${curryear-1} ${LANG['bizconf.jsp.admin.mybilling_list.res1']}</option>
           </select>
-          <select class="zd02" name="month" id="monthSelect">
+          <select class="zd02" name="month" id="monthSelect" onchange="submitQuery();">
             <option value="1" <c:if test="${month eq '1'}">selected="selected"</c:if>>1${LANG['bizconf.jsp.admin.mybilling_list.res2']}</option>
             <option value="2" <c:if test="${month eq '2'}">selected="selected"</c:if>>2${LANG['bizconf.jsp.admin.mybilling_list.res2']}</option>
             <option value="3" <c:if test="${month eq '3'}">selected="selected"</c:if>>3${LANG['bizconf.jsp.admin.mybilling_list.res2']}</option>
@@ -67,8 +81,8 @@ function viewDetail(id){
         </td>
       </tr>
       <tr align="right" bgcolor="#FFFFFF" height="32">
-        <td width="50%" colspan="2" class="tr_main" style=" border-left:#D2D8DB 1px solid; padding-left:10px; " align="left"><strong>${LANG['bizconf.jsp.admin.mybilling_list.res5']}${site.siteName}</strong> </td>
-        <td width="50%" colspan="2" class="tr_main" style="  border-right:#D2D8DB 1px solid;padding-right:10px;">${LANG['bizconf.jsp.admin.mybilling_list.res6']}
+        <td width="50%" colspan="2" class="tr_main" style=" border-left:#D2D8DB 1px solid; padding-left:10px;border-bottom: 0px; " align="left"><strong>${LANG['bizconf.jsp.admin.mybilling_list.res5']}${site.siteName}</strong> </td>
+        <td width="50%" colspan="2" class="tr_main" style="  border-right:#D2D8DB 1px solid;padding-right:10px;border-bottom: 0px;">${LANG['bizconf.jsp.admin.mybilling_list.res6']}
         <c:choose>
 	  	 	<c:when test="${site.chargeMode eq 1 }">
 	  	 		name_host
@@ -85,7 +99,7 @@ function viewDetail(id){
 	  	 </c:choose>
 	  </td>
 	  <c:if test="${fn:length(pageModel.datas)<=0}">
-				<tr class="table001" height="32"  >
+				<tr class="table001" height="32" style="border-bottom: 0px;" >
 			            <td height="32" colspan="11" align="center"> ${LANG['website.common.msg.list.nodata']} </td>
 			     </tr>
 			</c:if>
@@ -93,18 +107,20 @@ function viewDetail(id){
 	      </tr>
 	        <tr align="center" height="35" class="tr_center" bgcolor="#000066" >
 	         <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; padding-right:10px; padding-left:55px;" align="left"><strong>${LANG['bizconf.jsp.admin.mybilling_list.res7']}</strong></td>
-	        <td class="tr_center" colspan="2" style="border-right:#D2D8DB 1px solid; padding-right:10px; color:#996600; border-left:none;border-top:none" align="right"><strong>${LANG['bizconf.jsp.admin.mybilling_list.res8']}${bill.totalFee}${LANG['bizconf.jsp.admin.mybilling_list.res9']}</strong></td>
-		
-		<c:if test="${site.chargeMode != 3}">
+	        <td class="tr_center" colspan="2" style="border-right:#D2D8DB 1px solid; padding-right:10px; color:#996600; border-left:none;border-top:none" align="right"><strong>${LANG['bizconf.jsp.admin.mybilling_list.res8']}<fmt:formatNumber value="${bill.totalFee}" pattern="#.00" type="number"/>${LANG['bizconf.jsp.admin.mybilling_list.res9']}</strong></td>
 	      </tr>
 	        <tr align="left" bgcolor="#FFFFFF" height="32" class="tongxin">
-	        <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; padding-left:100px; border-bottom:dashed 1px #D2D8DB;" onclick="parent.parent.showDataFeeDetail(${bill.id});">${LANG['bizconf.jsp.admin.mybilling_list.res10']}</td>
-	        <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; border-right:#D2D8DB 1px solid;padding-right:50px;border-left:none;border-bottom:dashed 1px #D2D8DB; " align="right"><span>${bill.dataFee}</span></td>
+			<c:if test="${site.chargeMode != 3}">
+	        	<td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; padding-left:100px; border-bottom:dashed 1px #D2D8DB;" onclick="parent.parent.showDataFeeDetail(${bill.id},'${year}','${month}');">${LANG['bizconf.jsp.admin.mybilling_list.res10']}</td>
+	     	</c:if>
+			<c:if test="${site.chargeMode eq 3}">
+	        	<td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; padding-left:100px; border-bottom:dashed 1px #D2D8DB;">${LANG['bizconf.jsp.admin.mybilling_list.res10']}</td>
+	     	</c:if>
+	        <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; border-right:#D2D8DB 1px solid;padding-right:50px;border-left:none;border-bottom:dashed 1px #D2D8DB; " align="right"><span><fmt:formatNumber value="${bill.dataFee}" pattern="#.00" type="number"/></span></td>
 	      </tr>
-	     </c:if>
 	      <tr align="left" bgcolor="#FFFFFF" height="32" class="tongxin">
 	        <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; padding-left:100px;" onclick="viewDetail(${bill.id});">${LANG['bizconf.jsp.admin.mybilling_list.res11']}</td>
-	        <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; border-right:#D2D8DB 1px solid;padding-right:50px;border-left:none; " align="right"><span>${bill.telFee}${LANG['bizconf.jsp.admin.mybilling_list.res9']}</span></td>
+	        <td class="tr_main" colspan="2" style=" border-left:#D2D8DB 1px solid; cursor:pointer; border-right:#D2D8DB 1px solid;padding-right:50px;border-left:none; " align="right"><span><fmt:formatNumber value="${bill.telFee}" pattern="#.00" type="number"/>${LANG['bizconf.jsp.admin.mybilling_list.res9']}</span></td>
 	      </tr>
 	     </tr>
 	  </c:forEach>

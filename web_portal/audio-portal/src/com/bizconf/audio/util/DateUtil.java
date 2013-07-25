@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.bizconf.audio.constant.ConfConstant;
 import com.bizconf.audio.constant.ConstantUtil;
@@ -33,24 +34,27 @@ public class DateUtil {
 //		
 //		System.out.println(calendar.getTime());
 //		
-
-		Calendar beginCalendar=Calendar.getInstance();
-		beginCalendar.set(2013,3,3);
-		Calendar endCalendar=Calendar.getInstance();
-////		System.out.println(beginCalendar.get(Calendar.WEEK_OF_MONTH));//.getMinimalDaysInFirstWeek());
-////		System.out.println(beginCalendar.getTime());
-		endCalendar.set(2013,3, 30);
-		List<Date> confDayList=null;
-		System.out.println("根据gmt时间获取当前时区时间:"+getOffsetDateByGmtDate(getGmtDate(null), 28800000L));
-		
-//		confDayList = getMonthlyDays(beginCalendar.getTime(),endCalendar.getTime(),"4;22222");
-		confDayList=getWeeklyDays(beginCalendar.getTime(),endCalendar.getTime(), "3,4,6", ConstantUtil.CYCLE_CONF_DATE_LIMIT);
+//
+//		Calendar beginCalendar=Calendar.getInstance();
+//		beginCalendar.set(2013,3,3);
+//		Calendar endCalendar=Calendar.getInstance();
+//////		System.out.println(beginCalendar.get(Calendar.WEEK_OF_MONTH));//.getMinimalDaysInFirstWeek());
+//////		System.out.println(beginCalendar.getTime());
+//		endCalendar.set(2013,3, 30);
+//		List<Date> confDayList=null;
+//		System.out.println("根据gmt时间获取当前时区时间:"+getOffsetDateByGmtDate(getGmtDate(null), 28800000L));
 //		
-////		confDayList=getMonthlyDays(beginCalendar.getTime(), endCalendar.getTime(), "4;2,3",true);
-//		confDayList=getDaysByMonth(beginCalendar.getTime(), endCalendar.getTime(), "2;2");
+////		confDayList = getMonthlyDays(beginCalendar.getTime(),endCalendar.getTime(),"4;22222");
+//		confDayList=getWeeklyDays(beginCalendar.getTime(),endCalendar.getTime(), "3,4,6", ConstantUtil.CYCLE_CONF_DATE_LIMIT);
+////		
+//////		confDayList=getMonthlyDays(beginCalendar.getTime(), endCalendar.getTime(), "4;2,3",true);
+////		confDayList=getDaysByMonth(beginCalendar.getTime(), endCalendar.getTime(), "2;2");
 //		Date test = getDaysByDate(beginCalendar.getTime(),3,ConfConstant.WEEK_WENDESDAY);       //获取指定日期，即2013年3月的第3个周三
 //		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(test));
-		System.out.println(confDayList);
+	//	sendFlag.intValue()!=(thisFlag&sendFlag)))
+		int thisFlag=4;
+		int sendFlag=7;
+		System.out.println(sendFlag&thisFlag);
 		
 //		System.out.println(getMonthlyDays(beginCalendar.getTime(), endCalendar.getTime(), "5"));
 		
@@ -967,7 +971,7 @@ public class DateUtil {
 		Date date = getOffsetDateByGmtDate(getGmtDate(null),offsetmill);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);	
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.DAY_OF_MONTH,1);
@@ -981,65 +985,182 @@ public class DateUtil {
 		calendar.setTime(monthstart);
 		calendar.add(Calendar.MONTH, 1);
 		int mon = calendar.get(Calendar.MONTH)+1;
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		if(mon==1 || mon ==3 || mon ==5 || mon==7 ||mon ==8 ||mon ==10 || mon ==12){
-			calendar.set(Calendar.DAY_OF_MONTH, 31);
+			if(day>28){
+				calendar.set(Calendar.DAY_OF_MONTH, 31);
+			}
 		}
 		return calendar.getTime();
 	}
 	
 	public static Date getMonthStratDate(String year,String month,Integer offsetmill){
 		long mills = DateUtil.BJ_TIME_OFFSET;
+		if(offsetmill!=null){
+			mills = offsetmill.longValue();
+		}
+		
 		if(StringUtil.isEmpty(month) && StringUtil.isEmpty(month)){
 			return getMonthStartDate(mills); 
 		}
 		Calendar calendar = Calendar.getInstance();
 		int y =  calendar.get(Calendar.YEAR);
 		int M = calendar.get(Calendar.MONTH);
-		if(offsetmill!=null){
-			mills = offsetmill.longValue();
-		}
-		if(year!=null){
+		try{
 			y = Integer.parseInt(year);
-		}
-		if(month!=null){
 			M = Integer.parseInt(month)-1;
+		}catch (Exception e) {
+			y =  calendar.get(Calendar.YEAR);
+			M = calendar.get(Calendar.MONTH);
 		}
 		calendar.set(Calendar.YEAR, y);
 		calendar.set(Calendar.MONTH, M);
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.DAY_OF_MONTH,1);
 		return getGmtDateByTimeZone(calendar.getTime(), (int)mills);
 	}
-	public static void main(String ...strings){
-		SimpleDateFormat sdfp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		long offset = 28800000l;
-		
-//		Date d=getTodayStartDate(offset);
-//		Date w =getWeekStartDate(offset);
-//		Date m =getMonthStartDate(offset);
-//		Date de = getTodayEndDate(d);
-//		Date we = getWeekEndDate(w);
-//		Date me = getMonthEndDate(m);
-		
-//		System.out.println(sdfp.format(d));
-//		System.out.println(sdfp.format(w));
-//		System.out.println(sdfp.format(m));
-		
-//		System.out.println(sdfp.format(de));
-//		System.out.println(sdfp.format(we));
-//		System.out.println(sdfp.format(me));
+	
+	
+	public static int getDateDiff(Date date1,Date date2){
+		long diffDays=0;
+		Calendar calendar=Calendar.getInstance();
+		calendar.setTime(date1);
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		long time1 = calendar.getTimeInMillis();
+		calendar.setTime(date2);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		long time2 = calendar.getTimeInMillis();
+		diffDays = (time2 - time1) / (1000 * 3600 * 24);
+		calendar.clear();
+		calendar=null;
+		return Integer.parseInt(String.valueOf(diffDays));            
 
-//		Date date = getMonthStartDate(DateUtil.BJ_TIME_OFFSET);
-		Date ds;
-		try {
-			ds = getMonthEndDate(sdfp.parse("2013-02-28 16:00:00"));
-			System.out.println("date == "+sdfp.format(ds));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		System.out.println("date == "+sdfp.format(date));
 	}
+	
+	
+	
+	
+	
+
+	public static boolean isTime(String str){
+		boolean flag = false;
+		if (!StringUtil.isEmpty(str)) {
+			Pattern pattern = Pattern.compile("(([0-1]?\\d)|(2[0-3]))(:([0-5]?\\d)){2}");
+			flag = pattern.matcher(str).matches();
+			pattern = null;
+		}
+		return flag;
+	}
+
+	/**
+	 * 验证是否日期
+	 * @param str 格式 ："yyyy-MM-dd"  或者  “yyyy-MM-dd hh:mm:ss" 或者  “yyyy-MM-dd h:m:s" 
+	 * @return
+	 */
+	public static boolean isDate(String str) {
+		boolean flag = false;
+		if (!StringUtil.isEmpty(str)) {
+			Pattern pattern = Pattern.compile("((((1[6-9]|[2-9]\\d)\\d{2})-(0?[13578]|1[02])-" +
+					"(0?[1-9]|[12]\\d|3[01]))|(((1[6-9]|[2-9]\\d)\\d{2})-(0?[13456789]|1[012])-" +
+					"(0?[1-9]|[12]\\d|30))|(((1[6-9]|[2-9]\\d)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|" +
+					"(((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|" +
+					"((16|[2468][048]|[3579][26])00))-0?2-29-))" +
+					"( (([0-1]?\\d)|(2[0-3]))(:([0-5]?\\d)){2})?");
+			flag = pattern.matcher(str).matches();
+			pattern = null;
+
+		}
+		return flag;
+	}
+	
+	/**
+	 * 将日期格式的字符转转成日期类型
+	  * @param str 格式 ："yyyy-MM-dd"  或者  “yyyy-MM-dd hh:mm:ss" 或者  “yyyy-MM-dd h:m:s" 
+	 * @return
+	 */
+	public static Date parseDate(String str){
+		Date date=null;
+		if(isDate(str)){
+			String[] tmpArray=str.split("[-\\s:]");
+			if(tmpArray!=null && (tmpArray.length==3 ||tmpArray.length==6)){
+				Calendar calendar=Calendar.getInstance();
+				calendar.clear();
+				calendar.set(Calendar.YEAR, NumberUtil.parseInteger(tmpArray[0]));
+				calendar.set(Calendar.MONTH, NumberUtil.parseInteger(tmpArray[1])-1);
+				calendar.set(Calendar.DAY_OF_MONTH, NumberUtil.parseInteger(tmpArray[2]));
+				if(tmpArray.length==6){
+					calendar.set(Calendar.HOUR, NumberUtil.parseInteger(tmpArray[3]));
+					calendar.set(Calendar.MINUTE, NumberUtil.parseInteger(tmpArray[4]));
+					calendar.set(Calendar.SECOND, NumberUtil.parseInteger(tmpArray[5]));
+				}
+				date=calendar.getTime();
+				calendar=null;
+			}
+			tmpArray=null;
+		}
+		return date;
+	}
+
+
+	/**
+	 * 格式化日期，将日期转成符合格式的字符串
+	 * @param date
+	 * @param formatStr
+	 * @return
+	 */
+	public static String format(Date date, String formatStr) {
+		if (date == null) {
+			return null;
+		}
+		if (formatStr == null || "".equals(formatStr.trim())) {
+			formatStr = "yyyy-MM-dd HH:mm:ss";
+		}
+		SimpleDateFormat format = new SimpleDateFormat(formatStr);
+		String dateStr = format.format(date);
+		format = null;
+		return dateStr;
+	}
+	
+	
+	public static void main(String ...strings){
+//		SimpleDateFormat sdfp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+////		long offset = 28800000l;
+//		
+////		Date d=getTodayStartDate(offset);
+////		Date w =getWeekStartDate(offset);
+////		Date m =getMonthStartDate(offset);
+////		Date de = getTodayEndDate(d);
+////		Date we = getWeekEndDate(w);
+////		Date me = getMonthEndDate(m);
+//		
+////		System.out.println(sdfp.format(d));
+////		System.out.println(sdfp.format(w));
+////		System.out.println(sdfp.format(m));
+//		
+////		System.out.println(sdfp.format(de));
+////		System.out.println(sdfp.format(we));
+////		System.out.println(sdfp.format(me));
+//
+////		Date date = getMonthStartDate(DateUtil.BJ_TIME_OFFSET);
+//		Date ds;
+//		try {
+//			ds = getMonthEndDate(sdfp.parse("2013-04-01 16:00:00"));
+//			System.out.println("date == "+sdfp.format(ds));
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		System.out.println("date == "+(4&7));
+	}
+	
+	
+	
+	
 }

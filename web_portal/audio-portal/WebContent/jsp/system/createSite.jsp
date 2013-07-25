@@ -1,16 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/jsp/common/taglibs.jsp"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 	<title>${LANG['system.site.list.create']}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
 <!-- Css -->	
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/reset.css" />	
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
@@ -94,9 +88,12 @@
 <cc:siteList var="EMPOWER_CODE_FIELD_ARRAY"/>
 <cc:siteList var="EMPOWER_CODE_VIDEO"/>
 <cc:siteList var="EMPOWER_CODE_AUDIO"/>
+<cc:siteList var="EMPOWER_CODE_DPI"/>
 <cc:siteList var="EMPOWER_ENABLED"/>
 <cc:siteList var="SITE_CREATE_MIN_LICENSE"/>
 <cc:siteList var="SITE_CREATE_MAX_LICENSE"/>
+<cc:siteList var="SITE_CREATE_MIN_SYNCNUM"/>
+<cc:siteList var="SITE_CREATE_MAX_SYNCNUM"/>
 
 <div style="margin: 0px auto;">
 <form name="createSiteForm" id="createSiteForm" action="" method="post">
@@ -182,7 +179,7 @@
 							<img id="previewImg" src="/static/images/logo.png" alt=""/>			   
 					   	</c:if>
 					   	<img id="previewLoadImg" src="/static/images/loading.gif">
-					   	<div style="color: red;width: 200px; margin-left: 110px;">${LANG['bizconf.jsp.system.createSite.res3']}jpg,bmp,png,gif${LANG['bizconf.jsp.system.createSite.res4']}256K${LANG['bizconf.jsp.system.createSite.res5']}<br />${LANG['bizconf.jsp.system.createSite.res6']}100*48</div>
+					   	<div style="color: red;width: 200px; margin-left: 110px;">${LANG['bizconf.jsp.system.createSite.res3000']}</div>
 					</div>
 				</td>
 			</tr>
@@ -239,15 +236,15 @@
 				<td class="step-td">			
 					<span class="mode-time-span" style="display: none;">
 						<input name="time" type="radio" value="4" checked="checked"/>
-							<label>time</label>
+							<label>${LANG['system.site.list.chargeMode.time']}</label>
 					</span>
 					<span class="mode-other-span">
 						<input name="chargeMode" type="radio" value="3"  checked="checked"/>
-							<label>seats</label>						
+							<label>${LANG['system.site.list.chargeMode.Seats']}</label>						
 						<input name="chargeMode" type="radio" value="1"/>
-							<label>name host</label>
+							<label>${LANG['system.site.list.chargeMode.Name Host']}</label>
 						<input name="chargeMode" type="radio" value="2" />
-							<label>active user</label>
+							<label>${LANG['system.site.list.chargeMode.Active User']}</label>
 					</span>
 				</td>
 			</tr>
@@ -285,34 +282,53 @@
 				</td>
 				<td class="step-td">
 				<table width="100%" border="0" >
+				<%--
+					<tr>
+					<td colspan="4">&nbsp;<input type="radio" name="video_typ_code" value="2"/>优先保证视频流畅 
+					&nbsp;<input type="radio" name="" value="3"/>优先保证画质清晰 
+					&nbsp;<input type="radio" name="" value="1"/>优先保证网络带宽
+					</td>
+					</tr>
+				 --%>
 					<tr><c:set var="modNum" value="0"/><c:set var="tmpNum" value="1"/>
 					<c:forEach var="eachField" items="${EMPOWER_CODE_FIELD_ARRAY}" varStatus="fieldSatus">
 					
 						<c:if test='${fn:indexOf(eachField[1],"Flag")>-1}'>
-						<td><c:set var="eachFieldName" value="${eachField[1]}"/>
-						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO || eachField[0]==EMPOWER_CODE_AUDIO }"><c:set var="tmpNum" value="${tmpNum+1 }"/></c:if>
+						<c:set var="eachFieldName" value="${eachField[1]}"/>
+						<td>
+						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO || eachField[0]==EMPOWER_CODE_AUDIO  || eachField[0]==EMPOWER_CODE_DPI }"><c:set var="tmpNum" value="${tmpNum+1 }"/></c:if>
+						
 						<input class="extraConfig" name="${eachFieldName}" id="${eachFieldName}" type="checkbox" 
-						<c:if test="${empowerConfig[eachFieldName]==EMPOWER_ENABLED }"> checked </c:if> 
+						<c:if test="${empowerConfig[eachFieldName]==EMPOWER_ENABLED  || eachField[0]==EMPOWER_CODE_DPI }"> checked </c:if> 
 						value="${EMPOWER_ENABLED}" 
 						 <c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"> onclick="javascript:showVideoNum();" </c:if>  
-						  <c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"> onclick="javascript:showAudioNum();" </c:if> />
+						  <c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"> onclick="javascript:showAudioNum();" </c:if>
+						  <c:if test="${eachField[0]==EMPOWER_CODE_DPI}"> disabled</c:if>
+						   />
+						 
 						<label><c:set var="langName" value="system.site.empower.item.${eachField[0]}"/>${LANG[langName]}</label>
+						
 						</td>
-						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"><td id="videoNumTd"></td> 
-						</c:if>
+						
+						<c:if test="${eachField[0]==EMPOWER_CODE_VIDEO }"><td id="videoNumTd"></td> </c:if>
 						<c:if test="${eachField[0]==EMPOWER_CODE_AUDIO }"><td id="audioNumTd"></td> </c:if> 
-						<c:if test="${(fieldSatus.index+tmpNum) % 4==0 }"></tr><tr></c:if><c:set var="modNum" value="${(fieldSatus.index+tmpNum) %4 }"/>
+						<c:if test="${eachField[0]==EMPOWER_CODE_DPI }"><td id="dpiNumTd"></td> </c:if> 
+						<c:if test="${(fieldSatus.index+tmpNum) % 4==0 }"></tr><tr></c:if>
+						<c:set var="modNum" value="${(fieldSatus.index+tmpNum) %4 }"/> 
 						</c:if>
 					</c:forEach>
-						<%--<label>${LANG['system.site.empower.item.10']}</label>
-						<td id="audioNumTd"></td>
-						 --%>
+					 
 					<c:if test="${modNum>0}">
 					<c:forEach begin="${modNum }" end="3" >
 						<td>&nbsp;</td>
 					</c:forEach>
 				
 					</c:if>
+					</tr>
+					<tr>
+						<td><input type=checkbox id="siteDiy" name="siteDiy" value="1" <c:if test="${siteBase.siteDiy==1}"> checked </c:if> /> 站点Banner</td>
+						<td><input type=checkbox id="syncConf" name="syncConf" value="1" checked="checked" disabled="disabled" /> ${LANG['system.site.empower.item.18'] }</td>
+						<td><input type="text" id="syncConfNum" name="syncConfNum" value="0" style="width:20px;"/>个</td>
 					</tr>
 				</table>
 					<%--
@@ -425,6 +441,7 @@
 				<td class="step-td" style="height: 65px;">
 					<textarea name="remark" id="remark" style="width: 290px; height:50px;resize:none;"></textarea>
 				</td>
+				<div id="remarkFlag" style="display: none;">${siteAdmin.remark}</div>
 			</tr>
 		</table>
 		<div class="step-bottom">
@@ -446,9 +463,11 @@
 	<script type="text/javascript"> //${LANG['bizconf.jsp.system.createSite.res12']}
 		$(function() {
 			$("#siteName").val("${siteBase.siteName}");
+			$("#siteDiy").val("${siteBase.siteDiy}");
 			$("#enName").val("${siteBase.enName}");
-			$("#siteSign").val("${siteBase.siteSign}").attr("disabled",'disabled');
+			$("#siteSign").val("${siteBase.siteSign}").attr("disabled",'disabled').css("color","#888");
 			$("#license").val("${siteBase.license}");
+			$("#syncConfNum").val("${siteBase.syncConfNum}");
 			$("#timeZoneId").val("${siteBase.timeZoneId}");
 			var siteFlag = "${siteBase.siteFlag}";
 			if (siteFlag=="1") {
@@ -474,7 +493,8 @@
 			$("#loginPass").val("");
 			$("#userEmail").val("${siteAdmin.userEmail}");
 			$("#mobile").val("${siteAdmin.mobile}");
-			$("#remark").val("${siteAdmin.remark}");
+			var remark = $("#remarkFlag").text();
+			$("#remark").val(remark);
 			//${LANG['bizconf.jsp.system.createSite.res13']}
 			var hireMode = "${siteBase.hireMode}";
 			if (hireMode=="1") {
@@ -595,8 +615,39 @@ function showAudioNum(){
 	$("#audioNumTd").html(selectHtml);
 }
 
+
+
+function showDpiNum(){
+	var selectHtml="";
+	var dpiChecked =true;
+	if(dpiChecked){
+		var dpiNum="${empowerConfig.dpiNumber}";
+		selectHtml+="<select name='dpiNumber' id='dpiNumber'>";
+		if(dpiNum==null || dpiNum==""){
+			dpiNum=0;
+		}
+		dpiNum=parseInt(dpiNum,10);
+		var stdStr="";
+		var langs = [" ${LANG['system.quality.level.low']}"," ${LANG['system.quality.level.medium']}"," ${LANG['system.quality.level.high']}"," ${LANG['system.quality.level.best']}"];
+		for(var ii=1;ii<=4;ii++){
+			var lang = "";
+			stdStr="";
+			if(dpiNum==ii){
+				stdStr="selected";
+			}
+			selectHtml+="<option value='"+ii+"' "+stdStr+">"+langs[ii-1]+"</option>";
+		}
+		
+		selectHtml+="";
+		selectHtml+="</select>";
+		//selectHtml+=" ${LANG['bizconf.jsp.system.createSite.res16']}";
+	}
+	$("#dpiNumTd").html(selectHtml);
+}
+
 showVideoNum();
 showAudioNum();
+showDpiNum();
 $(document).ready(function(){
 	var lang = getBrowserLang(); 
 	if (lang=="zh-cn") {
@@ -628,7 +679,8 @@ $(document).ready(function(){
 				"loginName": "${LANG['system.site.list.LoginName.input']}",
 				"loginPass": "${LANG['system.site.list.Password.input']}",
 				"confirmPass": "${LANG['system.user.confirmPass.input']}",
-				"userEmail": "${LANG['system.site.list.Email.input']}"
+				"userEmail": "${LANG['system.site.list.Email.input']}",
+				"syncConfNum": "请输入最大并发会场数"
 				
 			},
 			remote: {
@@ -637,11 +689,13 @@ $(document).ready(function(){
 				"userEmail": "${LANG['system.site.list.userEmail.remote']}"
 			},
 			minlength: {
-				"license": "${LANG['system.site.list.license.minlength']}"
+				"license": "${LANG['system.site.list.license.minlength']}",
+				"syncConfNum": "并发会场数最少为1个"
 			},
 			maxlength: {
 				"remark": "${LANG['system.site.list.remark.maxlength']}",
-				"license": "${LANG['system.site.list.license.maxlength']}"
+				"license": "${LANG['system.site.list.license.maxlength']}",
+				"syncConfNum": "并发会场数最多为50个"
 			},
 			rangelength: {
 				"siteName": "${LANG['system.site.list.siteName.rangelength']}",
@@ -657,6 +711,7 @@ $(document).ready(function(){
 				"equalTo": "${LANG['system.user.confirmpass.custom']}",
 				"checkSiteName": "${LANG['system.site.list.checkSiteName.custom']}",
 				"checkEnName": "${LANG['system.site.list.checkEnName.custom']}",
+				"checkChName": "${LANG['system.site.list.checkChName.custom']}",
 				"checkSiteSign": "${LANG['system.site.list.checkSiteSign.custom']}",
 				"checkUserName": "${LANG['system.site.list.checkUserName.custom']}",
 				"checkLoginName": "${LANG['system.site.list.checkLoginName.custom']}",
@@ -684,6 +739,7 @@ $(document).ready(function(){
 		}
     	return true;
  	}, "");
+	
 	$.validator.addMethod("checkSiteName", function(value, element) {   
     	return this.optional(element) || /^[a-zA-Z0-9_\s\-&\u4e00-\u9fa5]{1,32}$/.test(value);
  	}, ruleString.custom.checkSiteName);
@@ -691,6 +747,10 @@ $(document).ready(function(){
 	$.validator.addMethod("checkEnName", function(value, element) {       
     	return this.optional(element) || /^[a-zA-Z0-9_\s\-&,.]{1,64}$/.test(value);
  	}, ruleString.custom.checkEnName);
+	
+	$.validator.addMethod("notChName", function(value, element) {       
+    	return this.optional(element) || /^[^\u4e00-\u9fa5]+$/.test(value);
+ 	}, ruleString.custom.checkChName);
 	
 	$.validator.addMethod("checkSiteSign", function(value, element) {       
     	return this.optional(element) || /^[a-zA-Z0-9_\-&]{1,16}$/.test(value);
@@ -701,7 +761,7 @@ $(document).ready(function(){
  	}, ruleString.custom.checkUserName);	
 	
 	$.validator.addMethod("checkLoginName", function(value, element) {       
-    	return this.optional(element) || /^[a-zA-Z0-9]{4,16}$/.test(value);
+    	return this.optional(element) || /^[a-zA-Z0-9_]{4,16}$/.test(value);
  	}, ruleString.custom.checkLoginName);
 
 	$.validator.addMethod("endDate", function(value, element) {
@@ -719,7 +779,7 @@ $(document).ready(function(){
 	1334567890, 031-3145678-123, 010-11111111, (+86)010-13901691-123
 	*/
 	$.validator.addMethod("checkMobile", function(value, element) {       
-		return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
+		return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
 	}, ruleString.custom.checkMobile);	
 	
 	var v = $("#createSiteForm").validate({
@@ -730,8 +790,8 @@ $(document).ready(function(){
 			saveOrCreateSite();
 		},
 		rules: {
-            'siteName' : {pageRequired:true, rangelength: [1, 32], checkSiteName:true},
-            'enName' : {pageRequired:true,  rangelength: [1, 64], checkEnName:true},
+            'siteName' : {pageRequired:true, rangelength: [1, 32]},
+            'enName' : {pageRequired:true,  rangelength: [1, 64], notChName:true},
             'siteSign' : {pageRequired:true, rangelength: [1, 16], checkSiteSign:true, remote: {
             	url: '/system/site/siteSignValidate',
             	type: 'post',
@@ -750,6 +810,7 @@ $(document).ready(function(){
             	}
             }},
             'license' : {pageRequired:true, digits: true, min:"${SITE_CREATE_MIN_LICENSE}", max:"${SITE_CREATE_MAX_LICENSE}"},
+            'syncConfNum' : {pageRequired:true, digits: true, min:"${SITE_CREATE_MIN_SYNCNUM}", max:"${SITE_CREATE_MAX_SYNCNUM}"},
             'effeDate' : {pageRequired:true, dateISO:true},
             'expireDate' : {pageRequired:true, dateISO:true, endDate: true},
             'trueName' : {pageRequired:true, rangelength: [1, 32],checkUserName:true},
@@ -808,8 +869,8 @@ $(document).ready(function(){
             "remark": {maxlength: 256}
         },
         messages: {
-            'siteName' : {pageRequired:ruleString.pageRequired.siteName, checkSiteName:ruleString.custom.checkSiteName, rangelength: ruleString.rangelength.siteName},
-            'enName' : {pageRequired:ruleString.pageRequired.enName, checkEnName: ruleString.custom.checkEnName,  rangelength: ruleString.rangelength.enName},
+            'siteName' : {pageRequired:ruleString.pageRequired.siteName, rangelength: ruleString.rangelength.siteName},
+            'enName' : {pageRequired:ruleString.pageRequired.enName, rangelength: ruleString.rangelength.enName},
             'siteSign' : {pageRequired:ruleString.pageRequired.siteSign,checkSiteSign:ruleString.custom.checkSiteSign, remote: ruleString.remote.siteSign, rangelength: ruleString.rangelength.siteSign},
             'license' : {pageRequired:ruleString.pageRequired.license, digits: ruleString.custom.digits, min:ruleString.minlength.license, max:ruleString.maxlength.license},
             'effeDate' : {pageRequired:ruleString.pageRequired.effeDate, dateISO:ruleString.custom.dateISO},
@@ -821,7 +882,8 @@ $(document).ready(function(){
             'confirmPass' : {pageRequired:ruleString.pageRequired.confirmPass, rangelength: ruleString.rangelength.loginPass, equalTo:ruleString.custom.equalTo},
             'userEmail' : {pageRequired:ruleString.pageRequired.userEmail, rangelength: ruleString.rangelength.userEmail, email: ruleString.custom.email, remote: ruleString.remote.userEmail},
             'mobile': {rangelength: ruleString.rangelength.mobile, checkMobile: ruleString.custom.mobile},
-            'remark': {maxlength: ruleString.maxlength.remark}
+            'remark': {maxlength: ruleString.maxlength.remark},
+            'syncConfNum' : {pageRequired:ruleString.pageRequired.license, digits: ruleString.custom.digits, min:ruleString.minlength.syncConfNum, max:ruleString.maxlength.syncConfNum}
         
         },
         success: function (label) {
@@ -940,7 +1002,10 @@ $(document).ready(function(){
 	});
 	
 	//${LANG['bizconf.jsp.system.createSite.res17']}
-	
+	var licenseNum = "${siteBase.license}";
+	if(licenseNum == "" || licenseNum == 0){
+		$("#license").val(20);
+	}
 	$("input[name='autoFlag']").attr("disabled", "disabled");
 	var checked = $("input[name='phoneFlag']").attr("checked");
 	if(checked=="checked"){
@@ -966,7 +1031,9 @@ function saveOrCreateSite() {
 	//siteinfo
 	var siteInfo = {};
 	siteInfo.siteName = $("#siteName").val();
+	siteInfo.siteDiy = $("#siteDiy").attr("checked") ? 1 : 0;
 	siteInfo.enName = $("#enName").val();
+	siteInfo.syncConfNum = $("#syncConfNum").val();
 	siteInfo.siteSign = $("#siteSign").val();
 	siteInfo.timeZoneId = $("#timeZoneId").val();
 	var logo = $("#previewImg").attr("alt");
@@ -977,7 +1044,7 @@ function saveOrCreateSite() {
 	if(siteInfo.hireMode==2){
 		siteInfo.chargeMode = $('input:radio[name="time"]:checked').val();
 	}
-	siteInfo.license = $("#license").val();
+	
 	siteInfo.effeDate = $("#effeDate").val();
 	siteInfo.expireDate = $("#expireDate").val();
 	//userinfo
@@ -1014,14 +1081,17 @@ function saveOrCreateSite() {
 	});
 	config.videoNumber = $("#videoNumber").val();
 	config.audioNumber = $("#audioNumber").val();
+	config.dpiNumber = $("#dpiNumber").val();
 	if (siteID && siteID.length>0) {
 		siteInfo.id = siteID;
 		userInfo.id = userID;
+		siteInfo.license = "${siteBase.license}";    //修改站点时，不可以修改license
 		app.updateSite(siteInfo, userInfo, config, function(result) {
 			var frame = parent.$("#siteDiv");
 			frame.trigger("closeDialog", [result]);
 		}, {message:"${LANG['system.site.change']}", ui:parent});
 	} else {
+		siteInfo.license = $("#license").val();
 		app.createSite(siteInfo, userInfo, config,function(result) {
 			var frame = parent.$("#siteDiv");
 			frame.trigger("closeDialog", [result]);
@@ -1030,9 +1100,12 @@ function saveOrCreateSite() {
 }
 function uploadCallback(url){
 	$("#previewLoadImg").hide();
-	$("#previewImg").attr("src", "/uploadfiles/site_logo/" + url);
-	$("#previewImg").attr("alt", "/uploadfiles/site_logo/" + url);
 	$("#logoIframe").attr("src", "/jsp/common/upload_common.jsp");
+	if(url && url.length>0){
+		$("#previewImg").attr("src", "/uploadfiles/site_logo/" + url);
+		$("#previewImg").attr("alt", "/uploadfiles/site_logo/" + url);
+		
+	}
 }
 
 function loaded() {

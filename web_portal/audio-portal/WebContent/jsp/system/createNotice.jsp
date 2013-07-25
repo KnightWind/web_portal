@@ -1,19 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="utf-8"%>
 <%@ include file="/jsp/common/taglibs.jsp"%>    
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 	<title>${LANG['system.notice.list.Create']}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css"/>
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/common.css" />
 	<link rel="stylesheet" type="text/css" href="${baseUrlStatic}/js/tipsy-master/src/stylesheets/tipsy.css" />
+	<style>
+		.form-uni-input {
+				outline: 0;
+				padding: 3px;
+			  font-size: 12px;
+			  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+			  font-weight: normal;
+  			  color: #000;
+			  border-top: solid 1px #aaa;
+			  border-left: solid 1px #aaa;
+			  border-bottom: solid 1px #ccc;
+			  border-right: solid 1px #ccc;
+			  -webkit-border-radius: 3px;
+			  -moz-border-radius: 3px;
+			  border-radius: 3px; 
+		}
+	</style>
 	<%@ include file="/jsp/common/cookie_util.jsp"%>
 	<script type="text/javascript" src="${baseUrlStatic}/js/jquery-1.8.3.js"></script>
 	<SCRIPT type="text/javascript" src="${baseUrlStatic}/js/jquery-ui-1.9.2.custom.js"></SCRIPT>
@@ -26,7 +38,8 @@
 	
 	<script type="text/javascript">
 	$(document).ready(function(){
-		$('#noticeForm :input').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
+		$('.input-sw').tipsy({ trigger: 'manual', fade: false, gravity: 'sw', opacity: 1 });
+		$('#stopTime').tipsy({ trigger: 'manual', fade: false, gravity: 'w', opacity: 1 });
 		var lang = getBrowserLang(); 
 		if (lang=="zh-cn") {
 			$.datepicker.setDefaults( $.datepicker.regional[ "zh-CN" ] );
@@ -136,12 +149,12 @@
 			</tr>
 			<tr>
 				<td align="right" width="60px"><span class='red_star'>*</span>${LANG['system.notice.list.Title']}</td>
-				<td><input id="title" name="title" type="text" class="form-input" /></td>
+				<td><input id="title" name="title" type="text" class="input-sw form-uni-input" style="width:260px;"/></td>
 			</tr>
 			<tr>
 				<td align="right" width="60px" valign="top"><span class='red_star'>*</span>${LANG['system.notice.list.Contents']}</td>
 				<td>
-					<input class="form-valid-hidden" id="contents" name="contents" />
+					<input class="form-valid-hidden input-sw" id="contents" name="contents" />
 					<textarea id="content" name="content" style="visibility: hidden;">
 						<c:if test="${!empty notice}">
 							<c:out value="${notice.content }" />
@@ -151,12 +164,12 @@
 			</tr>
 			<tr>
 				<td align="right" width="60px"><span class='red_star'>*</span>${LANG['system.notice.list.StopTime']}</td>
-				<td><input name="stopTime" type="text" id="stopTime"  class="form-input" /></td>
+				<td><input name="stopTime" type="text" id="stopTime"  class="form-uni-input" readonly="readonly"/></td>
 			</tr>
 			<td colspan="2" align="center">
-				<input name="submit" type="button"  value="${LANG['system.preview']}" class="form-button" id="preview"/>
-				<input name="submit" type="submit"  value="${LANG['system.ok']}" class="form-button" id="submitForm"/>
-				<input name="submit" type="button"  value="${LANG['system.cancel']}" class="form-button closeButton"/>
+				<input type="button"  value="${LANG['system.preview']}" class="form-button" id="preview"/>
+				<input type="submit"  value="${LANG['system.ok']}" class="form-button" id="submitForm"/>
+				<input type="button"  value="${LANG['system.cancel']}" class="form-button closeButton"/>
 			</td>
 		
 		</table>

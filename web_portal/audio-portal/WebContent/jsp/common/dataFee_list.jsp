@@ -50,7 +50,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			  	 	</c:otherwise>
 			  	 </c:choose>
                 </td>
-                <td align="right"><strong style=" color:#F00">${LANG['bizconf.jsp.admin.mybilling_list.res8']}${total}${LANG['bizconf.jsp.admin.mybilling_list.res9']}</strong></td>
+                <td align="right"><strong style=" color:#F00">${LANG['bizconf.jsp.admin.mybilling_list.res8']}<fmt:formatNumber value="${total}" pattern="#.00" type="number"/>${LANG['bizconf.jsp.admin.mybilling_list.res9']}</strong></td>
               </tr>
             </table>
             <table cellpadding="0" cellspacing="0" border="0" class="chaxun_main">
@@ -63,10 +63,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
               <table cellpadding="0" cellspacing="0" border="0" class="chaxun_top">
               </table>
               <table cellpadding="0" cellspacing="0" border="0" class="chaxun_main">
-                <c:if test="${fn:length(pageModel.datas)<=0}">
+                <c:if test="${fn:length(billings)<=0}">
 			           <tr class="cx04"><td width="100%">${LANG['website.common.msg.list.nodata']}</td></tr>
 			</c:if>
-			<c:forEach var="bill" items="${pageModel.datas}" varStatus="status">
+			<c:forEach var="bill" items="${billings}" varStatus="status">
 	                <tr class="cx04">
 	                  <td width="40%">
 	                  <c:choose>
@@ -88,7 +88,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	                  		</c:otherwise>
 	                  	</c:choose>
 	                  </td>
-	                  <td width="20%">${bill.dataFee}</td>
+	                  <td width="20%"><fmt:formatNumber value=" ${bill.dataFee}" pattern="#.00" type="number"/></td>
 	                </tr>
                 </c:forEach>
               </table>

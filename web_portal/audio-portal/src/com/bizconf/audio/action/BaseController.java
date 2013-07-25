@@ -85,6 +85,10 @@ public abstract class BaseController {
 				request.setAttribute("isVideoFlag",
 						SiteConstant.EMPOWER_ENABLED);
 			}
+			if (userEmpower.getAudioFlag().intValue() == SiteConstant.EMPOWER_ENABLED) {
+				request.setAttribute("isAudioFlag",
+						SiteConstant.EMPOWER_ENABLED);
+			}
 			request.setAttribute("videoNumber", userEmpower.getVideoNumber());
 			request.setAttribute("audioNumber", userEmpower.getAudioNumber());
 		}

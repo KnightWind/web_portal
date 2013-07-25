@@ -13,6 +13,7 @@ import com.bizconf.audio.entity.PageModel;
 import com.bizconf.audio.entity.SiteBase;
 import com.bizconf.audio.entity.SystemUser;
 import com.bizconf.audio.entity.UserBase;
+import com.bizconf.audio.entity.UserSiteMap;
 
 public interface SiteService {
 
@@ -62,7 +63,7 @@ public interface SiteService {
 	 * @param logoFile
 	 * @return
 	 */
-	public SiteBase updateSiteBaseForSiteAdmin(Integer siteId, String siteName, String enName, String logoFile,Integer timeZoneId,Integer timeZone);
+	public SiteBase updateSiteBaseForSiteAdmin(Integer siteId, String siteName, String enName, String logoFile,String siteBanner, Integer timeZoneId,Integer timeZone);
 
 	/**
 	 * 根据站点ID号删除站点
@@ -264,4 +265,66 @@ public interface SiteService {
 	 * @return
 	 */
 	public PageBean<SiteBase> queryASAllSites(int start, int end);
+	
+	/**
+ 
+	 * 获取需要提醒的站点列表
+	 * @return
+	 */
+	public List<SiteBase> getSiteListForRemind();
+	
+	/**
+	 * 保存一个站点
+	 * @param site
+	 * @return
+	 */
+	public  SiteBase saveSiteBase(SiteBase site);
+	
+	
+	/**
+	 * 保存一个站点-用户关系
+	 * @param userSite
+	 * @return
+	 */
+	public boolean saveUserSiteMap(UserSiteMap userSite);
+	
+	
+	/**
+	 * 修改所有的子站点信息
+	 * @param pId
+	 * @return
+	 */
+	public boolean updateSubVritualSite(SiteBase parentSite);
+	
+	
+	/**
+	 * 删除子站点信息
+	 * @param siteid
+	 * @return
+	 */
+	public boolean delSubVritualSite(Integer siteid);
+	
+	
+	/**
+	 * 删除父站点的同时删除子站点
+	 * @param parenSite
+	 * @return
+	 */
+	public boolean delSubVritualSite(SiteBase parenSite);
+	
+	
+	
+	/**
+	 * 根据用户的ID删除该用户对应的子站点
+	 * @param userId
+	 * @return
+	 */
+	public boolean delSubVritualSiteByUser(Integer userId);
+	
+	/**
+	 * 根据父站点和主持人信息创建虚拟子站点
+	 * @return
+	 */
+	public UserBase buildingVritualSite(SiteBase parentSite,UserBase host);
+ 
 }

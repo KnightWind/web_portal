@@ -7,10 +7,18 @@
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/reset.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/popupbox.css"/>
 <link rel="stylesheet" type="text/css" href="${baseUrlStatic}/css/user/box.css"/>
+<style type="text/css">
+html, body {
+	height: 100%;
+}
+</style>
 <script type="text/javascript" src="${ctx}/static/js/jquery-1.8.3.js"></script> 
 <title>${LANG['bizconf.jsp.common.join_msg.res1']}</title>
 </head>
 <body>
+<table style="width: 100%;height: 100%;">
+<tr>
+<td  align="center" valign="middle">
 <table class="overlay-panel" border="0" cellpadding="0" cellspacing="0" id="joinMtgErrorDiv" >
   <tbody>
     <tr class="no-header">
@@ -58,6 +66,10 @@
       <td class="overlay-ftR"></td>
     </tr>
   </tbody>
+</table>
+
+</td>
+</tr>	
 </table>
 </body>
 </html>

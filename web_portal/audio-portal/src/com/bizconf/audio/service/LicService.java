@@ -126,4 +126,21 @@ public interface LicService {
 	 * @return
 	 */
 	public boolean delHostLicenses(Integer userId);
+	
+	/**
+	 * 查询seats、time模式下创建站点时的第一条license记录
+	 * wangyong
+	 * 2013-6-27
+	 */
+	public License getFirstLic(int siteId);
+	
+	
+	
+	/**
+	 * 更新初始化license的过期时间
+	 * @param siteId
+	 * @param expiredDate
+	 * @return
+	 */
+	public boolean updateInitLicExpireDate(Integer siteId,Date expiredDate);
 }

@@ -46,7 +46,9 @@
 				$("#checkAll").attr("checked",false);
 			}
 		});
-		$(".contact_search").watermark('${LANG['bizconf.jsp.group_contacts_list.res3']}');
+		if (!$.browser.msie || $.browser.version>7) {
+			$(".contact_search").watermark("${LANG['bizconf.jsp.group_contacts_list.res3']}");
+		}
 		
 		$("#orgLevel1").change(function() {
 			var level4 = $("#orgLevel4");
@@ -129,8 +131,13 @@
 		});
 	}
 	
+	function refreshIHeight() {
+		var height = $("#orgListFrame").contents().find("body").height() + 50;
+		$("#orgListFrame").height(height);  
+	}
+	
 	function refreshList(id) {
-		var url = "/user/contact/showEnterpriseOrgContacts?showAll=true";
+		var url = "/user/contact/showEnterpriseOrgContacts?showAll=${showAll}";
 		var orgId = $("#orgId").val();
 		if(id){
 			orgId = id;
@@ -140,13 +147,16 @@
 		}
 		var keyword = $(".contact_search").val();
 		if(keyword && keyword!="${LANG['bizconf.jsp.group_contacts_list.res3']}"){
-			url += "&keyword="+keyword;
+			url += "&keyword="+encodeURIComponent(encodeURIComponent(keyword));
 		}
 		$("#orgListFrame").attr("src", url);
+		
+		//$("#query").attr("target","orgListFrame");
+		//$("#query").submit();
 	}
 </script>
 </head>
-<body style="height: 550px;">
+<body>
 <form id="query" name="query" action="/user/contact/showEnterpriseContacts" method="post" onsubmit="javascript:$('input').trigger('submitForm');">
 	  <input type="hidden"  name="showAll" value="${showAll}"/>
 	  <input type="hidden" id="orgId"  name="orgId" value=""/>
@@ -157,6 +167,7 @@
               <td height="40" colspan="6" bgcolor="#EAF4FC" class="tr_top">
               	<input name="keyword" type="text" value="${keyword}" class="meeting_ss contact_search" />
                 <input class="meeting_but" type="button" onclick="javscript:refreshList();" />
+                <c:if test="${!empty orgList }">
                 <select id="orgLevel1" name="" style="padding: 3px; border: 1px solid #ABADB3;margin-left: 10px;width:120px;">
                 	<option value="0">${LANG['bizconf.jsp.invite_enContacts_list.res3']}</option>
                 	<c:forEach var="org" items="${orgList}" >
@@ -165,6 +176,7 @@
               			</c:if>
 		            </c:forEach>
               	</select>
+                </c:if>
               	<select id="orgLevel2" name="" style="padding: 3px; border: 1px solid #ABADB3;margin-left: 5px;display: none;width:80px;">
               		<option value="0">${LANG['bizconf.jsp.invite_enContacts_list.res4']}</option>
               	</select>
@@ -178,7 +190,7 @@
             </tr>
             <tr>
             	<td colspan="6">
-            		<iframe frameborder="0" width="100%" height="385px;" id="orgListFrame" name="orgListFrame" scrolling="no" src="/user/contact/showEnterpriseOrgContacts"></iframe>
+            		<iframe frameborder="0" width="100%" height="385px;" id="orgListFrame" name="orgListFrame" scrolling="no" src="/user/contact/showEnterpriseOrgContacts?showAll=${showAll}"></iframe>
             	</td>
             </tr>
 <!--             <tr align="center" height="35" class="tr_center" bgcolor="#000066"> -->

@@ -26,11 +26,11 @@
 					"authCode": "${LANG['bizconf.jsp.admin.password_forget.res2']}"
 				},
 				rangelength: {
-					"email": "${LANG['bizconf.jsp.admin.login.res4']}6~32${LANG['bizconf.jsp.admin.login.res5']}",
-					"authCode": "${LANG['bizconf.jsp.admin.login.res4']}4${LANG['bizconf.jsp.admin.login.res5']}"
+					"email": "${LANG['bizconf.jsp.admin.email.res4000']}",
+					"authCode": "${LANG['bizconf.jsp.admin.login.res4000']}"
 				},
 				custom: {
-					"email": "${LANG['bizconf.jsp.admin.password_forget.res3']}email${LANG['bizconf.jsp.admin.password_forget.res4']}"
+					"email": "${LANG['bizconf.jsp.admin.password_forget.email.res3']}"
 				}
 		};
 		var v = $("#passwordForgetForm").validate({
@@ -81,7 +81,7 @@
 <form action="/system/password/sendEmail" name="passwordForgetForm" id="passwordForgetForm" method="post">
 <div class="main">
   <h3>${LANG['bizconf.jsp.admin.login.res12']}</h3>
-  <p>*  ${LANG['bizconf.jsp.admin.password_forget.res8']}eCon${LANG['bizconf.jsp.admin.password_forget.res9']}</p>
+  <p>*  ${LANG['bizconf.jsp.admin.password_forget.conf.res8000']}</p>
 	<input type="hidden" name="random" id="random" value=""/>
 	<input type="hidden" name="type" id="type" value="forgetpass"/>
 	<ul>

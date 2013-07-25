@@ -21,7 +21,7 @@ function checkForm(pageIndex) {
 		var allowPublic = $('input:radio[name="allowPublic"]:checked').val();
 		var publicPass = $('input:radio[name="passSetRadio"]:checked').val();
 		if(allowPublic=="1" && publicPass && publicPass=="1"){
-			var confPass = $("#confPass").val();
+			var confPass = $("#confPass").val().trim();
 			if(!confPass){
 				parent.errorDialog(validString.pageRequired.confPass, function() {
 					$("#confPass").focus();
@@ -34,7 +34,7 @@ function checkForm(pageIndex) {
 				});
 				return false;
 			}
-			var confirmPass = $("#confirmPass").val();
+			var confirmPass = $("#confirmPass").val().trim();
 			if(!confirmPass){
 				parent.errorDialog(validString.pageRequired.confPass2, function() {
 					$("#confirmPass").focus();
@@ -78,7 +78,7 @@ function checkForm(pageIndex) {
 			return false;
 		}
 		var confDesc = $("#confDesc").val();
-		if(confDesc && (confDesc.length<1 ||confDesc.length>256)){
+		if(confDesc && (confDesc.length<1 ||confDesc.length>150)){
 			parent.errorDialog(validString.pageRequired.confDescLength, function() {
 				$("#confDesc").focus();
 			});
@@ -287,6 +287,12 @@ function checkForm(pageIndex) {
 		}
 		*/
 		var aheadTime = $("#aheadTime").val();
+		if(aheadTime == "" || aheadTime == null){
+			parent.errorDialog(validString.pageRequired.aheadTimeInt, function() {
+				$("#aheadTime").focus();
+			});
+			return false;
+		}
 		if(aheadTime && !aheadTime.isInteger()){
 			parent.errorDialog(validString.pageRequired.aheadTimeInt, function() {
 				$("#aheadTime").focus();
@@ -569,8 +575,16 @@ function updateMeetSuccess(result) {
 	$("#confDescSpan").text(confBase.confDesc); 		//会议描述
 	var duraH = parseInt(confBase.duration/60);
 	var duraM = confBase.duration%60;
-	var duraString = duraM + validString.pageRequired.minute;
-	if(duraH >= 1){
+	var duraString = "";
+	if(duraM > 1){
+		duraString = duraM + validString.pageRequired.minutes;
+	}else if(duraM == 1){
+		duraString = duraM + validString.pageRequired.minute;
+	}
+	
+	if(duraH > 1){
+		duraString = duraH+ validString.pageRequired.hours + " " +duraString; 
+	}else if(duraH == 1){
 		duraString = duraH+ validString.pageRequired.hour + " " +duraString; 
 	}
 	$("#durationSpan").text(duraString);    //会议时长 ：1小时30分
@@ -607,8 +621,16 @@ function reCreateConfSuccess(result) {
 	$("#confDescSpan").text(confBase.confDesc); 		//会议描述
 	var duraH = parseInt(confBase.duration/60);
 	var duraM = confBase.duration%60;
-	var duraString = duraM + validString.pageRequired.minute;
-	if(duraH >= 1){
+	var duraString = "";
+	if(duraM > 1){
+		duraString = duraM + validString.pageRequired.minutes;
+	}else if(duraM == 1){
+		duraString = duraM + validString.pageRequired.minute;
+	}
+	
+	if(duraH > 1){
+		duraString = duraH+ validString.pageRequired.hours + " " +duraString; 
+	}else if(duraH == 1){
 		duraString = duraH+ validString.pageRequired.hour + " " +duraString; 
 	}
 	$("#durationSpan").text(duraString);    //会议时长 ：1小时30分
@@ -684,16 +706,35 @@ function createMeetSuccess(result) {
 	
 	var duraH = parseInt(confBase.duration/60);
 	var duraM = confBase.duration%60;
-	var duraString = duraM + validString.pageRequired.minute;
-	if(duraH >= 1){
+	var duraString = "";
+	if(duraM > 1){
+		duraString = duraM + validString.pageRequired.minutes;
+	}else if(duraM == 1){
+		duraString = duraM + validString.pageRequired.minute;
+	}
+	
+	if(duraH > 1){
+		duraString = duraH+ validString.pageRequired.hours + " " +duraString; 
+	}else if(duraH == 1){
 		duraString = duraH+ validString.pageRequired.hour + " " +duraString; 
 	}
-//	if(duraH){
-//		duraString = duraH+ validString.pageRequired.hour + " " +duraString; 
-//	}
 	$("#durationSpan").text(duraString);    //会议时长 ：1小时30分
 	$("#step4").show().siblings().hide();
+	showInventDialog(confBase);
 }
+
+function showInventDialog(conf) {
+	if(conf.publicFlag=="2"){
+		parent.confirmDialog(validString.pageRequired.sendInventors, function() {
+			if ($.browser.msie && $.browser.version<7) {//fixed ie6 iframe blank
+				setTimeout(inventContact, 1000);	
+			} else {
+				inventContact();
+			}
+		});
+	}
+}
+
 function createSuccess() {
 	var frame = parent.$("#bookMeeting");
 	var data = frame.data("data");
@@ -754,15 +795,19 @@ jQuery(function($) {
 		if (value=="1") {
 			$(".publicPassSet").show();
 			$(".confInviterTR").hide();
+			var passSetRaido = $('input:radio[name="passSetRadio"]:checked').val();
+			if(passSetRaido=="1"){
+				$("#confPassTR").show();
+				$("#confirmPassTR").show();
+			}
 		} else {
-			$('input:radio[name="passSetRadio"]:eq(1)').attr("checked",'checked');
 			$(".publicPassSet").hide();
 			$(".confInviterTR").show();
 			$("#confPassTR").hide();
 			$("#confPass").val("");
 			$("#confirmPassTR").hide();
 			$("#confirmPass").val("");
-			$.uniform.update();
+//			$.uniform.update();
 		}
 	});
 	//设置公开会议密码

@@ -88,25 +88,13 @@
 </head>
 <body onload="loaded()">
 <form id="query" name="query" action="/admin/org/getOrgUserList/${orgId}" method="post">
-		<div style="margin:10px auto;width: 710px;height: 405px;">
-		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="table_box" style="border:#A3C5DE 1px solid; border-top:none; border-bottom:none;">
-        <tr class="table002" height="32" >
-          <td>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list">
+		<div style="margin:10px auto;width: 710px;height: 405px;overflow-y: auto;">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" id="site-list" style="border:#A3C5DE 1px solid;border-top:none;border-bottom:none;color:#73798E;">
 
-              <tr class="table003" height="38" >
+              <tr class="" height="38" >
                 <td width="5%" height="38" bgcolor="d3eaef" class="STYLE10">
                   <div align="center"><span><input type="checkbox" id="checkAll"/></span></div>
                 </td>
-<!--                <td width="30%" height="38" bgcolor="d3eaef" class="STYLE10">-->
-<!--                  <div align="center"><span>${LANG['bizconf.jsp.admin.arrange_org_user.res7']}</span></div>-->
-<!--                </td>-->
-<!--                <td width="30%"  height="38" bgcolor="d3eaef" class="STYLE10" >-->
-<!--                  <div align="center" ><span>${LANG['bizconf.jsp.admin.arrange_org_user.res8']}</span></div>-->
-<!--                </td>-->
-<!--                <td width="35%"  height="38" bgcolor="d3eaef" class="STYLE10" style="border-right:none;">-->
-<!--                  <div align="center" ><span>${LANG['bizconf.jsp.admin.arrange_org_user.res9']}</span></div>-->
-<!--                </td>-->
                 <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.login.name']}</span></div></td>
 	            <td width="15%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['system.sysUser.list.userName']}</span></div></td>
 	            <td width="8%" height="38" bgcolor="d3eaef" class="STYLE10"><div align="center"><span>${LANG['site.admin.edituser.userrole']}</span></div></td>
@@ -134,9 +122,6 @@
 			        <td height="32">
 	                  <div align="center"><span><input name="id" type="checkbox" value="${user.id }" /></span></div>
 	                </td>
-<!--			        <td height="32"><div align="center">${user.loginName }</div></td>-->
-<!--			        <td height="32"><div align="center">${user.trueName }</div></td>-->
-<!--			        <td height="32"><div align="center">${user.userEmail }</div></td>-->
 					<td height="32"><div align="center"><span>${user.loginName }</span></div></td>
 		            <td height="32"><div align="center"><span>${user.trueName }</span></div></td>
 		            <td height="32">
@@ -160,17 +145,12 @@
 			      </tr>
 			     </c:forEach>
 		      </c:if>
+				<tr>
+		          <td class="table_bottom" height="38" colspan="7">
+					<jsp:include page="/jsp/common/page_info.jsp" />
+		          </td>
+		        </tr>      
             </table>
-        </tr>
-        <tr>
-          <td class="table_bottom" height="38">
-			<jsp:include page="/jsp/common/page_info.jsp" />
-          </td>
-        </tr>
-      </table>
-      </td>
-      </tr>
-      </table>
 		</div>
       <input name="emile_btn01" class="emile_btn01_PP" type="button"  value="${LANG['bizconf.jsp.admin.arrange_org_user.res10']}" onclick="submitBatch()" style=" margin-right:30px;margin-left: 20px;"/>
       <input name="emile_btn01" class="emile_btn01_PP" type="button"  value="${LANG['bizconf.jsp.admin.arrange_org_user.res11']}" onclick="closeDialog()"/> 

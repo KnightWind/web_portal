@@ -32,7 +32,7 @@ public interface EnterpriseAdminService {
 	 * @param pageNo
 	 * @return
 	 */
-	PageBean<UserBase> getUserBases(String keyword,String sortField,String sortRule,Integer siteId,Integer creator,String pageNo);
+	PageBean<UserBase> getUserBases(String keyword,String sortField,String sortRule, UserBase userBase, Integer creator,String pageNo);
 	
 	/**
 	 * 企业管理员管理
@@ -44,7 +44,7 @@ public interface EnterpriseAdminService {
 	 * @return
 	 */
 	PageBean<UserBase> getSiteManagers(String keyword, String sortField,
-			String sortRule, Integer siteId,Integer creator, String pageNo);
+			String sortRule, UserBase userBase, Integer creator, String pageNo);
 	/**
 	 * 获取企业管理员分页列表
 	 * @param keyword
@@ -109,5 +109,13 @@ public interface EnterpriseAdminService {
 	 * @return
 	 */
 	public boolean validUserBaseBatch(List<UserBase> users,Integer siteId);
+	
+	/**
+	 * 批量导入时用
+	 * @param userBase
+	 * @param userConfig
+	 * @return
+	 */
+	public UserBase saveUserBaseForImport(UserBase userBase,EmpowerConfig userConfig);
 	
 }

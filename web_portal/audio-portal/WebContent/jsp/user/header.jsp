@@ -9,7 +9,14 @@
     position: relative;
     width: 100%;
 }
-
+#head_custom {
+	background: url("/static/images/new_header_bg.jpg") repeat-x scroll left center transparent;
+    height: 100px;
+    min-width: 1002px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
 .logo_img {
     float: left;
     margin: 20px 0 0 40px;
@@ -36,7 +43,26 @@
     position: absolute;
     left: 0px;
 }
-
+.header_left_custom {
+    float: left;
+    height: 100px;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+}
+.header_left_custom h2 {
+    bottom: 36px;
+    color: #FFFFFF;
+    font-family: "${LANG['bizconf.jsp.header.res1']}";
+    font-size: 18px;
+    left: 180px;
+    position: absolute;
+}
+.header_left_custom h2 strong{
+    color: #FFFFFF;
+    font-family: "${LANG['bizconf.jsp.header.res1']}";
+    font-size: 18px;
+}
 .new_li {
     left: 245px;
     position: absolute;
@@ -75,14 +101,20 @@
     font-size: 28px;
 }
 </style>
+<%--
+<c:if test="${(empty siteBase.siteBanner) || (!empty siteBase.siteBanner && !empty siteBase.siteDiy && siteBase.siteDiy==0)}">
+ --%>
+<c:if test="${siteBase.siteDiy==0 || (siteBase.siteDiy==1 && empty siteBase.siteBanner)}">
 <div id="head">
   <div class="header_left">
-  	<c:if test="${!empty siteBase.siteLogo}">
+  	<c:choose>
+  	<c:when test="${!empty siteBase.siteLogo && siteBase.siteDiy==1}">
   		<img class="logo_img png" onerror="this.src='${baseUrlStatic}/images/logo_bg.png';" src="${siteBase.siteLogo}" height="54" />
-  	</c:if>
-  	<c:if test="${empty siteBase.siteLogo}">
+  	</c:when>
+  	<c:otherwise>
   		<img class="logo_img png" onerror="this.src='${baseUrlStatic}/images/logo_bg.png';" src="${baseUrlStatic}/images/logo_bg.png" height="54" />
-  	</c:if>
+  	</c:otherwise>
+  	</c:choose>
   <h2 id="siteName" style="margin-left: 60px;"></h2>
   
   </div>
@@ -98,29 +130,23 @@ var word = "${LANG['bizconf.jsp.header.res2']}";
 str = str.replace(new RegExp("(" + word + ")","ig"), "<strong>" + word + "</strong>");
 $("#siteName").html(str);
 </script>
-<!-- 
-<div id="head">
-  <div class="header_left"> 
+</c:if>
+<%--
+<c:if test="${!empty siteBase.siteBanner && !empty siteBase.siteDiy && siteBase.siteDiy==1}">
+ --%>
+<c:if test="${siteBase.siteDiy==1 && !empty siteBase.siteBanner}">
+<div id="head_custom">
+  <div class="header_left_custom">
   	<c:if test="${!empty siteBase.siteLogo}">
-  		<img style=" float:left" class="yh_logo png" onerror="this.src='${baseUrlStatic}/images/logo.png';" src="${siteBase.siteLogo}" height="48" />
+  		<img class="logo_img png" onerror="this.src='${baseUrlStatic}/images/logo_bg.png';" src="${siteBase.siteLogo}" height="54" />
   	</c:if>
   	<c:if test="${empty siteBase.siteLogo}">
-  		<img style=" float:left" class="yh_logo png" onerror="this.src='${baseUrlStatic}/images/logo.png';" src="${baseUrlStatic}/images/logo.png" height="48" />
+  		<img class="logo_img png" onerror="this.src='${baseUrlStatic}/images/logo_bg.png';" src="${baseUrlStatic}/images/logo_bg.png" height="54" />
   	</c:if>
-  	<h3 style=" float:left; padding-top:30px; padding-left:20px; color:#013A7E; font-size:24px; font-family:'${LANG['bizconf.jsp.header.res1']}';">${siteBase.siteName}</h3>
-
   </div>
-      <div class="header_right" style="display: none;">
-     	<div class="header_right01">
-     		<c:if test="${!empty siteBase}">
-				<form name="langForm" id="langForm">
-			  <select id="lang" name="lang">
-			    <option value="zh-cn">${LANG['website.lang.zh']}</option>
-<%-- 				<option value="en-us">${LANG['website.lang.en']}</option> --%>
-			  </select>
-			</form>     		
-     		</c:if>
-     	</div>
-     </div>
 </div>
- -->
+<script type="text/javascript">
+var siteBanner = "${siteBase.siteBanner}";
+$("#head_custom").css("background", "url("+siteBanner+") no-repeat scroll right center transparent");
+</script>
+</c:if>

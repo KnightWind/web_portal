@@ -66,7 +66,7 @@ $(function() {
  	}, ruleString.custom.checkEnName);
 
 	$.validator.addMethod("checkMobile", function(value, element) {       
-		return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86\-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86\-)0?([1-9]\d-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
+		return this.optional(element) || /(^((\+86)?|\(\+86\)|\+86\s|\+86\-)0?1[358]\d{9}$)|(^((\+86)?|\(\+86\)|\+86\s|\+86\-)0?([1-9]\d{1,2}-?\d{6,8}|[3-9][13579]\d-?\d{6,7}|[3-9][24680]\d{2}-?\d{6})(-\d{4})?$)/.test(value);
 	}, ruleString.custom.checkMobile);
 	
 	profileForm = $("#profileForm").validate({
@@ -118,6 +118,22 @@ function saveInfo() {
 	}
 }
 
+$(document).keydown(function(e){ 
+	var doPrevent; 
+	if (e.keyCode == 8) { 
+		var d = e.srcElement || e.target; 
+		if (d.tagName.toUpperCase() == 'INPUT' || d.tagName.toUpperCase() == 'TEXTAREA') { 
+			doPrevent = d.readOnly || d.disabled; 
+		}else{
+			doPrevent = true; 
+		}
+	}else{
+		doPrevent = false; 
+	}
+	if (doPrevent){
+		e.preventDefault(); 
+	} 
+}); 
 </script>
 </head>
 <body>
@@ -129,50 +145,50 @@ function saveInfo() {
   </div>
   <table class="Personal_settings_main" cellpadding="0" cellspacing="0" border="0" >
   	<tr height="40">
-    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.login.res1']}</td>
+    	<td align="right" width="160"><span>*</span>${LANG['bizconf.jsp.login.res1']}</td>
         <td align="left" class="confsetTD">
-        	<input class="Personal_settings " id="loginName" name="loginName" type="text" value="${currentUser.loginName}"/>
+        	<input class="Personal_settings " id="loginName" name="loginName" type="text" <c:if test="${(currentUser.userRole eq 1) && (siteBase.chargeMode==1 || siteBase.chargeMode==2)}">readonly  style='border:0px;'</c:if> value="${currentUser.loginName}"/>
         </td>
-        <td align="left"><strong>${LANG['bizconf.jsp.profile.res3']},${LANG['bizconf.jsp.profile.res4']}</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res3000']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.add_contacts.res7']}</td>
+    	<td align="right" width="160"><span>*</span>${LANG['bizconf.jsp.add_contacts.res7']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " name="trueName" id="trueName" type="text" value="${currentUser.trueName}"/></td>
-        <td align="left"><strong>${LANG['bizconf.jsp.profile.res5']}"_"${LANG['bizconf.jsp.index.res26']}"&"${LANG['bizconf.jsp.index.res26']}"-"${LANG['bizconf.jsp.index.res26']}${LANG['bizconf.jsp.user.profile.res1']}</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res5000']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100">${LANG['bizconf.jsp.add_contacts.res8']}</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.add_contacts.res8']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " name="enName" id="enName" type="text" value="${currentUser.enName}"/></td>
-        <td align="left"><strong>${LANG['bizconf.jsp.profile.res7']}"_"${LANG['bizconf.jsp.index.res26']}"&"${LANG['bizconf.jsp.index.res26']}"-"${LANG['bizconf.jsp.index.res26']}${LANG['bizconf.jsp.user.profile.res1']}</strong></td>
+        <td align="left"><strong>${LANG['bizconf.jsp.profile.res7fix1']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.profile.res8']}</td>
+    	<td align="right" width="160"><span>*</span>${LANG['bizconf.jsp.profile.res8']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="password" name="oldpassword" id="oldpassword" value=""/></td>
         <td align="left"><strong>${LANG['bizconf.jsp.profile.res9']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.profile.res10']}</td>
+    	<td align="right" width="160"><span>*</span>${LANG['bizconf.jsp.profile.res10']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " name="loginPass" id="loginPass" type="password" value=""/></td>
         <td align="left"><strong>${LANG['bizconf.jsp.profile.res11']}</strong></td>
     </tr>
     <tr height="40">
-    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.profile.res12']}</td>
+    	<td align="right" width="160"><span>*</span>${LANG['bizconf.jsp.profile.res12']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="password" name="loginPass2" id="loginPass2"/></td>
         <td align="left"><strong>${LANG['bizconf.jsp.profile.res11']}</strong></td>
     </tr>
      <tr height="40">
-    	<td align="right" width="100"><span>*</span>${LANG['bizconf.jsp.add_contacts.res9']}</td>
+    	<td align="right" width="160"><span>*</span>${LANG['bizconf.jsp.add_contacts.res9']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="text" name="userEmail" id="userEmail" value="${currentUser.userEmail}"/></td>
         <td align="left"><strong>${LANG['bizconf.jsp.profile.res13']}user@bizconf.cn</strong></td>
     </tr>
      <tr height="40">
-    	<td align="right" width="100">${LANG['bizconf.jsp.conflogs.res4']}</td>
+    	<td align="right" width="160">${LANG['bizconf.jsp.conflogs.res4']}</td>
         <td align="left" class="confsetTD">
         	<input class="Personal_settings " type="text" name="mobile" id="mobile" value="${currentUser.mobile}"/></td>
         <td align="left"><strong>${LANG['bizconf.jsp.profile.res14']}+86 010-88888888${LANG['bizconf.jsp.profile.res15']}</strong></td>
@@ -219,6 +235,7 @@ $(function() {
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
+			$("#loginPass").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#oldpassword").rules("remove");
 			$("#loginPass2").rules("remove");
@@ -231,6 +248,7 @@ $(function() {
 			$(this).rules("add", { required: true, rangelength: [6, 16]});
 			$("#loginPass2").rules("add", { required: true, rangelength: [6, 16], equalTo: '#loginPass'});
 		} else {
+			$("#oldpassword").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");
@@ -243,6 +261,7 @@ $(function() {
 			$("#loginPass").rules("add", { required: true, rangelength: [6, 16]});
 			$("#oldpassword").rules("add", { required: true, rangelength: [6, 16]});
 		} else {
+			$("#loginPass2").tipsy('hide').removeAttr('original-title');
 			$(this).rules("remove");
 			$("#loginPass").rules("remove");
 			$("#loginPass2").rules("remove");

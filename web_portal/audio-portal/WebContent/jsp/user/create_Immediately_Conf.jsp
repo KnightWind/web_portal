@@ -104,9 +104,9 @@
       <td class="overlay-content">
       <!--${LANG['bizconf.jsp.add_contacts.res2']}========================================================================-->  
 	  <form name="immediaForm" id="immediaForm" method="post" action="">
-      	<div class="First_Steps_quick_a" style=" background:#FFF;height: 160px;">
-	        <div class="First_Steps_title_a"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
-	          <h3 class="tit_a">${LANG['user.menu.conf.join']}</h3>
+      	<div class="First_Steps_quick_a" style=" background:#FFF;height: 173px;">
+	        <div class="First_Steps_title_a" style="height: 75px;"> <a href="javascript:"  onclick="javascript:closeDialog();" ></a>
+	          <h3 class="tit_a">${LANG['user.menu.conf.immediatly']}</h3>
 	          <p class="tit_b">${LANG['user.menu.conf.join.desc']}</p>
 	        </div>
         	<div style=" background:#fff"><img class="toa_quick" src="/static/images/min.jpg" width="410" height="1" /></div>

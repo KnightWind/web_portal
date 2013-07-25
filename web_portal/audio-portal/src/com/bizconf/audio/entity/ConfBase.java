@@ -56,6 +56,11 @@ public class ConfBase implements java.io.Serializable {
 	 * 会议开始时间
 	 * */
 	private Date startTime;
+	
+	/*
+	 * 会议开始时间备份（从数据库中取出的GMT时间备份）
+	 * */
+	private Date startTimeGmt = null;
 	/*
 	 * 会议时间长度，分钟 为单位
 	 * */
@@ -102,11 +107,11 @@ public class ConfBase implements java.io.Serializable {
 	/*
 	 * 最大音频数
 	 * */
-	private Integer maxAudio = 0;
+	private Integer maxAudio = -1;
 	/*
 	 * 最大视频数
 	 * */
-	private Integer maxVideo = 0;
+	private Integer maxVideo = -1;
 	/*
 	 * 视频设置类型
 //	 * 1.优先保证视频流畅
@@ -114,9 +119,9 @@ public class ConfBase implements java.io.Serializable {
 //	 * 3.优先保证网络带宽
 	 * 45.优先保证视频流畅(默认分辨率是4，最大分辨率是5)
 	 * 48.优先保证画质清晰(默认分辨率是4，最大分辨率是8)
-	 * 02.优先保证网络带宽(默认分辨率是0，最大分辨率是2)
+	 * 03.优先保证网络带宽(默认分辨率是0，最大分辨率是3)
 	 * */
-	private String videoType = "45";
+	private String videoType = "";
 	/*
 	 * 最大分辨率
 	 * */
@@ -437,6 +442,17 @@ public class ConfBase implements java.io.Serializable {
 
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
+		if(this.startTimeGmt == null){
+			this.startTimeGmt = startTime;
+		}
+	}
+
+	public Date getStartTimeGmt() {
+		return startTimeGmt;
+	}
+
+	public void setStartTimeGmt(Date startTimeGmt) {
+		this.startTimeGmt = startTimeGmt;
 	}
 
 	public Integer getDuration() {
@@ -548,6 +564,16 @@ public class ConfBase implements java.io.Serializable {
 
 	public void setFuncBits(String funcBits) {
 		this.funcBits = funcBits;
+	}
+	
+	public boolean isAudioServerMixed() {
+		if (funcBits == null || funcBits.length() < 2) {
+			return false;
+		}
+		if (funcBits.charAt(1) == '1') {
+			return true;
+		}
+		return false;
 	}
 
 	public String getPriviBits() {
@@ -761,6 +787,23 @@ public class ConfBase implements java.io.Serializable {
 	//added by Chris Gao
 	public String getTimeZoneDesc() {
 		return ResourceHolder.getInstance().getResource("website.timezone.city." + this.timeZoneId);
+	}
+	
+	/**
+	 * 当前时间是否允许进会
+	 * @return true 允许进会   false  不允许进会
+	 * shhc
+	 * 2013-7-2
+	 */
+	public boolean getJoinTimeFlag() {
+		Date nowGmtDate = DateUtil.getGmtDate(null);
+		Date aheadGmtDate = DateUtil.addDateMinutes(nowGmtDate, this.aheadTime);
+//		long startTimeStamp = DateUtil.getGmtDateByTimeZone(this.startTime, this.timeZone).getTime(); 
+		long startTimeStamp = this.startTimeGmt.getTime(); 
+		long gmtTimeStamp = aheadGmtDate.getTime();
+		nowGmtDate=null;
+		aheadGmtDate=null;
+		return gmtTimeStamp >= startTimeStamp;
 	}
 	
 	/**

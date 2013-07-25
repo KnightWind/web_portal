@@ -115,7 +115,123 @@
   <table cellpadding="0" cellspacing="0" border="0" style=" background:#fff;">
     <tr height="20">
       <td>
-        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:40px;line-height:22px; margin-top:10px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服。</p>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:40px;line-height:22px; margin-top:10px;  "> 您有任何问题，可以参考<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >用户手册</a>或联系客服:400 082 6161</p>
+      </td>
+    </tr>
+    <tr height="20">
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+  
+  <!--英文-->
+  <table cellpadding="0" cellspacing="0" border="0" width="700" style=" background:#fff;">
+    <tr height="60" >
+      <td>
+        <h2 style=" margin:0; padding:0; border:0; font-size:20px; color:#333; border-bottom:#ccc 1px solid; padding-bottom:5px; margin:0px 40px; font-family:"微软雅黑";">Enterprise Site Info Modified</h2>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <h2 style="margin:0; padding:0; border:0; color:#EB6C00; font-size:12px; margin:5px 40px 15px">Dear ${userBase.trueName},</h2>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px; margin:0px 40px; font-family:Arial, Helvetica, sans-serif;">Thank you for using ConfCloud Enterprise Management platform. The requested info has been modified successfully. 
+          Please click <a href="http://${siteBase.siteSign}.confcloud.cn/admin" style=" margin:0; padding:0; border:0;font-family:Arial, Helvetica, sans-serif;">ConfCloud Enterprise Management Platform</a> to Log in </p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px; margin:0px 40px 10px; font-family:Arial, Helvetica, sans-serif;">Below is your Enterprise Site Info：</p>
+      </td>
+    </tr>
+  </table>
+  <!--左部主题信息区域================================================================-->
+  <table cellpadding="0" cellspacing="0" border="0" style=" background:#fff; margin-left:50px;">
+    <tr  height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px;line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Enterprise Name：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${siteBase.siteName}</span></td>
+    </tr>
+    <tr  height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px;line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Site TimeZone：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${timezone}</span></td>
+    </tr>
+    <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Site Type：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">
+		 <#if siteBase.siteFlag==1>
+             Formal
+         <#else>
+            Trial
+         </#if>
+	  </span></td>
+    </tr>
+    <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Lease Mode：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">
+		  <#if siteBase.hireMode==1>
+           Monthly Payment
+         <#else>
+          Timing
+         </#if>
+	  </span></td>
+    </tr>
+    <tr  height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px;line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Charge Type：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">
+		<#if siteBase.chargeMode==1>
+            name host
+        <#elseif siteBase.chargeMode==2>
+            active user
+        <#elseif siteBase.chargeMode==3>
+            seats
+        <#else>
+            time
+        </#if>
+	  </span></td>
+    </tr>
+    <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Max Attendees：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${siteBase.license}</span></td>
+    </tr>
+    <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Effective Time：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${siteBase.effeDate?string("yyyy-MM-dd")}</span></td>
+    </tr>
+     <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Due Time：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${siteBase.expireDate?string("yyyy-MM-dd")}</span></td>
+    </tr>
+    <tr height="26">
+      <td>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif;">Below is your account info：</p>
+      </td>
+    </tr>
+    <tr  height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px;line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Login Name：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${userBase.loginName}</span></td>
+    </tr>
+	<#if userBase.loginPass!="">
+		<tr height="22">
+		  <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Password：</span></td>
+		  <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${userBase.loginPass}</span></td>
+		</tr>
+	</#if>
+    <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">User Name：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${userBase.trueName}</span></td>
+    </tr>
+     <tr height="22">
+      <td align="right"><span  style="margin:0; padding:0; border:0; color:#333; font-size:12px; line-height:22px; margin-left:65px; margin-top:18px; font-weight:bold;">Email：</span></td>
+      <td align="left"><span style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:22px;font-family:Arial, Helvetica, sans-serif; line-height:20px; margin-left:5px;line-height:24px;">${userBase.userEmail}</span></td>
+    </tr>
+    
+  </table>
+  <table cellpadding="0" cellspacing="0" border="0" style=" background:#fff;">
+    <tr height="20">
+      <td>
+        <p style=" margin:0; padding:0; border:0; font-size:12px; color:#666666; line-height:20px; margin-left:40px;line-height:22px; margin-top:10px;  "> Any questions, please refer to<a href="http://${userGuider!'www.confcloud.cn/help'}" style=" margin:0; padding:0; border:0; color:#EB6C00" >User Guide</a>or contact Customer Service:400 082 6161</p>
       </td>
     </tr>
     <tr height="20">

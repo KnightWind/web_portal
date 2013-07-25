@@ -33,7 +33,7 @@
 					"passConfrim": "${LANG['bizconf.jsp.admin.password_reset.res2']}"
 				},
 				rangelength: {
-					"pass": "${LANG['bizconf.jsp.admin.login.res4']}6~16${LANG['bizconf.jsp.admin.login.res5']}"
+					"pass": "${LANG['bizconf.jsp.admin.login.res4fix2']}"
 				},
 				custom: {
 					"equalTo": "${LANG['bizconf.jsp.admin.resetPass.res3']}"

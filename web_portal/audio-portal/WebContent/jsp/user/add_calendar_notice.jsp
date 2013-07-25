@@ -23,7 +23,7 @@ $(document).ready(function(){
 				"email": "${LANG['bizconf.jsp.add_calendar_notice.res1']}"
 			},
 			rangelength: {
-				"email": "${LANG['bizconf.jsp.add_calendar_notice.res2']}6~32${LANG['bizconf.jsp.add_calendar_notice.res3']}"
+				"email": "${LANG['bizconf.jsp.add_calendar_notice.res2000']}"
 			},
 			custom: {
 				"email": "${LANG['bizconf.jsp.add_calendar_notice.res4']}"

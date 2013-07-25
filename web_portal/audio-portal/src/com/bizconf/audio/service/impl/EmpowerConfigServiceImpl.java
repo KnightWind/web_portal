@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.bizconf.audio.constant.SiteConstant;
+import com.bizconf.audio.entity.ConfBase;
 import com.bizconf.audio.entity.Empower;
 import com.bizconf.audio.entity.EmpowerConfig;
 import com.bizconf.audio.entity.UserBase;
@@ -479,12 +480,17 @@ public class EmpowerConfigServiceImpl extends BaseService implements EmpowerConf
 		if(sitePower==null){
 			return null;
 		}
+		EmpowerConfig siteGlobalEmpower=getSiteEmpowerGlobalBySiteId(sitePower.getSiteId());
+		if(siteGlobalEmpower==null){
+			siteGlobalEmpower=sitePower;
+		}
+		
 		if(userPower==null){
-			return sitePower;
+			return siteGlobalEmpower;
 		}
 		
 		EmpowerConfig empowerConfig=new EmpowerConfig();
-		empowerConfig.setSiteId(sitePower.getSiteId());
+		empowerConfig.setSiteId(siteGlobalEmpower.getSiteId());
 		empowerConfig.setUserId(userPower.getUserId());
 		List<String []> empowerFields=SiteConstant.EMPOWER_CODE_FIELD_LIST;//.EMPOWER_CODE_FIELD_ARRAY;
 		int eachSiteFlag;
@@ -493,7 +499,7 @@ public class EmpowerConfigServiceImpl extends BaseService implements EmpowerConf
 		for(String[] eachField:empowerFields){
 			if(eachField!=null){
 				eachFieldName=eachField[1];
-				eachSiteFlag=IntegerUtil.parseInteger(ObjectUtil.getFieldValue(sitePower, eachFieldName)).intValue();
+				eachSiteFlag=IntegerUtil.parseInteger(ObjectUtil.getFieldValue(siteGlobalEmpower, eachFieldName)).intValue();
 				eachUserFlag=IntegerUtil.parseInteger(ObjectUtil.getFieldValue(userPower, eachFieldName)).intValue();
 				ObjectUtil.setFieldValue(empowerConfig, eachFieldName, eachSiteFlag & eachUserFlag);
 			}
@@ -557,5 +563,86 @@ public class EmpowerConfigServiceImpl extends BaseService implements EmpowerConf
 		return empowerConfig;
 	}
 
+	/**
+	 * 生成进入会议的会议对象,主要是根据站点ID号、创建者的ID号获取授权后调整入会的参数
+	 * @param confBase
+	 * @return
+	 */
+	public ConfBase makeConfBaseForJoinMeeting(ConfBase confBase){
+		if(confBase==null ){
+			return null;
+		}
+		ConfBase confForJoin=confBase;
+		
+		EmpowerConfig siteEmpower=getSiteEmpowerConfigBySiteId(confBase.getSiteId());
+		EmpowerConfig globalEmpower=getSiteEmpowerGlobalBySiteId(confBase.getSiteId());
+		List<String[]> fieldList=SiteConstant.EMPOWER_CODE_FIELD_LIST;
+		EmpowerConfig empowerForJoin=null;
+
+		String eachFiledName="";
+		
+		empowerForJoin=new EmpowerConfig();
+		empowerForJoin.setSiteId(confBase.getSiteId());
+		empowerForJoin.setUserId(confBase.getCreateUser());
+		for(String[] eachField:fieldList){
+			eachFiledName=eachField[1];
+			ObjectUtil.setFieldValue(empowerForJoin, eachFiledName, 0);
+		}
+		
+		empowerForJoin.setVideoNumber(confBase.getMaxVideo());
+		empowerForJoin.setAudioNumber(confBase.getMaxAudio());
+		empowerForJoin.setDpiNumber(IntegerUtil.parseInteger(confBase.getMaxDpi()));
+		
+		int eachSiteFlag;
+		int eachGlobalFlag;
+		int eachSiteNumber;
+		int eachConfBaseNumber;
+		for(String[] eachField:fieldList){
+			eachFiledName=eachField[1];
+			if(eachFiledName.indexOf("Flag")>-1){
+				eachSiteFlag = IntegerUtil.parseIntegerWithDefaultZero(String.valueOf(ObjectUtil.getFieldValue(siteEmpower, eachFiledName))).intValue();
+				eachGlobalFlag = IntegerUtil.parseIntegerWithDefaultZero(String.valueOf(ObjectUtil.getFieldValue(globalEmpower, eachFiledName))).intValue();
+				ObjectUtil.setFieldValue(empowerForJoin, eachFiledName, eachSiteFlag & eachGlobalFlag);
+			}
+			if(eachFiledName.indexOf("Number")>-1){
+				eachSiteNumber = IntegerUtil.parseIntegerWithDefaultZero(
+						String.valueOf(ObjectUtil.getFieldValue(siteEmpower, eachFiledName))).intValue();
+				eachConfBaseNumber = IntegerUtil.parseIntegerWithDefaultZero(
+						String.valueOf(ObjectUtil.getFieldValue(empowerForJoin, eachFiledName))).intValue();
+				if (eachConfBaseNumber > eachSiteNumber) {
+					eachConfBaseNumber = eachSiteNumber;
+				}
+				ObjectUtil.setFieldValue(empowerForJoin, eachFiledName, eachConfBaseNumber);
+			}
+		}
+		
+		if(empowerForJoin != null){
+			
+			//会议类型：0，2
+			//confForJoin.getConfType();
+			
+			
+			//自动外呼
+			
+			//媒体共享
+			
+			//录制
+			
+			//视频功能  路数
+			
+			//音频功能 路数
+			
+			//视频最大画质
+			
+			
+			
+		}
+		
+		
+		
+		
+		return confForJoin;
+		
+	}
 
 }

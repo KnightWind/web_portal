@@ -418,17 +418,17 @@ function refreshTips() {
 }
 
 var $l = {
-	seconds: "${LANG['bizconf.jsp.conf_list_index.res14']} 1 ${LANG['bizconf.jsp.attended_conf_list.res10']}",
-	minute: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.attended_conf_list.res10']}",
-	minutes: "%d ${LANG['bizconf.jsp.attended_conf_list.res10']}",
-	hour: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.conf_list_index.res16']}",
-	hours: "${LANG['bizconf.jsp.conf_list_index.res15']} %d ${LANG['bizconf.jsp.conf_list_index.res16']}",
-	day: "1 ${LANG['bizconf.jsp.conf_list_index.res17']}",
-	days: "%d ${LANG['bizconf.jsp.conf_list_index.res17']}",
-	month: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.conf_list_index.res18']}",
-	months: "%d ${LANG['bizconf.jsp.conf_list_index.res19']}",
-	year: "${LANG['bizconf.jsp.conf_list_index.res15']} 1 ${LANG['bizconf.jsp.conf_list_index.res20']}",
-	years: "%d ${LANG['bizconf.jsp.conf_list_index.res20']}"
+	seconds: "${LANG['bizconf.jsp.conf_list_index.res14']}",
+	minute: "${LANG['bizconf.jsp.conf_list_index.res15']}",
+	minutes: "${LANG['bizconf.jsp.conf_list_index.res1500']}",
+	hour: "${LANG['bizconf.jsp.conf_list_index.res1501']}",
+	hours: "${LANG['bizconf.jsp.conf_list_index.res1502']}",
+	day: "${LANG['bizconf.jsp.conf_list_index.res1700']}",
+	days: "${LANG['bizconf.jsp.conf_list_index.res1701']}",
+	month: "${LANG['bizconf.jsp.conf_list_index.res1503']}",
+	months: "${LANG['bizconf.jsp.conf_list_index.res1900']}",
+	year: "${LANG['bizconf.jsp.conf_list_index.res1504']}",
+	years: "${LANG['bizconf.jsp.conf_list_index.res2000']}"
 };
 function substitute(string, number) {
     return string.replace(/%d/i, number);
@@ -589,7 +589,7 @@ function getParticipantInfo(){
 	      	success:function(data){
 				html ="${LANG['bizconf.jsp.conf_list_index.res35']}";
 				if(data){
-					var renshu = "<img src=\"${baseUrlStatic}/images/ico24.png\" width=\"20\" height=\"20\" align=\"absmiddle\" />";
+					var renshu = "<img src=\"${baseUrlStatic}/images/ico24.jpg\" width=\"20\" height=\"20\" align=\"absmiddle\" />";
 					if(data.length>0){
 						html = "";
 					}
@@ -717,11 +717,11 @@ window.setInterval(refreshList, 5*60*1000);
 			<div class="action_part">
 				<table  border="0" align="right" cellpadding="0" cellspacing="0">
           			<tr>
-          				<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${dringConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${dringConf.duration}" endTime="${runEndTime}" status="run"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${dringConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
-			            <td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${dringConf.compereName}"><img src="${baseUrlStatic}/images/mac.png" width="18" height="21" align="absmiddle" /><div class="k02_span">${dringConf.compereName}</div></div></td>
+          				<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${dringConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${dringConf.duration}" endTime="${runEndTime}" status="run"><img src="${baseUrlStatic}/images/clockbtn.jpg" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${dringConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
+			            <td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${dringConf.compereName}"><img src="${baseUrlStatic}/images/mac.jpg" width="18" height="21" align="absmiddle" /><div class="k02_span">${dringConf.compereName}</div></div></td>
 <%--			            <td><div name="attendeer" confId="${dringConf.id}" class="k04 attendee" title=""><img src="${baseUrlStatic}/images/renshu.png" width="20" height="20" align="absmiddle" />${dringConf.maxUser}</div></td>--%>
 			            <td><div class="k04 attendee" title="${LANG['bizconf.jsp.conf_list_index.res46']}${dringConf.pcNum+dringConf.phoneNum}"><img src="${baseUrlStatic}/images/renshu.png" width="20" height="20" align="absmiddle" />${dringConf.pcNum+dringConf.phoneNum}</div></td>
-			            <td><div class="extras-default viewtip"  title="${LANG['bizconf.jsp.conf_list_index.res47']}" onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
+			            <td><div class="extras-default viewtip"  title="${LANG['bizconf.jsp.conf_list_index.res47']}" onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.jpg" width="20" height="20" /></a></div></td>
 			            <td><div class="k06" onclick="javascript:joinMeeting(1,'${dringConf.id}');">
 			            		<c:if test="${user.id != dringConf.compereUser}">
 			            			<a href="javascript:;">${LANG['bizconf.jsp.conf_list_index.res48']}</a>
@@ -816,13 +816,13 @@ window.setInterval(refreshList, 5*60*1000);
 	          		<tr>
 	          			<td class="" ><!-- ${LANG['bizconf.jsp.conf_list_index.res53']} -->
 	          				<c:if test="${user.id eq upcomingConf.compereUser}">
-	          					<div class="k_f <c:if test="${upcomingConf.maxUser==0}">k_d</c:if>" onclick="inventContact(${upcomingConf.id})"><img src="/static/images/yaoqing.png" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res13']}</div>
+	          					<div class="k_f <c:if test="${upcomingConf.maxUser==0}">k_d</c:if>" onclick="inventContact(${upcomingConf.id})"><img src="/static/images/yaoqing.jpg" width="21" height="16" align="absmiddle" style=" padding-right:5px;" />${LANG['bizconf.jsp.conf_list_index.res13']}</div>
 	          				</c:if>
 	          			</td>
-	          			<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${upcomingConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${upcomingConf.duration}"><img src="${baseUrlStatic}/images/clockbtn.png" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${upcomingConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
-	            		<td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${upcomingConf.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.png" width="20" height="20" align="absmiddle" /><div class="k02_span">${upcomingConf.compereName}</div></div></td>
-	            		<td><div onclick="<c:if test="${!empty user}">editInventContact('${upcomingConf.id}')</c:if>" name="attendeer" confId="${upcomingConf.id}" class="k04 attendee" title=""><img src="${baseUrlStatic}/images/ico24.png" width="20" height="20" align="absmiddle" /></div></td>
-	            		<td><div title="${LANG['bizconf.jsp.conf_list_index.res47']}" class="viewtip extras-default"  onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.png" width="20" height="20" /></a></div></td>
+	          			<td><div class="k02 viewtip durationTime" title="${LANG['bizconf.jsp.conf_list_index.res23']}:${upcomingConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}" duration="${upcomingConf.duration}"><img src="${baseUrlStatic}/images/clockbtn.jpg" width="20" height="20" align="absmiddle" /><div class="k02_span durationMin">${upcomingConf.duration}${LANG['bizconf.jsp.attended_conf_list.res10']}</div></div></td>
+	            		<td><div class="k02 k09 viewtip" title="${LANG['bizconf.jsp.attendConfloglist.res5']}${upcomingConf.compereName}"><img src="${baseUrlStatic}/images/zhuchuren.jpg" width="20" height="20" align="absmiddle" /><div class="k02_span">${upcomingConf.compereName}</div></div></td>
+	            		<td><div onclick="<c:if test="${!empty user}">editInventContact('${upcomingConf.id}')</c:if>" name="attendeer" confId="${upcomingConf.id}" class="k04 attendee" title=""><img src="${baseUrlStatic}/images/ico24.jpg" width="20" height="20" align="absmiddle" /></div></td>
+	            		<td><div title="${LANG['bizconf.jsp.conf_list_index.res47']}" class="viewtip extras-default"  onclick="toggleExtra(this)"><a href="javascript:;"><img src="${baseUrlStatic}/images/caozuo.jpg" width="20" height="20" /></a></div></td>
 	            		<td>
 		            		<div class="k06" onclick="javascript:joinMeeting(1,'${upcomingConf.id}');">
 			            		<c:if test="${user.id != upcomingConf.compereUser}">

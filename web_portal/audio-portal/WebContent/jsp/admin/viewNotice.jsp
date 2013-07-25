@@ -45,7 +45,7 @@
 							<div class="gg_header_b"></div>
 							<div class="message_gg_main">
 								<div  id="content_notice" class="gg_main">
-									<textarea style="width:100%;height:100%;text-indent: 0px;">${notice.content}</textarea>
+									<textarea style="width:560px;height:340px;text-indent: 0px;border: 0px;overflow: auto;">${notice.content}</textarea>
 							     </div>
 							</div>
 						</div>

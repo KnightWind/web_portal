@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
+import com.bizconf.audio.component.language.ResourceHolder;
 import com.bizconf.audio.entity.DefaultConfig;
 import com.bizconf.audio.entity.EmpowerConfig;
 import com.bizconf.audio.entity.UserBase;
@@ -50,7 +51,7 @@ public class ConfConfigController extends BaseController {
 	public Object getConfConfig(HttpServletRequest request) {
 		UserBase currentUser = userService.getCurrentUser(request);
 		if(!currentUser.isConfHost()){
-			setErrMessage(request, "该企业用户无权限修改会议设置！");
+			setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.confconfig.update.not"));
 			return new ActionForward.Forward("/jsp/user/conf_default_setup.jsp");
 		}
 		DefaultConfig confConfig = confService.getDefaultConfig(currentUser);
@@ -112,8 +113,8 @@ public class ConfConfigController extends BaseController {
 			confConfig.setMaxAudio(newConfig.getMaxAudio());
 			confConfig.setMaxVideo(newConfig.getMaxVideo());
 			confConfig.setVideoType(newConfig.getVideoType());
-			confConfig.setMaxDpi(confConfig.getVideoType().substring(0, 1));
-			confConfig.setDefaultDpi(confConfig.getVideoType().substring(1, 2));
+			confConfig.setMaxDpi(confConfig.getVideoType().substring(1, 2));
+			confConfig.setDefaultDpi(confConfig.getVideoType().substring(0, 1));
 			confConfig.setAheadTimes(newConfig.getAheadTimes());
 			confConfig.setPriviBits(confService.getPriviBits(request, confConfig));
 			confConfig.setClientConfig(confService.getClientConfig(request, confConfig));
@@ -121,13 +122,13 @@ public class ConfConfigController extends BaseController {
 			confConfig.setConfType(newConfig.getConfType());
 			updateFlag = confService.updateConfConfig(confConfig);
 			if(updateFlag){
-				setInfoMessage(request,"修改会议设置成功！");
+				setInfoMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.confconfig.update.success"));
 			}else{
-				setErrMessage(request, "修改会议设置失败！");
+				setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.confconfig.update.failed"));
 				return new ActionForward.Forward("/jsp/user/conf_default_setup.jsp");
 			}
 		}else{
-			setErrMessage(request, "修改会议设置失败！");
+			setErrMessage(request, ResourceHolder.getInstance().getResource("bizconf.jsp.user.confconfig.update.failed"));
 		}
 		return new ActionForward.Forward("/user/confConfig/getConfConfig");
 	}

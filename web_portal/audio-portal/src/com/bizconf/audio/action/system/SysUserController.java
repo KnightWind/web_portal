@@ -10,7 +10,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
-import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizconf.audio.action.BaseController;
@@ -92,6 +91,7 @@ public class SysUserController extends BaseController {
 	 * 2. 邮箱不能重复
 	 * 3. 创建系统管理员，要给系统管理员发封邮件
 	 * 4. 校验数据放到service的logic中
+	 * 5. 由martin改造新增客服管理员
 	 * wangyong
 	 * 2013-2-5
 	 */
@@ -105,20 +105,29 @@ public class SysUserController extends BaseController {
 		SystemUser sysUser = null;
 		//获取密码，发邮件时候使用
 		String loginpass = "";
-		
-		String roleStr = "管理员";
+		String createSuccess = ResourceHolder.getInstance().getResource("system.admin.create.succeed");
+		String createFailed = ResourceHolder.getInstance().getResource("system.admin.create.failed");
+		String exists = ResourceHolder.getInstance().getResource("system.admin.create.exists");
 		if(ConstantUtil.USERTYPE_SYS_SERVER.equals(systemUser.getSysType())){
-			roleStr = "客服";
+			createSuccess = ResourceHolder.getInstance().getResource("system.service.create.succeed");
+			createFailed = ResourceHolder.getInstance().getResource("system.service.create.failed");
+			exists = ResourceHolder.getInstance().getResource("system.service.create.exists");
 		}
+		
+//		String roleStr = "管理员";
+//		roleStr = ResourceHolder.getInstance().getResource("system.sysUser.delete.");
+//		if(ConstantUtil.USERTYPE_SYS_SERVER.equals(systemUser.getSysType())){
+//			roleStr = "客服";
+//		}
 		if(systemUser != null){
 			if(StringUtil.isNotBlank(systemUser.getLoginName())){
 				if("false".equals(loginNameValidate(systemUser.getLoginName(), 0))){
-					return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, "该系统"+roleStr+"已存在!");
+					return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, exists);
 				}
 			}
 			if(StringUtil.isNotBlank(systemUser.getEmail())){
 				if("false".equals(emailValidate(systemUser.getEmail(), 0))){
-					return returnJsonStr(ConstantUtil.CREATESITE_FAIL, "该邮箱已存在!");
+					return returnJsonStr(ConstantUtil.CREATESITE_FAIL, ResourceHolder.getInstance().getResource("system.service.email.exists"));
 				}
 			}
 			systemUser = initSystemUser(systemUser, currentSystemUser.getId());	//初始化systemUser对象
@@ -130,29 +139,29 @@ public class SysUserController extends BaseController {
 			try{
 				sysUser = userService.createSystemUser(systemUser);
 			}catch(Exception e){
-				return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, "创建"+roleStr+"员失败");
+				return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, createFailed);
 			}
 			try{
 				if(sysUser != null){
 					sysUser.setLoginPass(loginpass);//设置获取的密码 用于邮件发送
 					emailService.createSystemUserEmail(sysUser);                //创建成功后发送邮件
 					eventLogService.saveSystemEventLog(currentSystemUser, 
-							EventLogConstants.SYSTEM_SYSTEMUSER_CREATE, "创建"+roleStr+"成功", 
+							EventLogConstants.SYSTEM_SYSTEMUSER_CREATE, createSuccess, 
 							EventLogConstants.EVENTLOG_SECCEED, sysUser, request);   //创建成功后写EventLog
 					logger.info("创建系统管理员成功");
 				}else{
 					eventLogService.saveSystemEventLog(currentSystemUser, 
-							EventLogConstants.SYSTEM_SYSTEMUSER_CREATE, "创建"+roleStr+"失败", 
+							EventLogConstants.SYSTEM_SYSTEMUSER_CREATE, createFailed, 
 							EventLogConstants.EVENTLOG_FAIL, sysUser, request);   //创建失败后写EventLog
-					return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, "创建系统管理员失败");
+					return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, createFailed);
 				}
 			}catch(Exception e){
 				eventLogService.saveSystemEventLog(currentSystemUser, 
-						EventLogConstants.SYSTEM_SYSTEMUSER_CREATE, "创建"+roleStr+"失败", 
+						EventLogConstants.SYSTEM_SYSTEMUSER_CREATE, createFailed, 
 						EventLogConstants.EVENTLOG_FAIL, sysUser, request);   //创建失败后写EventLog
 			}
 		}
-		return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_SUCCEED, "创建"+roleStr+"成功");
+		return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_SUCCEED, createSuccess);
 	}
 	
 	/**
@@ -168,7 +177,7 @@ public class SysUserController extends BaseController {
 			systemUser.setDelTime((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1970-01-01 00:00:00")));
 			systemUser.setLastErrorTime((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1970-01-01 00:00:00")));
 		} catch (ParseException e) {
-			Log.error("初始化系统管理员删除时间字段错误！");
+			logger.error("初始化系统管理员删除时间字段错误！");
 		}
 		systemUser.setDelUser(0);
 		systemUser.setErrorCount(0);
@@ -248,6 +257,7 @@ public class SysUserController extends BaseController {
 	 * 1. 修改系统管理员后发封邮件通知
 	 * 2. 校验数据放到service的logic中
 	 * 3. 校验loginname是否已存在
+	 * 4. 由martin改造修改客服管理员
 	 * wangyong
 	 * 2013-2-5
 	 */
@@ -261,10 +271,20 @@ public class SysUserController extends BaseController {
 		String loginpass = "";//发送邮件用  如果有修改密码
 		
 		SystemUser orgUser = userService.getSystemUserById(systemUser.getId());
-		String roleStr = "管理员";
-		if(orgUser!=null && ConstantUtil.USERTYPE_SYS_SERVER.equals(orgUser.getSysType())){
-			roleStr = "客服";
+		
+		String updateSuccess = ResourceHolder.getInstance().getResource("system.admin.update.succeed");
+		String updateFailed = ResourceHolder.getInstance().getResource("system.admin.update.failed");
+		String exists = ResourceHolder.getInstance().getResource("system.admin.create.exists");
+		if(orgUser != null && ConstantUtil.USERTYPE_SYS_SERVER.equals(orgUser.getSysType())){
+			updateSuccess = ResourceHolder.getInstance().getResource("system.service.update.succeed");
+			updateFailed = ResourceHolder.getInstance().getResource("system.service.update.failed");
+			exists = ResourceHolder.getInstance().getResource("system.service.create.exists");
 		}
+		
+//		String roleStr = "管理员";
+//		if(orgUser!=null && ConstantUtil.USERTYPE_SYS_SERVER.equals(orgUser.getSysType())){
+//			roleStr = "客服";
+//		}
 		if(systemUser != null){
 			SystemUser currentSystemUser = userService.getCurrentSysAdmin(request);
 			if(StringUtil.isNotBlank(systemUser.getLoginPass())){     //若管理员修改用户密码，则记录操作人ID
@@ -272,12 +292,12 @@ public class SysUserController extends BaseController {
 			}
 			if(StringUtil.isNotBlank(systemUser.getLoginName())){
 				if("false".equals(loginNameValidate(systemUser.getLoginName(), systemUser.getId()))){
-					return returnJsonStr(ConstantUtil.UPDATESYSTEMUSER_FAIL, "该系统"+roleStr+"已存在!");
+					return returnJsonStr(ConstantUtil.UPDATESYSTEMUSER_FAIL, exists);
 				}
 			}
 			if(StringUtil.isNotBlank(systemUser.getEmail())){
 				if("false".equals(emailValidate(systemUser.getEmail(), systemUser.getId()))){
-					return returnJsonStr(ConstantUtil.CREATESITE_FAIL, "该邮箱已存在!");
+					return returnJsonStr(ConstantUtil.CREATESITE_FAIL, ResourceHolder.getInstance().getResource("system.service.email.exists"));
 				}
 			}
 			if(StringUtil.isNotBlank(systemUser.getLoginPass())){
@@ -287,28 +307,28 @@ public class SysUserController extends BaseController {
 			try {
 				sysUser = userService.updateSystemUser(systemUser);
 			}catch (Exception e){
-				return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, "修改系统"+roleStr+"失败");
+				return returnJsonStr(ConstantUtil.CREATESYSTEMUSER_FAIL, updateFailed);
 			}
 			try{
 				if(sysUser != null){
 					sysUser.setLoginPass(loginpass);//发送邮件如果有修改密码
 					emailService.updateSystemUserEmail(sysUser);                //修改成功后发送邮件
 					eventLogService.saveSystemEventLog(currentSystemUser,
-							EventLogConstants.SYSTEM_SYSTEMUSER_UPDATE, "修改系统"+roleStr+"成功", 
+							EventLogConstants.SYSTEM_SYSTEMUSER_UPDATE, updateSuccess, 
 							EventLogConstants.EVENTLOG_SECCEED, sysUser, request);   //修改成功后写EventLog
 				}else{
 					eventLogService.saveSystemEventLog(currentSystemUser, 
-							EventLogConstants.SYSTEM_SYSTEMUSER_UPDATE, "修改系统"+roleStr+"失败", 
+							EventLogConstants.SYSTEM_SYSTEMUSER_UPDATE, updateFailed, 
 							EventLogConstants.EVENTLOG_FAIL, sysUser, request);   //修改失败后写EventLog
-					return returnJsonStr(ConstantUtil.UPDATESITE_FAIL, "修改系统"+roleStr+"失败");
+					return returnJsonStr(ConstantUtil.UPDATESITE_FAIL, updateFailed);
 				}
 			} catch (Exception e) {
 				eventLogService.saveSystemEventLog(currentSystemUser, 
-						EventLogConstants.SYSTEM_SYSTEMUSER_UPDATE, "修改系统"+roleStr+"失败", 
+						EventLogConstants.SYSTEM_SYSTEMUSER_UPDATE, updateFailed, 
 						EventLogConstants.EVENTLOG_FAIL, sysUser, request);   //修改失败后写EventLog
 			}
 		}
-		return returnJsonStr(ConstantUtil.UPDATESYSTEMUSER_SUCCEED, "修改系统"+roleStr+"成功");
+		return returnJsonStr(ConstantUtil.UPDATESYSTEMUSER_SUCCEED, updateSuccess);
 	}
 	
 	/**
@@ -322,22 +342,31 @@ public class SysUserController extends BaseController {
 		SystemUser currentSystemUser = userService.getCurrentSysAdmin(request);
 		
 		SystemUser orgUser = userService.getSystemUserById(id);
-		String roleStr = "管理员";
+		
+		
+		String deleteSuccess = ResourceHolder.getInstance().getResource("system.admin.delete.succeed");
+		String deleteFailed = ResourceHolder.getInstance().getResource("system.admin.delete.failed");
 		if(orgUser!=null && ConstantUtil.USERTYPE_SYS_SERVER.equals(orgUser.getSysType())){
-			roleStr = "客服";
+			deleteSuccess = ResourceHolder.getInstance().getResource("system.service.delete.succeed");
+			deleteFailed = ResourceHolder.getInstance().getResource("system.service.delete.failed");
 		}
+		
+//		String roleStr = "管理员";
+//		if(orgUser!=null && ConstantUtil.USERTYPE_SYS_SERVER.equals(orgUser.getSysType())){
+//			roleStr = "客服";
+//		}
 		boolean delFlag = userService.delSystemUser(id, currentSystemUser);
 		int delStatus = ConstantUtil.DELSITE_SUCCEED;
 		if(delFlag){
 			//emailService.updateSystemUserEmail(id);系统管理员删除成功发送邮件通知
 			eventLogService.saveSystemEventLog(currentSystemUser, 
-					EventLogConstants.SYSTEM_SITE_DELETE, "删除系统"+roleStr+"成功", 
+					EventLogConstants.SYSTEM_SITE_DELETE, deleteSuccess, 
 					EventLogConstants.EVENTLOG_SECCEED, id, request);   //删除站点成功后写EventLog
 			setInfoMessage(request, ResourceHolder.getInstance().getResource("system.sysUser.delete." + delStatus));
 		}else{
 			delStatus = ConstantUtil.DELSITE_FAIL;
 			eventLogService.saveSystemEventLog(currentSystemUser, 
-					EventLogConstants.SYSTEM_SITE_DELETE, "删除系统"+roleStr+"失败", 
+					EventLogConstants.SYSTEM_SITE_DELETE, deleteFailed, 
 					EventLogConstants.EVENTLOG_FAIL, id, request);   //删除站点失败后写EventLog
 			setErrMessage(request, ResourceHolder.getInstance().getResource("system.sysUser.delete." + delStatus));
 		}

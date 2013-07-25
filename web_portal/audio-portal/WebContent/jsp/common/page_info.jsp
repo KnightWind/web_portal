@@ -14,8 +14,8 @@
 	            <td><div align="center" class="page_next"><a href="javascript:"> ${LANG['website.pagination.previous'] }</a></div></td>
             </c:if>
             <c:if test="${pageModel.pageNo > 1 }">
-	            <td><div align="center" class="page_shouye"><a href="javascript:" onclick="first();">${LANG['website.pagination.first'] }</a></div></td>
-	            <td><div align="center" class="page_next"><a href="javascript:" onclick="previous();">${LANG['website.pagination.previous'] }</a></div></td>
+	            <td><div align="center" class="page_shouye"><a href="javascript:first();" >${LANG['website.pagination.first'] }</a></div></td>
+	            <td><div align="center" class="page_next"><a href="javascript:previous();" >${LANG['website.pagination.previous'] }</a></div></td>
             </c:if>
             <td><div align="center" class="page_shuzi">
 				<c:set var="viewCount" value="5"/>
@@ -33,14 +33,15 @@
 					</c:if>
 				</c:if>
 	           <c:forEach var ="iNum" begin="${istart}" end="${istop}" step="1">
-	           		<c:if test="${pageModel.pageNo!=iNum}"><a href="javascript:" onclick="jumpPage(${iNum});" >${iNum}</a></c:if>
-	           		<c:if test="${pageModel.pageNo==iNum}"><a href="javascript:" style="color:#FF0000;border:0px;cursor:default;">${iNum}</a></c:if>
+	           		<c:if test="${pageModel.pageNo!=iNum}"><a title="${iNum}" href="javascript:jumpPage(${iNum});"  >${iNum}</a></c:if>
+	           		<c:if test="${pageModel.pageNo==iNum}"><a title="${iNum}" href="javascript:" style="color:#FF0000;border:0px;cursor:default;">${iNum}</a></c:if>
 	           </c:forEach>
+	           <div style="clear:both; font-size:0; height:0; overflow:hidden"></div>
            </div></td>
            
 	           <c:if test="${pageModel.pageNo < pageModel.pageCount}">
-	            <td><div class="page_next"><a href="javascript:" onclick="next();">${LANG['website.pagination.next'] }</a></div></td>
-	            <td><div class="page_shouye"><a href="javascript:" onclick="end();">${LANG['website.pagination.end'] }</a></div></td>
+	            <td><div class="page_next"><a href="javascript:next();" >${LANG['website.pagination.next'] }</a></div></td>
+	            <td><div class="page_shouye"><a href="javascript:end();" >${LANG['website.pagination.end'] }</a></div></td>
 	           </c:if>
 	           <c:if test="${pageModel.pageNo==pageModel.pageCount}">
 	            <td><div class="page_next"><a href="javascript:">${LANG['website.pagination.next'] }</a></div></td>
@@ -51,7 +52,7 @@
             <input class="skipThese" type="text" name="pageNo" id="pageNo" value="${pageModel.pageNo}"  style="width:22px; height:16px; font-size:12px; border:solid 1px #CACACA; line-height:16px;text-indent:2px;background:#fff "/>
              </div></td>
             <td class="STYLE22"><div style="margin:0px 5px">${LANG['website.pagination.word.page'] }</div></td>
-            <td class="STYLE22"><div class="page_shouye01"><a href="javascript:" onclick="jumpForButton();">${LANG['website.pagination.jumpbtn'] }</a></div></td>
+            <td class="STYLE22"><div class="page_shouye01"><a href="javascript:jumpForButton();" >${LANG['website.pagination.jumpbtn'] }</a></div></td>
            </tr>  
            </table>  
         </td> 
@@ -94,7 +95,8 @@
 		if($.isNumeric(jumpPageNo)){
 			jumpPageNo=parseInt(jumpPageNo,10);
 		}else{
-			return false;
+			$("#pageNo").val("");
+			return;
 		}
 		
 		if(jumpPageNo<=1){
@@ -119,6 +121,7 @@
 	function jumpPage(pageNo){
 		//alert(pageNo);
 		var formId=$("#pageNo").closest("form").attr("id");
+		//alert(formId);
 		$('input').trigger('submitForm');
 		$("#pageNo").val(pageNo);
 		$("#"+formId).submit();
